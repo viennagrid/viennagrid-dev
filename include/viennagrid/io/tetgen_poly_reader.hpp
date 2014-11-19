@@ -123,7 +123,7 @@ namespace viennagrid
       {
         typedef typename viennagrid::result_of::point<MeshT>::type           PointType;
 
-        const std::size_t point_dim = mesh_obj.dimension(); //viennagrid::result_of::static_size<PointType>::value;
+        const std::size_t point_dim = mesh_obj.geometric_dimension();
 
         typedef typename result_of::vertex<MeshT>::type         VertexType;
         typedef typename VertexType::id_type VertexIDType;

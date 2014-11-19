@@ -203,7 +203,7 @@ namespace viennagrid
         // mesh version = 2
         writer << "2 # version\n";
         // geometric dimension
-        writer << mesh.dimension() << " # sdim\n";
+        writer << mesh.geometric_dimension() << " # sdim\n";
         // number of vertices
         writer << viennagrid::vertices(mesh).size() << " # number of mesh points\n";
         // lowest index = 0

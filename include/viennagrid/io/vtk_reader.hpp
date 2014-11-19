@@ -472,7 +472,7 @@ namespace viennagrid
             for (std::size_t i=0; i<container.second.size(); ++i)
             {
               std::size_t global_vertex_id = local_to_global_map[region_id][i];
-              VertexType const & vertex = viennagrid::elements<viennagrid::vertex_tag>(mesh_obj)[global_vertex_id];
+              VertexType vertex(viennagrid::vertex_tag(), mesh_obj.mesh_hierarchy(), global_vertex_id);
 
               (*registered_vertex_scalar_data[name])(vertex) = (container.second)[i];
             }
@@ -482,7 +482,7 @@ namespace viennagrid
             for (std::size_t i=0; i<container.second.size(); ++i)
             {
               std::size_t global_vertex_id = local_to_global_map[region_id][i];
-              VertexType const & vertex = viennagrid::elements<viennagrid::vertex_tag>(mesh_obj)[global_vertex_id];
+              VertexType vertex(viennagrid::vertex_tag(), mesh_obj.mesh_hierarchy(), global_vertex_id);
 
               (*current_registered_region_vertex_scalar_data[name])(vertex) = (container.second)[i];
             }
@@ -496,11 +496,10 @@ namespace viennagrid
             for (std::size_t i=0; i<container.second.size(); ++i)
             {
               std::size_t global_vertex_id = local_to_global_map[region_id][i];
-              VertexType const & vertex = viennagrid::elements<viennagrid::vertex_tag>(mesh_obj)[global_vertex_id];
 
-              if ( static_cast<typename result_of::id<VertexType>::type>(vertex_scalar_data[container.first][region_id].size()) <= vertex.id())
-                vertex_scalar_data[container.first][region_id].resize(static_cast<std::size_t>(vertex.id()+1));
-              vertex_scalar_data[container.first][region_id][static_cast<std::size_t>(vertex.id())] = (container.second)[i];
+              if (vertex_scalar_data[container.first][region_id].size() <= global_vertex_id)
+                vertex_scalar_data[container.first][region_id].resize(static_cast<std::size_t>(global_vertex_id+1));
+              vertex_scalar_data[container.first][region_id][static_cast<std::size_t>(global_vertex_id)] = (container.second)[i];
             }
           }
         }
@@ -512,7 +511,7 @@ namespace viennagrid
             for (std::size_t i=0; i<container.second.size()/3; ++i)
             {
               std::size_t global_vertex_id = local_to_global_map[region_id][i];
-              VertexType const & vertex = viennagrid::elements<viennagrid::vertex_tag>(mesh_obj)[global_vertex_id];
+              VertexType vertex(viennagrid::vertex_tag(), mesh_obj.mesh_hierarchy(), global_vertex_id);
 
               (*registered_vertex_vector_data[name])(vertex).resize(3);
               (*registered_vertex_vector_data[name])(vertex)[0] = (container.second)[3*i+0];
@@ -525,7 +524,7 @@ namespace viennagrid
             for (std::size_t i=0; i<container.second.size(); ++i)
             {
               std::size_t global_vertex_id = local_to_global_map[region_id][i];
-              VertexType const & vertex = viennagrid::elements<viennagrid::vertex_tag>(mesh_obj)[global_vertex_id];
+              VertexType vertex(viennagrid::vertex_tag(), mesh_obj.mesh_hierarchy(), global_vertex_id);
 
               (*current_registered_region_vertex_vector_data[name])(vertex).resize(3);
               (*current_registered_region_vertex_vector_data[name])(vertex)[0] = (container.second)[3*i+0];
@@ -543,14 +542,14 @@ namespace viennagrid
             for (std::size_t i=0; i<container.second.size() / 3; ++i)
             {
               std::size_t global_vertex_id = local_to_global_map[region_id][i];
-              VertexType const & vertex = viennagrid::elements<viennagrid::vertex_tag>(mesh_obj.get_make_region(region_id))[global_vertex_id];
 
-              if ( static_cast<typename result_of::id<VertexType>::type>(vertex_vector_data[container.first][region_id].size()) <= vertex.id())
-                vertex_vector_data[container.first][region_id].resize(static_cast<std::size_t>(vertex.id()+1));
-              vertex_vector_data[container.first][region_id][static_cast<std::size_t>(vertex.id())].resize(3);
-              vertex_vector_data[container.first][region_id][static_cast<std::size_t>(vertex.id())][0] = (container.second)[3*i+0];
-              vertex_vector_data[container.first][region_id][static_cast<std::size_t>(vertex.id())][1] = (container.second)[3*i+1];
-              vertex_vector_data[container.first][region_id][static_cast<std::size_t>(vertex.id())][2] = (container.second)[3*i+2];
+              if ( vertex_vector_data[container.first][region_id].size() <= global_vertex_id)
+                vertex_vector_data[container.first][region_id].resize(static_cast<std::size_t>(global_vertex_id+1));
+
+              vertex_vector_data[container.first][region_id][static_cast<std::size_t>(global_vertex_id)].resize(3);
+              vertex_vector_data[container.first][region_id][static_cast<std::size_t>(global_vertex_id)][0] = (container.second)[3*i+0];
+              vertex_vector_data[container.first][region_id][static_cast<std::size_t>(global_vertex_id)][1] = (container.second)[3*i+1];
+              vertex_vector_data[container.first][region_id][static_cast<std::size_t>(global_vertex_id)][2] = (container.second)[3*i+2];
             }
           }
         }
@@ -873,7 +872,7 @@ namespace viennagrid
        */
       void operator()(mesh_type & mesh_obj, std::string const & filename)
       {
-        geometric_dim = mesh_obj.dimension();
+        geometric_dim = mesh_obj.geometric_dimension();
         cell_tag = mesh_obj.cell_tag();
         pre_clear();
 

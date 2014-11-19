@@ -17,6 +17,7 @@
 #include <fstream>
 #include <sstream>
 #include <iostream>
+#include <iterator>
 
 #include "viennagrid/core.hpp"
 #include "viennagrid/io/helper.hpp"
@@ -42,7 +43,10 @@ namespace viennagrid
 
       static std::string type_name() { return "Float32"; }
       static int num_components() { return 1; }
-      static void write( std::ostream & os, value_type value ) { os << value; }
+      static void write( std::ostream & os, value_type value )
+      {
+        os << value;
+      }
     };
 
     template<>
@@ -55,11 +59,6 @@ namespace viennagrid
       static void write( std::ostream & os, value_type const & value )
       {
         os << value[0] << " " << value[1] << " " << value[2];
-//         for (int i = 0; i < std::min(value.size(), std::size_t(3)); ++i)
-//           os << value[i] << " ";
-//
-//         for (int i = std::min(value.size(), std::size_t(3)); i < 3; ++i)
-//           os << "0 ";
       }
     };
 
@@ -170,7 +169,7 @@ namespace viennagrid
 
 
       template<typename MeshRegionT>
-      std::size_t preparePoints(MeshRegionT const & region, region_id_type seg_id)
+      std::size_t preparePoints(MeshRegionT const & region, region_id_type region_id)
       {
         typedef typename viennagrid::result_of::const_element_range<MeshRegionT, CellTag>::type     CellRange;
         typedef typename viennagrid::result_of::iterator<CellRange>::type                                         CellIterator;
@@ -178,8 +177,8 @@ namespace viennagrid
         typedef typename viennagrid::result_of::const_element_range<CellType, vertex_tag>::type      VertexOnCellRange;
         typedef typename viennagrid::result_of::iterator<VertexOnCellRange>::type         VertexOnCellIterator;
 
-        std::map< VertexIDType, ConstVertexType > & current_used_vertex_map = used_vertex_map[seg_id];
-        std::map< ConstVertexType, VertexIDType > & current_vertex_to_index_map = vertex_to_index_map[seg_id];
+        std::map< VertexIDType, ConstVertexType > & current_used_vertex_map = used_vertex_map[region_id];
+        std::map< ConstVertexType, VertexIDType > & current_vertex_to_index_map = vertex_to_index_map[region_id];
 
 
         CellRange cells(region);
@@ -214,12 +213,12 @@ namespace viennagrid
       }
 
       template<typename MeshRegionT>
-      std::size_t prepareCells(MeshRegionT const & domseg, region_id_type seg_id)
+      std::size_t prepareCells(MeshRegionT const & domseg, region_id_type region_id)
       {
         typedef typename viennagrid::result_of::const_element_range<MeshRegionT, CellTag>::type     CellRange;
         typedef typename viennagrid::result_of::iterator<CellRange>::type                                         CellIterator;
 
-        std::map< CellIDType, ConstCellType > & current_used_cells_map = used_cell_map[seg_id];
+        std::map< CellIDType, ConstCellType > & current_used_cells_map = used_cell_map[region_id];
 
         int index = 0;
         CellRange cells(domseg);
@@ -235,16 +234,16 @@ namespace viennagrid
 
       /** @brief Writes the vertices in the mesh */
       template <typename RegionT>
-      void writePoints(RegionT const & domseg, std::ofstream & writer, region_id_type seg_id)
+      void writePoints(RegionT const & domseg, std::ofstream & writer, region_id_type region_id)
       {
-        std::map< VertexIDType, ConstVertexType > & current_used_vertex_map = used_vertex_map[seg_id];
+        std::map< VertexIDType, ConstVertexType > & current_used_vertex_map = used_vertex_map[region_id];
 
         writer << "   <Points>" << std::endl;
         writer << "    <DataArray type=\"Float32\" NumberOfComponents=\"3\" format=\"ascii\">" << std::endl;
 
         for (typename std::map< VertexIDType, ConstVertexType >::iterator it = current_used_vertex_map.begin(); it != current_used_vertex_map.end(); ++it)
         {
-          const int dim = domseg.dimension();//  result_of::static_size<PointType>::value;
+          const int dim = domseg.geometric_dimension();//  result_of::static_size<PointType>::value;
           PointWriter::write(writer, viennagrid::get_point(domseg, it->second) );
 
           // add 0's for less than three dimensions
@@ -260,17 +259,17 @@ namespace viennagrid
 
       /** @brief Writes the cells to the mesh */
       template <typename MeshRegionT>
-      void writeCells(MeshRegionT const & domseg, std::ofstream & writer, region_id_type seg_id)
+      void writeCells(MeshRegionT const & domseg, std::ofstream & writer, region_id_type region_id)
       {
         typedef typename viennagrid::result_of::const_element_range<CellType, vertex_tag>::type      VertexOnCellRange;
         typedef typename viennagrid::result_of::iterator<VertexOnCellRange>::type         VertexOnCellIterator;
 
-        std::map< ConstVertexType, VertexIDType > & current_vertex_to_index_map = vertex_to_index_map[seg_id];
+        std::map< ConstVertexType, VertexIDType > & current_vertex_to_index_map = vertex_to_index_map[region_id];
 
         writer << "   <Cells> " << std::endl;
         writer << "    <DataArray type=\"Int32\" Name=\"connectivity\" format=\"ascii\">" << std::endl;
 
-        std::map< CellIDType, ConstCellType > & current_used_cells_map = used_cell_map[seg_id];
+        std::map< CellIDType, ConstCellType > & current_used_cells_map = used_cell_map[region_id];
         for (typename std::map< CellIDType, ConstCellType >::iterator it = current_used_cells_map.begin(); it != current_used_cells_map.end(); ++it)
 
         {
@@ -334,14 +333,14 @@ namespace viennagrid
 
       /** @brief Writes vector-valued data defined on vertices (points) to file */
       template <typename RegionT, typename IOAccessorType>
-      void writePointData(RegionT const &, std::ofstream & writer, std::string const & name, IOAccessorType const & accessor, region_id_type seg_id)
+      void writePointData(RegionT const &, std::ofstream & writer, std::string const & name, IOAccessorType const & accessor, region_id_type region_id)
       {
         typedef typename IOAccessorType::value_type ValueType;
 
         writer << "    <DataArray type=\"" << ValueTypeInformation<ValueType>::type_name() << "\" Name=\"" << name <<
           "\" NumberOfComponents=\"" << ValueTypeInformation<ValueType>::num_components() << "\" format=\"ascii\">" << std::endl;
 
-        std::map< VertexIDType, ConstVertexType > & current_used_vertex_map = used_vertex_map[seg_id];
+        std::map< VertexIDType, ConstVertexType > & current_used_vertex_map = used_vertex_map[region_id];
         for (typename std::map< VertexIDType, ConstVertexType >::iterator it = current_used_vertex_map.begin(); it != current_used_vertex_map.end(); ++it)
         {
           ValueTypeInformation<ValueType>::write(writer, accessor(it->second));
@@ -355,7 +354,7 @@ namespace viennagrid
 
       /** @brief Writes vector-valued data defined on vertices (points) to file */
       template <typename RegionT, typename IOAccessorType>
-      void writeCellData(RegionT const &, std::ofstream & writer, std::string const & name, IOAccessorType const & accessor, region_id_type seg_id)
+      void writeCellData(RegionT const &, std::ofstream & writer, std::string const & name, IOAccessorType const & accessor, region_id_type region_id)
       {
         typedef typename IOAccessorType::value_type ValueType;
 
@@ -363,7 +362,7 @@ namespace viennagrid
           "\" NumberOfComponents=\"" << ValueTypeInformation<ValueType>::num_components() << "\" format=\"ascii\">" << std::endl;
 
 
-        std::map< CellIDType, ConstCellType > & current_used_cells_map = used_cell_map[seg_id];
+        std::map< CellIDType, ConstCellType > & current_used_cells_map = used_cell_map[region_id];
         for (typename std::map< CellIDType, ConstCellType >::iterator it = current_used_cells_map.begin(); it != current_used_cells_map.end(); ++it)
 
         {
@@ -400,7 +399,7 @@ namespace viennagrid
        */
       void operator()(MeshType mesh_obj, std::string const & filename)
       {
-        if (mesh_obj.regions_count() <= 1)
+        if (mesh_obj.region_count() <= 1)
         {
           std::stringstream ss;
           ss << filename << ".vtu";
@@ -532,16 +531,24 @@ namespace viennagrid
             writer << "   <PointData>" << std::endl;
 
             for (typename VertexScalarOutputAccessorContainer::const_iterator data_it = vertex_scalar_data.begin(); data_it != vertex_scalar_data.end(); ++data_it)
+            {
               writePointData( region, writer, data_it->first, *(data_it->second), region.id() );
+            }
             for (typename VertexVectorOutputAccessorContainer::const_iterator data_it = vertex_vector_data.begin(); data_it != vertex_vector_data.end(); ++data_it)
+            {
               writePointData( region, writer, data_it->first, *(data_it->second), region.id() );
+            }
 
 
             for (typename VertexScalarOutputAccessorContainer::const_iterator data_it = current_region_vertex_scalar_data.begin(); data_it != current_region_vertex_scalar_data.end(); ++data_it)
+            {
               writePointData( region, writer, data_it->first, *(data_it->second), region.id() );
+            }
 
             for (typename VertexVectorOutputAccessorContainer::const_iterator data_it = current_region_vertex_vector_data.begin(); data_it != current_region_vertex_vector_data.end(); ++data_it)
+            {
               writePointData( region, writer, data_it->first, *(data_it->second), region.id() );
+            }
 
             writer << "   </PointData>" << std::endl;
           }
@@ -615,8 +622,8 @@ namespace viennagrid
 
       /** @brief Register an accessor/field for scalar data on vertices for a given region ID with a given quantity name */
       template <typename AccessorOrFieldType>
-      void add_scalar_data_on_vertices(region_id_type seg_id, AccessorOrFieldType const accessor_or_field, std::string const & quantity_name)
-      { add_to_vertex_container(region_vertex_scalar_data[seg_id], accessor_or_field, quantity_name); }
+      void add_scalar_data_on_vertices(region_id_type region_id, AccessorOrFieldType const accessor_or_field, std::string const & quantity_name)
+      { add_to_vertex_container(region_vertex_scalar_data[region_id], accessor_or_field, quantity_name); }
 
       /** @brief Register an accessor/field for scalar data on vertices for a given region with a given quantity name */
       template <typename AccessorOrFieldType>
@@ -631,8 +638,8 @@ namespace viennagrid
 
       /** @brief Register an accessor/field for vector data on vertices for a given region ID with a given quantity name */
       template <typename AccessorOrFieldType>
-      void add_vector_data_on_vertices(region_id_type seg_id, AccessorOrFieldType const accessor_or_field, std::string const & quantity_name)
-      { add_to_vertex_container(region_vertex_vector_data[seg_id], accessor_or_field, quantity_name); }
+      void add_vector_data_on_vertices(region_id_type region_id, AccessorOrFieldType const accessor_or_field, std::string const & quantity_name)
+      { add_to_vertex_container(region_vertex_vector_data[region_id], accessor_or_field, quantity_name); }
 
       /** @brief Register an accessor/field for vector data on vertices for a given region with a given quantity name */
       template <typename AccessorOrFieldType>
@@ -648,8 +655,8 @@ namespace viennagrid
 
       /** @brief Register an accessor/field for scalar data on cells for a given region ID with a given quantity name */
       template <typename AccessorOrFieldType>
-      void add_scalar_data_on_cells(region_id_type seg_id, AccessorOrFieldType const accessor_or_field, std::string const & quantity_name)
-      { add_to_cell_container(region_cell_scalar_data[seg_id], accessor_or_field, quantity_name); }
+      void add_scalar_data_on_cells(region_id_type region_id, AccessorOrFieldType const accessor_or_field, std::string const & quantity_name)
+      { add_to_cell_container(region_cell_scalar_data[region_id], accessor_or_field, quantity_name); }
 
       /** @brief Register an accessor/field for scalar data on cells for a given region with a given quantity name */
       template <typename AccessorOrFieldType>
@@ -664,8 +671,8 @@ namespace viennagrid
 
       /** @brief Register an accessor/field for vector data on cells for a given region ID with a given quantity name */
       template <typename AccessorOrFieldType>
-      void add_vector_data_on_cells(region_id_type seg_id, AccessorOrFieldType const accessor_or_field, std::string const & quantity_name)
-      { add_to_cell_container(region_cell_vector_data[seg_id], accessor_or_field, quantity_name); }
+      void add_vector_data_on_cells(region_id_type region_id, AccessorOrFieldType const accessor_or_field, std::string const & quantity_name)
+      { add_to_cell_container(region_cell_vector_data[region_id], accessor_or_field, quantity_name); }
 
       /** @brief Register an accessor/field for vector data on cells for a given region with a given quantity name */
       template <typename AccessorOrFieldType>
