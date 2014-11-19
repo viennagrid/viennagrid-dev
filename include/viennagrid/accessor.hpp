@@ -682,7 +682,7 @@ namespace viennagrid
     typedef typename ContainerType::const_pointer         pointer;
     typedef typename ContainerType::const_pointer   const_pointer;
 
-    typedef typename access_type::id_type::base_id_type offset_type;
+    typedef typename access_type::id_type offset_type;
 
     dense_container_field() : default_value() {}
     dense_container_field( ContainerType const & container_ ) : container(&container_), default_value() {}
