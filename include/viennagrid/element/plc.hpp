@@ -5,28 +5,28 @@
 
 namespace viennagrid
 {
-  inline void add_hole_point(base_mesh<false> mesh, base_element<false> element, point_t const & point)
+  inline void add_hole_point(base_mesh_hierarchy<false> mesh_hierarchy, base_element<false> element, point_t const & point)
   {
     assert( element.tag().is_plc() );
-    viennagrid_plc_add_hole_point( mesh.internal(), element.id(), &point[0] );
+    viennagrid_plc_add_hole_point( mesh_hierarchy.internal(), element.id(), &point[0] );
   }
 
   inline void add_hole_point(base_element<false> element, point_t const & point)
   {
-    add_hole_point(element.mesh_hierarchy().root(), element, point);
+    add_hole_point(element.mesh_hierarchy(), element, point);
   }
 
 
-  inline std::vector< point_t > hole_points(base_mesh<false> mesh, base_element<false> element)
+  inline std::vector< point_t > hole_points(base_mesh_hierarchy<false> mesh_hierarchy, base_element<false> element)
   {
     assert( element.tag().is_plc() );
 
 
-    const viennagrid_int dimension = mesh.dimension();
+    const viennagrid_int dimension = mesh_hierarchy.geometric_dimension();
     viennagrid_numeric const * begin;
     viennagrid_numeric const * end;
 
-    viennagrid_plc_get_hole_points(mesh.internal(), element.id(), &begin, &end);
+    viennagrid_plc_get_hole_points(mesh_hierarchy.internal(), element.id(), &begin, &end);
 
     assert( (end-begin) % dimension == 0 );
     std::size_t vertex_count = (end-begin)/dimension;
@@ -45,7 +45,7 @@ namespace viennagrid
 
   inline std::vector< point_t > hole_points(base_element<false> element)
   {
-    return hole_points(element.mesh_hierarchy().root(), element);
+    return hole_points(element.mesh_hierarchy(), element);
   }
 
 
