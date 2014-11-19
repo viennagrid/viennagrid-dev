@@ -44,6 +44,16 @@ namespace viennagrid
 
 
 
+
+    point_t operator-() const
+    {
+      point_t tmp(*this);
+      for (iterator it = tmp.begin(); it != tmp.end(); ++it)
+        *it = -*it;
+      return tmp;
+    }
+
+
     point_t & operator*=(value_type scalar)
     {
       iterator it = begin();
