@@ -404,12 +404,6 @@ public:
       element_buffer(et).set_tag(et);
   }
 
-//   viennagrid_mesh_hierarchy_(viennagrid_int dimension_in, viennagrid_element_tag cell_tag) : geometric_dimension_(dimension_in), cell_tag_(cell_tag), root_( new viennagrid_mesh_(this) ), highest_region_id(0), change_counter_(0), use_count_(1)
-//   {
-//     for (viennagrid_int et = VIENNAGRID_ELEMENT_TAG_START; et < VIENNAGRID_ELEMENT_TAG_COUNT; ++et)
-//       element_buffer(et).set_tag(et);
-//   }
-
   ~viennagrid_mesh_hierarchy_()
   {
 //     std::cout << "DELETE HIERARCHY" << std::endl;

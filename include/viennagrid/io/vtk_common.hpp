@@ -35,22 +35,16 @@ namespace viennagrid
       {
         case VIENNAGRID_ELEMENT_TAG_VERTEX:
           return 1;
-
         case VIENNAGRID_ELEMENT_TAG_LINE:
           return 3;
-
         case VIENNAGRID_ELEMENT_TAG_TRIANGLE:
           return 5;
-
         case VIENNAGRID_ELEMENT_TAG_QUADRILATERAL:
           return 9;
-
         case VIENNAGRID_ELEMENT_TAG_POLYGON:
           return 7;
-
         case VIENNAGRID_ELEMENT_TAG_TETRAHEDRON:
           return 10;
-
         case VIENNAGRID_ELEMENT_TAG_HEXAHEDRON:
           return 12;
 
@@ -65,22 +59,16 @@ namespace viennagrid
       {
         case 1:
           return viennagrid::vertex_tag();
-
         case 3:
           return viennagrid::line_tag();
-
         case 5:
           return viennagrid::triangle_tag();
-
         case 9:
           return viennagrid::quadrilateral_tag();
-
         case 7:
           return viennagrid::polygon_tag();
-
         case 10:
           return viennagrid::tetrahedron_tag();
-
         case 12:
           return viennagrid::hexahedron_tag();
 

@@ -87,7 +87,7 @@ inline viennagrid_bool viennagrid_native_element_tag(viennagrid_element_tag et)
 }
 
 
-inline viennagrid_int viennagrid_topologycal_dimension(viennagrid_element_tag et)
+inline viennagrid_int viennagrid_topological_dimension(viennagrid_element_tag et)
 {
   switch (et)
   {
@@ -105,6 +105,42 @@ inline viennagrid_int viennagrid_topologycal_dimension(viennagrid_element_tag et
     return 3;
   default:
     return -1;
+  }
+}
+
+
+
+inline viennagrid_element_tag viennagrid_element_tag_of_topological_dimension_begin(viennagrid_int topological_dimension)
+{
+  switch (topological_dimension)
+  {
+    case 0:
+      return VIENNAGRID_ELEMENT_TAG_VERTEX;
+    case 1:
+      return VIENNAGRID_ELEMENT_TAG_LINE;
+    case 2:
+      return VIENNAGRID_ELEMENT_TAG_TRIANGLE;
+    case 3:
+      return VIENNAGRID_ELEMENT_TAG_TETRAHEDRON;
+    default:
+      return -1;
+  }
+}
+
+inline viennagrid_element_tag viennagrid_element_tag_of_topological_dimension_end(viennagrid_int topological_dimension)
+{
+  switch (topological_dimension)
+  {
+    case 0:
+      return VIENNAGRID_ELEMENT_TAG_VERTEX+1;
+    case 1:
+      return VIENNAGRID_ELEMENT_TAG_LINE+1;
+    case 2:
+      return VIENNAGRID_ELEMENT_TAG_TRIANGLE+4;
+    case 3:
+      return VIENNAGRID_ELEMENT_TAG_TETRAHEDRON+2;
+    default:
+      return -1;
   }
 }
 

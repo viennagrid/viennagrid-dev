@@ -126,12 +126,8 @@ namespace viennagrid
 
         for (int i=0; i<cell_num; ++i)
         {
-//           std::size_t vertex_num;
-
-
           if (!reader.good())
             throw bad_file_format_exception("* ViennaGrid: netgen_reader::operator(): File " + filename + ": EOF encountered while reading cells (segment index expected).");
-
 
           getline( reader, tmp );
           std::istringstream line(tmp);
