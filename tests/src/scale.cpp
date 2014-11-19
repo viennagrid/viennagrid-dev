@@ -16,10 +16,7 @@
 
 #include <cmath>
 
-#include "viennagrid/forwards.hpp"
-#include "viennagrid/mesh/element_creation.hpp"
-#include "viennagrid/config/default_configs.hpp"
-#include "viennagrid/point.hpp"
+#include "viennagrid/core.hpp"
 #include "viennagrid/algorithm/geometric_transform.hpp"
 
 inline void fuzzy_check(double a, double b)
@@ -49,24 +46,23 @@ void fuzzy_check(PointType const & a, PointType const & b)
 // Triangular
 //
 
-inline void setup_mesh(viennagrid::triangular_2d_mesh & mesh)
+inline void setup_triangular2d_mesh(viennagrid::mesh_t & mesh)
 {
-  typedef viennagrid::triangular_2d_mesh                      MeshType;
+  typedef viennagrid::mesh_t                      MeshType;
   typedef viennagrid::triangle_tag                                      CellTag;
 
   typedef viennagrid::result_of::point<MeshType>::type          PointType;
-  typedef viennagrid::result_of::handle<MeshType, viennagrid::vertex_tag>::type       VertexHandleType;
-
+  typedef viennagrid::result_of::vertex<MeshType>::type       VertexType;
   typedef viennagrid::result_of::element<MeshType, CellTag>::type        CellType;
 
   const size_t s = 4;
   PointType p[s];
-  VertexHandleType v[s];
+  VertexType v[s];
 
-  p[0] = PointType(0.0, 0.0);
-  p[1] = PointType(1.0, 0.0);
-  p[2] = PointType(1.0, 1.0);
-  p[3] = PointType(0.0, 1.0);
+  p[0] = viennagrid::make_point(0.0, 0.0);
+  p[1] = viennagrid::make_point(1.0, 0.0);
+  p[2] = viennagrid::make_point(1.0, 1.0);
+  p[3] = viennagrid::make_point(0.0, 1.0);
 
   //upgrade to vertex:
   std::cout << "Adding vertices to mesh..." << std::endl;
@@ -76,54 +72,47 @@ inline void setup_mesh(viennagrid::triangular_2d_mesh & mesh)
   }
 
   std::cout << "Adding cells to mesh..." << std::endl;
-  VertexHandleType vertices[3];
+  VertexType vertices[3];
 
   vertices[0] = v[0];
   vertices[1] = v[2];
   vertices[2] = v[3];
-  viennagrid::make_element<CellType>( mesh, vertices, vertices+3 );
+  viennagrid::make_cell( mesh, vertices, vertices+3 );
 
   vertices[0] = v[0];
   vertices[1] = v[1];
   vertices[2] = v[2];
-  viennagrid::make_element<CellType>( mesh, vertices, vertices+3 );
+  viennagrid::make_cell( mesh, vertices, vertices+3 );
 }
 
 
 
-
-inline void test(viennagrid::triangular_2d_mesh)
+template<int dimension, typename CellTagT>
+void test()
 {
-  typedef viennagrid::triangular_2d_mesh                 Mesh;
+  typedef viennagrid::mesh_t                 Mesh;
   typedef viennagrid::result_of::point<Mesh>::type       PointType;
 
-  viennagrid::result_of::default_point_accessor<Mesh>::type point_acc;
-  Mesh mesh;
 
-  setup_mesh(mesh);
+  Mesh mesh(dimension, CellTagT());
+  viennagrid::result_of::point_accessor<Mesh>::type point_acc(mesh);
 
-
-  PointType const & p0 = point_acc(viennagrid::elements<viennagrid::vertex_tag>(mesh)[0]);
-  PointType const & p1 = point_acc(viennagrid::elements<viennagrid::vertex_tag>(mesh)[1]);
-  PointType const & p2 = point_acc(viennagrid::elements<viennagrid::vertex_tag>(mesh)[2]);
-  PointType const & p3 = point_acc(viennagrid::elements<viennagrid::vertex_tag>(mesh)[3]);
-
+  setup_triangular2d_mesh(mesh);
 
   std::cout << "Scaling domain by a factor of two from origin... " << std::endl;
   viennagrid::scale(mesh, 2.0);
-  fuzzy_check( p0, PointType(0,0) );
-  fuzzy_check( p1, PointType(2,0) );
-  fuzzy_check( p2, PointType(2,2) );
-  fuzzy_check( p3, PointType(0,2) );
+  fuzzy_check( point_acc(viennagrid::vertices(mesh)[0]), viennagrid::make_point(0,0) );
+  fuzzy_check( point_acc(viennagrid::vertices(mesh)[1]), viennagrid::make_point(2,0) );
+  fuzzy_check( point_acc(viennagrid::vertices(mesh)[2]), viennagrid::make_point(2,2) );
+  fuzzy_check( point_acc(viennagrid::vertices(mesh)[3]), viennagrid::make_point(0,2) );
 
 
   std::cout << "Scaling domain by a factor of three with respect to (1,1)... " << std::endl;
-  viennagrid::scale(mesh, 3.0, PointType(1,1));
-  fuzzy_check( p0, PointType(-2,-2) );
-  fuzzy_check( p1, PointType(4,-2) );
-  fuzzy_check( p2, PointType(4,4) );
-  fuzzy_check( p3, PointType(-2,4) );
-
+  viennagrid::scale(mesh, 3.0, viennagrid::make_point(1,1));
+  fuzzy_check( point_acc(viennagrid::vertices(mesh)[0]), viennagrid::make_point(-2,-2) );
+  fuzzy_check( point_acc(viennagrid::vertices(mesh)[1]), viennagrid::make_point(4,-2) );
+  fuzzy_check( point_acc(viennagrid::vertices(mesh)[2]), viennagrid::make_point(4,4) );
+  fuzzy_check( point_acc(viennagrid::vertices(mesh)[3]), viennagrid::make_point(-2,4) );
 }
 
 
@@ -135,7 +124,7 @@ int main()
   std::cout << "*****************" << std::endl;
 
   std::cout << "==== Testing triangular mesh in 2D ====" << std::endl;
-  test(viennagrid::triangular_2d_mesh());
+  test<2, viennagrid::triangle_tag>();
 
   std::cout << "*******************************" << std::endl;
   std::cout << "* Test finished successfully! *" << std::endl;

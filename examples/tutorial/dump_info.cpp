@@ -42,13 +42,13 @@ bool dump_information(MeshT & mesh, string const & filename)
   std::cout << "Information for Mesh '" << filename << "'" << std::endl;
   std::cout << std::endl;
   std::cout << "Cell Type           : " << mesh.cell_tag().name() << std::endl;
-  std::cout << "Geometric Dimension : " << mesh.dimension() << std::endl;
+  std::cout << "Geometric Dimension : " << mesh.geometric_dimension() << std::endl;
   std::cout << "Number of vertices  : " << viennagrid::vertices(mesh).size() << std::endl;
   std::cout << "Number of cells     : " << viennagrid::cells(mesh).size() << std::endl;
   std::cout << std::endl;
 
   // dump segment information
-  std::cout << "Number of segments: " << mesh.regions_count() << std::endl;
+  std::cout << "Number of segments: " << mesh.region_count() << std::endl;
   typedef typename viennagrid::result_of::const_region_range<MeshT>::type ConstRegionRangeType;
   typedef typename viennagrid::result_of::iterator<ConstRegionRangeType>::type ConstRegionRangeIterator;
 

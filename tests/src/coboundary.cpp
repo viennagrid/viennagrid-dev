@@ -16,41 +16,37 @@
   #pragma warning( disable : 4503 )     //truncated name decoration
 #endif
 
-#include "viennagrid/forwards.hpp"
-#include "viennagrid/point.hpp"
-#include "viennagrid/config/default_configs.hpp"
-#include "viennagrid/mesh/coboundary_iteration.hpp"
+#include "viennagrid/core.hpp"
 #include "viennagrid/io/netgen_reader.hpp"
 
-template <typename CellTypeOrTag, typename Mesh>
-void test(std::string infile)
+template <typename CellTypeOrTag>
+void test(int dimension, viennagrid::element_tag_t element_tag, std::string infile)
 {
+  typedef viennagrid::mesh_t MeshType;
   typedef typename viennagrid::result_of::element_tag<CellTypeOrTag>::type CellTag;
 
   //typedef typename viennagrid::result_of::mesh<ConfigType>::type        Mesh;
   //typedef typename ConfigType::cell_tag                                   CellTag;
-  typedef typename viennagrid::result_of::segmentation<Mesh>::type       SegmentationType;
+//   typedef typename viennagrid::result_of::segmentation<MeshType>::type       SegmentationType;
 
-  typedef typename viennagrid::result_of::element<Mesh, viennagrid::vertex_tag>::type       VertexType;
-  typedef typename viennagrid::result_of::element<Mesh,
-                                                typename CellTag::facet_tag>::type FacetType;
+  typedef typename viennagrid::result_of::vertex<MeshType>::type       VertexType;
+  typedef typename viennagrid::result_of::facet<MeshType>::type FacetType;
 
-  typedef typename viennagrid::result_of::element_range<Mesh, viennagrid::vertex_tag>::type       VertexContainer;
+  typedef typename viennagrid::result_of::vertex_range<MeshType>::type       VertexContainer;
   typedef typename viennagrid::result_of::iterator<VertexContainer>::type    VertexIterator;
 //   typedef typename viennagrid::result_of::iterator<VertexContainer>::type    VertexHandleIterator;
 
-  typedef typename viennagrid::result_of::element_range<Mesh, typename CellTag::facet_tag>::type   FacetContainer;
+  typedef typename viennagrid::result_of::facet_range<MeshType>::type   FacetContainer;
   typedef typename viennagrid::result_of::iterator<FacetContainer>::type                         FacetIterator;
 //   typedef typename viennagrid::result_of::hook_iterator<FacetContainer>::type                         FacetHandleIterator;
 
-  Mesh mesh;
-  SegmentationType segmentation(mesh);
+  MeshType mesh(dimension, element_tag);
 
   //read from file:
   try
   {
     viennagrid::io::netgen_reader my_netgen_reader;
-    my_netgen_reader(mesh, segmentation, infile);
+    my_netgen_reader(mesh, infile);
   }
   catch (std::exception const & ex)
   {
@@ -72,10 +68,10 @@ void test(std::string infile)
   {
     const VertexType & vertex = *vit;//viennagrid::dereference_hook(mesh, *vit);
     std::cout << vertex << std::endl;
-    typedef typename viennagrid::result_of::coboundary_range<Mesh, viennagrid::vertex_tag, viennagrid::line_tag>::type          EdgeOnVertexContainer;
+    typedef typename viennagrid::result_of::coboundary_range<MeshType, viennagrid::line_tag>::type          EdgeOnVertexContainer;
     typedef typename viennagrid::result_of::iterator<EdgeOnVertexContainer>::type     EdgeOnVertexIterator;
 
-    EdgeOnVertexContainer edges = viennagrid::coboundary_elements<viennagrid::vertex_tag, viennagrid::line_tag>(mesh, vit.handle());
+    EdgeOnVertexContainer edges (mesh, *vit);
     for (EdgeOnVertexIterator eovit = edges.begin();
          eovit != edges.end();
          ++eovit)
@@ -92,17 +88,17 @@ void test(std::string infile)
   std::cout << "*" << std::endl;
   std::cout << "* Test 2: Iteration over all cells adjacent to each facet" << std::endl;
   std::cout << "*" << std::endl;
-  FacetContainer facets = viennagrid::elements<typename CellTag::facet_tag>(mesh);
+  FacetContainer facets(mesh);
   for (FacetIterator fit = facets.begin();
        fit != facets.end();
        ++fit)
   {
-    const FacetType & facet = *fit; //viennagrid::dereference_hook(mesh, *fit);
+    FacetType facet = *fit; //viennagrid::dereference_hook(mesh, *fit);
     std::cout << facet << std::endl;
-    typedef typename viennagrid::result_of::coboundary_range<Mesh, FacetType, CellTag>::type   CellOnFacetContainer;
+    typedef typename viennagrid::result_of::coboundary_range<MeshType, CellTag>::type   CellOnFacetContainer;
     typedef typename viennagrid::result_of::iterator<CellOnFacetContainer>::type                          CellOnFacetIterator;
 
-    CellOnFacetContainer cells = viennagrid::coboundary_elements<FacetType, CellTag>(mesh, fit.handle());
+    CellOnFacetContainer cells(mesh, *fit);
     for (CellOnFacetIterator eovit = cells.begin();
          eovit != cells.end();
          ++eovit)
@@ -124,11 +120,11 @@ int main()
   std::string path = "../examples/data/";
 
   std::cout << "Testing 1d..." << std::endl;
-  test<viennagrid::line_tag, viennagrid::line_1d_mesh>(path + "line8.mesh");
+  test<viennagrid::line_tag>(1, viennagrid::line_tag(), path + "line8.mesh");
   std::cout << "Testing 2d..." << std::endl;
-  test<viennagrid::triangle_tag, viennagrid::triangular_2d_mesh>(path + "square32.mesh");
+  test<viennagrid::triangle_tag>(2, viennagrid::triangle_tag(), path + "square32.mesh");
   std::cout << "Testing 3d..." << std::endl;
-  test<viennagrid::tetrahedron_tag, viennagrid::tetrahedral_3d_mesh>(path + "cube48.mesh");
+  test<viennagrid::tetrahedron_tag>(3, viennagrid::tetrahedron_tag(), path + "cube48.mesh");
 
   std::cout << "*******************************" << std::endl;
   std::cout << "* Test finished successfully! *" << std::endl;

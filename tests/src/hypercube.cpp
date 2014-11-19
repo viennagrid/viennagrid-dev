@@ -14,97 +14,94 @@
   #pragma warning( disable : 4503 )     //truncated name decoration
 #endif
 
-#include "viennagrid/mesh/element_creation.hpp"
-#include "viennagrid/config/default_configs.hpp"
+#include "viennagrid/core.hpp"
 #include "viennagrid/io/vtk_writer.hpp"
 
 template <typename MeshType>
-void setup(MeshType & mesh, viennagrid::hexahedron_tag)
+void setup(MeshType & mesh, viennagrid::element_tag_t element_tag)
 {
   typedef typename viennagrid::result_of::point<MeshType>::type               PointType;
-  typedef typename viennagrid::result_of::vertex_handle<MeshType>::type       VertexHandleType;
+  typedef typename viennagrid::result_of::vertex<MeshType>::type       VertexType;
 
-  PointType p0(0.0, 0.0, 0.0);
-  PointType p1(1.0, 0.0, 0.0);
-  PointType p2(1.0, 1.0, 0.0);
-  PointType p3(0.0, 1.0, 0.0);
-  PointType p4(0.0, 0.0, 1.0);
-  PointType p5(1.0, 0.0, 1.0);
-  PointType p6(1.0, 1.0, 1.0);
-  PointType p7(0.0, 1.0, 1.0);
-  PointType p8(2.0, 0.0, 0.0);
-  PointType p9(2.0, 1.0, 0.0);
-  PointType p10(2.0, 0.0, 1.0);
-  PointType p11(2.0, 1.0, 1.0);
+  if (element_tag.is_hexahedron())
+  {
+    PointType p0 = viennagrid::make_point(0.0, 0.0, 0.0);
+    PointType p1 = viennagrid::make_point(1.0, 0.0, 0.0);
+    PointType p2 = viennagrid::make_point(1.0, 1.0, 0.0);
+    PointType p3 = viennagrid::make_point(0.0, 1.0, 0.0);
+    PointType p4 = viennagrid::make_point(0.0, 0.0, 1.0);
+    PointType p5 = viennagrid::make_point(1.0, 0.0, 1.0);
+    PointType p6 = viennagrid::make_point(1.0, 1.0, 1.0);
+    PointType p7 = viennagrid::make_point(0.0, 1.0, 1.0);
+    PointType p8 = viennagrid::make_point(2.0, 0.0, 0.0);
+    PointType p9 = viennagrid::make_point(2.0, 1.0, 0.0);
+    PointType p10 = viennagrid::make_point(2.0, 0.0, 1.0);
+    PointType p11 = viennagrid::make_point(2.0, 1.0, 1.0);
 
-  std::cout << "Adding vertices to segment:" << std::endl;
-
-
-  VertexHandleType vh0 = viennagrid::make_vertex( mesh, p0 );
-  VertexHandleType vh1 = viennagrid::make_vertex( mesh, p1 );
-  VertexHandleType vh2 = viennagrid::make_vertex( mesh, p2 );
-  VertexHandleType vh3 = viennagrid::make_vertex( mesh, p3 );
-  VertexHandleType vh4 = viennagrid::make_vertex( mesh, p4 );
-  VertexHandleType vh5 = viennagrid::make_vertex( mesh, p5 );
-  VertexHandleType vh6 = viennagrid::make_vertex( mesh, p6 );
-  VertexHandleType vh7 = viennagrid::make_vertex( mesh, p7 );
-  VertexHandleType vh8 = viennagrid::make_vertex( mesh, p8 );
-  VertexHandleType vh9 = viennagrid::make_vertex( mesh, p9 );
-  VertexHandleType vh10 = viennagrid::make_vertex( mesh, p10 );
-  VertexHandleType vh11 = viennagrid::make_vertex( mesh, p11 );
+    std::cout << "Adding vertices to segment:" << std::endl;
 
 
-  viennagrid::make_hexahedron( mesh, vh0, vh1, vh3, vh2, vh4, vh5, vh7, vh6 );
-  viennagrid::make_hexahedron( mesh, vh1, vh8, vh2, vh9, vh5, vh10, vh6, vh11 );
+    VertexType v0 = viennagrid::make_vertex( mesh, p0 );
+    VertexType v1 = viennagrid::make_vertex( mesh, p1 );
+    VertexType v2 = viennagrid::make_vertex( mesh, p2 );
+    VertexType v3 = viennagrid::make_vertex( mesh, p3 );
+    VertexType v4 = viennagrid::make_vertex( mesh, p4 );
+    VertexType v5 = viennagrid::make_vertex( mesh, p5 );
+    VertexType v6 = viennagrid::make_vertex( mesh, p6 );
+    VertexType v7 = viennagrid::make_vertex( mesh, p7 );
+    VertexType v8 = viennagrid::make_vertex( mesh, p8 );
+    VertexType v9 = viennagrid::make_vertex( mesh, p9 );
+    VertexType v10 = viennagrid::make_vertex( mesh, p10 );
+    VertexType v11 = viennagrid::make_vertex( mesh, p11 );
+
+
+    viennagrid::make_hexahedron( mesh, v0, v1, v3, v2, v4, v5, v7, v6 );
+    viennagrid::make_hexahedron( mesh, v1, v8, v2, v9, v5, v10, v6, v11 );
+  }
+
+  if (element_tag.is_quadrilateral())
+  {
+    PointType p0 = viennagrid::make_point(0.0, 0.0);
+    PointType p1 = viennagrid::make_point(1.0, 0.0);
+    PointType p2 = viennagrid::make_point(2.0, 0.0);
+    PointType p3 = viennagrid::make_point(2.0, 1.0);
+    PointType p4 = viennagrid::make_point(1.0, 1.0);
+    PointType p5 = viennagrid::make_point(0.0, 1.0);
+
+    std::cout << "Adding vertices to segment:" << std::endl;
+    VertexType v0 = viennagrid::make_vertex( mesh, p0 );
+    VertexType v1 = viennagrid::make_vertex( mesh, p1 );
+    VertexType v2 = viennagrid::make_vertex( mesh, p2 );
+    VertexType v3 = viennagrid::make_vertex( mesh, p3 );
+    VertexType v4 = viennagrid::make_vertex( mesh, p4 );
+    VertexType v5 = viennagrid::make_vertex( mesh, p5 );
+
+    viennagrid::make_quadrilateral( mesh, v0, v1, v5, v4 );
+    viennagrid::make_quadrilateral( mesh, v1, v2, v4, v3 );
+  }
 }
 
-template <typename MeshType>
-void setup(MeshType & mesh, viennagrid::quadrilateral_tag)
+
+void test(std::string outfile, int dimension, viennagrid::element_tag_t element_tag)
 {
-  typedef typename viennagrid::result_of::point<MeshType>::type               PointType;
-  typedef typename viennagrid::result_of::vertex_handle<MeshType>::type       VertexHandleType;
+  typedef viennagrid::mesh_t MeshType;
+  typedef viennagrid::result_of::cell_tag<MeshType>::type            CellTag;
 
-  PointType p0(0.0, 0.0);
-  PointType p1(1.0, 0.0);
-  PointType p2(2.0, 0.0);
-  PointType p3(2.0, 1.0);
-  PointType p4(1.0, 1.0);
-  PointType p5(0.0, 1.0);
+  typedef viennagrid::result_of::vertex_range<MeshType>::type       VertexContainer;
+  typedef viennagrid::result_of::iterator<VertexContainer>::type    VertexIterator;
 
-  std::cout << "Adding vertices to segment:" << std::endl;
-  VertexHandleType vh0 = viennagrid::make_vertex( mesh, p0 );
-  VertexHandleType vh1 = viennagrid::make_vertex( mesh, p1 );
-  VertexHandleType vh2 = viennagrid::make_vertex( mesh, p2 );
-  VertexHandleType vh3 = viennagrid::make_vertex( mesh, p3 );
-  VertexHandleType vh4 = viennagrid::make_vertex( mesh, p4 );
-  VertexHandleType vh5 = viennagrid::make_vertex( mesh, p5 );
+  typedef viennagrid::result_of::line_range<MeshType>::type       EdgeContainer;
+  typedef viennagrid::result_of::iterator<EdgeContainer>::type      EdgeIterator;
 
-  viennagrid::make_quadrilateral( mesh, vh0, vh1, vh5, vh4 );
-  viennagrid::make_quadrilateral( mesh, vh1, vh2, vh4, vh3 );
+  typedef viennagrid::result_of::facet_range<MeshType>::type   FacetContainer;
+  typedef viennagrid::result_of::iterator<FacetContainer>::type                         FacetIterator;
 
-}
+  typedef viennagrid::result_of::cell_range<MeshType>::type   CellContainer;
+  typedef viennagrid::result_of::iterator<CellContainer>::type                        CellIterator;
 
+  MeshType mesh(dimension, element_tag);
 
-template <typename MeshType>
-void test(std::string outfile)
-{
-  typedef typename viennagrid::result_of::cell_tag<MeshType>::type            CellTag;
-
-  typedef typename viennagrid::result_of::vertex_range<MeshType>::type       VertexContainer;
-  typedef typename viennagrid::result_of::iterator<VertexContainer>::type    VertexIterator;
-
-  typedef typename viennagrid::result_of::line_range<MeshType>::type       EdgeContainer;
-  typedef typename viennagrid::result_of::iterator<EdgeContainer>::type      EdgeIterator;
-
-  typedef typename viennagrid::result_of::facet_range<MeshType>::type   FacetContainer;
-  typedef typename viennagrid::result_of::iterator<FacetContainer>::type                         FacetIterator;
-
-  typedef typename viennagrid::result_of::cell_range<MeshType>::type   CellContainer;
-  typedef typename viennagrid::result_of::iterator<CellContainer>::type                        CellIterator;
-
-  MeshType mesh;
-
-  setup(mesh, CellTag());
+  setup(mesh, element_tag);
 
   std::cout << "Vertices: " << std::endl;
   VertexContainer vertices(mesh);
@@ -146,8 +143,8 @@ int main()
   std::cout << "* Test started! *" << std::endl;
   std::cout << "*****************" << std::endl;
 
-  test<viennagrid::quadrilateral_2d_mesh>("hypercube_2d");
-  test<viennagrid::hexahedral_3d_mesh>("hypercube_3d");
+  test("hypercube_2d", 2, viennagrid::quadrilateral_tag());
+  test("hypercube_3d", 3, viennagrid::hexahedron_tag());
 
   std::cout << "*******************************" << std::endl;
   std::cout << "* Test finished successfully! *" << std::endl;

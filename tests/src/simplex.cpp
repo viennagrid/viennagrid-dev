@@ -14,10 +14,7 @@
   #pragma warning( disable : 4503 )     //truncated name decoration
 #endif
 
-#include "viennagrid/forwards.hpp"
-#include "viennagrid/point.hpp"
-#include "viennagrid/config/default_configs.hpp"
-#include "viennagrid/mesh/element_creation.hpp"
+#include "viennagrid/core.hpp"
 
 template <typename ElementTagT,
           typename SegmentT>
@@ -53,50 +50,50 @@ void print_elements(SegmentT & seg)
 }
 
 
-inline void setup_mesh(viennagrid::triangular_2d_mesh & mesh)
+inline void setup_triangular2d_mesh(viennagrid::mesh_t & mesh)
 {
-  typedef viennagrid::triangular_2d_mesh MeshType;
+  typedef viennagrid::mesh_t MeshType;
 
   typedef viennagrid::result_of::point<MeshType>::type          PointType;
   typedef viennagrid::result_of::vertex_handle<MeshType>::type       VertexHandleType;
 
   PointType p[4];
 
-  p[0] = PointType(0.0, 0.0, 0.0);
-  p[0] = PointType(1.0, 0.0, 0.0);
-  p[0] = PointType(0.0, 1.0, 0.0);
-  p[0] = PointType(0.0, 0.0, 1.0);
+  p[0] = viennagrid::make_point(0.0, 0.0);
+  p[1] = viennagrid::make_point(1.0, 0.0);
+  p[2] = viennagrid::make_point(0.0, 1.0);
+  p[3] = viennagrid::make_point(1.0, 1.0);
 
   //upgrade to vertex:
-  VertexHandleType vh[7];
+  VertexHandleType vh[4];
 
   std::cout << "Adding vertices to mesh..." << std::endl;
-  for (int i = 0; i < 7; ++i)
+  for (int i = 0; i < 4; ++i)
     vh[i] = viennagrid::make_vertex( mesh, p[i] );
 
   std::cout << "Adding cells to mesh..." << std::endl;
   viennagrid::make_triangle( mesh, vh[1], vh[3], vh[2] );
 }
 
-inline void setup_mesh(viennagrid::triangular_3d_mesh & mesh)
+inline void setup_triangular3d_mesh(viennagrid::mesh_t & mesh)
 {
-  typedef viennagrid::triangular_3d_mesh MeshType;
+  typedef viennagrid::mesh_t MeshType;
 
   typedef viennagrid::result_of::point<MeshType>::type          PointType;
   typedef viennagrid::result_of::vertex_handle<MeshType>::type       VertexHandleType;
 
   PointType p[4];
 
-  p[0] = PointType(0.0, 0.0, 0.0);
-  p[0] = PointType(1.0, 0.0, 0.0);
-  p[0] = PointType(0.0, 1.0, 0.0);
-  p[0] = PointType(0.0, 0.0, 1.0);
+  p[0] = viennagrid::make_point(0.0, 0.0, 0.0);
+  p[1] = viennagrid::make_point(1.0, 0.0, 0.0);
+  p[2] = viennagrid::make_point(0.0, 1.0, 0.0);
+  p[3] = viennagrid::make_point(0.0, 0.0, 1.0);
 
   //upgrade to vertex:
-  VertexHandleType vh[7];
+  VertexHandleType vh[4];
 
   std::cout << "Adding vertices to mesh..." << std::endl;
-  for (int i = 0; i < 7; ++i)
+  for (int i = 0; i < 4; ++i)
     vh[i] = viennagrid::make_vertex( mesh, p[i] );
 
   std::cout << "Adding cells to mesh..." << std::endl;
@@ -118,10 +115,10 @@ inline void setup_mesh(viennagrid::tetrahedral_3d_mesh & mesh)
   p[0] = PointType(0.0, 0.0, 1.0);
 
   //upgrade to vertex:
-  VertexHandleType vh[7];
+  VertexHandleType vh[4];
 
   std::cout << "Adding vertices to mesh..." << std::endl;
-  for (int i = 0; i < 7; ++i)
+  for (int i = 0; i < 4; ++i)
     vh[i] = viennagrid::make_vertex( mesh, p[i] );
 
   std::cout << "Adding cells to mesh..." << std::endl;

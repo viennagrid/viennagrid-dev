@@ -44,7 +44,7 @@ void read_netgen(MeshType & mesh)
   //
   // Note that the Netgen format supports multiple segments, which will be automatically created by the reader
   //
-  std::cout << "Number of segments in Netgen file: " << mesh.regions_count() << std::endl;
+  std::cout << "Number of segments in Netgen file: " << mesh.region_count() << std::endl;
 
   // do more stuff with the mesh here.
 }

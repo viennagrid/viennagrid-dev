@@ -17,23 +17,21 @@
 #include <iostream>
 #include <ostream>
 
-#include "viennagrid/algorithm/boundary.hpp"
+#include "viennagrid/core.hpp"
 #include "viennagrid/algorithm/volume.hpp"
 #include "viennagrid/algorithm/circumcenter.hpp"
-#include "viennagrid/config/default_configs.hpp"
 #include "viennagrid/io/vtk_writer.hpp"
 #include "viennagrid/io/vtk_reader.hpp"
 #include "viennagrid/io/netgen_reader.hpp"
 
 
 
-template <typename MeshType>
+template<int dimension, typename CellTagT>
 void test(std::string & infile, std::string & outfile)
 {
-
-  typedef typename viennagrid::result_of::segmentation<MeshType>::type           SegmentationType;
-  typedef typename viennagrid::result_of::segment_handle<SegmentationType>::type           SegmentHandleType;
-  typedef typename SegmentHandleType::segment_id_type SegmentIDType;
+  typedef viennagrid::mesh_t MeshType;
+  typedef viennagrid::result_of::region<MeshType>::type RegionType;
+  typedef viennagrid::result_of::id<RegionType>::type RegionIDType;
 
   typedef typename viennagrid::result_of::vertex<MeshType>::type       VertexType;
   typedef typename viennagrid::result_of::cell<MeshType>::type   CellType;
@@ -44,19 +42,18 @@ void test(std::string & infile, std::string & outfile)
   typedef typename viennagrid::result_of::cell_range<MeshType>::type     CellContainer;
   typedef typename viennagrid::result_of::iterator<CellContainer>::type                          CellIterator;
 
-  typedef typename viennagrid::result_of::vertex_range<SegmentHandleType>::type                 SegmentVertexContainer;
-  typedef typename viennagrid::result_of::iterator<SegmentVertexContainer>::type        SegmentVertexIterator;
+  typedef typename viennagrid::result_of::vertex_range<RegionType>::type                 RegionVertexContainer;
+  typedef typename viennagrid::result_of::iterator<RegionVertexContainer>::type        RegionVertexIterator;
 
-  typedef typename viennagrid::result_of::cell_range<SegmentHandleType>::type     SegmentCellContainer;
-  typedef typename viennagrid::result_of::iterator<SegmentCellContainer>::type                    SegmentCellIterator;
+  typedef typename viennagrid::result_of::cell_range<RegionType>::type     RegionCellContainer;
+  typedef typename viennagrid::result_of::iterator<RegionCellContainer>::type                    RegionCellIterator;
 
 
-  MeshType mesh;
-  SegmentationType segmentation(mesh);
+  MeshType mesh(dimension, CellTagT());
 
   try{
     viennagrid::io::netgen_reader my_netgen_reader;
-    my_netgen_reader(mesh, segmentation, infile);
+    my_netgen_reader(mesh, infile);
   } catch (std::exception const & ex){
     std::cerr << ex.what() << std::endl;
      std::cerr << "File-Reader failed. Aborting program..." << std::endl;
@@ -88,7 +85,7 @@ void test(std::string & infile, std::string & outfile)
       vit != vertices.end();
       ++vit)
   {
-    vertex_double_data_field(*vit) = viennagrid::point(*vit)[0];
+    vertex_double_data_field(*vit) = viennagrid::get_point(*vit)[0];
     vertex_vector_data_field(*vit) = std::vector<double>(3);
     vertex_normal_data_field(*vit) = std::vector<double>(3);
   }
@@ -108,51 +105,59 @@ void test(std::string & infile, std::string & outfile)
 
 
 
-  std::map<SegmentIDType, std::deque<double> >            segment_vertex_double_data;
-  std::map<SegmentIDType, std::deque< std::vector<double> > >    segment_vertex_vector_data;
-  std::map<SegmentIDType, std::deque< std::vector<double> > >    segment_vertex_normal_data;
+  std::map<RegionIDType, std::deque<double> >            region_vertex_double_data;
+  std::map<RegionIDType, std::deque< std::vector<double> > >    region_vertex_vector_data;
+  std::map<RegionIDType, std::deque< std::vector<double> > >    region_vertex_normal_data;
 
-  std::map<SegmentIDType, std::deque<double> >            segment_cell_double_data;
-  std::map<SegmentIDType, std::deque< std::vector<double> > >    segment_cell_vector_data;
-  std::map<SegmentIDType, std::deque< std::vector<double> > >    segment_cell_normal_data;
-
-
+  std::map<RegionIDType, std::deque<double> >            region_cell_double_data;
+  std::map<RegionIDType, std::deque< std::vector<double> > >    region_cell_vector_data;
+  std::map<RegionIDType, std::deque< std::vector<double> > >    region_cell_normal_data;
 
 
 
-  // write segment-based data
+
+
+  // write region-based data
   int index = 0;
-  for (typename SegmentationType::iterator it = segmentation.begin(); it != segmentation.end(); ++it, ++index)
+
+  typedef viennagrid::result_of::region_range<MeshType>::type RegionRangeType;
+  typedef viennagrid::result_of::iterator<RegionRangeType>::type RegionRangeIterator;
+
+  RegionRangeType regions(mesh);
+  for (RegionRangeIterator rit = regions.begin(); rit != regions.end(); ++rit, ++index)
   {
-    std::cout << "Writing segment " << it->id() << std::endl;
+    std::cout << "Writing region " << (*rit).id() << std::endl;
 
-    typename viennagrid::result_of::field< std::deque<double>, VertexType >::type            segment_vertex_double_data_field( segment_vertex_double_data[it->id()] );
-    typename viennagrid::result_of::field< std::deque< std::vector<double> >, VertexType >::type    segment_vertex_vector_data_field( segment_vertex_vector_data[it->id()] );
-    typename viennagrid::result_of::field< std::deque< std::vector<double> >, VertexType >::type    segment_vertex_normal_data_field( segment_vertex_normal_data[it->id()] );
+    typename viennagrid::result_of::field< std::deque<double>, VertexType >::type            region_vertex_double_data_field( region_vertex_double_data[(*rit).id()] );
+    typename viennagrid::result_of::field< std::deque< std::vector<double> >, VertexType >::type    region_vertex_vector_data_field( region_vertex_vector_data[(*rit).id()] );
+    typename viennagrid::result_of::field< std::deque< std::vector<double> >, VertexType >::type    region_vertex_normal_data_field( region_vertex_normal_data[(*rit).id()] );
 
-    typename viennagrid::result_of::field< std::deque<double>, CellType >::type            segment_cell_double_data_field( segment_cell_double_data[it->id()] );
-    typename viennagrid::result_of::field< std::deque< std::vector<double> >, CellType >::type    segment_cell_vector_data_field( segment_cell_vector_data[it->id()] );
-    typename viennagrid::result_of::field< std::deque< std::vector<double> >, CellType >::type    segment_cell_normal_data_field( segment_cell_normal_data[it->id()] );
-
-
-    SegmentVertexContainer segment_vertices(*it);
-    for (SegmentVertexIterator vit = segment_vertices.begin();
-        vit != segment_vertices.end();
+    RegionVertexContainer region_vertices(*rit);
+    for (RegionVertexIterator vit = region_vertices.begin();
+        vit != region_vertices.end();
         ++vit)
     {
-      segment_vertex_double_data_field(*vit) = index+1;
-      segment_vertex_vector_data_field(*vit) = std::vector<double>(3, index);
-      segment_vertex_normal_data_field(*vit) = std::vector<double>(3, index);
+      region_vertex_double_data_field(*vit) = index+1;
+      region_vertex_vector_data_field(*vit) = std::vector<double>(3, index);
+      region_vertex_normal_data_field(*vit) = std::vector<double>(3, index);
     }
 
-    SegmentCellContainer segment_cells(*it);
-    for (SegmentCellIterator cit = segment_cells.begin();
-                      cit != segment_cells.end();
+
+    typename viennagrid::result_of::field< std::deque<double>, CellType >::type            region_cell_double_data_field( region_cell_double_data[(*rit).id()] );
+    typename viennagrid::result_of::field< std::deque< std::vector<double> >, CellType >::type    region_cell_vector_data_field( region_cell_vector_data[(*rit).id()] );
+    typename viennagrid::result_of::field< std::deque< std::vector<double> >, CellType >::type    region_cell_normal_data_field( region_cell_normal_data[(*rit).id()] );
+
+
+
+
+    RegionCellContainer region_cells(*rit);
+    for (RegionCellIterator cit = region_cells.begin();
+                      cit != region_cells.end();
                     ++cit)
     {
-      segment_cell_double_data_field(*cit) = viennagrid::circumcenter(*cit)[0] + index;
-      segment_cell_vector_data_field(*cit) = std::vector<double>(3, index);
-      segment_cell_normal_data_field(*cit) = std::vector<double>(3, index);
+      region_cell_double_data_field(*cit) = viennagrid::circumcenter(*cit)[0] + index;
+      region_cell_vector_data_field(*cit) = std::vector<double>(3, index);
+      region_cell_normal_data_field(*cit) = std::vector<double>(3, index);
     }
   }
 
@@ -167,25 +172,25 @@ void test(std::string & infile, std::string & outfile)
   viennagrid::io::add_vector_data_on_vertices(vtk_writer, viennagrid::make_field<VertexType>(vertex_vector_data), "point_vector_global");
   viennagrid::io::add_vector_data_on_vertices(vtk_writer, viennagrid::make_field<VertexType>(vertex_normal_data), "point_normal_global");
 
-  for (typename SegmentationType::iterator it = segmentation.begin(); it != segmentation.end(); ++it)
+  for (RegionRangeIterator rit = regions.begin(); rit != regions.end(); ++rit, ++index)
   {
-    viennagrid::io::add_scalar_data_on_vertices(vtk_writer, *it, viennagrid::make_field<VertexType>(segment_vertex_double_data[it->id()]), "point_scalar1_segment");
-    viennagrid::io::add_vector_data_on_vertices(vtk_writer, *it, viennagrid::make_field<VertexType>(segment_vertex_vector_data[it->id()]), "point_vector_segment");
-    viennagrid::io::add_vector_data_on_vertices(vtk_writer, *it, viennagrid::make_field<VertexType>(segment_vertex_normal_data[it->id()]), "point_normal_segment");
+    viennagrid::io::add_scalar_data_on_vertices(vtk_writer, *rit, viennagrid::make_field<VertexType>(region_vertex_double_data[(*rit).id()]), "point_scalar1_region");
+    viennagrid::io::add_vector_data_on_vertices(vtk_writer, *rit, viennagrid::make_field<VertexType>(region_vertex_vector_data[(*rit).id()]), "point_vector_region");
+    viennagrid::io::add_vector_data_on_vertices(vtk_writer, *rit, viennagrid::make_field<VertexType>(region_vertex_normal_data[(*rit).id()]), "point_normal_region");
   }
 
   viennagrid::io::add_scalar_data_on_cells(vtk_writer, viennagrid::make_field<CellType>(cell_double_data), "point_scalar1_global");
   viennagrid::io::add_vector_data_on_cells(vtk_writer, viennagrid::make_field<CellType>(cell_vector_data), "point_vector_global");
   viennagrid::io::add_vector_data_on_cells(vtk_writer, viennagrid::make_field<CellType>(cell_normal_data), "point_normal_global");
 
-  for (typename SegmentationType::iterator it = segmentation.begin(); it != segmentation.end(); ++it)
+  for (RegionRangeIterator rit = regions.begin(); rit != regions.end(); ++rit, ++index)
   {
-    viennagrid::io::add_scalar_data_on_cells(vtk_writer, *it, viennagrid::make_field<CellType>(segment_cell_double_data[it->id()]), "point_scalar1_segment");
-    viennagrid::io::add_vector_data_on_cells(vtk_writer, *it, viennagrid::make_field<CellType>(segment_cell_vector_data[it->id()]), "point_vector_segment");
-    viennagrid::io::add_vector_data_on_cells(vtk_writer, *it, viennagrid::make_field<CellType>(segment_cell_normal_data[it->id()]), "point_normal_segment");
+    viennagrid::io::add_scalar_data_on_cells(vtk_writer, *rit, viennagrid::make_field<CellType>(region_cell_double_data[(*rit).id()]), "point_scalar1_region");
+    viennagrid::io::add_vector_data_on_cells(vtk_writer, *rit, viennagrid::make_field<CellType>(region_cell_vector_data[(*rit).id()]), "point_vector_region");
+    viennagrid::io::add_vector_data_on_cells(vtk_writer, *rit, viennagrid::make_field<CellType>(region_cell_normal_data[(*rit).id()]), "point_normal_region");
   }
 
-  vtk_writer(mesh, segmentation, outfile);
+  vtk_writer(mesh, outfile);
 
 
 
@@ -195,8 +200,7 @@ void test(std::string & infile, std::string & outfile)
   //
 
   std::cout << "Reading and writing the whole data again... (pass 1)" << std::endl;
-  MeshType mesh2;
-  SegmentationType segmentation2(mesh2);
+  MeshType mesh2(dimension, CellTagT());
 
   viennagrid::io::vtk_reader<MeshType> vtk_reader;
 
@@ -217,34 +221,35 @@ void test(std::string & infile, std::string & outfile)
   viennagrid::io::add_vector_data_on_cells(vtk_reader, viennagrid::make_field<CellType>(pass1_cell_vector_data), "point_vector_global");
   viennagrid::io::add_vector_data_on_cells(vtk_reader, viennagrid::make_field<CellType>(pass1_cell_normal_data), "point_normal_global");
 
-  vtk_reader(mesh2, segmentation2, outfile + "_main.pvd");
+  vtk_reader(mesh2, outfile + ".pvd");
 
 
   viennagrid::io::add_scalar_data_on_vertices(vtk_writer, viennagrid::make_field<VertexType>(pass1_vertex_double_data), "point_scalar1_global");
   viennagrid::io::add_vector_data_on_vertices(vtk_writer, viennagrid::make_field<VertexType>(pass1_vertex_vector_data), "point_vector_global");
   viennagrid::io::add_vector_data_on_vertices(vtk_writer, viennagrid::make_field<VertexType>(pass1_vertex_normal_data), "point_normal_global");
 
-  for (typename SegmentationType::iterator it = segmentation2.begin(); it != segmentation2.end(); ++it)
+  RegionRangeType regions2(mesh2);
+  for (RegionRangeIterator rit = regions2.begin(); rit != regions2.end(); ++rit)
   {
-    vtk_writer.add_scalar_data_on_vertices( *it, vtk_reader.vertex_scalar_field("point_scalar1_segment", *it), "point_scalar1_segment" );
-    vtk_writer.add_vector_data_on_vertices( *it, vtk_reader.vertex_vector_field("point_vector_segment", *it), "point_vector_segment" );
-    vtk_writer.add_vector_data_on_vertices( *it, vtk_reader.vertex_vector_field("point_normal_segment", *it), "point_normal_segment" );
+    vtk_writer.add_scalar_data_on_vertices( *rit, vtk_reader.vertex_scalar_field("point_scalar1_region", *rit), "point_scalar1_region" );
+    vtk_writer.add_vector_data_on_vertices( *rit, vtk_reader.vertex_vector_field("point_vector_region", *rit), "point_vector_region" );
+    vtk_writer.add_vector_data_on_vertices( *rit, vtk_reader.vertex_vector_field("point_normal_region", *rit), "point_normal_region" );
   }
 
   viennagrid::io::add_scalar_data_on_cells(vtk_writer, viennagrid::make_field<CellType>(pass1_cell_double_data), "point_scalar1_global");
   viennagrid::io::add_vector_data_on_cells(vtk_writer, viennagrid::make_field<CellType>(pass1_cell_vector_data), "point_vector_global");
   viennagrid::io::add_vector_data_on_cells(vtk_writer, viennagrid::make_field<CellType>(pass1_cell_normal_data), "point_normal_global");
 
-  for (typename SegmentationType::iterator it = segmentation2.begin(); it != segmentation2.end(); ++it)
+  for (RegionRangeIterator rit = regions2.begin(); rit != regions2.end(); ++rit)
   {
-    vtk_writer.add_scalar_data_on_cells( *it, vtk_reader.cell_scalar_field("point_scalar1_segment", *it), "point_scalar1_segment" );
-    vtk_writer.add_vector_data_on_cells( *it, vtk_reader.cell_vector_field("point_vector_segment", *it), "point_vector_segment" );
-    vtk_writer.add_vector_data_on_cells( *it, vtk_reader.cell_vector_field("point_normal_segment", *it), "point_normal_segment" );
+    vtk_writer.add_scalar_data_on_cells( *rit, vtk_reader.cell_scalar_field("point_scalar1_region", *rit), "point_scalar1_region" );
+    vtk_writer.add_vector_data_on_cells( *rit, vtk_reader.cell_vector_field("point_vector_region", *rit), "point_vector_region" );
+    vtk_writer.add_vector_data_on_cells( *rit, vtk_reader.cell_vector_field("point_normal_region", *rit), "point_normal_region" );
   }
 
 
   std::string outfile2 = outfile + "2";
-  vtk_writer(mesh2, segmentation2, outfile2);
+  vtk_writer(mesh2, outfile2);
 
 
 
@@ -253,8 +258,7 @@ void test(std::string & infile, std::string & outfile)
 
 
   std::cout << "Reading and writing the whole data again... (pass 2)" << std::endl;
-  MeshType mesh3;
-  SegmentationType segmentation3(mesh3);
+  MeshType mesh3(dimension, CellTagT());
 
   std::deque<double>            pass2_vertex_double_data;
   std::deque< std::vector<double> >    pass2_vertex_vector_data;
@@ -272,34 +276,35 @@ void test(std::string & infile, std::string & outfile)
   viennagrid::io::add_vector_data_on_cells(vtk_reader, viennagrid::make_field<CellType>(pass2_cell_vector_data), "point_vector_global");
   viennagrid::io::add_vector_data_on_cells(vtk_reader, viennagrid::make_field<CellType>(pass2_cell_normal_data), "point_normal_global");
 
-  vtk_reader(mesh3, segmentation3, outfile + "2_main.pvd");
+  vtk_reader(mesh3, outfile + "2.pvd");
 
 
   viennagrid::io::add_scalar_data_on_vertices(vtk_writer, viennagrid::make_field<VertexType>(pass2_vertex_double_data), "point_scalar1_global");
   viennagrid::io::add_vector_data_on_vertices(vtk_writer, viennagrid::make_field<VertexType>(pass2_vertex_vector_data), "point_vector_global");
   viennagrid::io::add_vector_data_on_vertices(vtk_writer, viennagrid::make_field<VertexType>(pass2_vertex_normal_data), "point_normal_global");
 
-  for (typename SegmentationType::iterator it = segmentation3.begin(); it != segmentation3.end(); ++it)
+  RegionRangeType regions3(mesh3);
+  for (RegionRangeIterator rit = regions3.begin(); rit != regions3.end(); ++rit)
   {
-    vtk_writer.add_scalar_data_on_vertices( *it, vtk_reader.vertex_scalar_field("point_scalar1_segment", *it), "point_scalar1_segment" );
-    vtk_writer.add_vector_data_on_vertices( *it, vtk_reader.vertex_vector_field("point_vector_segment", *it), "point_vector_segment" );
-    vtk_writer.add_vector_data_on_vertices( *it, vtk_reader.vertex_vector_field("point_normal_segment", *it), "point_normal_segment" );
+    vtk_writer.add_scalar_data_on_vertices( *rit, vtk_reader.vertex_scalar_field("point_scalar1_region", *rit), "point_scalar1_region" );
+    vtk_writer.add_vector_data_on_vertices( *rit, vtk_reader.vertex_vector_field("point_vector_region", *rit), "point_vector_region" );
+    vtk_writer.add_vector_data_on_vertices( *rit, vtk_reader.vertex_vector_field("point_normal_region", *rit), "point_normal_region" );
   }
 
   viennagrid::io::add_scalar_data_on_cells(vtk_writer, viennagrid::make_field<CellType>(pass2_cell_double_data), "point_scalar1_global");
   viennagrid::io::add_vector_data_on_cells(vtk_writer, viennagrid::make_field<CellType>(pass2_cell_vector_data), "point_vector_global");
   viennagrid::io::add_vector_data_on_cells(vtk_writer, viennagrid::make_field<CellType>(pass2_cell_normal_data), "point_normal_global");
 
-  for (typename SegmentationType::iterator it = segmentation3.begin(); it != segmentation3.end(); ++it)
+  for (RegionRangeIterator rit = regions3.begin(); rit != regions3.end(); ++rit)
   {
-    vtk_writer.add_scalar_data_on_cells( *it, vtk_reader.cell_scalar_field("point_scalar1_segment", *it), "point_scalar1_segment" );
-    vtk_writer.add_vector_data_on_cells( *it, vtk_reader.cell_vector_field("point_vector_segment", *it), "point_vector_segment" );
-    vtk_writer.add_vector_data_on_cells( *it, vtk_reader.cell_vector_field("point_normal_segment", *it), "point_normal_segment" );
+    vtk_writer.add_scalar_data_on_cells( *rit, vtk_reader.cell_scalar_field("point_scalar1_region", *rit), "point_scalar1_region" );
+    vtk_writer.add_vector_data_on_cells( *rit, vtk_reader.cell_vector_field("point_vector_region", *rit), "point_vector_region" );
+    vtk_writer.add_vector_data_on_cells( *rit, vtk_reader.cell_vector_field("point_normal_region", *rit), "point_normal_region" );
   }
 
 
   std::string outfile3 = outfile + "3";
-  vtk_writer(mesh3, segmentation3, outfile3);
+  vtk_writer(mesh3, outfile3);
 }
 
 
@@ -315,7 +320,7 @@ int main()
   std::string outfile = "vtk_writer"; // without ending
 
   std::cout << "Running VTK writer on tetrahedron mesh... " << std::endl;
-  test<viennagrid::tetrahedral_3d_mesh>(infile, outfile);
+  test<3, viennagrid::tetrahedron_tag>(infile, outfile);
 
   std::cout << "*******************************" << std::endl;
   std::cout << "* Test finished successfully! *" << std::endl;

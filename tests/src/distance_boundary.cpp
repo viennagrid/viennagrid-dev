@@ -16,10 +16,7 @@
 
 #include <cmath>
 
-#include "viennagrid/forwards.hpp"
-#include "viennagrid/config/default_configs.hpp"
-#include "viennagrid/mesh/element_creation.hpp"
-#include "viennagrid/point.hpp"
+#include "viennagrid/core.hpp"
 #include "viennagrid/algorithm/distance.hpp"
 
 inline void fuzzy_check(double a, double b)
@@ -43,17 +40,15 @@ inline void fuzzy_check(double a, double b)
 // Triangular
 //
 
-inline void setup_meshs(viennagrid::triangular_2d_mesh & mesh0,
-                        viennagrid::triangular_2d_segmentation & segmentation0,
-                        viennagrid::triangular_2d_mesh & mesh1,
-                        viennagrid::triangular_2d_segmentation & segmentation1)
+inline void setup_meshs(viennagrid::mesh_t & mesh0,
+                        viennagrid::mesh_t & mesh1)
 {
-  typedef viennagrid::triangular_2d_mesh                      MeshType;
-  typedef viennagrid::triangular_2d_segment_handle                     SegmentHandleType;
+  typedef viennagrid::mesh_t                      MeshType;
+  typedef viennagrid::result_of::region<MeshType>::type                 RegionType;
   typedef viennagrid::triangle_tag                                      CellTag;
 
   typedef viennagrid::result_of::point<MeshType>::type          PointType;
-  typedef viennagrid::result_of::handle<MeshType, viennagrid::vertex_tag>::type       VertexHandleType;
+  typedef viennagrid::result_of::vertex<MeshType>::type       VertexType;
 
   typedef viennagrid::result_of::element<MeshType, CellTag>::type        CellType;
 
@@ -61,27 +56,27 @@ inline void setup_meshs(viennagrid::triangular_2d_mesh & mesh0,
   {
     const size_t s = 15;
     PointType p[s];
-    VertexHandleType v[s];
+    VertexType v[s];
 
-    p[0] = PointType(0.0, 0.0);
-    p[1] = PointType(1.0, 0.0);
-    p[2] = PointType(2.0, 0.0);
+    p[0] = viennagrid::make_point(0.0, 0.0);
+    p[1] = viennagrid::make_point(1.0, 0.0);
+    p[2] = viennagrid::make_point(2.0, 0.0);
 
-    p[3] = PointType(0.0, 1.0);
-    p[4] = PointType(1.0, 1.0);
-    p[5] = PointType(2.0, 1.0);
+    p[3] = viennagrid::make_point(0.0, 1.0);
+    p[4] = viennagrid::make_point(1.0, 1.0);
+    p[5] = viennagrid::make_point(2.0, 1.0);
 
-    p[6] = PointType(0.0, 2.0);
-    p[7] = PointType(1.0, 2.0);
-    p[8] = PointType(2.0, 2.0);
+    p[6] = viennagrid::make_point(0.0, 2.0);
+    p[7] = viennagrid::make_point(1.0, 2.0);
+    p[8] = viennagrid::make_point(2.0, 2.0);
 
-    p[9] = PointType(0.0, 3.0);
-    p[10] = PointType(1.0, 3.0);
-    p[11] = PointType(2.0, 3.0);
+    p[9] = viennagrid::make_point(0.0, 3.0);
+    p[10] = viennagrid::make_point(1.0, 3.0);
+    p[11] = viennagrid::make_point(2.0, 3.0);
 
-    p[12] = PointType(0.0, 4.0);
-    p[13] = PointType(1.0, 4.0);
-    p[14] = PointType(2.0, 4.0);
+    p[12] = viennagrid::make_point(0.0, 4.0);
+    p[13] = viennagrid::make_point(1.0, 4.0);
+    p[14] = viennagrid::make_point(2.0, 4.0);
 
     //upgrade to vertex:
     std::cout << "Adding vertices to mesh..." << std::endl;
@@ -93,74 +88,74 @@ inline void setup_meshs(viennagrid::triangular_2d_mesh & mesh0,
 
 
     std::cout << "Adding cells to mesh..." << std::endl;
-    VertexHandleType vertices[3];
+    VertexType vertices[3];
 
 
-    SegmentHandleType seg0 = segmentation0.make_segment();
-    SegmentHandleType seg1 = segmentation0.make_segment();
+    RegionType region0 = mesh0.make_region();
+    RegionType region1 = mesh0.make_region();
 
     //segment 0:
     vertices[0] = v[0];
     vertices[1] = v[1];
     vertices[2] = v[3];
-    viennagrid::make_element<CellType>( seg0, vertices, vertices+3 );
+    viennagrid::make_cell( region0, vertices, vertices+3 );
 
     vertices[0] = v[1];
     vertices[1] = v[4];
     vertices[2] = v[3];
-    viennagrid::make_element<CellType>( seg0, vertices, vertices+3 );
+    viennagrid::make_cell( region0, vertices, vertices+3 );
 
     vertices[0] = v[1];
     vertices[1] = v[2];
     vertices[2] = v[4];
-    viennagrid::make_element<CellType>( seg0, vertices, vertices+3 );
+    viennagrid::make_cell( region0, vertices, vertices+3 );
 
     vertices[0] = v[2];
     vertices[1] = v[5];
     vertices[2] = v[4];
-    viennagrid::make_element<CellType>( seg0, vertices, vertices+3 );
+    viennagrid::make_cell( region0, vertices, vertices+3 );
 
     vertices[0] = v[3];
     vertices[1] = v[4];
     vertices[2] = v[6];
-    viennagrid::make_element<CellType>( seg0, vertices, vertices+3 );
+    viennagrid::make_cell( region0, vertices, vertices+3 );
 
     vertices[0] = v[4];
     vertices[1] = v[7];
     vertices[2] = v[6];
-    viennagrid::make_element<CellType>( seg0, vertices, vertices+3 );
+    viennagrid::make_cell( region0, vertices, vertices+3 );
 
     vertices[0] = v[4];
     vertices[1] = v[5];
     vertices[2] = v[7];
-    viennagrid::make_element<CellType>( seg0, vertices, vertices+3 );
+    viennagrid::make_cell( region0, vertices, vertices+3 );
 
     vertices[0] = v[5];
     vertices[1] = v[8];
     vertices[2] = v[7];
-    viennagrid::make_element<CellType>( seg0, vertices, vertices+3 );
+    viennagrid::make_cell( region0, vertices, vertices+3 );
 
     // segment 1:
 
     vertices[0] = v[9];
     vertices[1] = v[10];
     vertices[2] = v[12];
-    viennagrid::make_element<CellType>( seg1, vertices, vertices+3 );
+    viennagrid::make_cell( region1, vertices, vertices+3 );
 
     vertices[0] = v[10];
     vertices[1] = v[13];
     vertices[2] = v[12];
-    viennagrid::make_element<CellType>( seg1, vertices, vertices+3 );
+    viennagrid::make_cell( region1, vertices, vertices+3 );
 
     vertices[0] = v[10];
     vertices[1] = v[11];
     vertices[2] = v[13];
-    viennagrid::make_element<CellType>( seg1, vertices, vertices+3 );
+    viennagrid::make_cell( region1, vertices, vertices+3 );
 
     vertices[0] = v[11];
     vertices[1] = v[14];
     vertices[2] = v[13];
-    viennagrid::make_element<CellType>( seg1, vertices, vertices+3 );
+    viennagrid::make_cell( region1, vertices, vertices+3 );
   }
 
 
@@ -168,16 +163,16 @@ inline void setup_meshs(viennagrid::triangular_2d_mesh & mesh0,
   {
     const size_t s = 6;
     PointType p[s];
-    VertexHandleType v[s];
+    VertexType v[s];
 
-    p[0] = PointType(3.0, 0.0);
-    p[1] = PointType(4.0, 0.0);
+    p[0] = viennagrid::make_point(3.0, 0.0);
+    p[1] = viennagrid::make_point(4.0, 0.0);
 
-    p[2] = PointType(3.0, 1.0);
-    p[3] = PointType(4.0, 1.0);
+    p[2] = viennagrid::make_point(3.0, 1.0);
+    p[3] = viennagrid::make_point(4.0, 1.0);
 
-    p[4] = PointType(3.0, 2.0);
-    p[5] = PointType(4.0, 2.0);
+    p[4] = viennagrid::make_point(3.0, 2.0);
+    p[5] = viennagrid::make_point(4.0, 2.0);
 
     //upgrade to vertex:
     std::cout << "Adding vertices to mesh..." << std::endl;
@@ -189,31 +184,31 @@ inline void setup_meshs(viennagrid::triangular_2d_mesh & mesh0,
 
 
     std::cout << "Adding cells to mesh..." << std::endl;
-    VertexHandleType vertices[3];
+    VertexType vertices[3];
 
-    SegmentHandleType seg0 = segmentation1.make_segment();
+    RegionType region0 = mesh1.make_region();
 
     //segment 0:
 
     vertices[0] = v[0];
     vertices[1] = v[1];
     vertices[2] = v[2];
-    viennagrid::make_element<CellType>( seg0, vertices, vertices+3 );
+    viennagrid::make_cell( region0, vertices, vertices+3 );
 
     vertices[0] = v[1];
     vertices[1] = v[3];
     vertices[2] = v[2];
-    viennagrid::make_element<CellType>( seg0, vertices, vertices+3 );
+    viennagrid::make_cell( region0, vertices, vertices+3 );
 
     vertices[0] = v[2];
     vertices[1] = v[3];
     vertices[2] = v[4];
-    viennagrid::make_element<CellType>( seg0, vertices, vertices+3 );
+    viennagrid::make_cell( region0, vertices, vertices+3 );
 
     vertices[0] = v[3];
     vertices[1] = v[5];
     vertices[2] = v[4];
-    viennagrid::make_element<CellType>( seg0, vertices, vertices+3 );
+    viennagrid::make_cell( region0, vertices, vertices+3 );
   }
 
 }
@@ -221,22 +216,19 @@ inline void setup_meshs(viennagrid::triangular_2d_mesh & mesh0,
 
 
 
-inline void test(viennagrid::triangular_2d_mesh)
+inline void test()
 {
-  typedef viennagrid::triangular_2d_mesh                      Mesh;
-  typedef viennagrid::triangular_2d_segmentation                Segmentation;
+  typedef viennagrid::mesh_t                      Mesh;
   typedef viennagrid::triangle_tag                                      CellTag;
 
   typedef viennagrid::result_of::point<Mesh>::type                PointType;
 
-  Mesh mesh0;
-  Segmentation segmentation0(mesh0);
-  Mesh mesh1;
-  Segmentation segmentation1(mesh1);
+  Mesh mesh0(2, viennagrid::triangle_tag());
+  Mesh mesh1(2, viennagrid::triangle_tag());;
 
-  setup_meshs(mesh0, segmentation0, mesh1, segmentation1);
+  setup_meshs(mesh0, mesh1);
 
-  PointType A(-1.0, -1.0);
+  PointType A = viennagrid::make_point(-1.0, -1.0);
 
 
   /*CellType & t0_d0 =*/ viennagrid::elements<CellTag>(mesh0)[0];
@@ -250,13 +242,13 @@ inline void test(viennagrid::triangular_2d_mesh)
   // point to segment/mesh
 
   std::cout << "Distance of point A to segment0 in mesh0... ";
-  fuzzy_check( viennagrid::boundary_distance(A, segmentation0(0)), std::sqrt(2.0) );
+  fuzzy_check( viennagrid::boundary_distance(A, mesh0.get_region(0)), std::sqrt(2.0) );
 
   std::cout << "Distance of point A to segment1 in mesh0... ";
-  fuzzy_check( viennagrid::boundary_distance(A, segmentation0(1)), std::sqrt(17.0) );
+  fuzzy_check( viennagrid::boundary_distance(A, mesh0.get_region(1)), std::sqrt(17.0) );
 
   std::cout << "Distance of point A to segment0 in mesh1... ";
-  fuzzy_check( viennagrid::boundary_distance(A, segmentation1(0)),  std::sqrt(17.0) );
+  fuzzy_check( viennagrid::boundary_distance(A, mesh1.get_region(0)),  std::sqrt(17.0) );
 
   std::cout << "Distance of point A to mesh0... ";
   fuzzy_check( viennagrid::boundary_distance(A, mesh0),  std::sqrt(2.0) );
@@ -340,7 +332,7 @@ int main()
   std::cout << "*****************" << std::endl;
 
   std::cout << "==== Testing triangular mesh in 2D ====" << std::endl;
-  test(viennagrid::triangular_2d_mesh());
+  test();
 
   std::cout << "*******************************" << std::endl;
   std::cout << "* Test finished successfully! *" << std::endl;

@@ -55,7 +55,7 @@ int main()
   //
 
   viennagrid::io::tetgen_poly_reader reader;
-  reader(mesh, "../data/cube.poly");
+  reader(mesh, "../data/cube_with_tunnel.poly");
 
 
   // querying the first PLC in the mesh

@@ -1,17 +1,20 @@
 
 # tests with CPU backend
 foreach(PROG
-        surface
+        angle boundary coboundary
+        distance_1d distance_2d distance_3d distance_boundary
+        hypercube interface named_segment point
+        scale segment surface vtk_writer
 
-#             angle boundary coboundary
-#             distance_1d distance_2d distance_3d distance_boundary
-#             hypercube interface io mesh point named_segment
+
 #             refinement refinement2 refinement3 refinement-triangles
-#             scale segment simplex surface
 #             voronoi_hex voronoi_rect voronoi_tet voronoi_triangle voronoi_line
 #             vtk_writer
 #             serialization
 #             typelist typemap
+
+
+#           io simplex
             )
   add_executable(${PROG}-test src/${PROG}.cpp)
   target_link_libraries(${PROG}-test    viennagrid)

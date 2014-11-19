@@ -247,7 +247,7 @@ int main()
 
     std::cout << viennagrid::vertices(vtk_root).size() << std::endl;
     std::cout << viennagrid::cells(vtk_root).size() << std::endl;
-    std::cout << vtk_root.regions_count() << std::endl;
+    std::cout << vtk_root.region_count() << std::endl;
 
     viennagrid::mesh_region_t vtk_region0 = vtk_root.get_make_region(0);
     viennagrid::mesh_region_t vtk_region1 = vtk_root.get_make_region(1);
