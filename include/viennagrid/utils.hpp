@@ -37,16 +37,16 @@ namespace viennagrid
 
 
   template<typename T1, typename T2, typename T3>
-  struct tripple
+  struct triple
   {
     typedef T1 first_type;
     typedef T2 second_type;
     typedef T3 third_type;
 
-    tripple() {}
-    tripple(first_type first_, second_type second_, third_type third_) : first(first_), second(second_), third(third_) {}
+    triple() {}
+    triple(first_type first_, second_type second_, third_type third_) : first(first_), second(second_), third(third_) {}
 
-    bool operator<( tripple<T1,T2,T3> const & rhs ) const
+    bool operator<( triple<T1,T2,T3> const & rhs ) const
     {
       if (first < rhs.first)
         return true;
@@ -61,13 +61,13 @@ namespace viennagrid
       return third < rhs.third;
     }
 
-    bool operator<=( tripple<T1,T2,T3> const & rhs ) const
+    bool operator<=( triple<T1,T2,T3> const & rhs ) const
     { return !(rhs < *this); }
 
-    bool operator>( tripple<T1,T2,T3> const & rhs ) const
+    bool operator>( triple<T1,T2,T3> const & rhs ) const
     { return rhs < *this; }
 
-    bool operator>=( tripple<T1,T2,T3> const & rhs ) const
+    bool operator>=( triple<T1,T2,T3> const & rhs ) const
     { return !(*this < rhs); }
 
 
@@ -77,9 +77,9 @@ namespace viennagrid
   };
 
   template<typename T1, typename T2, typename T3>
-  tripple<T1,T2,T3> make_tripple(T1 first_, T2 second_, T3 third_)
+  triple<T1,T2,T3> make_tripple(T1 first_, T2 second_, T3 third_)
   {
-    return tripple<T1,T2,T3>(first_, second_, third_);
+    return triple<T1,T2,T3>(first_, second_, third_);
   }
 
 
