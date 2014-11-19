@@ -32,13 +32,13 @@ namespace viennagrid
   {
     /** @brief Implementation for calculating a normal vector of a vertex in 1D */
     template<typename PointAccessorT, typename ElementT>
-    typename viennagrid::result_of::point_accessor_point<PointAccessorT, ElementT>::type normal_vector_impl(
+    typename viennagrid::result_of::point<PointAccessorT, ElementT>::type normal_vector_impl(
       PointAccessorT const point_accessor,
       ElementT const & element,
       viennagrid::vertex_tag,
       viennagrid::dimension_tag<1>)
     {
-      typedef typename viennagrid::result_of::point_accessor_point<PointAccessorT, ElementT>::type    PointType;
+      typedef typename viennagrid::result_of::point<PointAccessorT, ElementT>::type    PointType;
 
       (void)point_accessor; (void)element;
       return PointType(1.0);
@@ -46,13 +46,13 @@ namespace viennagrid
 
     /** @brief Implementation for calculating a normal vector of a line in 2D */
     template<typename PointAccessorT, typename ElementT>
-    typename viennagrid::result_of::point_accessor_point<PointAccessorT, ElementT>::type normal_vector_impl(
+    typename viennagrid::result_of::point<PointAccessorT, ElementT>::type normal_vector_impl(
       PointAccessorT const point_accessor,
       ElementT const & element,
       viennagrid::line_tag,
       viennagrid::dimension_tag<2>)
     {
-      typedef typename viennagrid::result_of::point_accessor_point<PointAccessorT, ElementT>::type    PointType;
+      typedef typename viennagrid::result_of::point<PointAccessorT, ElementT>::type    PointType;
 
       PointType const & p0 = point_accessor( viennagrid::vertices(element)[0] );
       PointType const & p1 = point_accessor( viennagrid::vertices(element)[1] );
@@ -66,13 +66,13 @@ namespace viennagrid
 
     /** @brief Implementation for calculating a normal vector of a triangle in 3D */
     template<typename PointAccessorT, typename ElementT>
-    typename viennagrid::result_of::point_accessor_point<PointAccessorT, ElementT>::type normal_vector_impl(
+    typename viennagrid::result_of::point<PointAccessorT, ElementT>::type normal_vector_impl(
       PointAccessorT const point_accessor,
       ElementT const & element,
       viennagrid::triangle_tag,
       viennagrid::dimension_tag<3>)
     {
-      typedef typename viennagrid::result_of::point_accessor_point<PointAccessorT, ElementT>::type    PointType;
+      typedef typename viennagrid::result_of::point<PointAccessorT, ElementT>::type    PointType;
 
       PointType const & p0 = point_accessor( viennagrid::vertices(element)[0] );
       PointType const & p1 = point_accessor( viennagrid::vertices(element)[1] );
@@ -86,7 +86,7 @@ namespace viennagrid
     *  Reuses the implementation for a triangle.
     */
     template<typename PointAccessorT, typename ElementT>
-    typename viennagrid::result_of::point_accessor_point<PointAccessorT, ElementT>::type normal_vector_impl(
+    typename viennagrid::result_of::point<PointAccessorT, ElementT>::type normal_vector_impl(
       PointAccessorT const point_accessor,
       ElementT const & element,
       viennagrid::quadrilateral_tag,
@@ -108,11 +108,11 @@ namespace viennagrid
    * @param element                 The input element
    */
   template<typename PointAccessorT, typename ElementT>
-  typename viennagrid::result_of::point_accessor_point<PointAccessorT, ElementT>::type normal_vector(
+  typename viennagrid::result_of::point<PointAccessorT, ElementT>::type normal_vector(
     PointAccessorT const point_accessor,
     ElementT const & element)
   {
-    typedef typename viennagrid::result_of::point_accessor_point<PointAccessorT, ElementT>::type PointType;
+    typedef typename viennagrid::result_of::point<PointAccessorT, ElementT>::type PointType;
 
     if (element.tag().is_vertex())
       return detail::normal_vector_impl( point_accessor, element, vertex_tag(), dimension_tag<1>() );

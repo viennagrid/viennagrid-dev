@@ -53,7 +53,7 @@ namespace viennagrid
     //a point is degenerate and returns its location
     /** @brief Implementation of the calculation of a circumcenter for a point (degenerate case) */
     template <typename PointAccessorT, typename ElementT, typename DimensionTagT>
-    typename viennagrid::result_of::point_accessor_point< PointAccessorT, ElementT >::type
+    typename viennagrid::result_of::point< PointAccessorT, ElementT >::type
     circumcenter(PointAccessorT const accessor, ElementT const & cell, viennagrid::vertex_tag, DimensionTagT)
     {
       return circumcenter_points(viennagrid::vertex_tag(), DimensionTagT(), accessor(cell));
@@ -82,7 +82,7 @@ namespace viennagrid
 
     /** @brief Implementation of the calculation of a circumcenter for a line (1-simplex) */
     template <typename PointAccessorT, typename ElementT, typename DimensionTag>
-    typename viennagrid::result_of::point_accessor_point< PointAccessorT, ElementT >::type
+    typename viennagrid::result_of::point< PointAccessorT, ElementT >::type
     circumcenter(PointAccessorT const accessor, ElementT const & cell, viennagrid::line_tag, DimensionTag)
     {
       return circumcenter_points(viennagrid::line_tag(),
@@ -130,7 +130,7 @@ namespace viennagrid
 
     /** @brief Implementation of the calculation of a circumcenter for a triangle in two dimensions */
     template <typename PointAccessorT, typename ElementT>
-    typename viennagrid::result_of::point_accessor_point< PointAccessorT, ElementT >::type
+    typename viennagrid::result_of::point< PointAccessorT, ElementT >::type
     circumcenter(PointAccessorT const accessor, ElementT const & cell, viennagrid::triangle_tag, viennagrid::dimension_tag<2>)
     {
       return circumcenter_points(viennagrid::triangle_tag(),
@@ -158,7 +158,7 @@ namespace viennagrid
 
     /** @brief Implementation of the calculation of a circumcenter for a quadrilateral in two dimensions. Mind that the user has to ensure that the quadrilateral actually has a circumcenter! */
     template <typename PointAccessorT, typename ElementT>
-    typename viennagrid::result_of::point_accessor_point< PointAccessorT, ElementT >::type
+    typename viennagrid::result_of::point< PointAccessorT, ElementT >::type
     circumcenter(PointAccessorT const accessor, ElementT const & cell, viennagrid::quadrilateral_tag, viennagrid::dimension_tag<2>)
     {
       return circumcenter_points(viennagrid::quadrilateral_tag(),
@@ -190,7 +190,7 @@ namespace viennagrid
 
     /** @brief Implementation of the calculation of a circumcenter for a triangle in three dimensions */
     template <typename PointAccessorT, typename ElementT>
-    typename viennagrid::result_of::point_accessor_point< PointAccessorT, ElementT >::type
+    typename viennagrid::result_of::point< PointAccessorT, ElementT >::type
     circumcenter(PointAccessorT const accessor, ElementT const & cell, viennagrid::triangle_tag, viennagrid::dimension_tag<3>)
     {
       return circumcenter_points(viennagrid::triangle_tag(),
@@ -206,7 +206,7 @@ namespace viennagrid
     //
     /** @brief Implementation of the calculation of a circumcenter for a quadrilateral in three dimensions. Mind that the user has to ensure that the quadrilateral actually has a circumcenter! */
     template <typename PointAccessorT, typename ElementT>
-    typename viennagrid::result_of::point_accessor_point< PointAccessorT, ElementT >::type
+    typename viennagrid::result_of::point< PointAccessorT, ElementT >::type
     circumcenter(PointAccessorT const accessor, ElementT const & cell, viennagrid::quadrilateral_tag, viennagrid::dimension_tag<3>)
     {
       return circumcenter_points(viennagrid::quadrilateral_tag(),
@@ -252,7 +252,7 @@ namespace viennagrid
 
     /** @brief Implementation of the calculation of a circumcenter for a tetrahedron in three dimensions */
     template <typename PointAccessorT, typename ElementT>
-    typename viennagrid::result_of::point_accessor_point< PointAccessorT, ElementT >::type
+    typename viennagrid::result_of::point< PointAccessorT, ElementT >::type
     circumcenter(PointAccessorT const accessor, ElementT const & cell, viennagrid::tetrahedron_tag, viennagrid::dimension_tag<3>)
     {
       return circumcenter_points(viennagrid::tetrahedron_tag(),
@@ -285,7 +285,7 @@ namespace viennagrid
 
     /** @brief Implementation of the calculation of a circumcenter for a hexahedron in three dimensions.  Mind that the user has to ensure that the quadrilateral actually has a circumcenter! */
     template <typename PointAccessorT, typename ElementT>
-    typename viennagrid::result_of::point_accessor_point< PointAccessorT, ElementT >::type
+    typename viennagrid::result_of::point< PointAccessorT, ElementT >::type
     circumcenter(PointAccessorT const accessor, ElementT const & cell, viennagrid::hexahedron_tag, viennagrid::dimension_tag<3>)
     {
       return circumcenter_points(viennagrid::hexahedron_tag(),
@@ -306,7 +306,7 @@ namespace viennagrid
 
 
     template <typename PointAccessorT, typename ElementT>
-    typename viennagrid::result_of::point_accessor_point< PointAccessorT, ElementT >::type
+    typename viennagrid::result_of::point< PointAccessorT, ElementT >::type
     circumcenter(PointAccessorT const accessor, ElementT const & element, viennagrid::dimension_tag<1>)
     {
       if (element.tag().is_vertex())
@@ -314,11 +314,11 @@ namespace viennagrid
       if (element.tag().is_line())
         return circumcenter(accessor, element, viennagrid::line_tag(), viennagrid::dimension_tag<1>());
 
-      return typename viennagrid::result_of::point_accessor_point< PointAccessorT, ElementT >::type( 1 );
+      return typename viennagrid::result_of::point< PointAccessorT, ElementT >::type( 1 );
     }
 
     template <typename PointAccessorT, typename ElementT>
-    typename viennagrid::result_of::point_accessor_point< PointAccessorT, ElementT >::type
+    typename viennagrid::result_of::point< PointAccessorT, ElementT >::type
     circumcenter(PointAccessorT const accessor, ElementT const & element, viennagrid::dimension_tag<2>)
     {
       if (element.tag().is_vertex())
@@ -334,11 +334,11 @@ namespace viennagrid
 //       if (element.tag().is_plc())
 //         return circumcenter(accessor, element, viennagrid::plc_tag(), viennagrid::dimension_tag<2>());
 
-      return typename viennagrid::result_of::point_accessor_point< PointAccessorT, ElementT >::type( 2 );
+      return typename viennagrid::result_of::point< PointAccessorT, ElementT >::type( 2 );
     }
 
     template <typename PointAccessorT, typename ElementT>
-    typename viennagrid::result_of::point_accessor_point< PointAccessorT, ElementT >::type
+    typename viennagrid::result_of::point< PointAccessorT, ElementT >::type
     circumcenter(PointAccessorT const accessor, ElementT const & element, viennagrid::dimension_tag<3>)
     {
       if (element.tag().is_vertex())
@@ -358,7 +358,7 @@ namespace viennagrid
       if (element.tag().is_hexahedron())
         return circumcenter(accessor, element, viennagrid::hexahedron_tag(), viennagrid::dimension_tag<3>());
 
-      return typename viennagrid::result_of::point_accessor_point< PointAccessorT, ElementT >::type( 3 );
+      return typename viennagrid::result_of::point< PointAccessorT, ElementT >::type( 3 );
     }
 
 
@@ -413,12 +413,12 @@ namespace viennagrid
    * @param accessor      The point accessor providing point information for geometric calculation
    */
   template <typename PointAccessorT, typename ElementT>
-  typename viennagrid::result_of::point_accessor_point< PointAccessorT, ElementT >::type
+  typename viennagrid::result_of::point< PointAccessorT, ElementT >::type
   circumcenter(PointAccessorT const accessor, ElementT const & element)
   {
-    typedef typename viennagrid::result_of::point_accessor_point< PointAccessorT, ElementT >::type PointType;
+    typedef typename viennagrid::result_of::point< PointAccessorT, ElementT >::type PointType;
 
-    switch (element.mesh_hierarchy().dimension())
+    switch (element.mesh_hierarchy().geometric_dimension())
     {
       case 1:
         return detail::circumcenter(accessor,
@@ -435,7 +435,7 @@ namespace viennagrid
 
     }
 
-    return PointType( element.mesh_hierarchy().dimension() );
+    return PointType( element.mesh_hierarchy().geometric_dimension() );
   }
 
 

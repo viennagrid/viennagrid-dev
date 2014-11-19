@@ -36,16 +36,16 @@ namespace viennagrid
     //
     /** @brief Implementation of the calculation of a centroid for a triangle */
     template <typename PointAccessorT, typename ElementT>
-    typename viennagrid::result_of::point_accessor_point< PointAccessorT, ElementT >::type
+    typename viennagrid::result_of::point< PointAccessorT, ElementT >::type
     centroid(PointAccessorT const accessor, ElementT const & cell)
     {
-      typedef typename viennagrid::result_of::point_accessor_point< PointAccessorT, ElementT >::type PointType;
+      typedef typename viennagrid::result_of::point< PointAccessorT, ElementT >::type PointType;
       typedef typename viennagrid::result_of::coord<PointType>::type    CoordType;
 
       typedef typename viennagrid::result_of::const_element_range<ElementT, vertex_tag>::type         VertexOnCellRange;
       typedef typename viennagrid::result_of::iterator<VertexOnCellRange>::type            VertexOnCellIterator;
 
-      PointType p0( cell.mesh_hierarchy().dimension() );
+      PointType p0( cell.mesh_hierarchy().geometric_dimension() );
 
       VertexOnCellRange vertices(cell);
       for (VertexOnCellIterator vocit = vertices.begin();
@@ -122,7 +122,7 @@ namespace viennagrid
 
     /** @brief Implementation of the calculation of a centroid for a mesh/region */
     template <typename ElementTOrTag, typename MeshSegmentHandleType, typename PointAccessorT>
-    typename viennagrid::result_of::point_accessor_point< PointAccessorT, typename viennagrid::result_of::element<MeshSegmentHandleType>::type >::type
+    typename viennagrid::result_of::point< PointAccessorT, typename viennagrid::result_of::element<MeshSegmentHandleType>::type >::type
     centroid_mesh(PointAccessorT const point_accessor, MeshSegmentHandleType const & mesh_obj)
     {
       typedef typename viennagrid::result_of::element_tag<ElementTOrTag>::type            ElementTag;
@@ -131,7 +131,7 @@ namespace viennagrid
                                                                 ElementTag>::type         CellRange;
       typedef typename viennagrid::result_of::iterator<CellRange>::type                   CellIterator;
 
-      PointType result( mesh_obj.dimension() );
+      PointType result( mesh_obj.geometric_dimension() );
       double volume = 0;
 
       CellRange cells(mesh_obj);
@@ -155,7 +155,7 @@ namespace viennagrid
    * @param accessor   The point accessor providing point information for geometric calculation
    */
   template <typename PointAccessorT, bool element_is_const>
-  typename viennagrid::result_of::point_accessor_point< PointAccessorT, base_element<element_is_const> >::type
+  typename viennagrid::result_of::point< PointAccessorT, base_element<element_is_const> >::type
   centroid(PointAccessorT const accessor, base_element<element_is_const> const & element)
   {
     return detail::centroid( accessor, element );

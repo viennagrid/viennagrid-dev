@@ -60,16 +60,14 @@ namespace viennagrid
   //
   /** @brief Returns the surface of a n-cell using the provided point accessor to obtain the spatial points from each vertex. */
   template <typename PointAccessorT, bool element_is_const>
-  typename viennagrid::result_of::coord<
-      typename viennagrid::result_of::point_accessor_point< PointAccessorT, base_element<element_is_const> >::type
-  >::type
+  typename viennagrid::result_of::coord< PointAccessorT, base_element<element_is_const> >::type
   surface(PointAccessorT const accessor, base_element<element_is_const> const & element)
   {
     typedef base_element<element_is_const> ElementType;
     typedef typename viennagrid::result_of::const_facet_range<ElementType>::type   ElementBoundaryRange;
     typedef typename viennagrid::result_of::iterator<ElementBoundaryRange>::type                                         ElementBoundaryIterator;
 
-    typedef typename viennagrid::result_of::point_accessor_point< PointAccessorT, base_element<element_is_const> >::type PointType;
+    typedef typename viennagrid::result_of::point< PointAccessorT, base_element<element_is_const> >::type PointType;
     typedef typename viennagrid::result_of::coord<PointType>::type value_type;
 
     value_type result = 0;
