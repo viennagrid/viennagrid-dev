@@ -32,10 +32,17 @@ viennagrid_error viennagrid_mesh_hierarchy_get_cell_tag(viennagrid_mesh_hierarch
   return VIENNAGRID_SUCCESS;
 }
 
-viennagrid_error viennagrid_mesh_hierarchy_get_dimension(viennagrid_mesh_hierarchy mesh_hierarchy,
-                                                         viennagrid_int * dimension)
+viennagrid_error viennagrid_mesh_hierarchy_get_topologic_dimension(viennagrid_mesh_hierarchy mesh_hierarchy,
+                                                                   viennagrid_int * topologic_dimension)
 {
-  *dimension = mesh_hierarchy->dimension();
+  *topologic_dimension = mesh_hierarchy->topologic_dimension();
+  return VIENNAGRID_SUCCESS;
+}
+
+viennagrid_error viennagrid_mesh_hierarchy_get_geometric_dimension(viennagrid_mesh_hierarchy mesh_hierarchy,
+                                                                   viennagrid_int * geometric_dimension)
+{
+  *geometric_dimension = mesh_hierarchy->geometric_dimension();
   return VIENNAGRID_SUCCESS;
 }
 
@@ -87,23 +94,11 @@ viennagrid_error viennagrid_vertex_create(viennagrid_mesh_hierarchy hierarchy,
   return VIENNAGRID_SUCCESS;
 }
 
-viennagrid_error viennagrid_vertex_buffer_create(viennagrid_mesh mesh)
-{
-  mesh->make_vertex_buffer();
-  return VIENNAGRID_SUCCESS;
-}
-
-viennagrid_error viennagrid_vertex_buffer_delete(viennagrid_mesh mesh)
-{
-  mesh->delete_vertex_buffer();
-  return VIENNAGRID_SUCCESS;
-}
-
-viennagrid_error viennagrid_vertex_get(viennagrid_mesh mesh,
+viennagrid_error viennagrid_vertex_get(viennagrid_mesh_hierarchy mesh_hierarchy,
                                        viennagrid_index id,
                                        viennagrid_numeric ** coords)
 {
-  *coords = mesh->get_vertex(id);
+  *coords = mesh_hierarchy->get_vertex(id);
   return VIENNAGRID_SUCCESS;
 }
 
@@ -322,21 +317,21 @@ viennagrid_error viennagrid_add_to_region(viennagrid_mesh_hierarchy hierarchy,
 
 
 
-viennagrid_error viennagrid_plc_add_hole_point(viennagrid_mesh mesh,
+viennagrid_error viennagrid_plc_add_hole_point(viennagrid_mesh_hierarchy mesh_hierarchy,
                                                viennagrid_index plc_id,
                                                viennagrid_numeric const * coords)
 {
-  mesh->add_hole_point(plc_id, coords);
+  mesh_hierarchy->add_hole_point(plc_id, coords);
   return VIENNAGRID_SUCCESS;
 }
 
-viennagrid_error viennagrid_plc_get_hole_points(viennagrid_mesh mesh,
+viennagrid_error viennagrid_plc_get_hole_points(viennagrid_mesh_hierarchy mesh_hierarchy,
                                                 viennagrid_index plc_id,
                                                 viennagrid_numeric const ** hole_points_begin,
                                                 viennagrid_numeric const ** hole_points_end)
 {
-  *hole_points_begin = mesh->hole_points_begin(plc_id);
-  *hole_points_end = mesh->hole_points_end(plc_id);
+  *hole_points_begin = mesh_hierarchy->hole_points_begin(plc_id);
+  *hole_points_end = mesh_hierarchy->hole_points_end(plc_id);
   return VIENNAGRID_SUCCESS;
 }
 

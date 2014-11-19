@@ -81,8 +81,8 @@ private:
 struct viennagrid_mesh_
 {
 public:
-  viennagrid_mesh_(viennagrid_mesh_hierarchy hierarchy_in) : hierarchy_(hierarchy_in), parent_(0), vertex_buffer_in_use(false) {}
-  viennagrid_mesh_(viennagrid_mesh_hierarchy hierarchy_in, viennagrid_mesh parent_in) : hierarchy_(hierarchy_in), parent_(parent_in), vertex_buffer_in_use(false) {}
+  viennagrid_mesh_(viennagrid_mesh_hierarchy hierarchy_in) : hierarchy_(hierarchy_in), parent_(0) {}
+  viennagrid_mesh_(viennagrid_mesh_hierarchy hierarchy_in, viennagrid_mesh parent_in) : hierarchy_(hierarchy_in), parent_(parent_in) {}
 
   ~viennagrid_mesh_()
   {
@@ -103,117 +103,8 @@ public:
   viennagrid_int children_count() { return children.size(); }
   viennagrid_mesh get_child(viennagrid_int id) { return children[id]; }
 
-  void make_vertex_buffer()
-  {
-    if (!vertex_buffer_in_use)
-    {
-      vertex_buffer_in_use = true;
 
-      viennagrid_mesh mesh = parent();
-      while (mesh && !mesh->vertex_buffer_in_use)
-        mesh = mesh->parent();
-
-      if (mesh)
-        vertex_buffer = mesh->vertex_buffer;
-    }
-  }
-
-  void delete_vertex_buffer()
-  {
-    vertex_buffer.clear();
-    vertex_buffer_in_use = false;
-  }
-
-  viennagrid_index make_vertex(const viennagrid_numeric * coords)
-  {
-    if (vertex_buffer_in_use)
-    {
-      viennagrid_int prev_size = vertex_buffer.size();
-      vertex_buffer.resize( vertex_buffer.size() + dimension() );
-
-      if (coords)
-        std::copy( coords, coords+dimension(), &vertex_buffer[0] + prev_size );
-    }
-
-    for (ChildrenContainerType::iterator it = children.begin(); it != children.end(); ++it)
-      (*it)->make_vertex(coords);
-
-    return vertex_buffer.size()/dimension()-1;
-  }
-
-  viennagrid_numeric * get_vertex(viennagrid_int id)
-  {
-    if (!vertex_buffer_in_use)
-      return parent()->get_vertex(id);
-
-    return &vertex_buffer[id * dimension()];
-  }
-
-
-
-
-
-
-
-
-
-  void make_plc()
-  {
-    if (hole_point_buffer_in_use)
-      hole_point_buffer.push_back(0);
-
-    for (ChildrenContainerType::iterator it = children.begin(); it != children.end(); ++it)
-      (*it)->make_plc();
-  }
-
-  void make_hole_point_buffer()
-  {
-    if (!hole_point_buffer_in_use)
-    {
-      hole_point_buffer_in_use = true;
-
-      viennagrid_mesh mesh = parent();
-      while (mesh && !mesh->hole_point_buffer_in_use)
-        mesh = mesh->parent();
-
-      if (mesh)
-        hole_point_buffer = mesh->hole_point_buffer;
-    }
-  }
-
-  void delete_hole_point_buffer()
-  {
-    hole_point_buffer.clear();
-    hole_point_buffer_in_use = false;
-  }
-
-  viennagrid_numeric * hole_points_begin(viennagrid_int plc_id)
-  {
-    return hole_point_buffer.begin(plc_id);
-  }
-  viennagrid_numeric * hole_points_end(viennagrid_int plc_id)
-  {
-    return hole_point_buffer.end(plc_id);
-  }
-
-  void add_hole_point(viennagrid_int plc_id, viennagrid_numeric const * hole_point)
-  {
-    viennagrid_index old_count = hole_point_buffer.size(plc_id);
-    viennagrid_numeric * hp = hole_point_buffer.resize(plc_id, old_count+dimension());
-    std::copy(hole_point, hole_point+dimension(), hp+old_count);
-  }
-
-
-
-
-
-
-
-
-
-
-
-  viennagrid_int dimension();
+  viennagrid_int geometric_dimension();
 
   viennagrid_int element_count(viennagrid_element_tag element_tag)
   { return element_handle_buffer(element_tag).count(); }
@@ -321,12 +212,6 @@ private:
   viennagrid_mesh parent_;
   ChildrenContainerType children;
 
-  bool vertex_buffer_in_use;
-  std::vector<viennagrid_numeric> vertex_buffer;
-
-  bool hole_point_buffer_in_use;
-  viennagrid_hole_point_buffer hole_point_buffer;
-
   viennagrid_element_handle_buffer element_handle_buffers[VIENNAGRID_ELEMENT_TAG_COUNT];
 
 
@@ -347,14 +232,14 @@ private:
                                            viennagrid_element_tag connector_tag,
                                            viennagrid_element_tag neighbor_tag)
   {
-    std::map< viennagrid::tripple<viennagrid_element_tag, viennagrid_element_tag, viennagrid_element_tag>, viennagrid_int >::iterator it = neighbor_change_counters.find( viennagrid::make_tripple(element_tag, connector_tag, neighbor_tag) );
+    std::map< viennagrid::triple<viennagrid_element_tag, viennagrid_element_tag, viennagrid_element_tag>, viennagrid_int >::iterator it = neighbor_change_counters.find( viennagrid::make_tripple(element_tag, connector_tag, neighbor_tag) );
     if (it != neighbor_change_counters.end())
       return it->second;
 
     it = neighbor_change_counters.insert( std::make_pair(viennagrid::make_tripple(element_tag, connector_tag, neighbor_tag), viennagrid_int(0)) ).first;
     return it->second;
   }
-  std::map< viennagrid::tripple<viennagrid_element_tag, viennagrid_element_tag, viennagrid_element_tag>, viennagrid_int > neighbor_change_counters;
+  std::map< viennagrid::triple<viennagrid_element_tag, viennagrid_element_tag, viennagrid_element_tag>, viennagrid_int > neighbor_change_counters;
 
 
 
@@ -376,18 +261,7 @@ struct element_key
   }
 
   bool operator<(element_key const & rhs) const
-  {
-    assert( vertex_indices.size() == rhs.vertex_indices.size() );
-
-    for (std::size_t i=0; i < vertex_indices.size(); ++i)
-    {
-      if ( vertex_indices[i] > rhs.vertex_indices[i] )
-        return false;
-      else if ( vertex_indices[i] < rhs.vertex_indices[i] )
-        return true;
-    }
-    return false;
-  }
+  { return vertex_indices < rhs.vertex_indices; }
 
   std::vector<viennagrid_index> vertex_indices;
 };
@@ -460,37 +334,6 @@ private:
   }
 
   viennagrid_index make_element(viennagrid_mesh_hierarchy_ * mesh_hierarchy, viennagrid_index * indices, viennagrid_int index_count);
-//   {
-//     viennagrid_index id = size();
-//
-//     parents.push_back(-1);
-//     region_buffer.push_back(0);
-//
-//     if (indices)
-//     {
-//       if (element_tag == VIENNAGRID_ELEMENT_TAG_PLC)
-//       {
-//         std::set<viennagrid_index> vertices;
-//         for (viennagrid_int i = 0; i < index_count; ++i)
-//         {
-//           viennagrid_index * vtx = mesh_hierarchy->element_buffer(VIENNAGRID_ELEMENT_TAG_LINE).boundary_indices_begin(VIENNAGRID_ELEMENT_TAG_VERTEX, *(mesh_hierarchy+i));
-//           viennagrid_index * end = mesh_hierarchy->element_buffer(VIENNAGRID_ELEMENT_TAG_LINE).boundary_indices_end(VIENNAGRID_ELEMENT_TAG_VERTEX, *(mesh_hierarchy+i));
-//
-//           for (; vtx != end; ++vtx)
-//             vertices.insert(*vtx);
-//         }
-//       }
-//       else
-//       {
-//         viennagrid_index * ptr = boundary_buffer(VIENNAGRID_ELEMENT_TAG_VERTEX).push_back( index_count );
-//         std::copy( indices, indices+index_count, ptr );
-//       }
-//
-//       element_map[ element_key(indices, index_count) ] = id;
-//     }
-//
-//     return id;
-//   }
 
   viennagrid_index size() const { return parents.size(); }
   viennagrid_index boundary_index(viennagrid_element_tag boundary_tag) const
@@ -555,10 +398,8 @@ private:
 struct viennagrid_mesh_hierarchy_
 {
 public:
-  viennagrid_mesh_hierarchy_(viennagrid_int dimension_in, viennagrid_element_tag cell_tag) : dimension_(dimension_in), cell_tag_(cell_tag), root_( new viennagrid_mesh_(this) ), highest_region_id(0), change_counter_(0), use_count_(1)
+  viennagrid_mesh_hierarchy_(viennagrid_int dimension_in, viennagrid_element_tag cell_tag) : geometric_dimension_(dimension_in), cell_tag_(cell_tag), root_( new viennagrid_mesh_(this) ), highest_region_id(0), change_counter_(0), use_count_(1)
   {
-    root_->make_vertex_buffer();
-    root_->make_hole_point_buffer();
     for (viennagrid_int et = VIENNAGRID_ELEMENT_TAG_START; et < VIENNAGRID_ELEMENT_TAG_COUNT; ++et)
       element_buffer(et).set_tag(et);
   }
@@ -573,7 +414,8 @@ public:
   }
 
   viennagrid_mesh root() { return root_; }
-  viennagrid_int dimension() const { return dimension_; }
+  viennagrid_int geometric_dimension() const { return geometric_dimension_; }
+  viennagrid_int topologic_dimension() const { return topologic_dimension_; }
   viennagrid_element_tag cell_tag() const { return cell_tag_; }
 
 
@@ -597,15 +439,64 @@ public:
   viennagrid_index make_vertex(const viennagrid_numeric * coords)
   {
     viennagrid_index id = element_buffer(VIENNAGRID_ELEMENT_TAG_VERTEX).make_element(this, 0, 0);
-    root_->make_vertex(coords);
+
+    viennagrid_int prev_size = vertex_buffer.size();
+    vertex_buffer.resize( vertex_buffer.size() + geometric_dimension() );
+
+    if (coords)
+      std::copy( coords, coords+geometric_dimension(), &vertex_buffer[0] + prev_size );
+
+    return vertex_buffer.size()/geometric_dimension()-1;
+
+//     root_->make_vertex(coords);
     return id;
   }
+
+  viennagrid_numeric * get_vertex(viennagrid_int id)
+  {
+    return &vertex_buffer[id * geometric_dimension()];
+  }
+
+
 
   viennagrid_index get_make_element(viennagrid_element_tag element_tag,
                                     viennagrid_index * indices,
                                     viennagrid_int count);
   viennagrid_index get_make_plc(viennagrid_index * indices,
                                 viennagrid_int count);
+
+
+
+
+
+
+  void make_plc()
+  {
+    hole_point_buffer.push_back(0);
+  }
+
+  viennagrid_numeric * hole_points_begin(viennagrid_int plc_id)
+  {
+    return hole_point_buffer.begin(plc_id);
+  }
+  viennagrid_numeric * hole_points_end(viennagrid_int plc_id)
+  {
+    return hole_point_buffer.end(plc_id);
+  }
+
+  void add_hole_point(viennagrid_int plc_id, viennagrid_numeric const * hole_point)
+  {
+    viennagrid_index old_count = hole_point_buffer.size(plc_id);
+    viennagrid_numeric * hp = hole_point_buffer.resize(plc_id, old_count+geometric_dimension());
+    std::copy(hole_point, hole_point+geometric_dimension(), hp+old_count);
+  }
+
+
+
+
+
+
+
 
   viennagrid_index delete_element_simple(viennagrid_element_tag element_tag, viennagrid_index element_id);
   viennagrid_index delete_element(viennagrid_element_tag element_tag, viennagrid_index element_id);
@@ -669,13 +560,17 @@ public:
 
 
 
+
+
   void retain() const
   {
+//     std::cout << "MESH HIERARCHY RETAIN" << std::endl;
     ++use_count_;
   }
 
   bool release() const
   {
+//     std::cout << "MESH HIERARCHY RELEASE" << std::endl;
     if (--use_count_ <= 0)
     {
       delete this;
@@ -724,10 +619,14 @@ private:
 
   viennagrid_element_buffer element_buffers[VIENNAGRID_ELEMENT_TAG_COUNT];
 
-  viennagrid_int dimension_;
+  viennagrid_int geometric_dimension_;
+  viennagrid_int topologic_dimension_;
+
   viennagrid_element_tag cell_tag_;
   viennagrid_mesh root_;
 
+  std::vector<viennagrid_numeric> vertex_buffer;
+  viennagrid_hole_point_buffer hole_point_buffer;
 
   std::vector<viennagrid_region> regions;
   viennagrid_index highest_region_id;
@@ -738,7 +637,7 @@ private:
 };
 
 
-inline viennagrid_int viennagrid_mesh_::dimension() { return hierarchy_->dimension(); }
+inline viennagrid_int viennagrid_mesh_::geometric_dimension() { return hierarchy_->geometric_dimension(); }
 inline viennagrid_element_tag viennagrid_mesh_::unpack_element_tag(viennagrid_element_tag et)
 { return mesh_hierarchy()->unpack_element_tag(et); }
 

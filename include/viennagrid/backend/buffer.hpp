@@ -56,7 +56,7 @@ public:
     {
       size_type count_increase = count-old_count;
       values.resize( values.size()+count_increase );
-      for (iterator it = values_end()-1; it != begin(index)+old_count; --it)
+      for (iterator it = values_end()-1; it != begin(index)+count-1; --it)
         *it = *(it-count_increase);
       for (size_type i = index+1; i != static_cast<size_type>(offsets.size()); ++i)
         offsets[i] += count_increase;

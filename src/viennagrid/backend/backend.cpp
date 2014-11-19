@@ -211,7 +211,7 @@ viennagrid_index viennagrid_element_buffer::make_element(viennagrid_mesh_hierarc
   parents.push_back(-1);
   region_buffer.push_back(0);
   if (element_tag == VIENNAGRID_ELEMENT_TAG_PLC)
-    mesh_hierarchy->root()->make_plc();
+    mesh_hierarchy->make_plc();
 
   if (indices)
   {

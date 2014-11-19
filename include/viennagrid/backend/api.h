@@ -16,9 +16,14 @@ VIENNAGRID_DYNAMIC_EXPORT viennagrid_error viennagrid_mesh_hierarchy_release(vie
 // queries the cell tag of a mesh_hierarchy
 VIENNAGRID_DYNAMIC_EXPORT viennagrid_error viennagrid_mesh_hierarchy_get_cell_tag(viennagrid_mesh_hierarchy mesh_hierarchy,
                                                                              viennagrid_element_tag * cell_tag);
+
+// queries the topologic dimension of a mesh_hierarchy
+VIENNAGRID_DYNAMIC_EXPORT viennagrid_error viennagrid_mesh_hierarchy_get_topologic_dimension(viennagrid_mesh_hierarchy mesh_hierarchy,
+                                                                              viennagrid_int * topologic_dimension);
+
 // queries the geometric dimension of a mesh_hierarchy
-VIENNAGRID_DYNAMIC_EXPORT viennagrid_error viennagrid_mesh_hierarchy_get_dimension(viennagrid_mesh_hierarchy mesh_hierarchy,
-                                                                              viennagrid_int * dimension);
+VIENNAGRID_DYNAMIC_EXPORT viennagrid_error viennagrid_mesh_hierarchy_get_geometric_dimension(viennagrid_mesh_hierarchy mesh_hierarchy,
+                                                                              viennagrid_int * geometric_dimension);
 
 // get the root mesh
 VIENNAGRID_DYNAMIC_EXPORT viennagrid_error viennagrid_mesh_hierarchy_get_root(viennagrid_mesh_hierarchy mesh_hierarchy,
@@ -46,15 +51,8 @@ VIENNAGRID_DYNAMIC_EXPORT viennagrid_error viennagrid_mesh_get_child(viennagrid_
 VIENNAGRID_DYNAMIC_EXPORT viennagrid_error viennagrid_vertex_create(viennagrid_mesh_hierarchy mesh_hierarchy,
                                                                     const viennagrid_numeric * coords,
                                                                     viennagrid_index * vertex_id);
-// deletes a set of vertices in a mesh_hierarchy TODO: implement
-VIENNAGRID_DYNAMIC_EXPORT viennagrid_error viennagrid_delete_vertices(viennagrid_mesh_hierarchy mesh_hierarchy,
-                                                                      viennagrid_index * vertex_indices);
-// creates a separate vertex buffer for a mesh, coordinates are copied from the parent mesh
-VIENNAGRID_DYNAMIC_EXPORT viennagrid_error viennagrid_vertex_buffer_create(viennagrid_mesh mesh);
-// deletes the separate vertex buffer for a mesh
-VIENNAGRID_DYNAMIC_EXPORT viennagrid_error viennagrid_vertex_buffer_delete(viennagrid_mesh mesh);
 // gets the coordinates of a vertex of a mesh
-VIENNAGRID_DYNAMIC_EXPORT viennagrid_error viennagrid_vertex_get(viennagrid_mesh mesh,
+VIENNAGRID_DYNAMIC_EXPORT viennagrid_error viennagrid_vertex_get(viennagrid_mesh_hierarchy mesh_hierarchy,
                                                                  viennagrid_index id,
                                                                  viennagrid_numeric ** coords);
 
@@ -165,11 +163,11 @@ VIENNAGRID_DYNAMIC_EXPORT viennagrid_error viennagrid_add_to_region(viennagrid_m
 
 
 // creates a set of vertices in a mesh_hierarchy
-VIENNAGRID_DYNAMIC_EXPORT viennagrid_error viennagrid_plc_add_hole_point(viennagrid_mesh mesh,
+VIENNAGRID_DYNAMIC_EXPORT viennagrid_error viennagrid_plc_add_hole_point(viennagrid_mesh_hierarchy mesh_hierarchy,
                                                                          viennagrid_index plc_id,
                                                                          viennagrid_numeric const * coords);
 
-VIENNAGRID_DYNAMIC_EXPORT viennagrid_error viennagrid_plc_get_hole_points(viennagrid_mesh mesh,
+VIENNAGRID_DYNAMIC_EXPORT viennagrid_error viennagrid_plc_get_hole_points(viennagrid_mesh_hierarchy mesh_hierarchy,
                                                                           viennagrid_index plc_id,
                                                                           viennagrid_numeric const ** hole_points_begin,
                                                                           viennagrid_numeric const ** hole_points_end);
