@@ -47,8 +47,8 @@ namespace viennagrid
   template<bool is_const = false>
   class base_mesh;
 
-  typedef base_mesh<false> mesh_t;
-  typedef base_mesh<true> const_mesh_t;
+  typedef base_mesh<false>       mesh_t;
+  typedef base_mesh<true>  const_mesh_t;
 
 
   template<bool is_const = false>
@@ -154,6 +154,9 @@ namespace viennagrid
     bool operator!=(element_tag_t rhs) const { return !(*this == rhs);}
 
     bool operator<(element_tag_t rhs) const { return element_tag_ < rhs.element_tag_;}
+    bool operator<=(element_tag_t rhs) const { return !(rhs < *this);}
+    bool operator>(element_tag_t rhs) const { return rhs < *this;}
+    bool operator>=(element_tag_t rhs) const { return !(*this < rhs);}
 
     element_tag_t & operator++()
     {
@@ -576,32 +579,50 @@ namespace viennagrid
 
 
 
-    template<typename SomethingT>
+    template<typename SomethingT, typename ElementT = null_type>
+    struct point;
+
+    template<typename SomethingT, typename ElementT>
     struct point
     {
-      typedef typename point< typename mesh_hierarchy<SomethingT>::type >::type type;
+      typedef typename point<
+        typename mesh_hierarchy<SomethingT>::type,
+        typename element<ElementT>::type
+      >::type type;
     };
 
     template<typename SomethingT>
-    struct const_point
+    struct point<SomethingT, null_type>
     {
-      typedef typename const_type< typename point<SomethingT>::type >::type type;
+      typedef typename point< typename mesh_hierarchy<SomethingT>::type, null_type >::type type;
     };
+
+    template<typename SomethingT>
+    struct point<SomethingT, point_t>
+    {
+      typedef point_t type;
+    };
+
+//     template<typename SomethingT, typename ElementT = null_type>
+//     struct const_point
+//     {
+//       typedef typename const_type< typename point<SomethingT>::type, ElementT >::type type;
+//     };
 
 
 
 
     template<bool is_const>
-    struct point< base_mesh_hierarchy<is_const> >
+    struct point< base_mesh_hierarchy<is_const>, null_type >
     {
       typedef point_t type;
     };
 
 
-    template<typename SomethingT>
+    template<typename SomethingT, typename ElementT = null_type>
     struct coord
     {
-      typedef typename coord<typename point<SomethingT>::type>::type type;
+      typedef typename coord<typename point<SomethingT, ElementT>::type>::type type;
     };
 
 
