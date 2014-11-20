@@ -60,7 +60,8 @@ public:
     return false;
   }
 
-  viennagrid_index * ids() { return &indices[0]; }
+  viennagrid_index * ids()
+  { return indices.empty() ? 0 : &indices[0]; }
   viennagrid_int count() const { return indices.size(); }
 
   viennagrid_coboundary_buffer & coboundary_buffer(viennagrid_element_tag coboundary_tag)
@@ -276,6 +277,7 @@ struct element_key
 struct viennagrid_element_buffer
 {
   friend struct viennagrid_mesh_hierarchy_;
+  friend struct viennagrid_mesh_;
 public:
 
   viennagrid_element_buffer() : element_tag(VIENNAGRID_ELEMENT_TAG_NO_ELEMENT) {}
@@ -288,9 +290,18 @@ public:
 
 
   viennagrid_index * boundary_indices_begin(viennagrid_element_tag boundary_tag, viennagrid_index element_id)
-  { return boundary_buffer(boundary_tag).begin(element_id); }
+  {
+    return (viennagrid_is_boundary_tag(element_tag, boundary_tag) == VIENNAGRID_TRUE) ?
+           boundary_buffer(boundary_tag).begin(element_id) :
+           0;
+  }
+
   viennagrid_index * boundary_indices_end(viennagrid_element_tag boundary_tag, viennagrid_index element_id)
-  { return boundary_buffer(boundary_tag).end(element_id); }
+  {
+    return (viennagrid_is_boundary_tag(element_tag, boundary_tag) == VIENNAGRID_TRUE) ?
+           boundary_buffer(boundary_tag).end(element_id) :
+           0;
+  }
 
 
   viennagrid_index parend_id(viennagrid_index element_id) const { return parents[element_id]; }
@@ -310,14 +321,12 @@ public:
   viennagrid_region * regions_end(viennagrid_index element_id) { return region_buffer.end(element_id); }
 
 
+private:
+
   viennagrid_boundary_buffer & boundary_buffer(viennagrid_element_tag boundary_tag)
   { return boundary_indices[boundary_index(boundary_tag)]; }
   viennagrid_boundary_buffer const & boundary_buffer(viennagrid_element_tag boundary_tag) const
   { return boundary_indices[boundary_index(boundary_tag)]; }
-
-private:
-
-
 
   viennagrid_index get_element(element_key const & key)
   {
@@ -658,9 +667,9 @@ inline viennagrid_element_tag viennagrid_mesh_::unpack_element_tag(viennagrid_el
 
 
 inline viennagrid_index * viennagrid_mesh_::boundary_begin(viennagrid_element_tag element_tag, viennagrid_index element_id, viennagrid_element_tag boundary_tag)
-{ return mesh_hierarchy()->element_buffer(element_tag).boundary_buffer(boundary_tag).begin(element_id); }
+{ return mesh_hierarchy()->element_buffer(element_tag).boundary_indices_begin(boundary_tag, element_id); }
 inline viennagrid_index * viennagrid_mesh_::boundary_end(viennagrid_element_tag element_tag, viennagrid_index element_id, viennagrid_element_tag boundary_tag)
-{ return mesh_hierarchy()->element_buffer(element_tag).boundary_buffer(boundary_tag).end(element_id); }
+{ return mesh_hierarchy()->element_buffer(element_tag).boundary_indices_end(boundary_tag, element_id); }
 
 
 inline bool viennagrid_mesh_::is_coboundary_obsolete(viennagrid_element_tag element_tag, viennagrid_element_tag coboundary_tag)

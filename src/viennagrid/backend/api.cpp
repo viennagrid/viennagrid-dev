@@ -129,8 +129,8 @@ viennagrid_error viennagrid_element_boundary_elements(viennagrid_mesh_hierarchy 
   element_tag = hierarchy->unpack_element_tag(element_tag);
   boundary_element_tag = hierarchy->unpack_element_tag(boundary_element_tag);
 
-  *boundary_element_index_begin = hierarchy->element_buffer(element_tag).boundary_buffer(boundary_element_tag).begin(element_id);
-  *boundary_element_index_end = hierarchy->element_buffer(element_tag).boundary_buffer(boundary_element_tag).end(element_id);
+  *boundary_element_index_begin = hierarchy->element_buffer(element_tag).boundary_indices_begin(boundary_element_tag, element_id);
+  *boundary_element_index_end = hierarchy->element_buffer(element_tag).boundary_indices_end(boundary_element_tag, element_id);
   return VIENNAGRID_SUCCESS;
 }
 

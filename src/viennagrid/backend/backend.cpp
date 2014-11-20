@@ -253,6 +253,7 @@ viennagrid_index viennagrid_mesh_hierarchy_::get_make_element(viennagrid_element
                                                               viennagrid_index * indices,
                                                               viennagrid_int count)
 {
+  std::cout << "get_make element with " << viennagrid_element_tag_string(element_tag) << std::endl;
   viennagrid_index id = element_buffer(element_tag).get_element(indices, count);
   if (id != -1)
     return id;
