@@ -61,6 +61,9 @@ target_link_libraries(copy_elements viennagrid)
 add_executable(convert_to_mphtxt    convert_to_mphtxt.cpp)
 target_link_libraries(convert_to_mphtxt viennagrid)
 
+add_executable(hybrid    hybrid.cpp)
+target_link_libraries(hybrid viennagrid)
+
 
 
 # Old (TODO cleanup, merge to tests)
