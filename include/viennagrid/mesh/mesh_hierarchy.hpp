@@ -35,7 +35,6 @@ namespace viennagrid
 
     base_mesh_hierarchy() : internal_mesh_hierarchy_(0)
     {
-//       viennagrid_mesh_hierarchy_create(dimension_, cell_tag_.internal(), &internal_mesh_hierarchy_);
       viennagrid_mesh_hierarchy_create(&internal_mesh_hierarchy_);
     }
 
@@ -65,12 +64,6 @@ namespace viennagrid
     mesh_type root();
     const_mesh_type root() const;
 
-    viennagrid_int geometric_dimension() const
-    {
-      viennagrid_int tmp;
-      viennagrid_mesh_hierarchy_get_geometric_dimension(internal(), &tmp);
-      return tmp;
-    }
     element_tag_type cell_tag() const
     {
       viennagrid_element_tag tmp;
@@ -122,12 +115,36 @@ namespace viennagrid
 
 
 
+  template<bool is_const>
+  viennagrid_int geometric_dimension( base_mesh_hierarchy<is_const> const & mesh_hierarchy )
+  {
+    viennagrid_int tmp;
+    viennagrid_mesh_hierarchy_get_geometric_dimension(mesh_hierarchy.internal(), &tmp);
+    return tmp;
+  }
+
   template<typename SomethingT>
   viennagrid_int geometric_dimension( SomethingT something )
   {
-    return mesh_hierarchy(something).geometric_dimension();
+    return geometric_dimension( mesh_hierarchy(something) );
   }
 
+
+
+
+  template<bool is_const>
+  viennagrid_int topologic_dimension( base_mesh_hierarchy<is_const> const & mesh_hierarchy )
+  {
+    viennagrid_int tmp;
+    viennagrid_mesh_hierarchy_get_topologic_dimension(mesh_hierarchy.internal(), &tmp);
+    return tmp;
+  }
+
+  template<typename SomethingT>
+  viennagrid_int topologic_dimension( SomethingT something )
+  {
+    return topologic_dimension( mesh_hierarchy(something) );
+  }
 
 
 

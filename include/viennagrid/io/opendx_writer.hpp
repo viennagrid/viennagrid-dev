@@ -136,7 +136,7 @@ namespace viennagrid
          */
         void operator()(MeshType const & mesh_obj, std::string const & filename)
         {
-          const int geometric_dim = mesh_obj.geometric_dimension();
+          const int geometric_dim = viennagrid::geometric_dimension(mesh_obj);
 
           DXHelper dxhelper(geometric_dim);
 //           typedef DXHelper<geometric_dim>  DXHelper;

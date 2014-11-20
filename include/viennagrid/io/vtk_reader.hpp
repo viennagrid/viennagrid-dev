@@ -883,8 +883,7 @@ namespace viennagrid
        */
       void operator()(mesh_type & mesh_obj, std::string const & filename)
       {
-        geometric_dim = mesh_obj.geometric_dimension();
-//         cell_tag = mesh_obj.cell_tag();
+        geometric_dim = viennagrid::geometric_dimension(mesh_obj);
         pre_clear();
 
         std::string::size_type pos  = filename.rfind(".")+1;

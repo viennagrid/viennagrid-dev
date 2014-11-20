@@ -418,7 +418,7 @@ namespace viennagrid
   {
     typedef typename viennagrid::result_of::point< PointAccessorT, ElementT >::type PointType;
 
-    switch (element.mesh_hierarchy().geometric_dimension())
+    switch ( viennagrid::geometric_dimension(element) )
     {
       case 1:
         return detail::circumcenter(accessor,
@@ -435,7 +435,8 @@ namespace viennagrid
 
     }
 
-    return PointType( element.mesh_hierarchy().geometric_dimension() );
+    assert(false);
+    return PointType( viennagrid::geometric_dimension(element) );
   }
 
 

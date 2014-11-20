@@ -45,7 +45,7 @@ namespace viennagrid
       typedef typename viennagrid::result_of::const_element_range<ElementT, vertex_tag>::type         VertexOnCellRange;
       typedef typename viennagrid::result_of::iterator<VertexOnCellRange>::type            VertexOnCellIterator;
 
-      PointType p0( cell.mesh_hierarchy().geometric_dimension() );
+      PointType p0( viennagrid::geometric_dimension(cell) );
 
       VertexOnCellRange vertices(cell);
       for (VertexOnCellIterator vocit = vertices.begin();
@@ -131,7 +131,7 @@ namespace viennagrid
                                                                 ElementTag>::type         CellRange;
       typedef typename viennagrid::result_of::iterator<CellRange>::type                   CellIterator;
 
-      PointType result( mesh_obj.geometric_dimension() );
+      PointType result( viennagrid::geometric_dimension(mesh_obj) );
       double volume = 0;
 
       CellRange cells(mesh_obj);

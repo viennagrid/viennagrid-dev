@@ -53,6 +53,17 @@ namespace viennagrid
 
 
   template<bool is_const>
+  base_mesh_hierarchy<is_const> mesh_hierarchy( base_element<is_const> element )
+  {
+    return element.mesh_hierarchy();
+  }
+
+
+
+
+
+
+  template<bool is_const>
   std::ostream& operator << (std::ostream & os, base_element<is_const> const & element)
   {
     std::cout << element.tag().name() << " [id = " << element.id() << "] ";

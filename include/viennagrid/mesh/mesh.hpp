@@ -72,7 +72,6 @@ namespace viennagrid
       release();
     }
 
-    viennagrid_int geometric_dimension() const { return mesh_hierarchy().geometric_dimension(); }
     element_tag_type cell_tag() const { return mesh_hierarchy().cell_tag(); }
     element_tag_type facet_tag() const { return mesh_hierarchy().facet_tag(); }
 

@@ -101,7 +101,7 @@ namespace viennagrid
   void scale(MeshT & mesh, ScalarT factor)
   {
     typedef typename viennagrid::result_of::point<MeshT>::type PointType;
-    scale_functor<MeshT> func(factor, PointType(mesh.geometric_dimension()));
+    scale_functor<MeshT> func(factor, PointType(viennagrid::geometric_dimension(mesh)));
     geometric_transform(mesh, func);
   }
 

@@ -22,7 +22,7 @@ namespace viennagrid
     assert( element.tag().is_plc() );
 
 
-    const viennagrid_int dimension = mesh_hierarchy.geometric_dimension();
+    const viennagrid_int dimension = viennagrid::geometric_dimension(mesh_hierarchy);
     viennagrid_numeric const * begin;
     viennagrid_numeric const * end;
 

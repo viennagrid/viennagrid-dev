@@ -56,7 +56,7 @@ namespace viennagrid
     base_element<element_is_const> const & vertex)
   {
     typedef typename viennagrid::result_of::point< base_mesh_hierarchy<mesh_hierarchy_is_const> >::type PointType;
-    PointType result( mesh_hierarchy.geometric_dimension() );
+    PointType result( viennagrid::geometric_dimension(mesh_hierarchy) );
     viennagrid_numeric const * tmp;
     viennagrid_vertex_get(mesh_hierarchy.internal(), vertex.id(), const_cast<viennagrid_numeric **>(&tmp));
     std::copy(tmp, tmp+result.size(), result.begin());
