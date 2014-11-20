@@ -334,7 +334,7 @@ inline viennagrid_index viennagrid_boundary_buffer_index_from_element_tag(vienna
       return 0;
   }
 
-  return 0;
+  return -1;
 }
 
 
