@@ -23,7 +23,7 @@
 // #include "viennagrid/algorithm/boundary.hpp"
 
 /** @file viennagrid/algorithm/surface.hpp
-    @brief Computes the surface of different cell types as well as meshs and segments
+    @brief Computes the surface of different cell types as well as meshs and regions
 */
 
 
@@ -31,24 +31,29 @@ namespace viennagrid
 {
   namespace detail
   {
-    /** @brief Implementation for the calculation of the surface of a mesh or segment */
-    template <typename ElementTypeOrTag, typename MeshT>
+    /** @brief Implementation for the calculation of the surface of a mesh or region */
+    template<typename MeshT>
     typename viennagrid::result_of::coord< MeshT >::type
-    surface_meshsegment(MeshT const & mesh_obj)
+    surface_meshregion(MeshT const & mesh_obj, element_tag_t facet_tag, element_tag_t facet_end)
     {
-      typedef typename viennagrid::result_of::const_element_range<MeshT, ElementTypeOrTag>::type  ElementRange;
-      typedef typename viennagrid::result_of::iterator<ElementRange>::type                        ElementIterator;
+      typedef typename viennagrid::result_of::const_element_range<MeshT>::type  ElementRange;
+      typedef typename viennagrid::result_of::iterator<ElementRange>::type      ElementIterator;
 
       typename viennagrid::result_of::coord<MeshT>::type result = 0;
 
-      ElementRange facets(mesh_obj);
-      for (ElementIterator fit = facets.begin();
-                           fit != facets.end();
-                         ++fit)
+      for (; facet_tag != facet_end; ++facet_tag)
       {
-        if (is_boundary(mesh_obj, *fit))
-          result += viennagrid::volume(*fit);
+        ElementRange facets(mesh_obj, facet_tag);
+        for (ElementIterator fit = facets.begin();
+                            fit != facets.end();
+                          ++fit)
+        {
+          if (is_boundary(mesh_obj, *fit))
+            result += viennagrid::volume(*fit);
+        }
       }
+
+
       return result;
     }
   } //namespace detail
@@ -64,7 +69,7 @@ namespace viennagrid
   surface(PointAccessorT const accessor, base_element<element_is_const> const & element)
   {
     typedef base_element<element_is_const> ElementType;
-    typedef typename viennagrid::result_of::const_facet_range<ElementType>::type   ElementBoundaryRange;
+    typedef typename viennagrid::result_of::const_element_range<ElementType>::type   ElementBoundaryRange;
     typedef typename viennagrid::result_of::iterator<ElementBoundaryRange>::type                                         ElementBoundaryIterator;
 
     typedef typename viennagrid::result_of::point< PointAccessorT, base_element<element_is_const> >::type PointType;
@@ -72,12 +77,15 @@ namespace viennagrid
 
     value_type result = 0;
 
-    ElementBoundaryRange boundary = viennagrid::facets(element);
-    for (ElementBoundaryIterator ebit = boundary.begin();
-                                 ebit != boundary.end();
-                               ++ebit)
+    for (element_tag_t facet_tag = facet_tag_begin(element); facet_tag != facet_tag_end(element); ++facet_tag)
     {
-      result += viennagrid::volume(accessor, *ebit);
+      ElementBoundaryRange boundary(element, facet_tag);
+      for (ElementBoundaryIterator ebit = boundary.begin();
+                                  ebit != boundary.end();
+                                ++ebit)
+      {
+        result += viennagrid::volume(accessor, *ebit);
+      }
     }
 
     return result;
@@ -99,7 +107,7 @@ namespace viennagrid
   typename viennagrid::result_of::coord< base_mesh<mesh_is_const> >::type
   surface(base_mesh<mesh_is_const> const & d)
   {
-    return detail::surface_meshsegment<ElementTypeOrTag>(d);
+    return detail::surface_meshregion<ElementTypeOrTag>(d);
   }
 
   /** @brief Returns the surface of a mesh*/
@@ -107,17 +115,15 @@ namespace viennagrid
   typename viennagrid::result_of::coord< base_mesh<mesh_is_const> >::type
   surface(base_mesh<mesh_is_const> const & d)
   {
-    typedef typename viennagrid::result_of::cell_tag< base_mesh<mesh_is_const> >::type CellTag;
-    return detail::surface_meshsegment< typename viennagrid::result_of::facet_tag<CellTag>::type>(d);
+    return detail::surface_meshregion(d, facet_tag_begin(d), facet_tag_end(d));
   }
 
-  /** @brief Returns the surface of a segment*/
+  /** @brief Returns the surface of a region*/
   template<bool mesh_region_is_const>
   typename viennagrid::result_of::coord< base_mesh_region<mesh_region_is_const> >::type
-  surface(base_mesh_region<mesh_region_is_const> const & segment)
+  surface(base_mesh_region<mesh_region_is_const> const & region)
   {
-    typedef typename viennagrid::result_of::cell_tag< base_mesh_region<mesh_region_is_const> >::type CellTag;
-    return detail::surface_meshsegment< typename viennagrid::result_of::facet_tag<CellTag>::type >(segment);
+    return detail::surface_meshregion(region, facet_tag_begin(region), facet_tag_end(region));
   }
 
 

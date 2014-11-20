@@ -12,8 +12,8 @@ VIENNAGRID_DYNAMIC_EXPORT viennagrid_error viennagrid_mesh_hierarchy_retain(vien
 VIENNAGRID_DYNAMIC_EXPORT viennagrid_error viennagrid_mesh_hierarchy_release(viennagrid_mesh_hierarchy mesh_hierarchy);
 
 // queries the cell tag of a mesh_hierarchy
-VIENNAGRID_DYNAMIC_EXPORT viennagrid_error viennagrid_mesh_hierarchy_get_cell_tag(viennagrid_mesh_hierarchy mesh_hierarchy,
-                                                                             viennagrid_element_tag * cell_tag);
+// VIENNAGRID_DYNAMIC_EXPORT viennagrid_error viennagrid_mesh_hierarchy_get_cell_tag(viennagrid_mesh_hierarchy mesh_hierarchy,
+//                                                                              viennagrid_element_tag * cell_tag);
 
 // queries the topologic dimension of a mesh_hierarchy
 VIENNAGRID_DYNAMIC_EXPORT viennagrid_error viennagrid_mesh_hierarchy_get_topologic_dimension(viennagrid_mesh_hierarchy mesh_hierarchy,
@@ -68,10 +68,15 @@ VIENNAGRID_DYNAMIC_EXPORT viennagrid_error viennagrid_element_create(viennagrid_
                                                                     viennagrid_index * indices,
                                                                     viennagrid_index * element_index);
 
+VIENNAGRID_DYNAMIC_EXPORT viennagrid_error viennagrid_element_get_tag(viennagrid_mesh_hierarchy mesh_hierarchy,
+                                                                      viennagrid_index element_topo_dim,
+                                                                      viennagrid_int element_id,
+                                                                      viennagrid_element_tag * element_tag);
+
 VIENNAGRID_DYNAMIC_EXPORT viennagrid_error viennagrid_element_boundary_elements(viennagrid_mesh_hierarchy mesh_hierarchy,
-                                                                                viennagrid_element_tag element_tag,
+                                                                                viennagrid_int element_topo_dim,
                                                                                 viennagrid_index element_id,
-                                                                                viennagrid_element_tag boundary_element_tag,
+                                                                                viennagrid_int boundary_topo_dim,
                                                                                 viennagrid_index ** boundary_element_index_begin,
                                                                                 viennagrid_index ** boundary_element_index_end);
 
@@ -107,12 +112,12 @@ VIENNAGRID_DYNAMIC_EXPORT viennagrid_error viennagrid_is_boundary_region(viennag
 
 
 VIENNAGRID_DYNAMIC_EXPORT viennagrid_error viennagrid_elements_get(viennagrid_mesh mesh,
-                                                                   viennagrid_element_tag element_tag,
+                                                                   viennagrid_int element_topo_dim,
                                                                    viennagrid_index ** element_index_begin,
                                                                    viennagrid_index ** element_index_end);
 
 VIENNAGRID_DYNAMIC_EXPORT viennagrid_error viennagrid_element_add(viennagrid_mesh mesh,
-                                                                  viennagrid_element_tag element_tag,
+                                                                  viennagrid_int element_topo_dim,
                                                                   viennagrid_index element_id);
 
 

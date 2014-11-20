@@ -79,6 +79,15 @@ private:
 };
 
 
+
+
+// struct mixed_element_type_buffer
+// {
+//   std::vector<viennagrid_index>         element_ids;
+//   std::vector<viennagrid_element_tag>   element_tags;
+// };
+
+
 struct viennagrid_mesh_
 {
 public:
@@ -107,17 +116,17 @@ public:
 
   viennagrid_int geometric_dimension();
 
-  viennagrid_int element_count(viennagrid_element_tag element_tag)
-  { return element_handle_buffer(element_tag).count(); }
+  viennagrid_int element_count(viennagrid_int element_topo_dim)
+  { return element_handle_buffer(element_topo_dim).count(); }
 
-  viennagrid_index * elements_begin(viennagrid_element_tag element_tag)
-  { return element_handle_buffer(element_tag).ids(); }
-  viennagrid_index * elements_end(viennagrid_element_tag element_tag)
-  { return elements_begin(element_tag) + element_count(element_tag); }
+  viennagrid_index * elements_begin(viennagrid_int element_topo_dim)
+  { return element_handle_buffer(element_topo_dim).ids(); }
+  viennagrid_index * elements_end(viennagrid_int element_topo_dim)
+  { return elements_begin(element_topo_dim) + element_count(element_topo_dim); }
 
 
-  viennagrid_index * boundary_begin(viennagrid_element_tag element_tag, viennagrid_index element_id, viennagrid_element_tag boundary_tag);
-  viennagrid_index * boundary_end(viennagrid_element_tag element_tag, viennagrid_index element_id, viennagrid_element_tag boundary_tag);
+  viennagrid_index * boundary_begin(viennagrid_int element_topo_dim, viennagrid_index element_id, viennagrid_int boundary_topo_dim);
+  viennagrid_index * boundary_end(viennagrid_int element_topo_dim, viennagrid_index element_id, viennagrid_int boundary_topo_dim);
 
   viennagrid_index * coboundary_begin(viennagrid_element_tag element_tag, viennagrid_index element_id, viennagrid_element_tag coboundary_tag)
   {
@@ -165,17 +174,17 @@ public:
   }
 
 
-  void add_element(viennagrid_element_tag element_tag,
+  void add_element(viennagrid_int element_topo_dim,
                    viennagrid_index element_id)
-  { element_handle_buffer(element_tag).add_element(element_id); }
+  { element_handle_buffer(element_topo_dim).add_element(element_id); }
 
 
   void make_coboundary(viennagrid_element_tag element_tag, viennagrid_element_tag coboundary_tag);
   void make_neighbor(viennagrid_element_tag element_tag, viennagrid_element_tag connector_tag, viennagrid_element_tag neighbor_tag);
 
 
-  viennagrid_element_handle_buffer & element_handle_buffer(viennagrid_element_tag element_tag)
-  { return element_handle_buffers[ static_cast<unsigned char>(element_tag) ]; }
+  viennagrid_element_handle_buffer & element_handle_buffer(viennagrid_int topo_dim)
+  { return element_handle_buffers[topo_dim]; }
 
 
   viennagrid_element_tag unpack_element_tag(viennagrid_element_tag et);
@@ -213,7 +222,7 @@ private:
   viennagrid_mesh parent_;
   ChildrenContainerType children;
 
-  viennagrid_element_handle_buffer element_handle_buffers[VIENNAGRID_ELEMENT_TAG_COUNT];
+  viennagrid_element_handle_buffer element_handle_buffers[VIENNAGRID_TOPOLOGIC_DIMENSION_END];
 
 
   viennagrid_int & coboundary_change_counter(viennagrid_element_tag element_tag,
@@ -280,27 +289,28 @@ struct viennagrid_element_buffer
   friend struct viennagrid_mesh_;
 public:
 
-  viennagrid_element_buffer() : element_tag(VIENNAGRID_ELEMENT_TAG_NO_ELEMENT) {}
+  viennagrid_element_buffer() : topologic_dimension(-1) {}
 
-  void set_tag(viennagrid_element_tag element_tag_)
+  void set_topologic_dimension(viennagrid_int topo_dim_in)
   {
-    element_tag = element_tag_;
-    boundary_indices.resize( viennagrid_boundary_element_tag_count(element_tag_) );
+    topologic_dimension = topo_dim_in;
+    boundary_indices.resize(topologic_dimension);
   }
 
 
-  viennagrid_index * boundary_indices_begin(viennagrid_element_tag boundary_tag, viennagrid_index element_id)
+  viennagrid_element_tag element_tag(viennagrid_index element_id) const
   {
-    return (viennagrid_is_boundary_tag(element_tag, boundary_tag) == VIENNAGRID_TRUE) ?
-           boundary_buffer(boundary_tag).begin(element_id) :
-           0;
+    return element_tags[element_id];
   }
 
-  viennagrid_index * boundary_indices_end(viennagrid_element_tag boundary_tag, viennagrid_index element_id)
+  viennagrid_index * boundary_indices_begin(viennagrid_index boundary_topo_dim, viennagrid_index element_id)
   {
-    return (viennagrid_is_boundary_tag(element_tag, boundary_tag) == VIENNAGRID_TRUE) ?
-           boundary_buffer(boundary_tag).end(element_id) :
-           0;
+    return boundary_buffer(boundary_topo_dim).begin(element_id);
+  }
+
+  viennagrid_index * boundary_indices_end(viennagrid_index boundary_topo_dim, viennagrid_index element_id)
+  {
+    return boundary_buffer(boundary_topo_dim).end(element_id);
   }
 
 
@@ -323,10 +333,10 @@ public:
 
 private:
 
-  viennagrid_boundary_buffer & boundary_buffer(viennagrid_element_tag boundary_tag)
-  { return boundary_indices[boundary_index(boundary_tag)]; }
-  viennagrid_boundary_buffer const & boundary_buffer(viennagrid_element_tag boundary_tag) const
-  { return boundary_indices[boundary_index(boundary_tag)]; }
+  viennagrid_boundary_buffer & boundary_buffer(viennagrid_int boundary_topo_dim)
+  { return boundary_indices[boundary_topo_dim]; }
+  viennagrid_boundary_buffer const & boundary_buffer(viennagrid_element_tag boundary_topo_dim) const
+  { return boundary_indices[boundary_topo_dim]; }
 
   viennagrid_index get_element(element_key const & key)
   {
@@ -342,17 +352,20 @@ private:
     return get_element( element_key(indices, index_count) );
   }
 
-  viennagrid_index make_element(viennagrid_mesh_hierarchy_ * mesh_hierarchy, viennagrid_index * indices, viennagrid_int index_count);
+  viennagrid_index make_element(viennagrid_element_tag element_tag_, viennagrid_index * indices, viennagrid_int index_count);
 
   viennagrid_index size() const { return parents.size(); }
-  viennagrid_index boundary_index(viennagrid_element_tag boundary_tag) const
-  { return viennagrid_boundary_buffer_index_from_element_tag(element_tag, boundary_tag); }
+//   viennagrid_index boundary_index(viennagrid_element_tag boundary_tag) const
+//   { return viennagrid_boundary_buffer_index_from_element_tag(element_tag, boundary_tag); }
 
 
-  viennagrid_element_tag element_tag;
+  viennagrid_int topologic_dimension;
 
+  std::vector<viennagrid_element_tag> element_tags;
   std::vector<viennagrid_index> parents;
   dense_multibuffer<viennagrid_index, viennagrid_region> region_buffer;
+
+
   std::vector<viennagrid_boundary_buffer> boundary_indices;
   std::map<element_key, viennagrid_index> element_map;
 };
@@ -407,10 +420,12 @@ private:
 struct viennagrid_mesh_hierarchy_
 {
 public:
-  viennagrid_mesh_hierarchy_() : geometric_dimension_(0), topologic_dimension_(-1), cell_tag_(VIENNAGRID_ELEMENT_TAG_NO_ELEMENT), root_( new viennagrid_mesh_(this) ), highest_region_id(0), change_counter_(0), use_count_(1)
+  viennagrid_mesh_hierarchy_() : geometric_dimension_(0), topologic_dimension_(-1),
+//   cell_tag_(VIENNAGRID_ELEMENT_TAG_NO_ELEMENT),
+  root_( new viennagrid_mesh_(this) ), highest_region_id(0), change_counter_(0), use_count_(1)
   {
-    for (viennagrid_int et = VIENNAGRID_ELEMENT_TAG_START; et < VIENNAGRID_ELEMENT_TAG_COUNT; ++et)
-      element_buffer(et).set_tag(et);
+    for (viennagrid_int i = 0; i < VIENNAGRID_TOPOLOGIC_DIMENSION_END; ++i)
+      element_buffer(i).set_topologic_dimension(i);
   }
 
   ~viennagrid_mesh_hierarchy_()
@@ -440,29 +455,42 @@ public:
   }
 
   viennagrid_int topologic_dimension() const { return topologic_dimension_; }
-  viennagrid_element_tag cell_tag() const { return cell_tag_; }
+  viennagrid_int facet_topological_dimension() const { return topologic_dimension()-1; }
+
+  viennagrid_element_tag cell_tags_begin() const { return viennagrid_element_tag_of_topological_dimension_begin(topologic_dimension()); }
+  viennagrid_element_tag cell_tags_end() const { return viennagrid_element_tag_of_topological_dimension_begin(topologic_dimension()); }
+
+  viennagrid_element_tag facet_tags_begin() const { return viennagrid_element_tag_of_topological_dimension_begin(facet_topological_dimension()); }
+  viennagrid_element_tag facet_tags_end() const { return viennagrid_element_tag_of_topological_dimension_begin(facet_topological_dimension()); }
+
+//   viennagrid_element_tag cell_tag() const { return cell_tag_; }
 
 
-  viennagrid_element_buffer & element_buffer(viennagrid_element_tag element_tag)
-  { return element_buffers[ static_cast<unsigned char>(element_tag) ]; }
+  viennagrid_element_buffer & element_buffer(viennagrid_index topo_dim)
+  { return element_buffers[topo_dim]; }
 
 
 
-  viennagrid_index * make_boundary_indices(viennagrid_element_tag host_tag, viennagrid_element_tag boundary_tag, viennagrid_int count)
+  viennagrid_index * make_boundary_indices(viennagrid_index host_topo_dim,
+                                           viennagrid_index boundary_topo_dim,
+                                           viennagrid_int count)
   {
-    return element_buffer(host_tag).boundary_buffer(boundary_tag).push_back(count);
+    return element_buffer(host_topo_dim).boundary_buffer(boundary_topo_dim).push_back(count);
   }
 
-  viennagrid_index * make_boundary_indices(viennagrid_element_tag host_tag, viennagrid_element_tag boundary_tag)
+  viennagrid_index * make_boundary_indices(viennagrid_element_tag host_tag,
+                                           viennagrid_element_tag boundary_tag)
   {
-    return make_boundary_indices(host_tag, boundary_tag, viennagrid_boundary_element_count_from_element_tag(host_tag, boundary_tag));
+    return make_boundary_indices(viennagrid_topological_dimension(host_tag),
+                                 viennagrid_topological_dimension(boundary_tag),
+                                 viennagrid_boundary_element_count_from_element_tag(host_tag, boundary_tag));
   }
 
 
 
   viennagrid_index make_vertex(const viennagrid_numeric * coords)
   {
-    viennagrid_index id = element_buffer(VIENNAGRID_ELEMENT_TAG_VERTEX).make_element(this, 0, 0);
+    viennagrid_index id = element_buffer(0).make_element(VIENNAGRID_ELEMENT_TAG_VERTEX, 0, 0);
 
     viennagrid_int prev_size = vertex_buffer.size();
     vertex_buffer.resize( vertex_buffer.size() + geometric_dimension() );
@@ -470,9 +498,6 @@ public:
     if (coords)
       std::copy( coords, coords+geometric_dimension(), &vertex_buffer[0] + prev_size );
 
-//     return vertex_buffer.size()/geometric_dimension()-1;
-
-//     root_->make_vertex(coords);
     return id;
   }
 
@@ -554,10 +579,10 @@ public:
   viennagrid_region * regions_begin() { return &regions[0]; }
   viennagrid_region * regions_end() { return &regions[0] + regions.size(); }
 
-  bool is_in_region(viennagrid_element_tag element_tag, viennagrid_index element_id, viennagrid_index region_id)
+  bool is_in_region(viennagrid_int element_topo_dim, viennagrid_index element_id, viennagrid_index region_id)
   {
-    viennagrid_region * it = element_buffer(element_tag).regions_begin(element_id);
-    viennagrid_region * regions_end = element_buffer(element_tag).regions_end(element_id);
+    viennagrid_region * it = element_buffer(element_topo_dim).regions_begin(element_id);
+    viennagrid_region * regions_end = element_buffer(element_topo_dim).regions_end(element_id);
 
     for (; it != regions_end; ++it)
       if (region_id == (*it)->id())
@@ -566,15 +591,15 @@ public:
     return false;
   }
 
-  viennagrid_element_tag unpack_element_tag(viennagrid_element_tag et) const
-  {
-    if (et == VIENNAGRID_ELEMENT_TAG_CELL)
-      return cell_tag();
-    else if (et == VIENNAGRID_ELEMENT_TAG_FACET)
-      return viennagrid_facet_tag(cell_tag());
-    else
-      return et;
-  }
+//   viennagrid_element_tag unpack_element_tag(viennagrid_element_tag et) const
+//   {
+//     if (et == VIENNAGRID_ELEMENT_TAG_CELL)
+//       return cell_tag();
+//     else if (et == VIENNAGRID_ELEMENT_TAG_FACET)
+//       return viennagrid_facet_tag(cell_tag());
+//     else
+//       return et;
+//   }
 
 
   bool is_obsolete( viennagrid_int change_counter_to_check ) const { return change_counter_to_check != change_counter_; }
@@ -641,12 +666,12 @@ private:
 
 
 
-  viennagrid_element_buffer element_buffers[VIENNAGRID_ELEMENT_TAG_COUNT];
+  viennagrid_element_buffer element_buffers[VIENNAGRID_TOPOLOGIC_DIMENSION_END];
 
   viennagrid_int geometric_dimension_;
   viennagrid_int topologic_dimension_;
 
-  viennagrid_element_tag cell_tag_;
+//   viennagrid_element_tag cell_tag_;
   viennagrid_mesh root_;
 
   std::vector<viennagrid_numeric> vertex_buffer;
@@ -662,14 +687,14 @@ private:
 
 
 inline viennagrid_int viennagrid_mesh_::geometric_dimension() { return hierarchy_->geometric_dimension(); }
-inline viennagrid_element_tag viennagrid_mesh_::unpack_element_tag(viennagrid_element_tag et)
-{ return mesh_hierarchy()->unpack_element_tag(et); }
+// inline viennagrid_element_tag viennagrid_mesh_::unpack_element_tag(viennagrid_element_tag et)
+// { return mesh_hierarchy()->unpack_element_tag(et); }
 
 
-inline viennagrid_index * viennagrid_mesh_::boundary_begin(viennagrid_element_tag element_tag, viennagrid_index element_id, viennagrid_element_tag boundary_tag)
-{ return mesh_hierarchy()->element_buffer(element_tag).boundary_indices_begin(boundary_tag, element_id); }
-inline viennagrid_index * viennagrid_mesh_::boundary_end(viennagrid_element_tag element_tag, viennagrid_index element_id, viennagrid_element_tag boundary_tag)
-{ return mesh_hierarchy()->element_buffer(element_tag).boundary_indices_end(boundary_tag, element_id); }
+inline viennagrid_index * viennagrid_mesh_::boundary_begin(viennagrid_int element_topo_dim, viennagrid_index element_id, viennagrid_int boundary_topo_dim)
+{ return mesh_hierarchy()->element_buffer(element_topo_dim).boundary_indices_begin(boundary_topo_dim, element_id); }
+inline viennagrid_index * viennagrid_mesh_::boundary_end(viennagrid_int element_topo_dim, viennagrid_index element_id, viennagrid_int boundary_topo_dim)
+{ return mesh_hierarchy()->element_buffer(element_topo_dim).boundary_indices_end(boundary_topo_dim, element_id); }
 
 
 inline bool viennagrid_mesh_::is_coboundary_obsolete(viennagrid_element_tag element_tag, viennagrid_element_tag coboundary_tag)

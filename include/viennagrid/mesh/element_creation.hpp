@@ -11,22 +11,23 @@
 namespace viennagrid
 {
 
-  inline void non_recursive_add_element_to_mesh(mesh_t m, element_t const & e)
+  inline void non_recursive_add_element_to_mesh(mesh_t mesh, element_t const & element)
   {
-    viennagrid_element_add(m.internal(), e.tag().internal(), e.id());
+    viennagrid_element_add(mesh.internal(), element.topologic_dimension(), element.id());
   }
 
-  inline void add_element_to_mesh(mesh_t & m, element_t const & e)
+  inline void add_element_to_mesh(mesh_t & mesh, element_t const & element)
   {
-    non_recursive_add_element_to_mesh(m, e);
+    non_recursive_add_element_to_mesh(mesh, element);
 
     typedef viennagrid::result_of::element_range<element_t>::type ElementRangeType;
 
-    for (element_tag_t et = element_tag_t::vertex(); et != m.unpack_element_tag(e.tag()); ++et)
+//     for (element_tag_t et = element_tag_t::vertex(); et != e.tag(); ++et)
+    for (viennagrid_int i = 0; i < element.topologic_dimension(); ++i)
     {
-      ElementRangeType elements(e, et);
+      ElementRangeType elements(element, i);
       for (ElementRangeType::iterator it = elements.begin(); it != elements.end(); ++it)
-        non_recursive_add_element_to_mesh(m, *it);
+        non_recursive_add_element_to_mesh(mesh, *it);
     }
   }
 
@@ -34,42 +35,47 @@ namespace viennagrid
 
 
   element_t make_vertex(mesh_hierarchy_t mesh_hierarchy,
-                        viennagrid_numeric const * coords,
-                        viennagrid_int num_coords)
+                        point_t const & point)
   {
-    if ( viennagrid::geometric_dimension(mesh_hierarchy) <= 0 && num_coords > 0 )
-      viennagrid_mesh_hierarchy_set_geometric_dimension( mesh_hierarchy.internal(), num_coords );
+    if ( viennagrid::geometric_dimension(mesh_hierarchy) <= 0 && !point.empty() )
+      viennagrid_mesh_hierarchy_set_geometric_dimension( mesh_hierarchy.internal(), point.size() );
 
     viennagrid_index id;
-    viennagrid_vertex_create( mesh_hierarchy.internal(), coords, &id );
-    return element_t(viennagrid::vertex_tag(), mesh_hierarchy, id);
+    viennagrid_vertex_create( mesh_hierarchy.internal(), &point[0], &id );
+    return element_t(mesh_hierarchy, 0, id);
   }
 
   element_t make_vertex(mesh_hierarchy_t mesh_hierarchy)
   {
-    return make_vertex(mesh_hierarchy, 0, -1);
+    return make_vertex(mesh_hierarchy, point_t());
   }
 
-  element_t make_vertex(mesh_t mesh,
-                        viennagrid_numeric const * coords,
-                        viennagrid_int num_coords)
+  element_t make_vertex(mesh_t mesh, point_t const & point)
   {
-    element_t vertex = make_vertex(mesh.mesh_hierarchy(), coords, num_coords);
+    element_t vertex = make_vertex(mesh.mesh_hierarchy(), point);
     non_recursive_add_element_to_mesh(mesh, vertex);
     return vertex;
   }
 
   element_t make_vertex(mesh_t mesh)
   {
-    return make_vertex(mesh, 0, -1);
+    return make_vertex(mesh, point_t());
   }
 
-
-  template<typename SomethingT>
-  typename result_of::vertex<SomethingT>::type make_vertex(SomethingT something, point_t const & point)
+  element_t make_vertex(mesh_region_t mr, point_t const & point)
   {
-    return make_vertex(something, &point[0], point.size());
+    element_t vertex = make_vertex(mr.mesh(), point);
+    add(mr, vertex);
+    return vertex;
   }
+
+  element_t make_vertex(mesh_region_t mr)
+  {
+    return make_vertex(mr, point_t());
+  }
+
+
+
 
 
   template<typename SomethingT>
@@ -108,12 +114,12 @@ namespace viennagrid
         typename result_of::point<SomethingT>::type const & point,
         NumericConfigT nc)
   {
-    typedef typename result_of::const_vertex_range<SomethingT>::type VertexRangeType;
+    typedef typename result_of::const_element_range<SomethingT>::type VertexRangeType;
     typedef typename result_of::iterator<VertexRangeType>::type VertexRangeIterator;
 
     if (nc > 0)
     {
-      VertexRangeType vertices(something);
+      VertexRangeType vertices(something, 0);
       for (VertexRangeIterator vit = vertices.begin(); vit != vertices.end(); ++vit)
       {
         if ( detail::is_equal_point(point, viennagrid::get_point(something, *vit), nc) )
@@ -181,7 +187,7 @@ namespace viennagrid
                               &internal_vertices_indices[0],
                               &id);
 
-    return element_t(mesh_hierarchy.unpack_element_tag(tag), mesh_hierarchy, id);
+    return element_t(mesh_hierarchy, tag.topologic_dimension(), id);
   }
 
   template<typename ElementTagT, typename VertexHandleIteratorT>
@@ -219,26 +225,6 @@ namespace viennagrid
 
 
 
-
-
-
-
-  element_t make_vertex(mesh_region_t mr,
-                        viennagrid_numeric const * coords,
-                        viennagrid_int num_coords)
-  {
-    element_t vertex = make_vertex(mr.mesh(), coords, num_coords);
-    add(mr, vertex);
-    return vertex;
-  }
-
-  element_t make_vertex(mesh_region_t mr)
-  {
-    return make_vertex(mr, 0, -1);
-  }
-
-
-
   template<typename VertexHandleIteratorT>
   element_t make_element(mesh_region_t mr,
                          element_tag_t tag,
@@ -264,29 +250,29 @@ namespace viennagrid
 
 
 
-  template<typename VertexHandleIteratorT>
-  element_t make_cell(mesh_hierarchy_t m,
-                      VertexHandleIteratorT vertices_begin,
-                      VertexHandleIteratorT vertices_end)
-  {
-    return make_element(m, m.cell_tag(), vertices_begin, vertices_end);
-  }
-
-  template<typename VertexHandleIteratorT>
-  element_t make_cell(mesh_t m,
-                      VertexHandleIteratorT vertices_begin,
-                      VertexHandleIteratorT vertices_end)
-  {
-    return make_element(m, m.cell_tag(), vertices_begin, vertices_end);
-  }
-
-  template<typename VertexHandleIteratorT>
-  element_t make_cell(mesh_region_t mr,
-                      VertexHandleIteratorT vertices_begin,
-                      VertexHandleIteratorT vertices_end)
-  {
-    return make_element(mr, mr.cell_tag(), vertices_begin, vertices_end);
-  }
+//   template<typename VertexHandleIteratorT>
+//   element_t make_cell(mesh_hierarchy_t m,
+//                       VertexHandleIteratorT vertices_begin,
+//                       VertexHandleIteratorT vertices_end)
+//   {
+//     return make_element(m, m.cell_tag(), vertices_begin, vertices_end);
+//   }
+//
+//   template<typename VertexHandleIteratorT>
+//   element_t make_cell(mesh_t m,
+//                       VertexHandleIteratorT vertices_begin,
+//                       VertexHandleIteratorT vertices_end)
+//   {
+//     return make_element(m, m.cell_tag(), vertices_begin, vertices_end);
+//   }
+//
+//   template<typename VertexHandleIteratorT>
+//   element_t make_cell(mesh_region_t mr,
+//                       VertexHandleIteratorT vertices_begin,
+//                       VertexHandleIteratorT vertices_end)
+//   {
+//     return make_element(mr, mr.cell_tag(), vertices_begin, vertices_end);
+//   }
 
 
 

@@ -62,7 +62,7 @@ namespace viennagrid
       typedef viennagrid::result_of::element_range<element_t>::type FacetElemenRangeType;
       typedef viennagrid::result_of::iterator<FacetElemenRangeType>::type FacetElemenRangeIterator;
 
-      FacetElemenRangeType elements( element, element.tag().facet_tag() );
+      FacetElemenRangeType elements( element, element.topologic_dimension()-1 );
       for (FacetElemenRangeIterator eit = elements.begin(); eit != elements.end(); ++eit)
         add(region, *eit);
     }

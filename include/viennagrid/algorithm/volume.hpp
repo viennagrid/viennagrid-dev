@@ -256,19 +256,26 @@ namespace viennagrid
     /** @brief Dispatched function for computing the volume of a mesh or segment.*/
     template <typename MeshSegmentHandleType>
     typename viennagrid::result_of::coord< MeshSegmentHandleType >::type
-    volume_mesh(MeshSegmentHandleType const & mesh_obj, viennagrid::element_tag_t tag)
+    volume_mesh(MeshSegmentHandleType const & mesh_obj,
+                viennagrid::element_tag_t cell_tag,
+                viennagrid::element_tag_t cell_tag_end
+               )
     {
       typedef typename viennagrid::result_of::const_element_range<MeshSegmentHandleType>::type  ElementContainerType;
       typedef typename viennagrid::result_of::iterator<ElementContainerType>::type              ElementContainerIterator;
 
       typename viennagrid::result_of::coord< MeshSegmentHandleType >::type new_volume = 0;
-      ElementContainerType new_cells(mesh_obj, tag);
-      for (ElementContainerIterator new_cit = new_cells.begin();
-                                    new_cit != new_cells.end();
-                                  ++new_cit)
+      for (; cell_tag != cell_tag_end; ++cell_tag)
       {
-        new_volume += volume( point_accessor(mesh_obj), *new_cit);
+        ElementContainerType new_cells(mesh_obj, cell_tag);
+        for (ElementContainerIterator new_cit = new_cells.begin();
+                                      new_cit != new_cells.end();
+                                    ++new_cit)
+        {
+          new_volume += volume( point_accessor(mesh_obj), *new_cit);
+        }
       }
+
       return new_volume;
     }
   } //namespace detail
@@ -298,7 +305,7 @@ namespace viennagrid
   typename viennagrid::result_of::coord< base_mesh<mesh_is_const> >::type
   volume(base_mesh<mesh_is_const> const & mesh_obj)
   {
-      return detail::volume_mesh(mesh_obj, ElementTagT());
+      return detail::volume_mesh(mesh_obj, ElementTagT(), ElementTagT()+1);
   }
 
   /** @brief Returns the n-dimensional volume of a whole mesh */
@@ -306,7 +313,7 @@ namespace viennagrid
   typename viennagrid::result_of::coord< base_mesh<mesh_is_const> >::type
   volume(base_mesh<mesh_is_const> const & mesh_obj)
   {
-    return detail::volume_mesh(mesh_obj, mesh_obj.cell_tag());
+    return detail::volume_mesh(mesh_obj, viennagrid::cell_tag_begin(mesh_obj), viennagrid::cell_tag_end(mesh_obj));
   }
 
   // default Element Tag = Cell Tag

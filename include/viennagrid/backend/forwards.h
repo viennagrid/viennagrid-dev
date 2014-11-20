@@ -54,8 +54,8 @@ typedef struct viennagrid_region_ * viennagrid_region;
 
 
 // VIENNAGRID ELEMENT TYPES
-#define VIENNAGRID_ELEMENT_TAG_FACET -3
-#define VIENNAGRID_ELEMENT_TAG_CELL -2
+// #define VIENNAGRID_ELEMENT_TAG_FACET -3
+// #define VIENNAGRID_ELEMENT_TAG_CELL -2
 #define VIENNAGRID_ELEMENT_TAG_NO_ELEMENT -1
 #define VIENNAGRID_ELEMENT_TAG_START 0
 #define VIENNAGRID_ELEMENT_TAG_VERTEX 0
@@ -68,6 +68,8 @@ typedef struct viennagrid_region_ * viennagrid_region;
 #define VIENNAGRID_ELEMENT_TAG_TETRAHEDRON 6
 #define VIENNAGRID_ELEMENT_TAG_HEXAHEDRON 7
 #define VIENNAGRID_ELEMENT_TAG_COUNT 8
+
+#define VIENNAGRID_TOPOLOGIC_DIMENSION_END 4
 
 // #define VIENNAGRID_ELEMENT_TAG_NOT_AN_ELEMENT 0
 // #define VIENNAGRID_ELEMENT_TAG_VERTEX 1
@@ -415,10 +417,10 @@ inline const char * viennagrid_element_tag_string(viennagrid_element_tag element
 {
   switch (element_tag)
   {
-    case VIENNAGRID_ELEMENT_TAG_FACET:
-      return "facet";
-    case VIENNAGRID_ELEMENT_TAG_CELL:
-      return "cell";
+//     case VIENNAGRID_ELEMENT_TAG_FACET:
+//       return "facet";
+//     case VIENNAGRID_ELEMENT_TAG_CELL:
+//       return "cell";
 
     case VIENNAGRID_ELEMENT_TAG_VERTEX:
       return "vertex";

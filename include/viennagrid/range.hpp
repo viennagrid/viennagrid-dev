@@ -22,17 +22,17 @@ namespace viennagrid
     typedef typename result_of::const_nonconst<value_type *, is_const>::type pointer;
     typedef value_type reference;
 
-    unpack_element_functor(element_tag_type element_tag_in, mesh_hierarchy_type mesh_hierarchy_in) : element_tag_(element_tag_in), mesh_hierarchy_(mesh_hierarchy_in) {}
+    unpack_element_functor(mesh_hierarchy_type mesh_hierarchy_in, viennagrid_int topologic_dimension_in) : mesh_hierarchy_(mesh_hierarchy_in), topologic_dimension_(topologic_dimension_in) {}
 
     template<bool other_is_const>
-    unpack_element_functor(unpack_element_functor<other_is_const> const & other) : element_tag_(other.element_tag_), mesh_hierarchy_(other.mesh_hierarchy_) {}
+    unpack_element_functor(unpack_element_functor<other_is_const> const & other) : mesh_hierarchy_(other.mesh_hierarchy_), topologic_dimension_(other.topologic_dimension_) {}
 
 
-    value_type operator()(viennagrid_index & it) const { return value_type(element_tag_, mesh_hierarchy_, it); }
-    const_value_type operator()(viennagrid_index const & it) const { return const_value_type(element_tag_, mesh_hierarchy_, it); }
+    value_type operator()(viennagrid_index & id) const { return value_type(mesh_hierarchy_, topologic_dimension_, id); }
+    const_value_type operator()(viennagrid_index const & id) const { return const_value_type(mesh_hierarchy_, topologic_dimension_, id); }
 
-    element_tag_type element_tag_;
     mesh_hierarchy_type mesh_hierarchy_;
+    viennagrid_int topologic_dimension_;
   };
 
 
@@ -64,58 +64,58 @@ namespace viennagrid
 
 
     template<bool mesh_is_const>
-    void from_mesh(base_mesh<mesh_is_const> mesh, element_tag_type element_tag_in)
+    void from_mesh(base_mesh<mesh_is_const> mesh, viennagrid_int topologic_dimension_in)
     {
-      element_tag_ = mesh.unpack_element_tag(element_tag_in);
+      topologic_dimension_ = topologic_dimension_in;
       mesh_hierarchy_ = mesh.mesh_hierarchy();
 
       viennagrid_elements_get(mesh.internal(),
-                              tag().internal(),
+                              topologic_dimension(),
                               const_cast<viennagrid_index **>(&element_index_begin),
                               const_cast<viennagrid_index **>(&element_index_end));
     }
 
     template<bool element_is_const>
-    void boundary_from_element(base_element<element_is_const> element, element_tag_type element_tag_in)
+    void boundary_from_element(base_element<element_is_const> element, viennagrid_int topologic_dimension_in)
     {
-      element_tag_ = element.unpack_element_tag(element_tag_in);
+      topologic_dimension_ = topologic_dimension_in;
       mesh_hierarchy_ = element.mesh_hierarchy();
 
       viennagrid_element_boundary_elements(mesh_hierarchy().internal(),
-                                          element.tag().internal(),
+                                          element.topologic_dimension(),
                                           element.id(),
-                                          tag().internal(),
+                                          topologic_dimension(),
                                           const_cast<viennagrid_index **>(&element_index_begin),
                                           const_cast<viennagrid_index **>(&element_index_end));
     }
 
     template<bool mesh_is_const, bool element_is_const>
-    void coboundary_from_element(base_mesh<mesh_is_const> mesh, base_element<element_is_const> element, element_tag_type coboundary_tag_in)
+    void coboundary_from_element(base_mesh<mesh_is_const> mesh, base_element<element_is_const> element, viennagrid_int coboundary_topo_dim_in)
     {
-      element_tag_ = mesh.unpack_element_tag(coboundary_tag_in);
+      topologic_dimension_ = coboundary_topo_dim_in;
       mesh_hierarchy_ = element.mesh_hierarchy();
 
       viennagrid_element_coboundary_elements(mesh.internal(),
-                                            element.tag().internal(),
-                                            element.id(),
-                                            tag().internal(),
-                                            const_cast<viennagrid_index **>(&element_index_begin),
-                                            const_cast<viennagrid_index **>(&element_index_end));
+                                             element.topologic_dimension(),
+                                             element.id(),
+                                             topologic_dimension(),
+                                             const_cast<viennagrid_index **>(&element_index_begin),
+                                             const_cast<viennagrid_index **>(&element_index_end));
     }
 
     template<bool mesh_is_const, bool element_is_const>
-    void neighbor_from_element(base_mesh<mesh_is_const> mesh, base_element<element_is_const> element, element_tag_type connector_tag_in, element_tag_type neighbor_tag_in)
+    void neighbor_from_element(base_mesh<mesh_is_const> mesh, base_element<element_is_const> element, viennagrid_int connector_topo_dim_in, viennagrid_int neighbor_topo_dim_in)
     {
-      element_tag_ = mesh.unpack_element_tag(neighbor_tag_in);
+      topologic_dimension_ = neighbor_topo_dim_in;
       mesh_hierarchy_ = element.mesh_hierarchy();
 
       viennagrid_element_neighbor_elements(mesh.internal(),
-                                          element.tag().internal(),
-                                          element.id(),
-                                          connector_tag_in.internal(),
-                                          tag().internal(),
-                                          const_cast<viennagrid_index **>(&element_index_begin),
-                                          const_cast<viennagrid_index **>(&element_index_end));
+                                           element.topologic_dimension(),
+                                           element.id(),
+                                           connector_topo_dim_in,
+                                           topologic_dimension(),
+                                           const_cast<viennagrid_index **>(&element_index_begin),
+                                           const_cast<viennagrid_index **>(&element_index_end));
     }
 
 
@@ -134,15 +134,15 @@ namespace viennagrid
     iterator begin()
     {
       return iterator(transform_iterator(element_index_begin,
-                                         unpack_functor(element_tag_, mesh_hierarchy_)),
+                                         unpack_functor(mesh_hierarchy_, topologic_dimension_)),
                       transform_iterator(element_index_end,
-                                         unpack_functor(element_tag_, mesh_hierarchy_)),
+                                         unpack_functor(mesh_hierarchy_, topologic_dimension_)),
                       view_functor);
     }
     iterator end()
     {
       return iterator(transform_iterator(element_index_end,
-                                         unpack_functor(element_tag_, mesh_hierarchy_)),
+                                         unpack_functor(mesh_hierarchy_, topologic_dimension_)),
                       view_functor);
 
     }
@@ -151,15 +151,15 @@ namespace viennagrid
     const_iterator cbegin() const
     {
       return const_iterator(const_transform_iterator(element_index_begin,
-                                                     const_unpack_functor(element_tag_, mesh_hierarchy_)),
+                                                     const_unpack_functor(mesh_hierarchy_, topologic_dimension_)),
                             const_transform_iterator(element_index_end,
-                                                     const_unpack_functor(element_tag_, mesh_hierarchy_)),
+                                                     const_unpack_functor(mesh_hierarchy_, topologic_dimension_)),
                             view_functor);
     }
     const_iterator cend() const
     {
       return const_iterator(const_transform_iterator(element_index_end,
-                                                     const_unpack_functor(element_tag_, mesh_hierarchy_)),
+                                                     const_unpack_functor(mesh_hierarchy_, topologic_dimension_)),
                             view_functor);
 
     }
@@ -180,10 +180,10 @@ namespace viennagrid
     mesh_hierarchy_type mesh_hierarchy() { return mesh_hierarchy_; }
     const_mesh_hierarchy_type mesh_hierarchy() const { return mesh_hierarchy_; }
 
-    element_tag_type tag() const { return element_tag_; }
+    viennagrid_int topologic_dimension() const { return topologic_dimension_; }
 
   protected:
-    element_tag_type element_tag_;
+    viennagrid_int topologic_dimension_;
     mesh_hierarchy_type mesh_hierarchy_;
     index_pointer_type element_index_begin;
     index_pointer_type element_index_end;
@@ -199,31 +199,29 @@ namespace viennagrid
   class mesh_element_range : public base_element_range<true_functor, is_const>
   {
   public:
-    typedef element_tag_t element_tag_type;
-
     typedef typename base_element_range<true_functor, is_const>::mesh_hierarchy_type mesh_hierarchy_type;
     typedef typename base_element_range<true_functor, is_const>::mesh_type mesh_type;
     typedef typename base_element_range<true_functor, is_const>::element_type element_type;
 
-    mesh_element_range(mesh_type mesh, element_tag_type element_tag_)
-    { this->from_mesh(mesh, element_tag_); }
+    mesh_element_range(mesh_type mesh, viennagrid_int element_topo_dim_)
+    { this->from_mesh(mesh, element_topo_dim_); }
 
   private:
   };
 
-  template<typename ElementTagT, bool is_const>
-  class static_mesh_element_range : public mesh_element_range<is_const>
-  {
-  public:
-
-    typedef typename mesh_element_range<is_const>::mesh_hierarchy_type mesh_hierarchy_type;
-    typedef typename mesh_element_range<is_const>::mesh_type mesh_type;
-    typedef typename mesh_element_range<is_const>::element_type element_type;
-
-    static_mesh_element_range(mesh_type mesh) : mesh_element_range<is_const>(mesh, ElementTagT()) {}
-
-  private:
-  };
+//   template<typename ElementTagT, bool is_const>
+//   class static_mesh_element_range : public mesh_element_range<is_const>
+//   {
+//   public:
+//
+//     typedef typename mesh_element_range<is_const>::mesh_hierarchy_type mesh_hierarchy_type;
+//     typedef typename mesh_element_range<is_const>::mesh_type mesh_type;
+//     typedef typename mesh_element_range<is_const>::element_type element_type;
+//
+//     static_mesh_element_range(mesh_type mesh) : mesh_element_range<is_const>(mesh, ElementTagT()) {}
+//
+//   private:
+//   };
 
 
 
@@ -231,32 +229,30 @@ namespace viennagrid
   class boundary_element_range : public base_element_range<true_functor, is_const>
   {
   public:
-    typedef element_tag_t element_tag_type;
-
     typedef typename base_element_range<true_functor, is_const>::mesh_hierarchy_type mesh_hierarchy_type;
     typedef typename base_element_range<true_functor, is_const>::mesh_type mesh_type;
     typedef typename base_element_range<true_functor, is_const>::element_type element_type;
 
-    boundary_element_range(element_type element, element_tag_type element_tag_)
-    { this->boundary_from_element(element, element_tag_); }
+    boundary_element_range(element_type element, viennagrid_int boundary_topo_dim)
+    { this->boundary_from_element(element, boundary_topo_dim); }
 
   private:
   };
 
 
-  template<typename BoundaryTagT, bool is_const>
-  class static_boundary_element_range : public boundary_element_range<is_const>
-  {
-  public:
-
-    typedef typename boundary_element_range<is_const>::mesh_hierarchy_type mesh_hierarchy_type;
-    typedef typename boundary_element_range<is_const>::mesh_type mesh_type;
-    typedef typename boundary_element_range<is_const>::element_type element_type;
-
-    static_boundary_element_range(element_type element) : boundary_element_range<is_const>(element, BoundaryTagT()) {}
-
-  private:
-  };
+//   template<typename BoundaryTagT, bool is_const>
+//   class static_boundary_element_range : public boundary_element_range<is_const>
+//   {
+//   public:
+//
+//     typedef typename boundary_element_range<is_const>::mesh_hierarchy_type mesh_hierarchy_type;
+//     typedef typename boundary_element_range<is_const>::mesh_type mesh_type;
+//     typedef typename boundary_element_range<is_const>::element_type element_type;
+//
+//     static_boundary_element_range(element_type element) : boundary_element_range<is_const>(element, BoundaryTagT()) {}
+//
+//   private:
+//   };
 
 
 
@@ -264,32 +260,30 @@ namespace viennagrid
   class coboundary_element_range : public base_element_range<true_functor, is_const>
   {
   public:
-    typedef element_tag_t element_tag_type;
-
     typedef typename base_element_range<true_functor, is_const>::mesh_hierarchy_type mesh_hierarchy_type;
     typedef typename base_element_range<true_functor, is_const>::mesh_type mesh_type;
     typedef typename base_element_range<true_functor, is_const>::element_type element_type;
 
-    coboundary_element_range(mesh_type mesh, element_type element, element_tag_type coboundary_tag_)
-    { this->coboundary_from_element(mesh, element, coboundary_tag_); }
+    coboundary_element_range(mesh_type mesh, element_type element, viennagrid_int coboundary_topo_dim_)
+    { this->coboundary_from_element(mesh, element, coboundary_topo_dim_); }
 
   private:
   };
 
 
-  template<typename CoboundaryTagT, bool is_const>
-  class static_coboundary_element_range : public coboundary_element_range<is_const>
-  {
-  public:
-
-    typedef typename coboundary_element_range<is_const>::mesh_hierarchy_type mesh_hierarchy_type;
-    typedef typename coboundary_element_range<is_const>::mesh_type mesh_type;
-    typedef typename coboundary_element_range<is_const>::element_type element_type;
-
-    static_coboundary_element_range(mesh_type mesh, element_type element) : coboundary_element_range<is_const>(mesh, element, CoboundaryTagT()) {}
-
-  private:
-  };
+//   template<typename CoboundaryTagT, bool is_const>
+//   class static_coboundary_element_range : public coboundary_element_range<is_const>
+//   {
+//   public:
+//
+//     typedef typename coboundary_element_range<is_const>::mesh_hierarchy_type mesh_hierarchy_type;
+//     typedef typename coboundary_element_range<is_const>::mesh_type mesh_type;
+//     typedef typename coboundary_element_range<is_const>::element_type element_type;
+//
+//     static_coboundary_element_range(mesh_type mesh, element_type element) : coboundary_element_range<is_const>(mesh, element, CoboundaryTagT()) {}
+//
+//   private:
+//   };
 
 
 
@@ -297,32 +291,30 @@ namespace viennagrid
   class neighbor_element_range : public base_element_range<true_functor, is_const>
   {
   public:
-    typedef element_tag_t element_tag_type;
-
     typedef typename base_element_range<true_functor, is_const>::mesh_hierarchy_type mesh_hierarchy_type;
     typedef typename base_element_range<true_functor, is_const>::mesh_type mesh_type;
     typedef typename base_element_range<true_functor, is_const>::element_type element_type;
 
-    neighbor_element_range(mesh_type mesh, element_type element, element_tag_type connector_tag_, element_tag_type neighbor_tag_)
-    { this->neighbor_from_element(mesh, element, connector_tag_, neighbor_tag_); }
+    neighbor_element_range(mesh_type mesh, element_type element, viennagrid_int connector_topo_dim_, viennagrid_int neighbor_topo_dim_)
+    { this->neighbor_from_element(mesh, element, connector_topo_dim_, neighbor_topo_dim_); }
 
   private:
   };
 
 
-  template<typename ConnectorTagT, typename NeighborTagT, bool is_const>
-  class static_neighbor_element_range : public neighbor_element_range<is_const>
-  {
-  public:
-
-    typedef typename neighbor_element_range<is_const>::mesh_hierarchy_type mesh_hierarchy_type;
-    typedef typename neighbor_element_range<is_const>::mesh_type mesh_type;
-    typedef typename neighbor_element_range<is_const>::element_type element_type;
-
-    static_neighbor_element_range(mesh_type mesh, element_type element) : neighbor_element_range<is_const>(mesh, element, ConnectorTagT(), NeighborTagT()) {}
-
-  private:
-  };
+//   template<typename ConnectorTagT, typename NeighborTagT, bool is_const>
+//   class static_neighbor_element_range : public neighbor_element_range<is_const>
+//   {
+//   public:
+//
+//     typedef typename neighbor_element_range<is_const>::mesh_hierarchy_type mesh_hierarchy_type;
+//     typedef typename neighbor_element_range<is_const>::mesh_type mesh_type;
+//     typedef typename neighbor_element_range<is_const>::element_type element_type;
+//
+//     static_neighbor_element_range(mesh_type mesh, element_type element) : neighbor_element_range<is_const>(mesh, element, ConnectorTagT(), NeighborTagT()) {}
+//
+//   private:
+//   };
 
 
 
@@ -357,27 +349,27 @@ namespace viennagrid
 
     typedef typename result_of::const_nonconst<mesh_region_t, is_const>::type mesh_region_type;
 
-    mesh_region_element_range(mesh_region_type region, element_tag_type element_tag_) : base_element_range<region_view_functor, is_const>( region_view_functor(region) )
-    { this->from_mesh(region.mesh(), element_tag_); }
+    mesh_region_element_range(mesh_region_type region, viennagrid_int element_topo_dim_) : base_element_range<region_view_functor, is_const>( region_view_functor(region) )
+    { this->from_mesh(region.mesh(), element_topo_dim_); }
 
   private:
   };
 
-  template<typename ElementTagT, bool is_const>
-  class static_mesh_region_element_range : public mesh_region_element_range<is_const>
-  {
-  public:
-
-    typedef typename mesh_region_element_range<is_const>::mesh_hierarchy_type mesh_hierarchy_type;
-    typedef typename mesh_region_element_range<is_const>::mesh_type mesh_type;
-    typedef typename mesh_region_element_range<is_const>::element_type element_type;
-
-    typedef typename result_of::const_nonconst<mesh_region_t, is_const>::type mesh_region_type;
-
-    static_mesh_region_element_range(mesh_region_type region) : mesh_region_element_range<is_const>(region, ElementTagT()) {}
-
-  private:
-  };
+//   template<typename ElementTagT, bool is_const>
+//   class static_mesh_region_element_range : public mesh_region_element_range<is_const>
+//   {
+//   public:
+//
+//     typedef typename mesh_region_element_range<is_const>::mesh_hierarchy_type mesh_hierarchy_type;
+//     typedef typename mesh_region_element_range<is_const>::mesh_type mesh_type;
+//     typedef typename mesh_region_element_range<is_const>::element_type element_type;
+//
+//     typedef typename result_of::const_nonconst<mesh_region_t, is_const>::type mesh_region_type;
+//
+//     static_mesh_region_element_range(mesh_region_type region) : mesh_region_element_range<is_const>(region, ElementTagT()) {}
+//
+//   private:
+//   };
 
 
   template<bool is_const>
@@ -392,28 +384,28 @@ namespace viennagrid
 
     typedef typename result_of::const_nonconst<mesh_region_t, is_const>::type mesh_region_type;
 
-    coboundary_region_element_range(mesh_region_type region, element_type element, element_tag_type coboundary_tag_) : base_element_range<region_view_functor, is_const>( region_view_functor(region) )
-    { this->coboundary_from_element(region.mesh(), element, coboundary_tag_); }
+    coboundary_region_element_range(mesh_region_type region, element_type element, viennagrid_int coboundary_topo_dim_) : base_element_range<region_view_functor, is_const>( region_view_functor(region) )
+    { this->coboundary_from_element(region.mesh(), element, coboundary_topo_dim_); }
 
   private:
   };
 
 
-  template<typename CoboundaryTagT, bool is_const>
-  class static_coboundary_region_element_range : public coboundary_region_element_range<is_const>
-  {
-  public:
-
-    typedef typename coboundary_region_element_range<is_const>::mesh_hierarchy_type mesh_hierarchy_type;
-    typedef typename coboundary_region_element_range<is_const>::mesh_type mesh_type;
-    typedef typename coboundary_region_element_range<is_const>::element_type element_type;
-
-    typedef typename result_of::const_nonconst<mesh_region_t, is_const>::type mesh_region_type;
-
-    static_coboundary_region_element_range(mesh_region_type region, element_type element) : coboundary_region_element_range<is_const>(region, element, CoboundaryTagT()) {}
-
-  private:
-  };
+//   template<typename CoboundaryTagT, bool is_const>
+//   class static_coboundary_region_element_range : public coboundary_region_element_range<is_const>
+//   {
+//   public:
+//
+//     typedef typename coboundary_region_element_range<is_const>::mesh_hierarchy_type mesh_hierarchy_type;
+//     typedef typename coboundary_region_element_range<is_const>::mesh_type mesh_type;
+//     typedef typename coboundary_region_element_range<is_const>::element_type element_type;
+//
+//     typedef typename result_of::const_nonconst<mesh_region_t, is_const>::type mesh_region_type;
+//
+//     static_coboundary_region_element_range(mesh_region_type region, element_type element) : coboundary_region_element_range<is_const>(region, element, CoboundaryTagT()) {}
+//
+//   private:
+//   };
 
 
   template<bool is_const>
@@ -428,28 +420,28 @@ namespace viennagrid
 
     typedef typename result_of::const_nonconst<mesh_region_t, is_const>::type mesh_region_type;
 
-    neighbor_region_element_range(mesh_region_type region, element_type element, element_tag_type connector_tag_, element_tag_type neighbor_tag_) : base_element_range<region_view_functor, is_const>( region_view_functor(region) )
-    { this->neighbor_from_element(region.mesh(), element, connector_tag_, neighbor_tag_); }
+    neighbor_region_element_range(mesh_region_type region, element_type element, element_tag_type connector_topo_dim_, element_tag_type neighbor_topo_dim_) : base_element_range<region_view_functor, is_const>( region_view_functor(region) )
+    { this->neighbor_from_element(region.mesh(), element, connector_topo_dim_, neighbor_topo_dim_); }
 
   private:
   };
 
 
-  template<typename ConnectorTagT, typename NeighborTagT, bool is_const>
-  class static_neighbor_region_element_range : public neighbor_region_element_range<is_const>
-  {
-  public:
-
-    typedef typename neighbor_region_element_range<is_const>::mesh_hierarchy_type mesh_hierarchy_type;
-    typedef typename neighbor_region_element_range<is_const>::mesh_type mesh_type;
-    typedef typename neighbor_region_element_range<is_const>::element_type element_type;
-
-    typedef typename result_of::const_nonconst<mesh_region_t, is_const>::type mesh_region_type;
-
-    static_neighbor_region_element_range(mesh_region_type region, element_type element) : neighbor_region_element_range<is_const>(region, element, ConnectorTagT(), NeighborTagT()) {}
-
-  private:
-  };
+//   template<typename ConnectorTagT, typename NeighborTagT, bool is_const>
+//   class static_neighbor_region_element_range : public neighbor_region_element_range<is_const>
+//   {
+//   public:
+//
+//     typedef typename neighbor_region_element_range<is_const>::mesh_hierarchy_type mesh_hierarchy_type;
+//     typedef typename neighbor_region_element_range<is_const>::mesh_type mesh_type;
+//     typedef typename neighbor_region_element_range<is_const>::element_type element_type;
+//
+//     typedef typename result_of::const_nonconst<mesh_region_t, is_const>::type mesh_region_type;
+//
+//     static_neighbor_region_element_range(mesh_region_type region, element_type element) : neighbor_region_element_range<is_const>(region, element, ConnectorTagT(), NeighborTagT()) {}
+//
+//   private:
+//   };
 
 
 
@@ -467,11 +459,11 @@ namespace viennagrid
       typedef mesh_element_range<false> type;
     };
 
-    template<typename ElementTagT>
-    struct element_range<mesh_t, ElementTagT>
-    {
-      typedef static_mesh_element_range<ElementTagT, false> type;
-    };
+//     template<typename ElementTagT>
+//     struct element_range<mesh_t, ElementTagT>
+//     {
+//       typedef static_mesh_element_range<ElementTagT, false> type;
+//     };
 
 
     template<>
@@ -480,11 +472,11 @@ namespace viennagrid
       typedef mesh_element_range<true> type;
     };
 
-    template<typename ElementTagT>
-    struct const_element_range<mesh_t, ElementTagT>
-    {
-      typedef static_mesh_element_range<ElementTagT, true> type;
-    };
+//     template<typename ElementTagT>
+//     struct const_element_range<mesh_t, ElementTagT>
+//     {
+//       typedef static_mesh_element_range<ElementTagT, true> type;
+//     };
 
 
 
@@ -498,11 +490,11 @@ namespace viennagrid
       typedef boundary_element_range<true> type;
     };
 
-    template<typename ElementTagT, bool is_const>
-    struct const_element_range<base_element<is_const>, ElementTagT>
-    {
-      typedef static_boundary_element_range<ElementTagT, true> type;
-    };
+//     template<typename ElementTagT, bool is_const>
+//     struct const_element_range<base_element<is_const>, ElementTagT>
+//     {
+//       typedef static_boundary_element_range<ElementTagT, true> type;
+//     };
 
 
     template<>
@@ -511,11 +503,11 @@ namespace viennagrid
       typedef boundary_element_range<false> type;
     };
 
-    template<typename ElementTagT>
-    struct element_range<element_t, ElementTagT>
-    {
-      typedef static_boundary_element_range<ElementTagT, false> type;
-    };
+//     template<typename ElementTagT>
+//     struct element_range<element_t, ElementTagT>
+//     {
+//       typedef static_boundary_element_range<ElementTagT, false> type;
+//     };
 
     template<>
     struct element_range<const_element_t, null_type>
@@ -543,11 +535,11 @@ namespace viennagrid
       typedef mesh_region_element_range<true> type;
     };
 
-    template<typename ElementTagT, bool is_const>
-    struct const_element_range<base_mesh_region<is_const>, ElementTagT>
-    {
-      typedef static_mesh_region_element_range<ElementTagT, true> type;
-    };
+//     template<typename ElementTagT, bool is_const>
+//     struct const_element_range<base_mesh_region<is_const>, ElementTagT>
+//     {
+//       typedef static_mesh_region_element_range<ElementTagT, true> type;
+//     };
 
 
     template<>
@@ -556,11 +548,11 @@ namespace viennagrid
       typedef mesh_region_element_range<false> type;
     };
 
-    template<typename ElementTagT>
-    struct element_range<mesh_region_t, ElementTagT>
-    {
-      typedef static_mesh_region_element_range<ElementTagT, false> type;
-    };
+//     template<typename ElementTagT>
+//     struct element_range<mesh_region_t, ElementTagT>
+//     {
+//       typedef static_mesh_region_element_range<ElementTagT, false> type;
+//     };
 
     template<>
     struct element_range<const_mesh_region_t, null_type>
@@ -584,97 +576,97 @@ namespace viennagrid
       typedef coboundary_element_range<false> type;
     };
 
-    template<typename CoboundaryTagT>
-    struct coboundary_range<mesh_t, CoboundaryTagT>
-    {
-      typedef static_coboundary_element_range<CoboundaryTagT, false> type;
-    };
+//     template<typename CoboundaryTagT>
+//     struct coboundary_range<mesh_t, CoboundaryTagT>
+//     {
+//       typedef static_coboundary_element_range<CoboundaryTagT, false> type;
+//     };
 
-    template<typename CoboundaryTagT>
-    struct const_coboundary_range<mesh_t, CoboundaryTagT>
-    {
-      typedef static_coboundary_element_range<CoboundaryTagT, true> type;
-    };
-
-
-    template<typename CoboundaryTagT>
-    struct coboundary_range<mesh_region_t, CoboundaryTagT>
-    {
-      typedef static_coboundary_region_element_range<CoboundaryTagT, false> type;
-    };
-
-    template<typename CoboundaryTagT>
-    struct const_coboundary_range<mesh_region_t, CoboundaryTagT>
-    {
-      typedef static_coboundary_region_element_range<CoboundaryTagT, true> type;
-    };
+//     template<typename CoboundaryTagT>
+//     struct const_coboundary_range<mesh_t, CoboundaryTagT>
+//     {
+//       typedef static_coboundary_element_range<CoboundaryTagT, true> type;
+//     };
 
 
+//     template<typename CoboundaryTagT>
+//     struct coboundary_range<mesh_region_t, CoboundaryTagT>
+//     {
+//       typedef static_coboundary_region_element_range<CoboundaryTagT, false> type;
+//     };
+
+//     template<typename CoboundaryTagT>
+//     struct const_coboundary_range<mesh_region_t, CoboundaryTagT>
+//     {
+//       typedef static_coboundary_region_element_range<CoboundaryTagT, true> type;
+//     };
 
 
 
 
-    template<typename ConnectorTagT, typename NeighborTagT>
-    struct neighbor_range<mesh_t, ConnectorTagT, NeighborTagT>
-    {
-      typedef static_neighbor_element_range<ConnectorTagT, NeighborTagT, false> type;
-    };
-
-    template<typename ConnectorTagT, typename NeighborTagT>
-    struct const_neighbor_range<mesh_t, ConnectorTagT, NeighborTagT>
-    {
-      typedef static_neighbor_element_range<ConnectorTagT, NeighborTagT, true> type;
-    };
 
 
-    template<typename ConnectorTagT, typename NeighborTagT>
-    struct neighbor_range<mesh_region_t, ConnectorTagT, NeighborTagT>
-    {
-      typedef static_neighbor_region_element_range<ConnectorTagT, NeighborTagT, false> type;
-    };
+//     template<typename ConnectorTagT, typename NeighborTagT>
+//     struct neighbor_range<mesh_t, ConnectorTagT, NeighborTagT>
+//     {
+//       typedef static_neighbor_element_range<ConnectorTagT, NeighborTagT, false> type;
+//     };
 
-    template<typename ConnectorTagT, typename NeighborTagT>
-    struct const_neighbor_range<mesh_region_t, ConnectorTagT, NeighborTagT>
-    {
-      typedef static_neighbor_region_element_range<ConnectorTagT, NeighborTagT, true> type;
-    };
+//     template<typename ConnectorTagT, typename NeighborTagT>
+//     struct const_neighbor_range<mesh_t, ConnectorTagT, NeighborTagT>
+//     {
+//       typedef static_neighbor_element_range<ConnectorTagT, NeighborTagT, true> type;
+//     };
+
+
+//     template<typename ConnectorTagT, typename NeighborTagT>
+//     struct neighbor_range<mesh_region_t, ConnectorTagT, NeighborTagT>
+//     {
+//       typedef static_neighbor_region_element_range<ConnectorTagT, NeighborTagT, false> type;
+//     };
+
+//     template<typename ConnectorTagT, typename NeighborTagT>
+//     struct const_neighbor_range<mesh_region_t, ConnectorTagT, NeighborTagT>
+//     {
+//       typedef static_neighbor_region_element_range<ConnectorTagT, NeighborTagT, true> type;
+//     };
 
   }
 
 
 
   template<typename SomethingT>
-  typename viennagrid::result_of::element_range<SomethingT>::type elements(SomethingT something, typename viennagrid::result_of::element_tag<SomethingT>::type element_tag)
-  { return typename viennagrid::result_of::element_range<SomethingT>::type(something, element_tag); }
+  typename viennagrid::result_of::element_range<SomethingT>::type elements(SomethingT something, viennagrid_int topologic_dimension)
+  { return typename viennagrid::result_of::element_range<SomethingT>::type(something, topologic_dimension); }
 
-  template<typename ElementTagT, typename SomethingT>
-  typename viennagrid::result_of::element_range<SomethingT, ElementTagT>::type elements(SomethingT something)
-  { return typename viennagrid::result_of::element_range<SomethingT, ElementTagT>::type(something); }
-
-
+//   template<typename ElementTagT, typename SomethingT>
+//   typename viennagrid::result_of::element_range<SomethingT, ElementTagT>::type elements(SomethingT something)
+//   { return typename viennagrid::result_of::element_range<SomethingT, ElementTagT>::type(something); }
 
 
 
 
-  /** @brief Function for retrieving a cell range object from a host object
-    *
-    * @tparam SomethingT         The host type, can be an element, a collection, a mesh, a segment or a segmentation
-    * @param  something          The host object of type SomethingT
-    * @return                    A cell range
-    */
-  template<typename SomethingT>
-  typename result_of::cell_range<SomethingT>::type cells(SomethingT something)
-  { return typename result_of::cell_range<SomethingT>::type(something); }
 
-  /** @brief Function for retrieving a facet range object from a host object
-    *
-    * @tparam ElementT           The host element (cell)
-    * @param  element            The host object of type ElementT
-    * @return                    A facet range
-    */
-  template<typename ElementT>
-  typename result_of::facet_range<ElementT>::type facets(ElementT element)
-  { return typename result_of::facet_range<ElementT>::type(element); }
+
+//   /** @brief Function for retrieving a cell range object from a host object
+//     *
+//     * @tparam SomethingT         The host type, can be an element, a collection, a mesh, a segment or a segmentation
+//     * @param  something          The host object of type SomethingT
+//     * @return                    A cell range
+//     */
+//   template<typename SomethingT>
+//   typename result_of::cell_range<SomethingT>::type cells(SomethingT something)
+//   { return typename result_of::cell_range<SomethingT>::type(something); }
+
+//   /** @brief Function for retrieving a facet range object from a host object
+//     *
+//     * @tparam ElementT           The host element (cell)
+//     * @param  element            The host object of type ElementT
+//     * @return                    A facet range
+//     */
+//   template<typename ElementT>
+//   typename result_of::facet_range<ElementT>::type facets(ElementT element)
+//   { return typename result_of::facet_range<ElementT>::type(element); }
 
   /** @brief Function for retrieving a vertex range object from a host object
     *
@@ -683,88 +675,88 @@ namespace viennagrid
     * @return                    A vertex range
     */
   template<typename SomethingT>
-  typename result_of::element_range<SomethingT, vertex_tag>::type vertices(SomethingT something)
-  { return typename result_of::element_range<SomethingT, vertex_tag>::type(something); }
+  typename result_of::element_range<SomethingT>::type vertices(SomethingT something)
+  { return typename result_of::element_range<SomethingT>::type(something,0); }
 
-  /** @brief Function for retrieving a line range object from a host object (same as edges)
-    *
-    * @tparam SomethingT         The host type, can be an element, a collection, a mesh, a segment or a segmentation
-    * @param  something          The host object of type SomethingT
-    * @return                    A line range
-    */
-  template<typename SomethingT>
-  typename result_of::element_range<SomethingT, line_tag>::type lines(SomethingT something)
-  { return typename result_of::element_range<SomethingT, line_tag>::type(something); }
-
-  /** @brief Function for retrieving a edge range object from a host object (same as lines)
-    *
-    * @tparam SomethingT         The host type, can be an element, a collection, a mesh, a segment or a segmentation
-    * @param  something          The host object of type SomethingT
-    * @return                    An edge range
-    */
-  template<typename SomethingT>
-  typename result_of::element_range<SomethingT, edge_tag>::type edges(SomethingT something)
-  { return typename result_of::element_range<SomethingT, edge_tag>::type(something); }
-
-  /** @brief Function for retrieving a triangle range object from a host object
-    *
-    * @tparam SomethingT         The host type, can be an element, a collection, a mesh, a segment or a segmentation
-    * @param  something          The host object of type SomethingT
-    * @return                    A triangle range
-    */
-  template<typename SomethingT>
-  typename result_of::element_range<SomethingT, triangle_tag>::type triangles(SomethingT something)
-  { return typename result_of::element_range<SomethingT, triangle_tag>::type(something); }
-
-  /** @brief Function for retrieving a quadrilaterals range object from a host object
-    *
-    * @tparam SomethingT         The host type, can be an element, a collection, a mesh, a segment or a segmentation
-    * @param  something          The host object of type SomethingT
-    * @return                    A quadrilateral range
-    */
-  template<typename SomethingT>
-  typename result_of::element_range<SomethingT, quadrilateral_tag>::type quadrilaterals(SomethingT something)
-  { return typename result_of::element_range<SomethingT, quadrilateral_tag>::type(something); }
-
-  /** @brief Function for retrieving a polygon range object from a host object
-    *
-    * @tparam SomethingT         The host type, can be an element, a collection, a mesh, a segment or a segmentation
-    * @param  something          The host object of type SomethingT
-    * @return                    A polygon range
-    */
-  template<typename SomethingT>
-  typename result_of::element_range<SomethingT, polygon_tag>::type polygons(SomethingT something)
-  { return typename result_of::element_range<SomethingT, polygon_tag>::type(something); }
-
-  /** @brief Function for retrieving a PLC range object from a host object
-    *
-    * @tparam SomethingT         The host type, can be an element, a collection, a mesh, a segment or a segmentation
-    * @param  something          The host object of type SomethingT
-    * @return                    A PLC range
-    */
-  template<typename SomethingT>
-  typename result_of::element_range<SomethingT, plc_tag>::type plcs(SomethingT something)
-  { return typename result_of::element_range<SomethingT, plc_tag>::type(something); }
-
-  /** @brief Function for retrieving a tetrahedron range object from a host object
-    *
-    * @tparam SomethingT         The host type, can be an element, a collection, a mesh, a segment or a segmentation
-    * @param  something          The host object of type SomethingT
-    * @return                    A tetrahedron range
-    */
-  template<typename SomethingT>
-  typename result_of::element_range<SomethingT, tetrahedron_tag>::type tetrahedra(SomethingT something)
-  { return typename result_of::element_range<SomethingT, tetrahedron_tag>::type(something); }
-
-  /** @brief Function for retrieving a hexahedron range object from a host object
-    *
-    * @tparam SomethingT         The host type, can be an element, a collection, a mesh, a segment or a segmentation
-    * @param  something          The host object of type SomethingT
-    * @return                    A hexahedron range
-    */
-  template<typename SomethingT>
-  typename result_of::element_range<SomethingT, hexahedron_tag>::type hexahedra(SomethingT something)
-  { return typename result_of::element_range<SomethingT, hexahedron_tag>::type(something); }
+//   /** @brief Function for retrieving a line range object from a host object (same as edges)
+//     *
+//     * @tparam SomethingT         The host type, can be an element, a collection, a mesh, a segment or a segmentation
+//     * @param  something          The host object of type SomethingT
+//     * @return                    A line range
+//     */
+//   template<typename SomethingT>
+//   typename result_of::element_range<SomethingT, line_tag>::type lines(SomethingT something)
+//   { return typename result_of::element_range<SomethingT, line_tag>::type(something); }
+//
+//   /** @brief Function for retrieving a edge range object from a host object (same as lines)
+//     *
+//     * @tparam SomethingT         The host type, can be an element, a collection, a mesh, a segment or a segmentation
+//     * @param  something          The host object of type SomethingT
+//     * @return                    An edge range
+//     */
+//   template<typename SomethingT>
+//   typename result_of::element_range<SomethingT, edge_tag>::type edges(SomethingT something)
+//   { return typename result_of::element_range<SomethingT, edge_tag>::type(something); }
+//
+//   /** @brief Function for retrieving a triangle range object from a host object
+//     *
+//     * @tparam SomethingT         The host type, can be an element, a collection, a mesh, a segment or a segmentation
+//     * @param  something          The host object of type SomethingT
+//     * @return                    A triangle range
+//     */
+//   template<typename SomethingT>
+//   typename result_of::element_range<SomethingT, triangle_tag>::type triangles(SomethingT something)
+//   { return typename result_of::element_range<SomethingT, triangle_tag>::type(something); }
+//
+//   /** @brief Function for retrieving a quadrilaterals range object from a host object
+//     *
+//     * @tparam SomethingT         The host type, can be an element, a collection, a mesh, a segment or a segmentation
+//     * @param  something          The host object of type SomethingT
+//     * @return                    A quadrilateral range
+//     */
+//   template<typename SomethingT>
+//   typename result_of::element_range<SomethingT, quadrilateral_tag>::type quadrilaterals(SomethingT something)
+//   { return typename result_of::element_range<SomethingT, quadrilateral_tag>::type(something); }
+//
+//   /** @brief Function for retrieving a polygon range object from a host object
+//     *
+//     * @tparam SomethingT         The host type, can be an element, a collection, a mesh, a segment or a segmentation
+//     * @param  something          The host object of type SomethingT
+//     * @return                    A polygon range
+//     */
+//   template<typename SomethingT>
+//   typename result_of::element_range<SomethingT, polygon_tag>::type polygons(SomethingT something)
+//   { return typename result_of::element_range<SomethingT, polygon_tag>::type(something); }
+//
+//   /** @brief Function for retrieving a PLC range object from a host object
+//     *
+//     * @tparam SomethingT         The host type, can be an element, a collection, a mesh, a segment or a segmentation
+//     * @param  something          The host object of type SomethingT
+//     * @return                    A PLC range
+//     */
+//   template<typename SomethingT>
+//   typename result_of::element_range<SomethingT, plc_tag>::type plcs(SomethingT something)
+//   { return typename result_of::element_range<SomethingT, plc_tag>::type(something); }
+//
+//   /** @brief Function for retrieving a tetrahedron range object from a host object
+//     *
+//     * @tparam SomethingT         The host type, can be an element, a collection, a mesh, a segment or a segmentation
+//     * @param  something          The host object of type SomethingT
+//     * @return                    A tetrahedron range
+//     */
+//   template<typename SomethingT>
+//   typename result_of::element_range<SomethingT, tetrahedron_tag>::type tetrahedra(SomethingT something)
+//   { return typename result_of::element_range<SomethingT, tetrahedron_tag>::type(something); }
+//
+//   /** @brief Function for retrieving a hexahedron range object from a host object
+//     *
+//     * @tparam SomethingT         The host type, can be an element, a collection, a mesh, a segment or a segmentation
+//     * @param  something          The host object of type SomethingT
+//     * @return                    A hexahedron range
+//     */
+//   template<typename SomethingT>
+//   typename result_of::element_range<SomethingT, hexahedron_tag>::type hexahedra(SomethingT something)
+//   { return typename result_of::element_range<SomethingT, hexahedron_tag>::type(something); }
 
 }
 

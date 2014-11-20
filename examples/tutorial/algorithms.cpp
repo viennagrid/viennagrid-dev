@@ -44,7 +44,7 @@ int main()
 
   typedef viennagrid::result_of::point<MeshType>::type            PointType;
 
-  typedef viennagrid::result_of::cell<MeshType>::type             CellType;
+  typedef viennagrid::result_of::element<MeshType>::type          CellType;
   typedef viennagrid::result_of::edge<MeshType>::type             EdgeType;
   typedef viennagrid::result_of::vertex<MeshType>::type           VertexType;
 
@@ -110,7 +110,7 @@ int main()
   //
 
   // Extract first cell from mesh:
-  CellType const & cell = viennagrid::cells(mesh)[0];
+  CellType const & cell = viennagrid::elements<viennagrid::tetrahedron_tag>(mesh)[0];
 
   std::cout << "Cell: " << std::endl;
   std::cout << cell << std::endl;
@@ -186,9 +186,9 @@ int main()
   // define an field on this container for easy access with elements
   viennagrid::result_of::field< CellRefinementContainerType, CellType >::type cell_refinement_field(cell_refinement_flag);
 
-  cell_refinement_field( viennagrid::cells(mesh)[0] ) = true;
-  cell_refinement_field( viennagrid::cells(mesh)[3] ) = true;
-  cell_refinement_field( viennagrid::cells(mesh)[8] ) = true;
+  cell_refinement_field( viennagrid::elements<viennagrid::tetrahedron_tag>(mesh)[0] ) = true;
+  cell_refinement_field( viennagrid::elements<viennagrid::tetrahedron_tag>(mesh)[3] ) = true;
+  cell_refinement_field( viennagrid::elements<viennagrid::tetrahedron_tag>(mesh)[8] ) = true;
 
   // refining the mesh using the field representing the marked cells
   viennagrid::cell_refine(mesh, adaptively_refined_mesh, cell_refinement_field);

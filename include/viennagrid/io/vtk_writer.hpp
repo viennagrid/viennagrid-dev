@@ -18,6 +18,7 @@
 #include <sstream>
 #include <iostream>
 #include <iterator>
+#include <set>
 
 #include "viennagrid/core.hpp"
 #include "viennagrid/io/helper.hpp"
@@ -86,10 +87,14 @@ namespace viennagrid
       typedef typename result_of::point<mesh_type>::type   PointType;
       typedef typename result_of::coord<PointType>::type  CoordType;
 
-      typedef typename result_of::cell_tag<mesh_type>::type                   CellTag;
-      typedef typename result_of::cell<mesh_type>::type           CellType;
-      typedef typename result_of::const_cell<mesh_type>::type           ConstCellType;
+//       typedef typename result_of::cell_tag<mesh_type>::type                   CellTag;
+      typedef typename result_of::element<mesh_type>::type           CellType;
+      typedef typename result_of::const_element<mesh_type>::type           ConstCellType;
       typedef typename result_of::id<CellType>::type                         CellIDType;
+
+//       typedef typename result_of::element<mesh_type>::type                  ElementType;
+//       typedef typename result_of::const_element<mesh_type>::type            ConstElementType;
+//       typedef typename result_of::id<ConstElementType>::type                CellIDType;
 
       typedef typename result_of::vertex<mesh_type>::type            VertexType;
       typedef typename result_of::const_vertex<mesh_type>::type            ConstVertexType;
@@ -171,21 +176,20 @@ namespace viennagrid
       template<typename MeshRegionT>
       std::size_t preparePoints(MeshRegionT const & region, region_id_type region_id)
       {
-        typedef typename viennagrid::result_of::const_element_range<MeshRegionT, CellTag>::type     CellRange;
-        typedef typename viennagrid::result_of::iterator<CellRange>::type                                         CellIterator;
+        typedef typename viennagrid::result_of::const_element_range<MeshRegionT>::type    CellRangeType;
+        typedef typename viennagrid::result_of::iterator<CellRangeType>::type             CellRangeIterator;
 
-        typedef typename viennagrid::result_of::const_element_range<CellType, vertex_tag>::type      VertexOnCellRange;
+        typedef typename viennagrid::result_of::const_element_range<CellType>::type       VertexOnCellRange;
         typedef typename viennagrid::result_of::iterator<VertexOnCellRange>::type         VertexOnCellIterator;
 
         std::map< VertexIDType, ConstVertexType > & current_used_vertex_map = used_vertex_map[region_id];
         std::map< ConstVertexType, VertexIDType > & current_vertex_to_index_map = vertex_to_index_map[region_id];
 
 
-        CellRange cells(region);
-
-        for (CellIterator it = cells.begin(); it != cells.end(); ++it)
+        CellRangeType cells(region, viennagrid::topologic_dimension(region));
+        for (CellRangeIterator it = cells.begin(); it != cells.end(); ++it)
         {
-          VertexOnCellRange vertices_on_cell(*it);
+          VertexOnCellRange vertices_on_cell(*it, 0);
           for (VertexOnCellIterator jt = vertices_on_cell.begin(); jt != vertices_on_cell.end(); ++jt)
           {
               typename std::map< VertexIDType, ConstVertexType >::iterator kt = current_used_vertex_map.find( (*jt).id() );
@@ -215,19 +219,24 @@ namespace viennagrid
       template<typename MeshRegionT>
       std::size_t prepareCells(MeshRegionT const & domseg, region_id_type region_id)
       {
-        typedef typename viennagrid::result_of::const_element_range<MeshRegionT, CellTag>::type     CellRange;
+        typedef typename viennagrid::result_of::const_element_range<MeshRegionT>::type     CellRange;
         typedef typename viennagrid::result_of::iterator<CellRange>::type                                         CellIterator;
 
-        std::map< CellIDType, ConstCellType > & current_used_cells_map = used_cell_map[region_id];
+        std::set< ConstCellType > & current_used_cells_map = used_cell_map[region_id];
 
-        int index = 0;
-        CellRange cells(domseg);
+//         int index = 0;
+//         for (element_tag_t cell_tag = cell_tag_begin(domseg); cell_tag != cell_tag_end(domseg); ++cell_tag)
+//         {
+        CellRange cells(domseg, topologic_dimension(domseg));
         for (CellIterator cit  = cells.begin();
                           cit != cells.end();
-                        ++cit, ++index)
+                        ++cit/*, ++index*/)
             {
-              current_used_cells_map[ (*cit).id() ] = *cit;
+              current_used_cells_map.insert(*cit);
+
+//                 [ (*cit).id() ] = *cit;
             }
+//         }
 
         return current_used_cells_map.size();
       }
@@ -259,9 +268,9 @@ namespace viennagrid
 
       /** @brief Writes the cells to the mesh */
       template <typename MeshRegionT>
-      void writeCells(MeshRegionT const & domseg, std::ofstream & writer, region_id_type region_id)
+      void writeCells(MeshRegionT const &, std::ofstream & writer, region_id_type region_id)
       {
-        typedef typename viennagrid::result_of::const_element_range<CellType, vertex_tag>::type      VertexOnCellRange;
+        typedef typename viennagrid::result_of::const_element_range<CellType>::type      VertexOnCellRange;
         typedef typename viennagrid::result_of::iterator<VertexOnCellRange>::type         VertexOnCellIterator;
 
         std::map< ConstVertexType, VertexIDType > & current_vertex_to_index_map = vertex_to_index_map[region_id];
@@ -269,16 +278,16 @@ namespace viennagrid
         writer << "   <Cells> " << std::endl;
         writer << "    <DataArray type=\"Int32\" Name=\"connectivity\" format=\"ascii\">" << std::endl;
 
-        std::map< CellIDType, ConstCellType > & current_used_cells_map = used_cell_map[region_id];
-        for (typename std::map< CellIDType, ConstCellType >::iterator it = current_used_cells_map.begin(); it != current_used_cells_map.end(); ++it)
+        std::set< ConstCellType > & current_used_cells_map = used_cell_map[region_id];
+        for (typename std::set< ConstCellType >::iterator it = current_used_cells_map.begin(); it != current_used_cells_map.end(); ++it)
 
         {
           //step 1: Write vertex indices in ViennaGrid orientation to array:
 //           CellType const & cell = it->second; //viennagrid::dereference_handle(domseg, it->second);
 //             CellType const & cell = *cit;
 
-          std::vector<VertexIDType> viennagrid_vertices( domseg.cell_tag().vertex_count() );
-          VertexOnCellRange vertices_on_cell = viennagrid::elements<vertex_tag>(it->second);
+          std::vector<VertexIDType> viennagrid_vertices( (*it).tag().vertex_count() );
+          VertexOnCellRange vertices_on_cell(*it, 0);
           std::size_t j = 0;
           for (VertexOnCellIterator vocit = vertices_on_cell.begin();
               vocit != vertices_on_cell.end();
@@ -289,7 +298,7 @@ namespace viennagrid
 
           //Step 2: Write the transformed connectivities:
 //           detail::viennagrid_to_vtk_orientations<CellTag> reorderer;
-          detail::viennagrid_to_vtk_orientations reorderer(domseg.cell_tag());
+          detail::viennagrid_to_vtk_orientations reorderer( (*it).tag() );
           for (std::size_t i=0; i<viennagrid_vertices.size(); ++i)
             writer << viennagrid_vertices[reorderer(i)] << " ";
 
@@ -300,25 +309,46 @@ namespace viennagrid
         writer << "    </DataArray>" << std::endl;
 
         writer << "    <DataArray type=\"Int32\" Name=\"offsets\" format=\"ascii\">" << std::endl;
-        for (std::size_t offsets = 1;
-              //offsets <= current_used_cells_map.size();
-              offsets <= viennagrid::elements<CellTag>(domseg).size();
-              ++offsets)
+
+        std::size_t offset = 0;
+        for (typename std::set< ConstCellType >::iterator it = current_used_cells_map.begin(); it != current_used_cells_map.end(); ++it)
         {
-          writer << ( offsets * domseg.cell_tag().vertex_count() ) << " ";
+          offset += viennagrid::vertices(*it).size();
+          writer << offset << " ";
         }
+
+//         for (element_tag_t cell_tag = cell_tag_begin(domseg); cell_tag != cell_tag_end(domseg); ++cell_tag)
+//         {
+//           for (std::size_t i = 1;
+//                 //offsets <= current_used_cells_map.size();
+//                 i <= viennagrid::elements(domseg, cell_tag).size();
+//                 ++i)
+//           {
+//             offset += i *
+//             writer << ( offsets * cell_tag.vertex_count() ) << " ";
+//           }
+//         }
         writer << std::endl;
         writer << "    </DataArray>" << std::endl;
 
         writer << "    <DataArray type=\"UInt8\" Name=\"types\" format=\"ascii\">" << std::endl;
-        for (std::size_t offsets = 1;
-              //offsets <= current_used_cells_map.size();
-             offsets <= viennagrid::elements<CellTag>(domseg).size();
-              ++offsets)
+        for (typename std::set< ConstCellType >::iterator it = current_used_cells_map.begin(); it != current_used_cells_map.end(); ++it)
         {
-          writer << vtk_element_tag(domseg.cell_tag()) << " ";
-//           writer << detail::ELEMENT_TAG_TO_VTK_TYPE<CellTag>::value << " ";
+          offset += viennagrid::vertices(*it).size();
+          writer << vtk_element_tag( (*it).tag() ) << " ";
         }
+
+//         for (element_tag_t cell_tag = cell_tag_begin(domseg); cell_tag != cell_tag_end(domseg); ++cell_tag)
+//         {
+//           for (std::size_t offsets = 1;
+//                 //offsets <= current_used_cells_map.size();
+//               offsets <= viennagrid::elements(domseg, cell_tag).size();
+//                 ++offsets)
+//           {
+//             writer << vtk_element_tag(cell_tag) << " ";
+//   //           writer << detail::ELEMENT_TAG_TO_VTK_TYPE<CellTag>::value << " ";
+//           }
+//         }
         writer << std::endl;
         writer << "    </DataArray>" << std::endl;
         writer << "   </Cells>" << std::endl;
@@ -362,15 +392,15 @@ namespace viennagrid
           "\" NumberOfComponents=\"" << ValueTypeInformation<ValueType>::num_components() << "\" format=\"ascii\">" << std::endl;
 
 
-        std::map< CellIDType, ConstCellType > & current_used_cells_map = used_cell_map[region_id];
-        for (typename std::map< CellIDType, ConstCellType >::iterator it = current_used_cells_map.begin(); it != current_used_cells_map.end(); ++it)
+        std::set<  ConstCellType > & current_used_cells_map = used_cell_map[region_id];
+        for (typename std::set< ConstCellType >::iterator it = current_used_cells_map.begin(); it != current_used_cells_map.end(); ++it)
 
         {
           //step 1: Write vertex indices in ViennaGrid orientation to array:
 //           CellType const & cell = viennagrid::dereference_handle(region, it->second);
 //             CellType const & cell = *cit;
 
-          ValueTypeInformation<ValueType>::write(writer, accessor(it->second));
+          ValueTypeInformation<ValueType>::write(writer, accessor(*it));
           writer << " ";
         }
         writer << std::endl;
@@ -415,10 +445,14 @@ namespace viennagrid
           std::size_t num_points = preparePoints(mesh_obj, tmp_id);
           prepareCells(mesh_obj, tmp_id);
 
+          std::size_t cell_count = viennagrid::elements(mesh_obj, topologic_dimension(mesh_obj)).size();
+//           for (element_tag_t cell_tag = cell_tag_begin(mesh_obj); cell_tag != cell_tag_end(mesh_obj); ++cell_tag)
+//             cell_count += viennagrid::elements(mesh_obj, topologic_dimension(mesh_obj)).size();
+
           writer << "  <Piece NumberOfPoints=\""
                 << num_points
                 << "\" NumberOfCells=\""
-                << viennagrid::cells(mesh_obj).size()
+                << cell_count //viennagrid::cells(mesh_obj).size()
                 << "\">" << std::endl;
 
           writePoints(mesh_obj, writer, tmp_id);
@@ -514,10 +548,15 @@ namespace viennagrid
           std::size_t num_points = preparePoints(region, region.id());
           prepareCells(region, region.id());
 
+          std::size_t cell_count = viennagrid::elements(mesh_obj, topologic_dimension(mesh_obj)).size();
+//           std::size_t cell_count = 0;
+//           for (element_tag_t cell_tag = cell_tag_begin(region); cell_tag != cell_tag_end(region); ++cell_tag)
+//             cell_count += viennagrid::elements(region, cell_tag).size();
+
           writer << "  <Piece NumberOfPoints=\""
                 << num_points
                 << "\" NumberOfCells=\""
-                << viennagrid::cells(region).size()
+                << cell_count //viennagrid::cells(region).size()
                 << "\">" << std::endl;
 
           writePoints(region, writer, region.id());
@@ -684,7 +723,7 @@ namespace viennagrid
 
       std::map< region_id_type, std::map< ConstVertexType, VertexIDType> >             vertex_to_index_map;
       std::map< region_id_type, std::map< VertexIDType, ConstVertexType> >             used_vertex_map;
-      std::map< region_id_type, std::map< CellIDType, ConstCellType> >                 used_cell_map;
+      std::map< region_id_type, std::set< ConstCellType> >                             used_cell_map;
 
 
       VertexScalarOutputAccessorContainer          vertex_scalar_data;

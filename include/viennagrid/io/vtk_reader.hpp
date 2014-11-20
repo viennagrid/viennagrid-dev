@@ -57,7 +57,7 @@ namespace viennagrid
 
       typedef typename result_of::vertex<mesh_type>::type                          VertexType;
       typedef typename result_of::vertex_id<mesh_type>::type                           VertexIDType;
-      typedef typename result_of::cell<mesh_type>::type     CellType;
+//       typedef typename result_of::cell<mesh_type>::type     CellType;
 
       typedef typename viennagrid::result_of::vertex_range<mesh_type>::type   VertexRange;
       typedef typename viennagrid::result_of::iterator<VertexRange>::type                             VertexIterator;
@@ -65,11 +65,11 @@ namespace viennagrid
       typedef typename viennagrid::result_of::line_range<mesh_type>::type     EdgeRange;
       typedef typename viennagrid::result_of::iterator<EdgeRange>::type                               EdgeIterator;
 
-      typedef typename viennagrid::result_of::facet_range<mesh_type>::type   FacetRange;
-      typedef typename viennagrid::result_of::iterator<FacetRange>::type                                   FacetIterator;
+//       typedef typename viennagrid::result_of::facet_range<mesh_type>::type   FacetRange;
+//       typedef typename viennagrid::result_of::iterator<FacetRange>::type                                   FacetIterator;
 
-      typedef typename viennagrid::result_of::cell_range<mesh_type>::type     CellRange;
-      typedef typename viennagrid::result_of::iterator<CellRange>::type                  CellIterator;
+//       typedef typename viennagrid::result_of::cell_range<mesh_type>::type     CellRange;
+//       typedef typename viennagrid::result_of::iterator<CellRange>::type                  CellIterator;
 
 
       typedef std::vector<double> vector_data_type;

@@ -93,32 +93,19 @@ int main()
   // Step 4: Output the cells for each segment:
   //
 
-
-  ElementRange cells(mesh, viennagrid::triangle_tag());
-  std::cout << "Triangles in mesh (count = " << cells.size() << "):" << std::endl;
+  ElementRange cells(mesh, 2);
+  std::cout << "Cells in mesh (count = " << cells.size() << "):" << std::endl;
   for (ElementIterator cit0 = cells.begin();
-                       cit0 != cells.end();
-                     ++cit0)
+                      cit0 != cells.end();
+                    ++cit0)
   {
     std::cout << *cit0 << std::endl;
   }
   std::cout << std::endl;
 
 
-  cells = ElementRange(mesh, viennagrid::quadrilateral_tag());
-  std::cout << "Quadrilaterals in mesh (count = " << cells.size() << "):" << std::endl;
-  for (ElementIterator cit0 = cells.begin();
-                       cit0 != cells.end();
-                     ++cit0)
-  {
-    std::cout << *cit0 << std::endl;
-  }
-  std::cout << std::endl;
-
-
-
-//   viennagrid::io::vtk_writer<MeshType> writer;
-//   writer(mesh, "hybrid");
+  viennagrid::io::vtk_writer<MeshType> writer;
+  writer(mesh, "hybrid");
 
 
   std::cout << "-----------------------------------------------" << std::endl;

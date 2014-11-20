@@ -121,25 +121,27 @@ namespace viennagrid
 
 
     /** @brief Implementation of the calculation of a centroid for a mesh/region */
-    template <typename ElementTOrTag, typename MeshSegmentHandleType, typename PointAccessorT>
+    template<typename MeshSegmentHandleType, typename PointAccessorT>
     typename viennagrid::result_of::point< PointAccessorT, typename viennagrid::result_of::element<MeshSegmentHandleType>::type >::type
-    centroid_mesh(PointAccessorT const point_accessor, MeshSegmentHandleType const & mesh_obj)
+    centroid_mesh(PointAccessorT const point_accessor, MeshSegmentHandleType const & mesh_obj,
+                  element_tag_t cell_tag, element_tag_t cell_end)
     {
-      typedef typename viennagrid::result_of::element_tag<ElementTOrTag>::type            ElementTag;
       typedef typename viennagrid::result_of::point<MeshSegmentHandleType>::type          PointType;
-      typedef typename viennagrid::result_of::const_element_range<MeshSegmentHandleType,
-                                                                ElementTag>::type         CellRange;
+      typedef typename viennagrid::result_of::const_element_range<MeshSegmentHandleType>::type         CellRange;
       typedef typename viennagrid::result_of::iterator<CellRange>::type                   CellIterator;
 
       PointType result( viennagrid::geometric_dimension(mesh_obj) );
       double volume = 0;
 
-      CellRange cells(mesh_obj);
-      for (CellIterator cit = cells.begin(); cit != cells.end(); ++cit)
+      for (; cell_tag != cell_end; ++cell_tag)
       {
-        double vol_cell = viennagrid::volume( point_accessor, *cit );
-        result += vol_cell * centroid( point_accessor, *cit);
-        volume += vol_cell;
+        CellRange cells(mesh_obj, cell_tag);
+        for (CellIterator cit = cells.begin(); cit != cells.end(); ++cit)
+        {
+          double vol_cell = viennagrid::volume( point_accessor, *cit );
+          result += vol_cell * centroid( point_accessor, *cit);
+          volume += vol_cell;
+        }
       }
 
       return result / volume;
@@ -196,8 +198,8 @@ namespace viennagrid
   typename viennagrid::result_of::point< base_mesh<mesh_is_const> >::type
   centroid(PointAccessorT const point_accessor, base_mesh<mesh_is_const> const & mesh_obj)
   {
-    typedef typename viennagrid::result_of::cell_tag< base_mesh<mesh_is_const> >::type CellTag;
-    return detail::centroid_mesh<CellTag>(point_accessor, mesh_obj);
+    return detail::centroid_mesh(point_accessor, mesh_obj,
+                                 cell_tag_begin(mesh_obj), cell_tag_end(mesh_obj));
   }
 
 
@@ -221,8 +223,8 @@ namespace viennagrid
   typename viennagrid::result_of::point< base_mesh<mesh_is_const> >::type
   centroid(base_mesh<mesh_is_const> const & mesh_obj)
   {
-    typedef typename viennagrid::result_of::cell_tag< base_mesh<mesh_is_const> >::type CellTag;
-    return centroid<CellTag>(point_accessor(mesh_obj), mesh_obj);
+    return centroid(point_accessor(mesh_obj), mesh_obj,
+                    cell_tag_begin(mesh_obj), cell_tag_end(mesh_obj));
   }
 
 
@@ -248,8 +250,8 @@ namespace viennagrid
   typename viennagrid::result_of::point< base_mesh_region<mesh_region_is_const> >::type
   centroid(PointAccessorT const point_accessor, base_mesh_region<mesh_region_is_const> const & region)
   {
-    typedef typename viennagrid::result_of::cell_tag< base_mesh_region<mesh_region_is_const> >::type CellTag;
-    return detail::centroid_mesh<CellTag>(point_accessor, region);
+    return detail::centroid_mesh(point_accessor, region,
+                                 cell_tag_begin(region), cell_tag_end(region));
   }
 
 
@@ -273,8 +275,8 @@ namespace viennagrid
   typename viennagrid::result_of::point< base_mesh_region<mesh_region_is_const> >::type
   centroid(base_mesh_region<mesh_region_is_const> const & region)
   {
-    typedef typename viennagrid::result_of::cell_tag< base_mesh_region<mesh_region_is_const> >::type CellTag;
-    return centroid<CellTag>(default_point_accessor(region), region);
+    return centroid(default_point_accessor(region), region,
+                    cell_tag_begin(region), cell_tag_end(region));
   }
 } //namespace viennagrid
 #endif

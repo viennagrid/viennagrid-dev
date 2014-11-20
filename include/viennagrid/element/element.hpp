@@ -26,37 +26,56 @@ namespace viennagrid
     typedef typename result_of::const_nonconst<mesh_hierarchy_t, true>::type const_mesh_hierarchy_type;
 
     base_element() : mesh_hierarchy_(0), id_(-1) {}
-    base_element(tag_type element_tag_in, mesh_hierarchy_type mesh_hierarchy_in, viennagrid_index id_in) : mesh_hierarchy_(mesh_hierarchy_in), id_(id_in), element_tag_(element_tag_in) {}
+    base_element(mesh_hierarchy_type mesh_hierarchy_in,
+                 viennagrid_int topologic_dimension_in,
+                 viennagrid_index id_in) :
+                 mesh_hierarchy_(mesh_hierarchy_in),
+                 topologic_dimension_(topologic_dimension_in),
+                 id_(id_in) {}
 
     template<bool other_is_const>
-    base_element(base_element<other_is_const> element) : mesh_hierarchy_(element.mesh_hierarchy_), id_(element.id_), element_tag_(element.element_tag_) {}
+    base_element(base_element<other_is_const> element) : mesh_hierarchy_(element.mesh_hierarchy_), topologic_dimension_(element.topologic_dimension_), id_(element.id_) {}
 
     id_type id() const { return id_; }
     mesh_hierarchy_type mesh_hierarchy() { return mesh_hierarchy_; }
     const_mesh_hierarchy_type mesh_hierarchy() const { return mesh_hierarchy_; }
 
-    tag_type tag() const { return element_tag_; }
-    tag_type unpack_element_tag(tag_type et) { return mesh_hierarchy().unpack_element_tag(et); }
-//     tag_type unpacked_tag() const { return mesh_hierarchy().unpack_element_tag(tag()); }
+    tag_type tag() const
+    {
+      viennagrid_element_tag tag;
+      viennagrid_element_get_tag( mesh_hierarchy().internal(), topologic_dimension(), id(), &tag);
+      return tag_type(tag);
+    }
+    viennagrid_int topologic_dimension() const { return topologic_dimension_; }
 
   private:
     mesh_hierarchy_type mesh_hierarchy_;
+    viennagrid_int topologic_dimension_;
     id_type id_;
-    tag_type element_tag_;
   };
 
 
   template<bool lhs_is_const, bool rhs_is_const>
   bool operator<(base_element<lhs_is_const> const & lhs, base_element<rhs_is_const> const & rhs)
-  { return lhs.id() < rhs.id(); }
+  {
+    if (lhs.tag() < rhs.tag())
+      return true;
+    if (rhs.tag() < lhs.tag())
+      return false;
+
+    return lhs.id() < rhs.id();
+  }
 
 
 
   template<bool is_const>
+  viennagrid_int topologic_dimension( base_element<is_const> const & element )
+  { return element.topologic_dimension(); }
+
+
+  template<bool is_const>
   base_mesh_hierarchy<is_const> mesh_hierarchy( base_element<is_const> element )
-  {
-    return element.mesh_hierarchy();
-  }
+  { return element.mesh_hierarchy(); }
 
 
 
@@ -74,8 +93,8 @@ namespace viennagrid
     }
     else if (element.tag().is_plc())
     {
-      typedef typename viennagrid::result_of::const_line_range< base_element<is_const> >::type ConstLineRangeType;
-      ConstLineRangeType lines(element);
+      typedef typename viennagrid::result_of::const_element_range< base_element<is_const> >::type ConstLineRangeType;
+      ConstLineRangeType lines(element, 1);
 
       std::cout <<  "{";
       typename ConstLineRangeType::iterator lit = lines.begin();
@@ -87,8 +106,8 @@ namespace viennagrid
     }
     else
     {
-      typedef typename viennagrid::result_of::const_vertex_range< base_element<is_const> >::type ConstVertexRangeType;
-      ConstVertexRangeType vertices(element);
+      typedef typename viennagrid::result_of::const_element_range< base_element<is_const> >::type ConstVertexRangeType;
+      ConstVertexRangeType vertices(element, 0);
 
       std::cout <<  "{";
       typename ConstVertexRangeType::iterator vit = vertices.begin();

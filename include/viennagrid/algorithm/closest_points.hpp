@@ -843,48 +843,57 @@ namespace viennagrid
     {
 
 
-      typedef typename viennagrid::result_of::facet_tag<SomethingT1>::type FacetTag1;
-      typedef typename viennagrid::result_of::facet_tag<SomethingT2>::type FacetTag2;
+//       typedef typename viennagrid::result_of::facet_tag<SomethingT1>::type FacetTag1;
+//       typedef typename viennagrid::result_of::facet_tag<SomethingT2>::type FacetTag2;
 
 
       typedef std::pair< typename PointAccessorT::value_type, typename PointAccessorT::value_type > PairType;
 
-      typedef typename viennagrid::result_of::const_element_range<SomethingT1, FacetTag1>::type           FacetRange1;
+      typedef typename viennagrid::result_of::const_element_range<SomethingT1>::type           FacetRange1;
       typedef typename viennagrid::result_of::iterator<FacetRange1>::type                   FacetIterator1;
 
-      typedef typename viennagrid::result_of::const_element_range<SomethingT2, FacetTag2>::type           FacetRange2;
+      typedef typename viennagrid::result_of::const_element_range<SomethingT2>::type           FacetRange2;
       typedef typename viennagrid::result_of::iterator<FacetRange2>::type                   FacetIterator2;
 
       PairType closest_pair;
       double shortest_distance = std::numeric_limits<double>::max();
 
 
-      FacetRange1 facets1(el1);
-      FacetRange2 facets2(el2);
 
-      for (FacetIterator1 fit1 = facets1.begin();
-                          fit1 != facets1.end();
-                        ++fit1)
+      for (element_tag_t facet_tag1 = facet_tag_begin(el1); facet_tag1 != facet_tag_end(el1); ++facet_tag1)
       {
-        if (!is_boundary(el1, *fit1))
-          continue;
+        FacetRange1 facets1(el1);
 
-        for (FacetIterator2 fit2 = facets2.begin();
-                            fit2 != facets2.end();
-                          ++fit2)
+        for (FacetIterator1 fit1 = facets1.begin();
+                            fit1 != facets1.end();
+                          ++fit1)
         {
-          if (!is_boundary(el2, *fit2))
+          if (!is_boundary(el1, *fit1))
             continue;
 
-          PairType p = closest_points_impl(accessor, *fit1, *fit2);
-          double cur_norm = norm_2(p.first - p.second);
-          if (cur_norm < shortest_distance)
+          for (element_tag_t facet_tag2 = facet_tag_begin(el2); facet_tag2 != facet_tag_end(el2); ++facet_tag2)
           {
-            closest_pair = p;
-            shortest_distance = cur_norm;
+            FacetRange2 facets2(el2);
+            for (FacetIterator2 fit2 = facets2.begin();
+                                fit2 != facets2.end();
+                              ++fit2)
+            {
+              if (!is_boundary(el2, *fit2))
+                continue;
+
+              PairType p = closest_points_impl(accessor, *fit1, *fit2);
+              double cur_norm = norm_2(p.first - p.second);
+              if (cur_norm < shortest_distance)
+              {
+                closest_pair = p;
+                shortest_distance = cur_norm;
+              }
+            }
           }
         }
       }
+
+
 
       return closest_pair;
     }

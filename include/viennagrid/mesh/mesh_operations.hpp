@@ -123,11 +123,11 @@ namespace viennagrid
     DstElementType copy_element( base_element<element_is_const> const & src )
     {
       typedef base_element<element_is_const> SrcElementType;
-      typedef typename viennagrid::result_of::const_vertex_range<SrcElementType>::type ConstVerticesOnElementRangeType;
+      typedef typename viennagrid::result_of::const_element_range<SrcElementType>::type ConstVerticesOnElementRangeType;
       typedef typename viennagrid::result_of::iterator<ConstVerticesOnElementRangeType>::type ConstVerticesOnElementIteratorType;
 
       std::vector<DstVertexType> dst_vertices;
-      ConstVerticesOnElementRangeType vertices(src);
+      ConstVerticesOnElementRangeType vertices(src, 0);
       for (ConstVerticesOnElementIteratorType vit = vertices.begin(); vit != vertices.end(); ++vit)
         dst_vertices.push_back( (*this)(*vit) );
 
@@ -221,14 +221,17 @@ namespace viennagrid
   {
     dst_mesh.clear();
 
-    typedef typename viennagrid::result_of::const_cell_range<SrcMeshT>::type ConstCellRangeType;
-    typedef typename viennagrid::result_of::iterator<ConstCellRangeType>::type ConstCellIteratorType;
+    typedef typename viennagrid::result_of::const_element_range<SrcMeshT>::type ConstElementRangeType;
+    typedef typename viennagrid::result_of::iterator<ConstElementRangeType>::type ConstElementRangeIterator;
 
-    ConstCellRangeType cells(src_mesh);
-    for (ConstCellIteratorType cit = cells.begin(); cit != cells.end(); ++cit)
+    for (element_tag_t cell_tag = cell_tag_begin(src_mesh); cell_tag != cell_tag_end(src_mesh); ++cell_tag)
     {
-      if ( functor(*cit) )
-        vertex_map.copy_element(*cit );
+      ConstElementRangeType cells(src_mesh, cell_tag);
+      for (ConstElementRangeIterator cit = cells.begin(); cit != cells.end(); ++cit)
+      {
+        if ( functor(*cit) )
+          vertex_map.copy_element(*cit );
+      }
     }
   }
 
