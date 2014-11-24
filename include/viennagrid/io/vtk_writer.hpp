@@ -548,7 +548,7 @@ namespace viennagrid
           std::size_t num_points = preparePoints(region, region.id());
           prepareCells(region, region.id());
 
-          std::size_t cell_count = viennagrid::elements(mesh_obj, topologic_dimension(mesh_obj)).size();
+          std::size_t cell_count = viennagrid::elements(region, topologic_dimension(region)).size();
 //           std::size_t cell_count = 0;
 //           for (element_tag_t cell_tag = cell_tag_begin(region); cell_tag != cell_tag_end(region); ++cell_tag)
 //             cell_count += viennagrid::elements(region, cell_tag).size();

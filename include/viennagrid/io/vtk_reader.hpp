@@ -95,7 +95,7 @@ namespace viennagrid
       std::map<int, std::deque<std::size_t> >              local_to_global_map;
       std::map<int, std::deque<std::size_t> >              local_cell_vertices;
       std::map<int, std::deque<std::size_t> >              local_cell_offsets;
-      std::map<int, std::deque<element_tag_t> >              local_cell_types;
+      std::map<int, std::deque<element_tag_t> >            local_cell_types;
       std::map<int, std::size_t>                           local_cell_num;
       std::map<int, std::deque<CellType> >                 local_cell_handle;
 
