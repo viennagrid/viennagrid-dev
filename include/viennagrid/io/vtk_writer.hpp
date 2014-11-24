@@ -96,8 +96,8 @@ namespace viennagrid
 //       typedef typename result_of::const_element<mesh_type>::type            ConstElementType;
 //       typedef typename result_of::id<ConstElementType>::type                CellIDType;
 
-      typedef typename result_of::vertex<mesh_type>::type            VertexType;
-      typedef typename result_of::const_vertex<mesh_type>::type            ConstVertexType;
+      typedef typename result_of::element<mesh_type>::type            VertexType;
+      typedef typename result_of::const_element<mesh_type>::type            ConstVertexType;
       typedef typename result_of::id<VertexType>::type                           VertexIDType;
 
       typedef typename mesh_type::const_region_type RegionType;

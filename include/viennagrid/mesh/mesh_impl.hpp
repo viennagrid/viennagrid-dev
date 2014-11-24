@@ -56,6 +56,22 @@ namespace viennagrid
   typename base_mesh<is_const>::const_region_type base_mesh<is_const>::get_region(std::string const & name) const
   { return region_type(*this, mesh_hierarchy().get_region(name)); }
 
+
+
+
+  template<bool element_is_const, bool mesh_is_const>
+  bool is_boundary( base_mesh<mesh_is_const> mesh, base_element<element_is_const> element )
+  {
+    viennagrid_bool result;
+    viennagrid_is_boundary_mesh(mesh.internal(),
+                                viennagrid::topologic_dimension(element),
+                                element.id(),
+                                &result);
+    return result == VIENNAGRID_TRUE;
+  }
+
+
+
 }
 
 #endif

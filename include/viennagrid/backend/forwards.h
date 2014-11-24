@@ -26,6 +26,7 @@ typedef viennagrid_int viennagrid_error;
 typedef double viennagrid_numeric;
 typedef viennagrid_int viennagrid_index;
 typedef char viennagrid_element_tag;
+typedef int viennagrid_dimension;
 
 
 typedef struct viennagrid_mesh_hierarchy_ * viennagrid_mesh_hierarchy;

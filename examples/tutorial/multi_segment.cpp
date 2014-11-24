@@ -26,22 +26,21 @@ int main()
   typedef viennagrid::mesh_t MeshType;
   typedef viennagrid::result_of::region<MeshType>::type RegionType;
 
-  typedef viennagrid::result_of::cell_tag<MeshType>::type             CellTag;
-  typedef viennagrid::result_of::facet_tag<MeshType>::type            FacetTag;
+//   typedef viennagrid::result_of::facet_tag<MeshType>::type            FacetTag;
 
-  typedef viennagrid::result_of::const_vertex<MeshType>::type               ConstVertexType;
-  typedef viennagrid::result_of::edge<MeshType>::type                 EdgeType;
-  typedef viennagrid::result_of::facet<MeshType>::type                FacetType;
-  typedef viennagrid::result_of::cell<MeshType>::type                 CellType;
+  typedef viennagrid::result_of::const_element<MeshType>::type               ConstVertexType;
+  typedef viennagrid::result_of::element<MeshType>::type                 EdgeType;
+  typedef viennagrid::result_of::element<MeshType>::type                FacetType;
+  typedef viennagrid::result_of::element<MeshType>::type                 CellType;
 
   typedef viennagrid::result_of::facet_range<MeshType>::type          FacetRange;
   typedef viennagrid::result_of::iterator<FacetRange>::type             FacetIterator;
 
-  typedef viennagrid::result_of::coboundary_range<RegionType, CellTag>::type                 CellOnFacetRange;
+  typedef viennagrid::result_of::coboundary_range<RegionType>::type                 CellOnFacetRange;
   typedef viennagrid::result_of::iterator<CellOnFacetRange>::type                                       CellOnFacetIterator;
 
-  typedef viennagrid::result_of::neighbor_range<RegionType, viennagrid::vertex_tag, CellTag>::type    NeighborCellRange;
-  typedef viennagrid::result_of::iterator<NeighborCellRange>::type                                     NeighborCellIterator;
+  typedef viennagrid::result_of::neighbor_range<RegionType>::type    NeighborCellRange;
+  typedef viennagrid::result_of::iterator<NeighborCellRange>::type   NeighborCellIterator;
 
   typedef viennagrid::result_of::vertex_range<RegionType>::type        VertexOnSegmentRange;
   typedef viennagrid::result_of::iterator<VertexOnSegmentRange>::type   VertexOnSegmentIterator;
@@ -66,7 +65,7 @@ int main()
   // In the same way, one may also traverse interface vertices, etc.
   std::cout << "Facets of the full mesh:" << std::endl;
   FacetType interface_facet;
-  FacetRange facets = viennagrid::elements<FacetTag>(mesh);
+  FacetRange facets(mesh);
   for (FacetIterator fit = facets.begin(); fit != facets.end(); ++fit)
   {
     FacetType facet = *fit;
@@ -82,7 +81,7 @@ int main()
   //
   // Now iterate over the cells the facet is member of with respect to the two regionments:
   // Mind the second argument to the ncells() function, which is the respective regionment
-  CellOnFacetRange cells_on_facet_region1(region1, interface_facet);
+  CellOnFacetRange cells_on_facet_region1(region1, interface_facet, viennagrid::cell_dimension(region1));
   std::cout << "Cells that share the interface facet in region1:" << std::endl;
   for (CellOnFacetIterator cofit = cells_on_facet_region1.begin();
                            cofit != cells_on_facet_region1.end();
@@ -91,7 +90,7 @@ int main()
     std::cout << *cofit << std::endl;
   }
 
-  CellOnFacetRange cells_on_facet_region2(region2, interface_facet);
+  CellOnFacetRange cells_on_facet_region2(region2, interface_facet, viennagrid::cell_dimension(region2));
   std::cout << "Cells that share the interface facet in region2:" << std::endl;
   for (CellOnFacetIterator cofit = cells_on_facet_region2.begin();
                            cofit != cells_on_facet_region2.end();
@@ -104,7 +103,7 @@ int main()
   //
   // Now iterate over all cells neighboring the first cell
 
-  NeighborCellRange neigbouring_cells_region1(region1, viennagrid::elements<CellTag>(region1)[0]);
+  NeighborCellRange neigbouring_cells_region1(region1, viennagrid::cells(region1)[0], 0, viennagrid::cell_dimension(region1));
   std::cout << "Neighbor Elements for first cell in region1 (should be no element, because only one element per region)" << std::endl;
   for (NeighborCellIterator cofit = neigbouring_cells_region1.begin();
                            cofit != neigbouring_cells_region1.end();
@@ -113,7 +112,7 @@ int main()
     std::cout << *cofit << std::endl;
   }
 
-  NeighborCellRange neigbouring_cells_region2(region2, viennagrid::elements<CellTag>(region2)[0]);
+  NeighborCellRange neigbouring_cells_region2(region2, viennagrid::cells(region2)[0],  0, viennagrid::cell_dimension(region1));
   std::cout << "Neighbor Elements for first cell in region2 (should be no element, because only one element per region)" << std::endl;
   for (NeighborCellIterator cofit = neigbouring_cells_region2.begin();
                            cofit != neigbouring_cells_region2.end();
@@ -179,7 +178,7 @@ int main()
   viennagrid::result_of::field< std::deque< double >, ConstVertexType >::type first_regionment_field(first_regionment_data);
   viennagrid::result_of::field< std::deque< double >, ConstVertexType >::type second_regionment_field(second_regionment_data);
 
-  VertexOnSegmentRange vertices_region1 = viennagrid::elements<viennagrid::vertex_tag>(region1);
+  VertexOnSegmentRange vertices_region1(region1);
   for (VertexOnSegmentIterator vosit = vertices_region1.begin();
                              vosit != vertices_region1.end();
                            ++vosit)
@@ -187,7 +186,7 @@ int main()
     first_regionment_field(*vosit) = 1.0;
   }
 
-  VertexOnSegmentRange vertices_region2 = viennagrid::elements<viennagrid::vertex_tag>(region2);
+  VertexOnSegmentRange vertices_region2(region2);
   for (VertexOnSegmentIterator vosit = vertices_region2.begin();
                              vosit != vertices_region2.end();
                            ++vosit)

@@ -52,8 +52,8 @@ inline void setup_triangular2d_mesh(viennagrid::mesh_t & mesh)
   typedef viennagrid::triangle_tag                                      CellTag;
 
   typedef viennagrid::result_of::point<MeshType>::type          PointType;
-  typedef viennagrid::result_of::vertex<MeshType>::type       VertexType;
-  typedef viennagrid::result_of::element<MeshType, CellTag>::type        CellType;
+  typedef viennagrid::result_of::element<MeshType>::type       VertexType;
+  typedef viennagrid::result_of::element<MeshType>::type        CellType;
 
   const size_t s = 4;
   PointType p[s];

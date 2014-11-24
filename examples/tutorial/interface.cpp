@@ -24,8 +24,8 @@ int main()
   typedef viennagrid::mesh_t                        MeshType;
   typedef viennagrid::result_of::region<MeshType>::type RegionType;
 
-  typedef viennagrid::result_of::vertex< MeshType >::type     VertexType;
-  typedef viennagrid::result_of::triangle< MeshType >::type          TriangleType;
+  typedef viennagrid::result_of::element< MeshType >::type     VertexType;
+  typedef viennagrid::result_of::element< MeshType >::type          TriangleType;
 
   MeshType mesh;
 
@@ -50,14 +50,14 @@ int main()
   viennagrid::add( region1, t2 );
   viennagrid::add( region1, t3 );
 
-  typedef viennagrid::result_of::line_range< MeshType >::type line_range;
+  typedef viennagrid::result_of::element_range<MeshType, 1>::type line_range;
   line_range lines( mesh );
   for (line_range::iterator it = lines.begin(); it != lines.end(); ++it)
   {
     std::cout << *it << " INTERFACE? " << viennagrid::is_interface( region0, region1, *it ) << std::endl;
   }
 
-  typedef viennagrid::result_of::vertex_range< MeshType >::type vertex_range;
+  typedef viennagrid::result_of::vertex_range<MeshType>::type vertex_range;
   vertex_range vertices( mesh );
   for (vertex_range::iterator it = vertices.begin(); it != vertices.end(); ++it)
   {

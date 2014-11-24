@@ -55,14 +55,14 @@ namespace viennagrid
 
       typedef typename viennagrid::result_of::coord<mesh_type>::type CoordType;
 
-      typedef typename result_of::vertex<mesh_type>::type                          VertexType;
-      typedef typename result_of::vertex_id<mesh_type>::type                           VertexIDType;
-//       typedef typename result_of::cell<mesh_type>::type     CellType;
+      typedef typename result_of::element<mesh_type>::type                          VertexType;
+      typedef typename result_of::element_id<mesh_type>::type                       VertexIDType;
+      typedef typename result_of::element<mesh_type>::type     CellType;
 
       typedef typename viennagrid::result_of::vertex_range<mesh_type>::type   VertexRange;
       typedef typename viennagrid::result_of::iterator<VertexRange>::type                             VertexIterator;
 
-      typedef typename viennagrid::result_of::line_range<mesh_type>::type     EdgeRange;
+      typedef typename viennagrid::result_of::element_range<mesh_type, 1>::type     EdgeRange;
       typedef typename viennagrid::result_of::iterator<EdgeRange>::type                               EdgeIterator;
 
 //       typedef typename viennagrid::result_of::facet_range<mesh_type>::type   FacetRange;
@@ -483,7 +483,7 @@ namespace viennagrid
             for (std::size_t i=0; i<container.second.size(); ++i)
             {
               std::size_t global_vertex_id = local_to_global_map[region_id][i];
-              VertexType vertex(viennagrid::vertex_tag(), mesh_obj.mesh_hierarchy(), global_vertex_id);
+              VertexType vertex(mesh_obj.mesh_hierarchy(), 0, global_vertex_id);
 
               (*registered_vertex_scalar_data[name])(vertex) = (container.second)[i];
             }
@@ -493,7 +493,7 @@ namespace viennagrid
             for (std::size_t i=0; i<container.second.size(); ++i)
             {
               std::size_t global_vertex_id = local_to_global_map[region_id][i];
-              VertexType vertex(viennagrid::vertex_tag(), mesh_obj.mesh_hierarchy(), global_vertex_id);
+              VertexType vertex(mesh_obj.mesh_hierarchy(), 0, global_vertex_id);
 
               (*current_registered_region_vertex_scalar_data[name])(vertex) = (container.second)[i];
             }
@@ -522,7 +522,7 @@ namespace viennagrid
             for (std::size_t i=0; i<container.second.size()/3; ++i)
             {
               std::size_t global_vertex_id = local_to_global_map[region_id][i];
-              VertexType vertex(viennagrid::vertex_tag(), mesh_obj.mesh_hierarchy(), global_vertex_id);
+              VertexType vertex(mesh_obj.mesh_hierarchy(), 0, global_vertex_id);
 
               (*registered_vertex_vector_data[name])(vertex).resize(3);
               (*registered_vertex_vector_data[name])(vertex)[0] = (container.second)[3*i+0];
@@ -535,7 +535,7 @@ namespace viennagrid
             for (std::size_t i=0; i<container.second.size(); ++i)
             {
               std::size_t global_vertex_id = local_to_global_map[region_id][i];
-              VertexType vertex(viennagrid::vertex_tag(), mesh_obj.mesh_hierarchy(), global_vertex_id);
+              VertexType vertex(mesh_obj.mesh_hierarchy(), 0, global_vertex_id);
 
               (*current_registered_region_vertex_vector_data[name])(vertex).resize(3);
               (*current_registered_region_vertex_vector_data[name])(vertex)[0] = (container.second)[3*i+0];
@@ -549,7 +549,7 @@ namespace viennagrid
             std::cout << "* vtk_reader::operator(): Reading vector quantity "
                       << container.first << " to vertices." << std::endl;
             #endif
-            assert( 3 * viennagrid::elements<viennagrid::vertex_tag>(mesh_obj.get_make_region(region_id)).size() == container.second.size());
+            assert( 3 * viennagrid::vertices(mesh_obj.get_make_region(region_id)).size() == container.second.size());
             for (std::size_t i=0; i<container.second.size() / 3; ++i)
             {
               std::size_t global_vertex_id = local_to_global_map[region_id][i];

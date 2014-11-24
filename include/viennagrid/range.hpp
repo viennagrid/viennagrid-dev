@@ -82,11 +82,11 @@ namespace viennagrid
       mesh_hierarchy_ = element.mesh_hierarchy();
 
       viennagrid_element_boundary_elements(mesh_hierarchy().internal(),
-                                          element.topologic_dimension(),
-                                          element.id(),
-                                          topologic_dimension(),
-                                          const_cast<viennagrid_index **>(&element_index_begin),
-                                          const_cast<viennagrid_index **>(&element_index_end));
+                                           viennagrid::topologic_dimension(element),
+                                           element.id(),
+                                           topologic_dimension(),
+                                           const_cast<viennagrid_index **>(&element_index_begin),
+                                           const_cast<viennagrid_index **>(&element_index_end));
     }
 
     template<bool mesh_is_const, bool element_is_const>
@@ -96,7 +96,7 @@ namespace viennagrid
       mesh_hierarchy_ = element.mesh_hierarchy();
 
       viennagrid_element_coboundary_elements(mesh.internal(),
-                                             element.topologic_dimension(),
+                                             viennagrid::topologic_dimension(element),
                                              element.id(),
                                              topologic_dimension(),
                                              const_cast<viennagrid_index **>(&element_index_begin),
@@ -110,7 +110,7 @@ namespace viennagrid
       mesh_hierarchy_ = element.mesh_hierarchy();
 
       viennagrid_element_neighbor_elements(mesh.internal(),
-                                           element.topologic_dimension(),
+                                           viennagrid::topologic_dimension(element),
                                            element.id(),
                                            connector_topo_dim_in,
                                            topologic_dimension(),
@@ -209,19 +209,47 @@ namespace viennagrid
   private:
   };
 
-//   template<typename ElementTagT, bool is_const>
-//   class static_mesh_element_range : public mesh_element_range<is_const>
-//   {
-//   public:
-//
-//     typedef typename mesh_element_range<is_const>::mesh_hierarchy_type mesh_hierarchy_type;
-//     typedef typename mesh_element_range<is_const>::mesh_type mesh_type;
-//     typedef typename mesh_element_range<is_const>::element_type element_type;
-//
-//     static_mesh_element_range(mesh_type mesh) : mesh_element_range<is_const>(mesh, ElementTagT()) {}
-//
-//   private:
-//   };
+  template<bool is_const>
+  class mesh_cell_range : public base_element_range<true_functor, is_const>
+  {
+  public:
+    typedef typename base_element_range<true_functor, is_const>::mesh_hierarchy_type mesh_hierarchy_type;
+    typedef typename base_element_range<true_functor, is_const>::mesh_type mesh_type;
+    typedef typename base_element_range<true_functor, is_const>::element_type element_type;
+
+    mesh_cell_range(mesh_type mesh)
+    { this->from_mesh(mesh, viennagrid::cell_dimension(mesh)); }
+
+  private:
+  };
+
+  template<bool is_const>
+  class mesh_facet_range : public base_element_range<true_functor, is_const>
+  {
+  public:
+    typedef typename base_element_range<true_functor, is_const>::mesh_hierarchy_type mesh_hierarchy_type;
+    typedef typename base_element_range<true_functor, is_const>::mesh_type mesh_type;
+    typedef typename base_element_range<true_functor, is_const>::element_type element_type;
+
+    mesh_facet_range(mesh_type mesh)
+    { this->from_mesh(mesh, viennagrid::cell_dimension(mesh)-1); }
+
+  private:
+  };
+
+  template<int topologic_dimension, bool is_const>
+  class static_mesh_element_range : public mesh_element_range<is_const>
+  {
+  public:
+
+    typedef typename mesh_element_range<is_const>::mesh_hierarchy_type mesh_hierarchy_type;
+    typedef typename mesh_element_range<is_const>::mesh_type mesh_type;
+    typedef typename mesh_element_range<is_const>::element_type element_type;
+
+    static_mesh_element_range(mesh_type mesh) : mesh_element_range<is_const>(mesh, topologic_dimension) {}
+
+  private:
+  };
 
 
 
@@ -239,20 +267,33 @@ namespace viennagrid
   private:
   };
 
+  template<bool is_const>
+  class boundary_facet_range : public base_element_range<true_functor, is_const>
+  {
+  public:
+    typedef typename base_element_range<true_functor, is_const>::mesh_hierarchy_type mesh_hierarchy_type;
+    typedef typename base_element_range<true_functor, is_const>::mesh_type mesh_type;
+    typedef typename base_element_range<true_functor, is_const>::element_type element_type;
 
-//   template<typename BoundaryTagT, bool is_const>
-//   class static_boundary_element_range : public boundary_element_range<is_const>
-//   {
-//   public:
-//
-//     typedef typename boundary_element_range<is_const>::mesh_hierarchy_type mesh_hierarchy_type;
-//     typedef typename boundary_element_range<is_const>::mesh_type mesh_type;
-//     typedef typename boundary_element_range<is_const>::element_type element_type;
-//
-//     static_boundary_element_range(element_type element) : boundary_element_range<is_const>(element, BoundaryTagT()) {}
-//
-//   private:
-//   };
+    boundary_facet_range(element_type element)
+    { this->boundary_from_element(element, viennagrid::topologic_dimension(element)-1); }
+
+  private:
+  };
+
+  template<int boundary_topologic_dimension, bool is_const>
+  class static_boundary_element_range : public boundary_element_range<is_const>
+  {
+  public:
+
+    typedef typename boundary_element_range<is_const>::mesh_hierarchy_type mesh_hierarchy_type;
+    typedef typename boundary_element_range<is_const>::mesh_type mesh_type;
+    typedef typename boundary_element_range<is_const>::element_type element_type;
+
+    static_boundary_element_range(element_type element) : boundary_element_range<is_const>(element, boundary_topologic_dimension) {}
+
+  private:
+  };
 
 
 
@@ -271,19 +312,19 @@ namespace viennagrid
   };
 
 
-//   template<typename CoboundaryTagT, bool is_const>
-//   class static_coboundary_element_range : public coboundary_element_range<is_const>
-//   {
-//   public:
-//
-//     typedef typename coboundary_element_range<is_const>::mesh_hierarchy_type mesh_hierarchy_type;
-//     typedef typename coboundary_element_range<is_const>::mesh_type mesh_type;
-//     typedef typename coboundary_element_range<is_const>::element_type element_type;
-//
-//     static_coboundary_element_range(mesh_type mesh, element_type element) : coboundary_element_range<is_const>(mesh, element, CoboundaryTagT()) {}
-//
-//   private:
-//   };
+  template<int coboundary_topologic_dimension, bool is_const>
+  class static_coboundary_element_range : public coboundary_element_range<is_const>
+  {
+  public:
+
+    typedef typename coboundary_element_range<is_const>::mesh_hierarchy_type mesh_hierarchy_type;
+    typedef typename coboundary_element_range<is_const>::mesh_type mesh_type;
+    typedef typename coboundary_element_range<is_const>::element_type element_type;
+
+    static_coboundary_element_range(mesh_type mesh, element_type element) : coboundary_element_range<is_const>(mesh, element, coboundary_topologic_dimension) {}
+
+  private:
+  };
 
 
 
@@ -302,19 +343,19 @@ namespace viennagrid
   };
 
 
-//   template<typename ConnectorTagT, typename NeighborTagT, bool is_const>
-//   class static_neighbor_element_range : public neighbor_element_range<is_const>
-//   {
-//   public:
-//
-//     typedef typename neighbor_element_range<is_const>::mesh_hierarchy_type mesh_hierarchy_type;
-//     typedef typename neighbor_element_range<is_const>::mesh_type mesh_type;
-//     typedef typename neighbor_element_range<is_const>::element_type element_type;
-//
-//     static_neighbor_element_range(mesh_type mesh, element_type element) : neighbor_element_range<is_const>(mesh, element, ConnectorTagT(), NeighborTagT()) {}
-//
-//   private:
-//   };
+  template<int connector_topologic_dimension, int neighbor_topologic_dimension, bool is_const>
+  class static_neighbor_element_range : public neighbor_element_range<is_const>
+  {
+  public:
+
+    typedef typename neighbor_element_range<is_const>::mesh_hierarchy_type mesh_hierarchy_type;
+    typedef typename neighbor_element_range<is_const>::mesh_type mesh_type;
+    typedef typename neighbor_element_range<is_const>::element_type element_type;
+
+    static_neighbor_element_range(mesh_type mesh, element_type element) : neighbor_element_range<is_const>(mesh, element, connector_topologic_dimension, neighbor_topologic_dimension) {}
+
+  private:
+  };
 
 
 
@@ -355,21 +396,61 @@ namespace viennagrid
   private:
   };
 
-//   template<typename ElementTagT, bool is_const>
-//   class static_mesh_region_element_range : public mesh_region_element_range<is_const>
-//   {
-//   public:
-//
-//     typedef typename mesh_region_element_range<is_const>::mesh_hierarchy_type mesh_hierarchy_type;
-//     typedef typename mesh_region_element_range<is_const>::mesh_type mesh_type;
-//     typedef typename mesh_region_element_range<is_const>::element_type element_type;
-//
-//     typedef typename result_of::const_nonconst<mesh_region_t, is_const>::type mesh_region_type;
-//
-//     static_mesh_region_element_range(mesh_region_type region) : mesh_region_element_range<is_const>(region, ElementTagT()) {}
-//
-//   private:
-//   };
+
+  template<bool is_const>
+  class mesh_region_cell_range : public base_element_range<region_view_functor, is_const>
+  {
+  public:
+    typedef element_tag_t element_tag_type;
+
+    typedef typename base_element_range<region_view_functor, is_const>::mesh_hierarchy_type mesh_hierarchy_type;
+    typedef typename base_element_range<region_view_functor, is_const>::mesh_type mesh_type;
+    typedef typename base_element_range<region_view_functor, is_const>::element_type element_type;
+
+    typedef typename result_of::const_nonconst<mesh_region_t, is_const>::type mesh_region_type;
+
+    mesh_region_cell_range(mesh_region_type region) : base_element_range<region_view_functor, is_const>( region_view_functor(region) )
+    { this->from_mesh(region.mesh(), viennagrid::cell_dimension(region)); }
+
+  private:
+  };
+
+  template<bool is_const>
+  class mesh_region_facet_range : public base_element_range<region_view_functor, is_const>
+  {
+  public:
+    typedef element_tag_t element_tag_type;
+
+    typedef typename base_element_range<region_view_functor, is_const>::mesh_hierarchy_type mesh_hierarchy_type;
+    typedef typename base_element_range<region_view_functor, is_const>::mesh_type mesh_type;
+    typedef typename base_element_range<region_view_functor, is_const>::element_type element_type;
+
+    typedef typename result_of::const_nonconst<mesh_region_t, is_const>::type mesh_region_type;
+
+    mesh_region_facet_range(mesh_region_type region) : base_element_range<region_view_functor, is_const>( region_view_functor(region) )
+    { this->from_mesh(region.mesh(), viennagrid::facet_dimension(region)); }
+
+  private:
+  };
+
+
+  template<int topologic_dimension, bool is_const>
+  class static_mesh_region_element_range : public mesh_region_element_range<is_const>
+  {
+  public:
+
+    typedef typename mesh_region_element_range<is_const>::mesh_hierarchy_type mesh_hierarchy_type;
+    typedef typename mesh_region_element_range<is_const>::mesh_type mesh_type;
+    typedef typename mesh_region_element_range<is_const>::element_type element_type;
+
+    typedef typename result_of::const_nonconst<mesh_region_t, is_const>::type mesh_region_type;
+
+    static_mesh_region_element_range(mesh_region_type region) : mesh_region_element_range<is_const>(region, topologic_dimension) {}
+
+  private:
+  };
+
+
 
 
   template<bool is_const>
@@ -391,21 +472,21 @@ namespace viennagrid
   };
 
 
-//   template<typename CoboundaryTagT, bool is_const>
-//   class static_coboundary_region_element_range : public coboundary_region_element_range<is_const>
-//   {
-//   public:
-//
-//     typedef typename coboundary_region_element_range<is_const>::mesh_hierarchy_type mesh_hierarchy_type;
-//     typedef typename coboundary_region_element_range<is_const>::mesh_type mesh_type;
-//     typedef typename coboundary_region_element_range<is_const>::element_type element_type;
-//
-//     typedef typename result_of::const_nonconst<mesh_region_t, is_const>::type mesh_region_type;
-//
-//     static_coboundary_region_element_range(mesh_region_type region, element_type element) : coboundary_region_element_range<is_const>(region, element, CoboundaryTagT()) {}
-//
-//   private:
-//   };
+  template<int coboundary_topologic_dimension, bool is_const>
+  class static_coboundary_region_element_range : public coboundary_region_element_range<is_const>
+  {
+  public:
+
+    typedef typename coboundary_region_element_range<is_const>::mesh_hierarchy_type mesh_hierarchy_type;
+    typedef typename coboundary_region_element_range<is_const>::mesh_type mesh_type;
+    typedef typename coboundary_region_element_range<is_const>::element_type element_type;
+
+    typedef typename result_of::const_nonconst<mesh_region_t, is_const>::type mesh_region_type;
+
+    static_coboundary_region_element_range(mesh_region_type region, element_type element) : coboundary_region_element_range<is_const>(region, element, coboundary_topologic_dimension) {}
+
+  private:
+  };
 
 
   template<bool is_const>
@@ -420,28 +501,28 @@ namespace viennagrid
 
     typedef typename result_of::const_nonconst<mesh_region_t, is_const>::type mesh_region_type;
 
-    neighbor_region_element_range(mesh_region_type region, element_type element, element_tag_type connector_topo_dim_, element_tag_type neighbor_topo_dim_) : base_element_range<region_view_functor, is_const>( region_view_functor(region) )
+    neighbor_region_element_range(mesh_region_type region, element_type element, viennagrid_int connector_topo_dim_, viennagrid_int neighbor_topo_dim_) : base_element_range<region_view_functor, is_const>( region_view_functor(region) )
     { this->neighbor_from_element(region.mesh(), element, connector_topo_dim_, neighbor_topo_dim_); }
 
   private:
   };
 
 
-//   template<typename ConnectorTagT, typename NeighborTagT, bool is_const>
-//   class static_neighbor_region_element_range : public neighbor_region_element_range<is_const>
-//   {
-//   public:
-//
-//     typedef typename neighbor_region_element_range<is_const>::mesh_hierarchy_type mesh_hierarchy_type;
-//     typedef typename neighbor_region_element_range<is_const>::mesh_type mesh_type;
-//     typedef typename neighbor_region_element_range<is_const>::element_type element_type;
-//
-//     typedef typename result_of::const_nonconst<mesh_region_t, is_const>::type mesh_region_type;
-//
-//     static_neighbor_region_element_range(mesh_region_type region, element_type element) : neighbor_region_element_range<is_const>(region, element, ConnectorTagT(), NeighborTagT()) {}
-//
-//   private:
-//   };
+  template<int connector_topologic_dimension, int neighbor_topologic_dimension, bool is_const>
+  class static_neighbor_region_element_range : public neighbor_region_element_range<is_const>
+  {
+  public:
+
+    typedef typename neighbor_region_element_range<is_const>::mesh_hierarchy_type mesh_hierarchy_type;
+    typedef typename neighbor_region_element_range<is_const>::mesh_type mesh_type;
+    typedef typename neighbor_region_element_range<is_const>::element_type element_type;
+
+    typedef typename result_of::const_nonconst<mesh_region_t, is_const>::type mesh_region_type;
+
+    static_neighbor_region_element_range(mesh_region_type region, element_type element) : neighbor_region_element_range<is_const>(region, element, connector_topologic_dimension, neighbor_topologic_dimension) {}
+
+  private:
+  };
 
 
 
@@ -454,29 +535,73 @@ namespace viennagrid
   namespace result_of
   {
     template<>
-    struct element_range<mesh_t, null_type>
+    struct element_range<mesh_t, -1>
     {
       typedef mesh_element_range<false> type;
     };
 
-//     template<typename ElementTagT>
-//     struct element_range<mesh_t, ElementTagT>
-//     {
-//       typedef static_mesh_element_range<ElementTagT, false> type;
-//     };
+    template<int topologic_dimension>
+    struct element_range<mesh_t, topologic_dimension>
+    {
+      typedef static_mesh_element_range<topologic_dimension, false> type;
+    };
 
 
     template<>
-    struct const_element_range<mesh_t, null_type>
+    struct const_element_range<mesh_t, -1>
     {
       typedef mesh_element_range<true> type;
     };
 
-//     template<typename ElementTagT>
-//     struct const_element_range<mesh_t, ElementTagT>
-//     {
-//       typedef static_mesh_element_range<ElementTagT, true> type;
-//     };
+    template<int topologic_dimension>
+    struct const_element_range<mesh_t, topologic_dimension>
+    {
+      typedef static_mesh_element_range<topologic_dimension, true> type;
+    };
+
+
+
+
+    template<>
+    struct cell_range<mesh_t>
+    {
+      typedef mesh_cell_range<false> type;
+    };
+
+    template<bool is_const>
+    struct const_cell_range< base_mesh<is_const> >
+    {
+      typedef mesh_cell_range<false> type;
+    };
+
+    template<>
+    struct cell_range<const_mesh_t>
+    {
+      typedef typename const_cell_range<const_mesh_t>::type type;
+    };
+
+
+    template<>
+    struct facet_range<mesh_t>
+    {
+      typedef mesh_facet_range<false> type;
+    };
+
+    template<bool is_const>
+    struct const_facet_range< base_mesh<is_const> >
+    {
+      typedef mesh_facet_range<false> type;
+    };
+
+    template<>
+    struct facet_range<const_mesh_t>
+    {
+      typedef typename const_facet_range<const_mesh_t>::type type;
+    };
+
+
+
+
 
 
 
@@ -485,40 +610,60 @@ namespace viennagrid
 
 
     template<bool is_const>
-    struct const_element_range<base_element<is_const>, null_type>
+    struct const_element_range<base_element<is_const>, -1>
     {
       typedef boundary_element_range<true> type;
     };
 
-//     template<typename ElementTagT, bool is_const>
-//     struct const_element_range<base_element<is_const>, ElementTagT>
-//     {
-//       typedef static_boundary_element_range<ElementTagT, true> type;
-//     };
+    template<int topologic_dimension, bool is_const>
+    struct const_element_range<base_element<is_const>, topologic_dimension>
+    {
+      typedef static_boundary_element_range<topologic_dimension, true> type;
+    };
 
 
     template<>
-    struct element_range<element_t, null_type>
+    struct element_range<element_t, -1>
     {
       typedef boundary_element_range<false> type;
     };
 
-//     template<typename ElementTagT>
-//     struct element_range<element_t, ElementTagT>
-//     {
-//       typedef static_boundary_element_range<ElementTagT, false> type;
-//     };
+    template<int topologic_dimension>
+    struct element_range<element_t, topologic_dimension>
+    {
+      typedef static_boundary_element_range<topologic_dimension, false> type;
+    };
 
     template<>
-    struct element_range<const_element_t, null_type>
+    struct element_range<const_element_t, -1>
     {
       typedef typename const_element_range<const_element_t>::type type;
     };
 
-    template<typename ElementTagT>
-    struct element_range<const_element_t, ElementTagT>
+    template<int topologic_dimension>
+    struct element_range<const_element_t, topologic_dimension>
     {
-      typedef typename const_element_range<const_element_t, ElementTagT>::type type;
+      typedef typename const_element_range<const_element_t, topologic_dimension>::type type;
+    };
+
+
+
+    template<>
+    struct facet_range<element_t>
+    {
+      typedef boundary_facet_range<false> type;
+    };
+
+    template<bool is_const>
+    struct const_facet_range< base_element<is_const> >
+    {
+      typedef boundary_facet_range<false> type;
+    };
+
+    template<>
+    struct facet_range<const_element_t>
+    {
+      typedef typename const_facet_range<const_element_t>::type type;
     };
 
 
@@ -530,106 +675,199 @@ namespace viennagrid
 
 
     template<bool is_const>
-    struct const_element_range<base_mesh_region<is_const>, null_type>
+    struct const_element_range<base_mesh_region<is_const>, -1>
     {
       typedef mesh_region_element_range<true> type;
     };
 
-//     template<typename ElementTagT, bool is_const>
-//     struct const_element_range<base_mesh_region<is_const>, ElementTagT>
-//     {
-//       typedef static_mesh_region_element_range<ElementTagT, true> type;
-//     };
+    template<int topologic_dimension, bool is_const>
+    struct const_element_range<base_mesh_region<is_const>, topologic_dimension>
+    {
+      typedef static_mesh_region_element_range<topologic_dimension, true> type;
+    };
 
 
     template<>
-    struct element_range<mesh_region_t, null_type>
+    struct element_range<mesh_region_t, -1>
     {
       typedef mesh_region_element_range<false> type;
     };
 
-//     template<typename ElementTagT>
-//     struct element_range<mesh_region_t, ElementTagT>
-//     {
-//       typedef static_mesh_region_element_range<ElementTagT, false> type;
-//     };
+    template<int topologic_dimension>
+    struct element_range<mesh_region_t, topologic_dimension>
+    {
+      typedef static_mesh_region_element_range<topologic_dimension, false> type;
+    };
 
     template<>
-    struct element_range<const_mesh_region_t, null_type>
+    struct element_range<const_mesh_region_t, -1>
     {
       typedef typename const_element_range<mesh_region_t>::type type;
     };
 
-    template<typename ElementTagT>
-    struct element_range<const_mesh_region_t, ElementTagT>
+    template<int topologic_dimension>
+    struct element_range<const_mesh_region_t, topologic_dimension>
     {
-      typedef typename const_element_range<mesh_region_t, ElementTagT>::type type;
+      typedef typename const_element_range<mesh_region_t, topologic_dimension>::type type;
     };
+
+
+
+    template<>
+    struct cell_range<mesh_region_t>
+    {
+      typedef mesh_region_cell_range<false> type;
+    };
+
+    template<bool is_const>
+    struct const_cell_range< base_mesh_region<is_const> >
+    {
+      typedef mesh_region_cell_range<false> type;
+    };
+
+    template<>
+    struct cell_range<const_mesh_region_t>
+    {
+      typedef typename const_cell_range<const_mesh_region_t>::type type;
+    };
+
+
+    template<>
+    struct facet_range<mesh_region_t>
+    {
+      typedef mesh_region_facet_range<false> type;
+    };
+
+    template<bool is_const>
+    struct const_facet_range< base_mesh_region<is_const> >
+    {
+      typedef mesh_region_facet_range<false> type;
+    };
+
+    template<>
+    struct facet_range<const_mesh_region_t>
+    {
+      typedef typename const_facet_range<const_mesh_region_t>::type type;
+    };
+
+
 
 
 
 
 
     template<>
-    struct coboundary_range<mesh_t, null_type>
+    struct coboundary_range<mesh_t, -1>
     {
       typedef coboundary_element_range<false> type;
     };
 
-//     template<typename CoboundaryTagT>
-//     struct coboundary_range<mesh_t, CoboundaryTagT>
-//     {
-//       typedef static_coboundary_element_range<CoboundaryTagT, false> type;
-//     };
+    template<int coboundary_topologic_dimension>
+    struct coboundary_range<mesh_t, coboundary_topologic_dimension>
+    {
+      typedef static_coboundary_element_range<coboundary_topologic_dimension, false> type;
+    };
 
-//     template<typename CoboundaryTagT>
-//     struct const_coboundary_range<mesh_t, CoboundaryTagT>
-//     {
-//       typedef static_coboundary_element_range<CoboundaryTagT, true> type;
-//     };
-
-
-//     template<typename CoboundaryTagT>
-//     struct coboundary_range<mesh_region_t, CoboundaryTagT>
-//     {
-//       typedef static_coboundary_region_element_range<CoboundaryTagT, false> type;
-//     };
-
-//     template<typename CoboundaryTagT>
-//     struct const_coboundary_range<mesh_region_t, CoboundaryTagT>
-//     {
-//       typedef static_coboundary_region_element_range<CoboundaryTagT, true> type;
-//     };
+    template<int coboundary_topologic_dimension>
+    struct const_coboundary_range<mesh_t, coboundary_topologic_dimension>
+    {
+      typedef static_coboundary_element_range<coboundary_topologic_dimension, true> type;
+    };
 
 
+    template<>
+    struct coboundary_range<mesh_region_t, -1>
+    {
+      typedef coboundary_region_element_range<false> type;
+    };
+
+    template<int coboundary_topologic_dimension>
+    struct coboundary_range<mesh_region_t, coboundary_topologic_dimension>
+    {
+      typedef static_coboundary_region_element_range<coboundary_topologic_dimension, false> type;
+    };
+
+    template<int coboundary_topologic_dimension>
+    struct const_coboundary_range<mesh_region_t, coboundary_topologic_dimension>
+    {
+      typedef static_coboundary_region_element_range<coboundary_topologic_dimension, true> type;
+    };
 
 
 
 
-//     template<typename ConnectorTagT, typename NeighborTagT>
-//     struct neighbor_range<mesh_t, ConnectorTagT, NeighborTagT>
-//     {
-//       typedef static_neighbor_element_range<ConnectorTagT, NeighborTagT, false> type;
-//     };
 
-//     template<typename ConnectorTagT, typename NeighborTagT>
-//     struct const_neighbor_range<mesh_t, ConnectorTagT, NeighborTagT>
-//     {
-//       typedef static_neighbor_element_range<ConnectorTagT, NeighborTagT, true> type;
-//     };
+    template<bool mesh_is_const>
+    struct const_neighbor_range<base_mesh<mesh_is_const>, -1>
+    {
+      typedef neighbor_element_range<true> type;
+    };
+
+    template<>
+    struct neighbor_range<mesh_t, -1>
+    {
+      typedef neighbor_element_range<false> type;
+    };
+
+    template<>
+    struct neighbor_range<const_mesh_t, -1>
+    {
+      typedef typename const_neighbor_range<const_mesh_t>::type type;
+    };
 
 
-//     template<typename ConnectorTagT, typename NeighborTagT>
-//     struct neighbor_range<mesh_region_t, ConnectorTagT, NeighborTagT>
-//     {
-//       typedef static_neighbor_region_element_range<ConnectorTagT, NeighborTagT, false> type;
-//     };
 
-//     template<typename ConnectorTagT, typename NeighborTagT>
-//     struct const_neighbor_range<mesh_region_t, ConnectorTagT, NeighborTagT>
-//     {
-//       typedef static_neighbor_region_element_range<ConnectorTagT, NeighborTagT, true> type;
-//     };
+
+
+    template<int connector_topologic_dimension, int neighbor_topologic_dimension>
+    struct neighbor_range<mesh_t, connector_topologic_dimension, neighbor_topologic_dimension>
+    {
+      typedef static_neighbor_element_range<connector_topologic_dimension, neighbor_topologic_dimension, false> type;
+    };
+
+    template<int connector_topologic_dimension, int neighbor_topologic_dimension>
+    struct const_neighbor_range<mesh_t, connector_topologic_dimension, neighbor_topologic_dimension>
+    {
+      typedef static_neighbor_element_range<connector_topologic_dimension, neighbor_topologic_dimension, true> type;
+    };
+
+
+
+
+
+
+    template<bool mesh_region_is_const>
+    struct const_neighbor_range<base_mesh_region<mesh_region_is_const>, -1>
+    {
+      typedef neighbor_region_element_range<false> type;
+    };
+
+    template<>
+    struct neighbor_range<mesh_region_t, -1>
+    {
+      typedef neighbor_region_element_range<false> type;
+    };
+
+    template<>
+    struct neighbor_range<const_mesh_region_t, -1>
+    {
+      typedef typename const_neighbor_range<const_mesh_region_t>::type type;
+    };
+
+
+
+
+    template<int connector_topologic_dimension, int neighbor_topologic_dimension>
+    struct neighbor_range<mesh_region_t, connector_topologic_dimension, neighbor_topologic_dimension>
+    {
+      typedef static_neighbor_region_element_range<connector_topologic_dimension, neighbor_topologic_dimension, false> type;
+    };
+
+    template<int connector_topologic_dimension, int neighbor_topologic_dimension>
+    struct const_neighbor_range<mesh_region_t, connector_topologic_dimension, neighbor_topologic_dimension>
+    {
+      typedef static_neighbor_region_element_range<connector_topologic_dimension, neighbor_topologic_dimension, true> type;
+    };
 
   }
 
@@ -639,34 +877,34 @@ namespace viennagrid
   typename viennagrid::result_of::element_range<SomethingT>::type elements(SomethingT something, viennagrid_int topologic_dimension)
   { return typename viennagrid::result_of::element_range<SomethingT>::type(something, topologic_dimension); }
 
-//   template<typename ElementTagT, typename SomethingT>
-//   typename viennagrid::result_of::element_range<SomethingT, ElementTagT>::type elements(SomethingT something)
-//   { return typename viennagrid::result_of::element_range<SomethingT, ElementTagT>::type(something); }
+  template<int topologic_dimension, typename SomethingT>
+  typename viennagrid::result_of::element_range<SomethingT, topologic_dimension>::type elements(SomethingT something)
+  { return typename viennagrid::result_of::element_range<SomethingT, topologic_dimension>::type(something); }
 
 
 
 
 
 
-//   /** @brief Function for retrieving a cell range object from a host object
-//     *
-//     * @tparam SomethingT         The host type, can be an element, a collection, a mesh, a segment or a segmentation
-//     * @param  something          The host object of type SomethingT
-//     * @return                    A cell range
-//     */
-//   template<typename SomethingT>
-//   typename result_of::cell_range<SomethingT>::type cells(SomethingT something)
-//   { return typename result_of::cell_range<SomethingT>::type(something); }
+  /** @brief Function for retrieving a cell range object from a host object
+    *
+    * @tparam SomethingT         The host type, can be an element, a collection, a mesh, a segment or a segmentation
+    * @param  something          The host object of type SomethingT
+    * @return                    A cell range
+    */
+  template<typename SomethingT>
+  typename result_of::cell_range<SomethingT>::type cells(SomethingT something)
+  { return typename result_of::cell_range<SomethingT>::type(something); }
 
-//   /** @brief Function for retrieving a facet range object from a host object
-//     *
-//     * @tparam ElementT           The host element (cell)
-//     * @param  element            The host object of type ElementT
-//     * @return                    A facet range
-//     */
-//   template<typename ElementT>
-//   typename result_of::facet_range<ElementT>::type facets(ElementT element)
-//   { return typename result_of::facet_range<ElementT>::type(element); }
+  /** @brief Function for retrieving a facet range object from a host object
+    *
+    * @tparam ElementT           The host element (cell)
+    * @param  element            The host object of type ElementT
+    * @return                    A facet range
+    */
+  template<typename ElementT>
+  typename result_of::facet_range<ElementT>::type facets(ElementT element)
+  { return typename result_of::facet_range<ElementT>::type(element); }
 
   /** @brief Function for retrieving a vertex range object from a host object
     *

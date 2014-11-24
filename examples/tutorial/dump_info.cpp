@@ -41,7 +41,7 @@ bool dump_information(MeshT & mesh, string const & filename)
   // dump mesh information
   std::cout << "Information for Mesh '" << filename << "'" << std::endl;
   std::cout << std::endl;
-  std::cout << "Cell Type           : " << mesh.cell_tag().name() << std::endl;
+  std::cout << "Topologic Dimension : " << viennagrid::cell_dimension(mesh) << std::endl;
   std::cout << "Geometric Dimension : " << viennagrid::geometric_dimension(mesh) << std::endl;
   std::cout << "Number of vertices  : " << viennagrid::vertices(mesh).size() << std::endl;
   std::cout << "Number of cells     : " << viennagrid::cells(mesh).size() << std::endl;

@@ -481,20 +481,10 @@ namespace viennagrid
 
 
 
-    template<typename SomethingT>
+    template<typename SomethingT, typename ElementT = null_type>
     struct const_region_range;
 
-    template<bool is_const>
-    struct const_region_range< base_mesh_hierarchy<is_const> >
-    {
-      typedef base_region_range<is_const> type;
-    };
 
-    template<bool is_const>
-    struct const_region_range< base_mesh<is_const> >
-    {
-      typedef base_mesh_region_range<is_const> type;
-    };
 
 
 
@@ -641,31 +631,31 @@ namespace viennagrid
 
 
 
-    template<typename SomethingT, typename ElementTagT = null_type>
+    template<typename SomethingT, int topologic_dimension = -1>
     struct element_range;
 
-    template<typename SomethingT, typename ElementTagT = null_type>
+    template<typename SomethingT, int topologic_dimension = -1>
     struct const_element_range;
 
-    template<typename SomethingT, typename ElementTagT>
-    struct element_range<const SomethingT, ElementTagT>
+    template<typename SomethingT, int topologic_dimension>
+    struct element_range<const SomethingT, topologic_dimension>
     {
-      typedef typename const_element_range<SomethingT, ElementTagT>::type type;
+      typedef typename const_element_range<SomethingT, topologic_dimension>::type type;
     };
 
 
-    template<typename SomethingT, typename CoboundaryTagT = null_type>
+    template<typename SomethingT, int coboundary_topologic_dimension = -1>
     struct coboundary_range;
 
-    template<typename SomethingT, typename CoboundaryTagT = null_type>
+    template<typename SomethingT, int coboundary_topologic_dimension = -1>
     struct const_coboundary_range;
 
 
 
-    template<typename SomethingT, typename ConnectorTagT = null_type, typename NeighborTagT = null_type>
+    template<typename SomethingT, int connector_topologic_dimension = -1, int neighbor_topologic_dimension = -1>
     struct neighbor_range;
 
-    template<typename SomethingT, typename ConnectorTagT = null_type, typename NeighborTagT = null_type>
+    template<typename SomethingT, int connector_topologic_dimension = -1, int neighbor_topologic_dimension = -1>
     struct const_neighbor_range;
 
 
@@ -692,96 +682,96 @@ namespace viennagrid
 //     };
 
 
-    /** @brief Convenience metafunction for the type retrieval of a vertex
-     *
-     * @tparam SomethingT         The host type, can be a collection, an element, a mesh, a segmentation or a segment
-     */
-    template<typename SomethingT>
-    struct vertex
-    {
-      typedef typename element<SomethingT, vertex_tag>::type type;
-    };
-
-    /** @brief Convenience metafunction for the type retrieval of a line (same as edge)
-     *
-     * @tparam SomethingT         The host type, can be a collection, an element, a mesh, a segmentation or a segment
-     */
-    template<typename SomethingT>
-    struct line
-    {
-      typedef typename element<SomethingT, line_tag>::type type;
-    };
-
-    /** @brief Convenience metafunction for the type retrieval of a edge (same as line)
-     *
-     * @tparam SomethingT         The host type, can be a collection, an element, a mesh, a segmentation or a segment
-     */
-    template<typename SomethingT>
-    struct edge
-    {
-      typedef typename element<SomethingT, edge_tag>::type type;
-    };
-
-    /** @brief Convenience metafunction for the type retrieval of a triangle
-     *
-     * @tparam SomethingT         The host type, can be a collection, an element, a mesh, a segmentation or a segment
-     */
-    template<typename SomethingT>
-    struct triangle
-    {
-      typedef typename element<SomethingT, triangle_tag>::type type;
-    };
-
-    /** @brief Convenience metafunction for the type retrieval of a quadrilateral
-     *
-     * @tparam SomethingT         The host type, can be a collection, an element, a mesh, a segmentation or a segment
-     */
-    template<typename SomethingT>
-    struct quadrilateral
-    {
-      typedef typename element<SomethingT, quadrilateral_tag>::type type;
-    };
-
-    /** @brief Convenience metafunction for the type retrieval of a polygon
-     *
-     * @tparam SomethingT         The host type, can be a collection, an element, a mesh, a segmentation or a segment
-     */
-    template<typename SomethingT>
-    struct polygon
-    {
-      typedef typename element<SomethingT, polygon_tag>::type type;
-    };
-
-    /** @brief Convenience metafunction for the type retrieval of a plc
-     *
-     * @tparam SomethingT         The host type, can be a collection, an element, a mesh, a segmentation or a segment
-     */
-    template<typename SomethingT>
-    struct plc
-    {
-      typedef typename element<SomethingT, plc_tag>::type type;
-    };
-
-    /** @brief Convenience metafunction for the type retrieval of a tetrahedron
-     *
-     * @tparam SomethingT         The host type, can be a collection, an element, a mesh, a segmentation or a segment
-     */
-    template<typename SomethingT>
-    struct tetrahedron
-    {
-      typedef typename element<SomethingT, tetrahedron_tag>::type type;
-    };
-
-    /** @brief Convenience metafunction for the type retrieval of a hexahedron
-     *
-     * @tparam SomethingT         The host type, can be a collection, an element, a mesh, a segmentation or a segment
-     */
-    template<typename SomethingT>
-    struct hexahedron
-    {
-      typedef typename element<SomethingT, hexahedron_tag>::type type;
-    };
-
+//     /** @brief Convenience metafunction for the type retrieval of a vertex
+//      *
+//      * @tparam SomethingT         The host type, can be a collection, an element, a mesh, a segmentation or a segment
+//      */
+//     template<typename SomethingT>
+//     struct vertex
+//     {
+//       typedef typename element<SomethingT, vertex_tag>::type type;
+//     };
+//
+//     /** @brief Convenience metafunction for the type retrieval of a line (same as edge)
+//      *
+//      * @tparam SomethingT         The host type, can be a collection, an element, a mesh, a segmentation or a segment
+//      */
+//     template<typename SomethingT>
+//     struct line
+//     {
+//       typedef typename element<SomethingT, line_tag>::type type;
+//     };
+//
+//     /** @brief Convenience metafunction for the type retrieval of a edge (same as line)
+//      *
+//      * @tparam SomethingT         The host type, can be a collection, an element, a mesh, a segmentation or a segment
+//      */
+//     template<typename SomethingT>
+//     struct edge
+//     {
+//       typedef typename element<SomethingT, edge_tag>::type type;
+//     };
+//
+//     /** @brief Convenience metafunction for the type retrieval of a triangle
+//      *
+//      * @tparam SomethingT         The host type, can be a collection, an element, a mesh, a segmentation or a segment
+//      */
+//     template<typename SomethingT>
+//     struct triangle
+//     {
+//       typedef typename element<SomethingT, triangle_tag>::type type;
+//     };
+//
+//     /** @brief Convenience metafunction for the type retrieval of a quadrilateral
+//      *
+//      * @tparam SomethingT         The host type, can be a collection, an element, a mesh, a segmentation or a segment
+//      */
+//     template<typename SomethingT>
+//     struct quadrilateral
+//     {
+//       typedef typename element<SomethingT, quadrilateral_tag>::type type;
+//     };
+//
+//     /** @brief Convenience metafunction for the type retrieval of a polygon
+//      *
+//      * @tparam SomethingT         The host type, can be a collection, an element, a mesh, a segmentation or a segment
+//      */
+//     template<typename SomethingT>
+//     struct polygon
+//     {
+//       typedef typename element<SomethingT, polygon_tag>::type type;
+//     };
+//
+//     /** @brief Convenience metafunction for the type retrieval of a plc
+//      *
+//      * @tparam SomethingT         The host type, can be a collection, an element, a mesh, a segmentation or a segment
+//      */
+//     template<typename SomethingT>
+//     struct plc
+//     {
+//       typedef typename element<SomethingT, plc_tag>::type type;
+//     };
+//
+//     /** @brief Convenience metafunction for the type retrieval of a tetrahedron
+//      *
+//      * @tparam SomethingT         The host type, can be a collection, an element, a mesh, a segmentation or a segment
+//      */
+//     template<typename SomethingT>
+//     struct tetrahedron
+//     {
+//       typedef typename element<SomethingT, tetrahedron_tag>::type type;
+//     };
+//
+//     /** @brief Convenience metafunction for the type retrieval of a hexahedron
+//      *
+//      * @tparam SomethingT         The host type, can be a collection, an element, a mesh, a segmentation or a segment
+//      */
+//     template<typename SomethingT>
+//     struct hexahedron
+//     {
+//       typedef typename element<SomethingT, hexahedron_tag>::type type;
+//     };
+//
 
 
 
@@ -799,99 +789,95 @@ namespace viennagrid
 //     };
 
 
-    /** @brief Convenience metafunction for the type retrieval of a vertex
-     *
-     * @tparam SomethingT         The host type, can be a collection, an element, a mesh, a segmentation or a segment
-     */
-    template<typename SomethingT>
-    struct const_vertex
-    {
-      typedef typename const_element<SomethingT, vertex_tag>::type type;
-    };
-
-    /** @brief Convenience metafunction for the type retrieval of a line (same as edge)
-     *
-     * @tparam SomethingT         The host type, can be a collection, an element, a mesh, a segmentation or a segment
-     */
-    template<typename SomethingT>
-    struct const_line
-    {
-      typedef typename const_element<SomethingT, line_tag>::type type;
-    };
-
-    /** @brief Convenience metafunction for the type retrieval of a edge (same as line)
-     *
-     * @tparam SomethingT         The host type, can be a collection, an element, a mesh, a segmentation or a segment
-     */
-    template<typename SomethingT>
-    struct const_edge
-    {
-      typedef typename const_element<SomethingT, edge_tag>::type type;
-    };
-
-    /** @brief Convenience metafunction for the type retrieval of a triangle
-     *
-     * @tparam SomethingT         The host type, can be a collection, an element, a mesh, a segmentation or a segment
-     */
-    template<typename SomethingT>
-    struct const_triangle
-    {
-      typedef typename const_element<SomethingT, triangle_tag>::type type;
-    };
-
-    /** @brief Convenience metafunction for the type retrieval of a quadrilateral
-     *
-     * @tparam SomethingT         The host type, can be a collection, an element, a mesh, a segmentation or a segment
-     */
-    template<typename SomethingT>
-    struct const_quadrilateral
-    {
-      typedef typename const_element<SomethingT, quadrilateral_tag>::type type;
-    };
-
-    /** @brief Convenience metafunction for the type retrieval of a polygon
-     *
-     * @tparam SomethingT         The host type, can be a collection, an element, a mesh, a segmentation or a segment
-     */
-    template<typename SomethingT>
-    struct const_polygon
-    {
-      typedef typename const_element<SomethingT, polygon_tag>::type type;
-    };
-
-    /** @brief Convenience metafunction for the type retrieval of a plc
-     *
-     * @tparam SomethingT         The host type, can be a collection, an element, a mesh, a segmentation or a segment
-     */
-    template<typename SomethingT>
-    struct const_plc
-    {
-      typedef typename const_element<SomethingT, plc_tag>::type type;
-    };
-
-    /** @brief Convenience metafunction for the type retrieval of a tetrahedron
-     *
-     * @tparam SomethingT         The host type, can be a collection, an element, a mesh, a segmentation or a segment
-     */
-    template<typename SomethingT>
-    struct const_tetrahedron
-    {
-      typedef typename const_element<SomethingT, tetrahedron_tag>::type type;
-    };
-
-    /** @brief Convenience metafunction for the type retrieval of a hexahedron
-     *
-     * @tparam SomethingT         The host type, can be a collection, an element, a mesh, a segmentation or a segment
-     */
-    template<typename SomethingT>
-    struct const_hexahedron
-    {
-      typedef typename const_element<SomethingT, hexahedron_tag>::type type;
-    };
-
-
-
-
+//     /** @brief Convenience metafunction for the type retrieval of a vertex
+//      *
+//      * @tparam SomethingT         The host type, can be a collection, an element, a mesh, a segmentation or a segment
+//      */
+//     template<typename SomethingT>
+//     struct const_vertex
+//     {
+//       typedef typename const_element<SomethingT, vertex_tag>::type type;
+//     };
+//
+//     /** @brief Convenience metafunction for the type retrieval of a line (same as edge)
+//      *
+//      * @tparam SomethingT         The host type, can be a collection, an element, a mesh, a segmentation or a segment
+//      */
+//     template<typename SomethingT>
+//     struct const_line
+//     {
+//       typedef typename const_element<SomethingT, line_tag>::type type;
+//     };
+//
+//     /** @brief Convenience metafunction for the type retrieval of a edge (same as line)
+//      *
+//      * @tparam SomethingT         The host type, can be a collection, an element, a mesh, a segmentation or a segment
+//      */
+//     template<typename SomethingT>
+//     struct const_edge
+//     {
+//       typedef typename const_element<SomethingT, edge_tag>::type type;
+//     };
+//
+//     /** @brief Convenience metafunction for the type retrieval of a triangle
+//      *
+//      * @tparam SomethingT         The host type, can be a collection, an element, a mesh, a segmentation or a segment
+//      */
+//     template<typename SomethingT>
+//     struct const_triangle
+//     {
+//       typedef typename const_element<SomethingT, triangle_tag>::type type;
+//     };
+//
+//     /** @brief Convenience metafunction for the type retrieval of a quadrilateral
+//      *
+//      * @tparam SomethingT         The host type, can be a collection, an element, a mesh, a segmentation or a segment
+//      */
+//     template<typename SomethingT>
+//     struct const_quadrilateral
+//     {
+//       typedef typename const_element<SomethingT, quadrilateral_tag>::type type;
+//     };
+//
+//     /** @brief Convenience metafunction for the type retrieval of a polygon
+//      *
+//      * @tparam SomethingT         The host type, can be a collection, an element, a mesh, a segmentation or a segment
+//      */
+//     template<typename SomethingT>
+//     struct const_polygon
+//     {
+//       typedef typename const_element<SomethingT, polygon_tag>::type type;
+//     };
+//
+//     /** @brief Convenience metafunction for the type retrieval of a plc
+//      *
+//      * @tparam SomethingT         The host type, can be a collection, an element, a mesh, a segmentation or a segment
+//      */
+//     template<typename SomethingT>
+//     struct const_plc
+//     {
+//       typedef typename const_element<SomethingT, plc_tag>::type type;
+//     };
+//
+//     /** @brief Convenience metafunction for the type retrieval of a tetrahedron
+//      *
+//      * @tparam SomethingT         The host type, can be a collection, an element, a mesh, a segmentation or a segment
+//      */
+//     template<typename SomethingT>
+//     struct const_tetrahedron
+//     {
+//       typedef typename const_element<SomethingT, tetrahedron_tag>::type type;
+//     };
+//
+//     /** @brief Convenience metafunction for the type retrieval of a hexahedron
+//      *
+//      * @tparam SomethingT         The host type, can be a collection, an element, a mesh, a segmentation or a segment
+//      */
+//     template<typename SomethingT>
+//     struct const_hexahedron
+//     {
+//       typedef typename const_element<SomethingT, hexahedron_tag>::type type;
+//     };
 
 
 
@@ -905,122 +891,134 @@ namespace viennagrid
      * @tparam SomethingT         The host type, can be a collection, an element, a mesh, a segmentation or a segment
      */
     template<typename SomethingT>
-    struct vertex_id
+    struct element_id
     {
-      typedef typename id< typename vertex<SomethingT>::type >::type type;
-    };
-
-    /** @brief Convenience metafunction for the type retrieval of a line ID (same as edge_id)
-     *
-     * @tparam SomethingT         The host type, can be a collection, an element, a mesh, a segmentation or a segment
-     */
-    template<typename SomethingT>
-    struct line_id
-    {
-      typedef typename id< typename line<SomethingT>::type >::type type;
-    };
-
-    /** @brief Convenience metafunction for the type retrieval of a line ID (same as line_id)
-     *
-     * @tparam SomethingT         The host type, can be a collection, an element, a mesh, a segmentation or a segment
-     */
-    template<typename SomethingT>
-    struct edge_id
-    {
-      typedef typename id< typename edge<SomethingT>::type >::type type;
-    };
-
-    /** @brief Convenience metafunction for the type retrieval of a triangle ID
-     *
-     * @tparam SomethingT         The host type, can be a collection, an element, a mesh, a segmentation or a segment
-     */
-    template<typename SomethingT>
-    struct triangle_id
-    {
-      typedef typename id< typename triangle<SomethingT>::type >::type type;
-    };
-
-    /** @brief Convenience metafunction for the type retrieval of a quadrilateral ID
-     *
-     * @tparam SomethingT         The host type, can be a collection, an element, a mesh, a segmentation or a segment
-     */
-    template<typename SomethingT>
-    struct quadrilateral_id
-    {
-      typedef typename id< typename quadrilateral<SomethingT>::type >::type type;
-    };
-
-    /** @brief Convenience metafunction for the type retrieval of a polygon v
-     *
-     * @tparam SomethingT         The host type, can be a collection, an element, a mesh, a segmentation or a segment
-     */
-    template<typename SomethingT>
-    struct polygon_id
-    {
-      typedef typename id< typename polygon<SomethingT>::type >::type type;
-    };
-
-    /** @brief Convenience metafunction for the type retrieval of a plc ID
-     *
-     * @tparam SomethingT         The host type, can be a collection, an element, a mesh, a segmentation or a segment
-     */
-    template<typename SomethingT>
-    struct plc_id
-    {
-      typedef typename id< typename plc<SomethingT>::type >::type type;
-    };
-
-    /** @brief Convenience metafunction for the type retrieval of a tetrahedron ID
-     *
-     * @tparam SomethingT         The host type, can be a collection, an element, a mesh, a segmentation or a segment
-     */
-    template<typename SomethingT>
-    struct tetrahedron_id
-    {
-      typedef typename id< typename tetrahedron<SomethingT>::type >::type type;
-    };
-
-    /** @brief Convenience metafunction for the type retrieval of a hexahedron ID
-     *
-     * @tparam SomethingT         The host type, can be a collection, an element, a mesh, a segmentation or a segment
-     */
-    template<typename SomethingT>
-    struct hexahedron_id
-    {
-      typedef typename id< typename hexahedron<SomethingT>::type >::type type;
+      typedef typename id< typename element<SomethingT>::type >::type type;
     };
 
 
 
-
-//     /** @brief Convenience metafunction for the type retrieval of a cell range. Will fail if there is more than one cell type
+//     /** @brief Convenience metafunction for the type retrieval of a vertex ID
 //      *
-//      * @tparam SomethingT         The host type, can be a typelist, a collection, a mesh, a segmentation or a segment
+//      * @tparam SomethingT         The host type, can be a collection, an element, a mesh, a segmentation or a segment
 //      */
 //     template<typename SomethingT>
-//     struct cell_range
+//     struct vertex_id
+//     {
+//       typedef typename id< typename vertex<SomethingT>::type >::type type;
+//     };
+//
+//     /** @brief Convenience metafunction for the type retrieval of a line ID (same as edge_id)
+//      *
+//      * @tparam SomethingT         The host type, can be a collection, an element, a mesh, a segmentation or a segment
+//      */
+//     template<typename SomethingT>
+//     struct line_id
+//     {
+//       typedef typename id< typename line<SomethingT>::type >::type type;
+//     };
+//
+//     /** @brief Convenience metafunction for the type retrieval of a line ID (same as line_id)
+//      *
+//      * @tparam SomethingT         The host type, can be a collection, an element, a mesh, a segmentation or a segment
+//      */
+//     template<typename SomethingT>
+//     struct edge_id
+//     {
+//       typedef typename id< typename edge<SomethingT>::type >::type type;
+//     };
+//
+//     /** @brief Convenience metafunction for the type retrieval of a triangle ID
+//      *
+//      * @tparam SomethingT         The host type, can be a collection, an element, a mesh, a segmentation or a segment
+//      */
+//     template<typename SomethingT>
+//     struct triangle_id
+//     {
+//       typedef typename id< typename triangle<SomethingT>::type >::type type;
+//     };
+//
+//     /** @brief Convenience metafunction for the type retrieval of a quadrilateral ID
+//      *
+//      * @tparam SomethingT         The host type, can be a collection, an element, a mesh, a segmentation or a segment
+//      */
+//     template<typename SomethingT>
+//     struct quadrilateral_id
+//     {
+//       typedef typename id< typename quadrilateral<SomethingT>::type >::type type;
+//     };
+//
+//     /** @brief Convenience metafunction for the type retrieval of a polygon v
+//      *
+//      * @tparam SomethingT         The host type, can be a collection, an element, a mesh, a segmentation or a segment
+//      */
+//     template<typename SomethingT>
+//     struct polygon_id
+//     {
+//       typedef typename id< typename polygon<SomethingT>::type >::type type;
+//     };
+//
+//     /** @brief Convenience metafunction for the type retrieval of a plc ID
+//      *
+//      * @tparam SomethingT         The host type, can be a collection, an element, a mesh, a segmentation or a segment
+//      */
+//     template<typename SomethingT>
+//     struct plc_id
+//     {
+//       typedef typename id< typename plc<SomethingT>::type >::type type;
+//     };
+//
+//     /** @brief Convenience metafunction for the type retrieval of a tetrahedron ID
+//      *
+//      * @tparam SomethingT         The host type, can be a collection, an element, a mesh, a segmentation or a segment
+//      */
+//     template<typename SomethingT>
+//     struct tetrahedron_id
+//     {
+//       typedef typename id< typename tetrahedron<SomethingT>::type >::type type;
+//     };
+//
+//     /** @brief Convenience metafunction for the type retrieval of a hexahedron ID
+//      *
+//      * @tparam SomethingT         The host type, can be a collection, an element, a mesh, a segmentation or a segment
+//      */
+//     template<typename SomethingT>
+//     struct hexahedron_id
+//     {
+//       typedef typename id< typename hexahedron<SomethingT>::type >::type type;
+//     };
+
+
+
+
+    /** @brief Convenience metafunction for the type retrieval of a cell range. Will fail if there is more than one cell type
+     *
+     * @tparam SomethingT         The host type, can be a typelist, a collection, a mesh, a segmentation or a segment
+     */
+    template<typename SomethingT>
+    struct cell_range;
 //     {
 //       typedef typename cell_tag<SomethingT>::type cell_tag;
 //       typedef typename element_range<SomethingT, cell_tag>::type type;
 //     };
-//
-//     template<typename SomethingT>
-//     struct facet_range
+
+    template<typename SomethingT>
+    struct facet_range;
 //     {
 //       typedef typename facet_tag<SomethingT>::type cell_tag;
 //       typedef typename element_range<SomethingT, cell_tag>::type type;
 //     };
 
-//     /** @brief Convenience metafunction for the type retrieval of a vertex range
-//      *
-//      * @tparam SomethingT         The host type, can be a typelist, a collection, a mesh, a segmentation or a segment
-//      */
-//     template<typename SomethingT>
-//     struct vertex_range
-//     {
-//       typedef typename element_range<SomethingT, vertex_tag>::type type;
-//     };
-//
+    /** @brief Convenience metafunction for the type retrieval of a vertex range
+     *
+     * @tparam SomethingT         The host type, can be a typelist, a collection, a mesh, a segmentation or a segment
+     */
+    template<typename SomethingT>
+    struct vertex_range
+    {
+      typedef typename element_range<SomethingT, 0>::type type;
+    };
+
 //     /** @brief Convenience metafunction for the type retrieval of a line range (same as edge_range)
 //      *
 //      * @tparam SomethingT         The host type, can be a typelist, a collection, a mesh, a segmentation or a segment
@@ -1108,34 +1106,34 @@ namespace viennagrid
 
 
 
-//     /** @brief Convenience metafunction for the type retrieval of a cell range. Will fail if there is more than one cell type
-//      *
-//      * @tparam SomethingT         The host type, can be a typelist, a collection, a mesh, a segmentation or a segment
-//      */
-//     template<typename SomethingT>
-//     struct const_cell_range
+    /** @brief Convenience metafunction for the type retrieval of a cell range. Will fail if there is more than one cell type
+     *
+     * @tparam SomethingT         The host type, can be a typelist, a collection, a mesh, a segmentation or a segment
+     */
+    template<typename SomethingT>
+    struct const_cell_range;
 //     {
 //       typedef typename cell_tag<SomethingT>::type cell_tag;
 //       typedef typename element_range<SomethingT, cell_tag>::type type;
 //     };
 //
-//     template<typename SomethingT>
-//     struct const_facet_range
+    template<typename SomethingT>
+    struct const_facet_range;
 //     {
 //       typedef typename facet_tag<SomethingT>::type cell_tag;
 //       typedef typename element_range<SomethingT, cell_tag>::type type;
 //     };
 
-//     /** @brief Convenience metafunction for the type retrieval of a vertex range
-//      *
-//      * @tparam SomethingT         The host type, can be a typelist, a collection, a mesh, a segmentation or a segment
-//      */
-//     template<typename SomethingT>
-//     struct const_vertex_range
-//     {
-//       typedef typename element_range<SomethingT, vertex_tag>::type type;
-//     };
-//
+    /** @brief Convenience metafunction for the type retrieval of a vertex range
+     *
+     * @tparam SomethingT         The host type, can be a typelist, a collection, a mesh, a segmentation or a segment
+     */
+    template<typename SomethingT>
+    struct const_vertex_range
+    {
+      typedef typename element_range<SomethingT, 0>::type type;
+    };
+
 //     /** @brief Convenience metafunction for the type retrieval of a line range (same as edge_range)
 //      *
 //      * @tparam SomethingT         The host type, can be a typelist, a collection, a mesh, a segmentation or a segment

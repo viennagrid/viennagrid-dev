@@ -13,7 +13,9 @@ namespace viennagrid
 
   inline void non_recursive_add_element_to_mesh(mesh_t mesh, element_t const & element)
   {
-    viennagrid_element_add(mesh.internal(), element.topologic_dimension(), element.id());
+    viennagrid_element_add(mesh.internal(),
+                           viennagrid::topologic_dimension(element),
+                           element.id());
   }
 
   inline void add_element_to_mesh(mesh_t & mesh, element_t const & element)
@@ -23,7 +25,7 @@ namespace viennagrid
     typedef viennagrid::result_of::element_range<element_t>::type ElementRangeType;
 
 //     for (element_tag_t et = element_tag_t::vertex(); et != e.tag(); ++et)
-    for (viennagrid_int i = 0; i < element.topologic_dimension(); ++i)
+    for (viennagrid_int i = 0; i < viennagrid::topologic_dimension(element); ++i)
     {
       ElementRangeType elements(element, i);
       for (ElementRangeType::iterator it = elements.begin(); it != elements.end(); ++it)
@@ -79,7 +81,7 @@ namespace viennagrid
 
 
   template<typename SomethingT>
-  typename result_of::vertex<SomethingT>::type make_vertex(SomethingT something, viennagrid_numeric x)
+  typename result_of::element<SomethingT>::type make_vertex(SomethingT something, viennagrid_numeric x)
   {
     typename viennagrid::result_of::point<SomethingT>::type pt(1);
     pt[0] = x;
@@ -87,7 +89,7 @@ namespace viennagrid
   }
 
   template<typename SomethingT>
-  typename result_of::vertex<SomethingT>::type make_vertex(SomethingT something, viennagrid_numeric x, viennagrid_numeric y)
+  typename result_of::element<SomethingT>::type make_vertex(SomethingT something, viennagrid_numeric x, viennagrid_numeric y)
   {
     typename viennagrid::result_of::point<SomethingT>::type pt(2);
     pt[0] = x;
@@ -96,7 +98,7 @@ namespace viennagrid
   }
 
   template<typename SomethingT>
-  typename result_of::vertex<SomethingT>::type make_vertex(SomethingT something, viennagrid_numeric x, viennagrid_numeric y, viennagrid_numeric z)
+  typename result_of::element<SomethingT>::type make_vertex(SomethingT something, viennagrid_numeric x, viennagrid_numeric y, viennagrid_numeric z)
   {
     typename viennagrid::result_of::point<SomethingT>::type pt(3);
     pt[0] = x;
@@ -109,7 +111,7 @@ namespace viennagrid
 
 
   template<typename SomethingT, typename NumericConfigT>
-  typename result_of::vertex<SomethingT>::type make_unique_vertex(
+  typename result_of::element<SomethingT>::type make_unique_vertex(
         SomethingT & something,
         typename result_of::point<SomethingT>::type const & point,
         NumericConfigT nc)
@@ -131,7 +133,7 @@ namespace viennagrid
   }
 
   template<typename SomethingT, typename NumericConfigT>
-  typename result_of::vertex<SomethingT>::type make_unique_vertex(SomethingT something, viennagrid_numeric x, NumericConfigT nc)
+  typename result_of::element<SomethingT>::type make_unique_vertex(SomethingT something, viennagrid_numeric x, NumericConfigT nc)
   {
     typename viennagrid::result_of::point<SomethingT>::type pt(1);
     pt[1] = x;
@@ -139,7 +141,7 @@ namespace viennagrid
   }
 
   template<typename SomethingT, typename NumericConfigT>
-  typename result_of::vertex<SomethingT>::type make_unique_vertex(SomethingT something, viennagrid_numeric x, viennagrid_numeric y, NumericConfigT nc)
+  typename result_of::element<SomethingT>::type make_unique_vertex(SomethingT something, viennagrid_numeric x, viennagrid_numeric y, NumericConfigT nc)
   {
     typename viennagrid::result_of::point<SomethingT>::type pt(2);
     pt[0] = x;
@@ -148,7 +150,7 @@ namespace viennagrid
   }
 
   template<typename SomethingT, typename NumericConfigT>
-  typename result_of::vertex<SomethingT>::type make_unique_vertex(SomethingT something, viennagrid_numeric x, viennagrid_numeric y, viennagrid_numeric z, NumericConfigT nc)
+  typename result_of::element<SomethingT>::type make_unique_vertex(SomethingT something, viennagrid_numeric x, viennagrid_numeric y, viennagrid_numeric z, NumericConfigT nc)
   {
     typename viennagrid::result_of::point<SomethingT>::type pt(3);
     pt[0] = x;

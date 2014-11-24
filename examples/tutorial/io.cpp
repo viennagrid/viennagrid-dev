@@ -56,7 +56,7 @@ void read_netgen(MeshType & mesh)
 template <typename MeshType, typename UserData>
 void write_opendx(MeshType const & mesh, UserData & data)
 {
-  typedef typename viennagrid::result_of::vertex< MeshType >::type        vertex_type;
+  typedef typename viennagrid::result_of::element<MeshType>::type        vertex_type;
 
   // Instantiate writer object:
   viennagrid::io::opendx_writer<MeshType> my_dx_writer;
@@ -80,8 +80,8 @@ void write_opendx(MeshType const & mesh, UserData & data)
 template <typename MeshType, typename UserData>
 void read_vtk(MeshType & mesh, UserData & data)
 {
-  typedef typename viennagrid::result_of::cell< MeshType >::type     cell_type;
-  typedef typename viennagrid::result_of::vertex< MeshType >::type        vertex_type;
+  typedef typename viennagrid::result_of::element< MeshType >::type     cell_type;
+  typedef typename viennagrid::result_of::element< MeshType >::type        vertex_type;
 
   //
   // Step 1: Instantiate reader object
@@ -169,8 +169,8 @@ void read_vtk(MeshType & mesh, UserData & data)
 template <typename MeshType, typename UserData>
 void write_vtk(MeshType & mesh, UserData & data)
 {
-  typedef typename viennagrid::result_of::cell< MeshType >::type     cell_type;
-  typedef typename viennagrid::result_of::vertex< MeshType >::type        vertex_type;
+  typedef typename viennagrid::result_of::element< MeshType >::type     cell_type;
+  typedef typename viennagrid::result_of::element< MeshType >::type        vertex_type;
 
   //
   // Step 1: Instantiate a writer object:

@@ -46,9 +46,9 @@ int main()
 
   typedef viennagrid::result_of::point<MeshType>::type point_type;
 
-  typedef viennagrid::result_of::vertex<MeshType>::type   VertexType;
-  typedef viennagrid::result_of::line<MeshType>::type       LineType;
-  typedef viennagrid::result_of::plc<MeshType>::type         PLCType;
+  typedef viennagrid::result_of::element<MeshType>::type   VertexType;
+  typedef viennagrid::result_of::element<MeshType>::type       LineType;
+  typedef viennagrid::result_of::element<MeshType>::type         PLCType;
 
   //
   // Reading the PLC mesh
@@ -59,7 +59,7 @@ int main()
 
 
   // querying the first PLC in the mesh
-  PLCType plc = viennagrid::plcs(mesh)[0];
+  PLCType plc = viennagrid::elements<2>(mesh)[0];
 
 
   // printing all vertices of the first PLC
@@ -73,7 +73,7 @@ int main()
   std::cout << std::endl;
 
   // printing all lines of the first PLC
-  typedef viennagrid::result_of::line_range<PLCType>::type line_on_plc_range;
+  typedef viennagrid::result_of::element_range<PLCType, 1>::type line_on_plc_range;
   typedef viennagrid::result_of::iterator<line_on_plc_range>::type line_on_plc_iterator;
 
   std::cout << "All lines of the PLC" << std::endl;
@@ -84,7 +84,7 @@ int main()
 
   // printing all PLC of the mesh
   std::cout << "All PLCs of the mesh" << std::endl;
-  typedef viennagrid::result_of::plc_range< MeshType >::type PLCRangeTYpe;
+  typedef viennagrid::result_of::element_range<MeshType, 2>::type PLCRangeTYpe;
   PLCRangeTYpe plc_range(mesh);
   for ( PLCRangeTYpe::iterator it = plc_range.begin(); it != plc_range.end(); ++it)
       std::cout << *it << std::endl;

@@ -38,8 +38,8 @@ int main()
   //
 
   typedef viennagrid::result_of::point<MeshType>::type PointType;
-  typedef viennagrid::result_of::vertex<MeshType>::type VertexType;
-  typedef viennagrid::result_of::polygon<MeshType>::type PolygonType;
+  typedef viennagrid::result_of::element<MeshType>::type VertexType;
+  typedef viennagrid::result_of::element<MeshType>::type PolygonType;
 
 
 //   viennagrid::static_array<vertex_handle_type, 7> handles;
@@ -56,7 +56,7 @@ int main()
 
   viennagrid::make_element<viennagrid::polygon_tag>( mesh, vertices.begin(), vertices.end() );
 
-  std::cout << viennagrid::elements<viennagrid::polygon_tag>(mesh)[0] << std::endl;
+  std::cout << viennagrid::elements<2>(mesh)[0] << std::endl;
 
   std::cout << "-----------------------------------------------" << std::endl;
   std::cout << " \\o/    Tutorial finished successfully!    \\o/ " << std::endl;

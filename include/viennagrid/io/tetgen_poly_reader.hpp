@@ -125,11 +125,11 @@ namespace viennagrid
 
 //         const std::size_t point_dim = mesh_obj.geometric_dimension();
 
-        typedef typename result_of::vertex<MeshT>::type         VertexType;
-        typedef typename VertexType::id_type VertexIDType;
+        typedef typename result_of::element<MeshT>::type         VertexType;
+        typedef typename result_of::element_id<VertexType>::type         VertexIDType;
 
-        typedef typename result_of::line<MeshT>::type            LineType;
-        typedef typename result_of::plc<MeshT>::type PLCType;
+        typedef typename result_of::element<MeshT>::type            LineType;
+        typedef typename result_of::element<MeshT>::type PLCType;
 
         std::ifstream reader(filename.c_str());
 

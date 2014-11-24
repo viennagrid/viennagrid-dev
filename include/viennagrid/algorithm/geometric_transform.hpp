@@ -31,7 +31,7 @@ namespace viennagrid
   template<typename PointAccessorT, typename MeshT, typename FunctorT>
   void geometric_transform(PointAccessorT accessor, MeshT & mesh, FunctorT func)
   {
-    typedef typename viennagrid::result_of::element_range<MeshT, viennagrid::vertex_tag>::type   VertexContainer;
+    typedef typename viennagrid::result_of::vertex_range<MeshT>::type   VertexContainer;
     typedef typename viennagrid::result_of::iterator<VertexContainer>::type                      VertexIterator;
 
     VertexContainer vertices(mesh);

@@ -33,8 +33,8 @@ void test(std::string & infile, std::string & outfile)
   typedef viennagrid::result_of::region<MeshType>::type RegionType;
   typedef viennagrid::result_of::id<RegionType>::type RegionIDType;
 
-  typedef typename viennagrid::result_of::vertex<MeshType>::type       VertexType;
-  typedef typename viennagrid::result_of::cell<MeshType>::type   CellType;
+  typedef typename viennagrid::result_of::element<MeshType>::type       VertexType;
+  typedef typename viennagrid::result_of::element<MeshType>::type   CellType;
 
   typedef typename viennagrid::result_of::vertex_range<MeshType>::type           VertexContainer;
   typedef typename viennagrid::result_of::iterator<VertexContainer>::type        VertexIterator;

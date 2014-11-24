@@ -20,9 +20,9 @@ int main()
   typedef viennagrid::result_of::element<MeshType>::type CellType;
 
   typedef viennagrid::result_of::vertex_range<MeshType>::type VertexRangeType;
-  typedef viennagrid::result_of::triangle_range<MeshType>::type TriangleRangeType;
+  typedef viennagrid::result_of::element_range<MeshType, 2>::type TriangleRangeType;
   typedef viennagrid::result_of::vertex_range<TriangleType>::type VertexOnTriangleRangeType;
-  typedef viennagrid::result_of::line_range<TriangleType>::type LineOnTriangleRangeType;
+  typedef viennagrid::result_of::element_range<TriangleType, 1>::type LineOnTriangleRangeType;
   typedef viennagrid::result_of::vertex_range<LineType>::type VertexOnLineRangeType;
 
 
@@ -99,8 +99,8 @@ int main()
   }
 
   {
-    typedef viennagrid::result_of::const_element_range<MeshType>::type CellRangeType;
-    CellRangeType cells(mesh, viennagrid::tetrahedron_tag());
+    typedef viennagrid::result_of::const_cell_range<MeshType>::type CellRangeType;
+    CellRangeType cells(mesh);
     for (VertexRangeType::const_iterator it = cells.begin(); it != cells.end(); ++it)
     {
       std::cout << "Cell: " << (*it).id() << std::endl;

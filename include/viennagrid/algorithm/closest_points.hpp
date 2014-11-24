@@ -750,7 +750,7 @@ namespace viennagrid
     template<typename PointAccessorT, typename SomethingT>
     std::pair<point_t, typename viennagrid::result_of::point<PointAccessorT, SomethingT>::type >
     closest_points_on_boundary_point_to_any(PointAccessorT const accessor,
-                                            element_tag_t facet_tag,
+                                            viennagrid_int topologic_dimension,
                                             point_t const & p,
                                             SomethingT const & cont)
     {
@@ -763,7 +763,7 @@ namespace viennagrid
       PairType closest_pair;
       double shortest_distance = std::numeric_limits<double>::max();
 
-      FacetRange facets(cont, facet_tag);
+      FacetRange facets(cont, topologic_dimension);
       for (FacetIterator fit = facets.begin();
                          fit != facets.end();
                        ++fit)
@@ -800,7 +800,7 @@ namespace viennagrid
                                     point_t const & p,
                                     base_mesh<mesh_is_const> const & mesh_obj)
     {
-      return closest_points_on_boundary_point_to_any(point_accessor, mesh_obj.facet_tag(), p, mesh_obj);
+      return closest_points_on_boundary_point_to_any(point_accessor, viennagrid::facet_dimension(mesh_obj), p, mesh_obj);
     }
 
     template <typename PointAccessorT, bool mesh_region_is_const>
@@ -809,7 +809,7 @@ namespace viennagrid
                                     point_t const & p,
                                     base_mesh_region<mesh_region_is_const> const & region)
     {
-      return closest_points_on_boundary_point_to_any(point_accessor, region.mesh().facet_tag(), p, region);
+      return closest_points_on_boundary_point_to_any(point_accessor, viennagrid::facet_dimension(region), p, region);
     }
 
 

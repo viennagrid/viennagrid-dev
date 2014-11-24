@@ -89,7 +89,7 @@ namespace viennagrid
       if (element.tag().is_polygon())
       {
         typedef typename viennagrid::result_of::coord< PointType >::type NumericType;
-        typedef typename viennagrid::result_of::const_element_range<ElementT, vertex_tag>::type       VertexOnCellContainer;
+        typedef typename viennagrid::result_of::const_vertex_range<ElementT>::type       VertexOnCellContainer;
         typedef typename viennagrid::result_of::iterator<VertexOnCellContainer>::type                    VertexOnCellIterator;
 
         VertexOnCellContainer range( element );
@@ -257,24 +257,25 @@ namespace viennagrid
     template <typename MeshSegmentHandleType>
     typename viennagrid::result_of::coord< MeshSegmentHandleType >::type
     volume_mesh(MeshSegmentHandleType const & mesh_obj,
-                viennagrid::element_tag_t cell_tag,
-                viennagrid::element_tag_t cell_tag_end
+                viennagrid_int topologic_dimension
+//                 viennagrid::element_tag_t cell_tag,
+//                 viennagrid::element_tag_t cell_tag_end
                )
     {
       typedef typename viennagrid::result_of::const_element_range<MeshSegmentHandleType>::type  ElementContainerType;
       typedef typename viennagrid::result_of::iterator<ElementContainerType>::type              ElementContainerIterator;
 
       typename viennagrid::result_of::coord< MeshSegmentHandleType >::type new_volume = 0;
-      for (; cell_tag != cell_tag_end; ++cell_tag)
-      {
-        ElementContainerType new_cells(mesh_obj, cell_tag);
+//       for (; cell_tag != cell_tag_end; ++cell_tag)
+//       {
+        ElementContainerType new_cells(mesh_obj, topologic_dimension);
         for (ElementContainerIterator new_cit = new_cells.begin();
                                       new_cit != new_cells.end();
                                     ++new_cit)
         {
           new_volume += volume( point_accessor(mesh_obj), *new_cit);
         }
-      }
+//       }
 
       return new_volume;
     }
@@ -313,7 +314,7 @@ namespace viennagrid
   typename viennagrid::result_of::coord< base_mesh<mesh_is_const> >::type
   volume(base_mesh<mesh_is_const> const & mesh_obj)
   {
-    return detail::volume_mesh(mesh_obj, viennagrid::cell_tag_begin(mesh_obj), viennagrid::cell_tag_end(mesh_obj));
+    return detail::volume_mesh(mesh_obj, viennagrid::topologic_dimension(mesh_obj));
   }
 
   // default Element Tag = Cell Tag

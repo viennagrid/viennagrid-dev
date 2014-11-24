@@ -20,11 +20,11 @@
 
 #include "viennagrid/core.hpp"
 #include "viennagrid/io/vtk_writer.hpp"
+#include "../../include/viennagrid/range.hpp"
 
 
-template <typename ElementTagT,
-          typename RegionT>
-void print_elements(RegionT & region)
+template<typename RegionT>
+void print_elements(RegionT & region, viennagrid_int topologic_dimension)
 {
   typedef typename viennagrid::result_of::mesh<RegionT>::type   MeshType;
 //   typedef typename viennagrid::result_of::mesh<SegmentationType>::type   MeshType2;  //to check that one can deduce {mesh type} <-> {segmentation type}
@@ -35,10 +35,10 @@ void print_elements(RegionT & region)
   RegionT const_seg = region;
 
   std::cout << "-- non-const --" << std::endl;
-  typedef typename viennagrid::result_of::element_range<RegionT, ElementTagT>::type  ContainerT;
+  typedef typename viennagrid::result_of::element_range<RegionT>::type  ContainerT;
   typedef typename viennagrid::result_of::iterator<ContainerT>::type           ContainerTIterator;
 
-  ContainerT elements(region);
+  ContainerT elements(region, topologic_dimension);
   for (ContainerTIterator it = elements.begin();
        it != elements.end();
        ++it)
@@ -48,10 +48,10 @@ void print_elements(RegionT & region)
   }
 
   std::cout << "-- const --" << std::endl;
-  typedef typename viennagrid::result_of::const_element_range<RegionT, ElementTagT>::type   ConstContainerT;
+  typedef typename viennagrid::result_of::const_element_range<RegionT>::type   ConstContainerT;
   typedef typename viennagrid::result_of::iterator<ConstContainerT>::type             ConstContainerTIterator;
 
-  ConstContainerT const_elements(const_seg);
+  ConstContainerT const_elements(const_seg, topologic_dimension);
   for (ConstContainerTIterator const_it = const_elements.begin();
        const_it != const_elements.end();
        ++const_it)
@@ -66,11 +66,10 @@ void print_elements(RegionT & region)
 inline void test_tetrahedral3d()
 {
   typedef viennagrid::mesh_t                         MeshType;
-  typedef viennagrid::result_of::cell_tag<MeshType>::type         CellTag;
   typedef viennagrid::result_of::region<MeshType>::type    RegionType;
 
   typedef viennagrid::result_of::point<MeshType>::type            PointType;
-  typedef viennagrid::result_of::vertex<MeshType>::type    VertexType;
+  typedef viennagrid::result_of::element<MeshType>::type    VertexType;
 
   MeshType mesh;
 
@@ -110,22 +109,22 @@ inline void test_tetrahedral3d()
 
   std::cout << "Vertices in Segment 0: " << viennagrid::vertices(region0).size() << std::endl;
   std::cout << "Vertices in Segment 1: " << viennagrid::vertices(region1).size() << std::endl;
-  std::cout << "Edges in Segment 0: "    << viennagrid::lines(region0).size() << std::endl;
-  std::cout << "Edges in Segment 1: "    << viennagrid::lines(region1).size() << std::endl;
+  std::cout << "Edges in Segment 0: "    << viennagrid::elements<1>(region0).size() << std::endl;
+  std::cout << "Edges in Segment 1: "    << viennagrid::elements<1>(region1).size() << std::endl;
   std::cout << "Cells in Segment 0: "    << viennagrid::cells(region0).size() << std::endl;
   std::cout << "Cells in Segment 1: "    << viennagrid::cells(region1).size() << std::endl;
 
   std::cout << "Printing vertices in segment 0:" << std::endl;
-  print_elements<viennagrid::vertex_tag>(region0);
+  print_elements(region0, 0);
 
   std::cout << "Printing vertices in segment 1:" << std::endl;
-  print_elements<viennagrid::vertex_tag>(region1);
+  print_elements(region1, 0);
 
   std::cout << "Printing cells in segment 0:" << std::endl;
-  print_elements<CellTag>(region0);
+  print_elements(region0, viennagrid::cell_dimension(region0));
 
   std::cout << "Printing cells in segment 1:" << std::endl;
-  print_elements<CellTag>(region1);
+  print_elements(region1, viennagrid::cell_dimension(region1));
 
   std::cout << "Test for direct operator[] access: " << std::endl;
   //viennagrid::ncells<0>(mesh.segments()[0])[0].print_short();
@@ -139,11 +138,11 @@ inline void test_tetrahedral3d()
 inline void test_hexahedral3d()
 {
   typedef viennagrid::mesh_t                         MeshType;
-  typedef viennagrid::result_of::cell_tag<MeshType>::type         CellTag;
+//   typedef viennagrid::result_of::cell_tag<MeshType>::type         CellTag;
   typedef viennagrid::result_of::region<MeshType>::type    RegionType;
 
   typedef viennagrid::result_of::point<MeshType>::type            PointType;
-  typedef viennagrid::result_of::vertex<MeshType>::type    VertexType;
+  typedef viennagrid::result_of::element<MeshType>::type    VertexType;
 
   MeshType mesh;
 
@@ -184,22 +183,22 @@ inline void test_hexahedral3d()
 
   std::cout << "Vertices in Segment 0: " << viennagrid::vertices(seg0).size() << std::endl;
   std::cout << "Vertices in Segment 1: " << viennagrid::vertices(seg1).size() << std::endl;
-  std::cout << "Edges in Segment 0: "    << viennagrid::lines(seg0).size() << std::endl;
-  std::cout << "Edges in Segment 1: "    << viennagrid::lines(seg1).size() << std::endl;
+  std::cout << "Edges in Segment 0: "    << viennagrid::elements<1>(seg0).size() << std::endl;
+  std::cout << "Edges in Segment 1: "    << viennagrid::elements<1>(seg1).size() << std::endl;
   std::cout << "Cells in Segment 0: "    << viennagrid::cells(seg0).size() << std::endl;
   std::cout << "Cells in Segment 1: "    << viennagrid::cells(seg1).size() << std::endl;
 
   std::cout << "Printing vertices in segment 0:" << std::endl;
-  print_elements<viennagrid::vertex_tag>(seg0);
+  print_elements(seg0, 0);
 
   std::cout << "Printing vertices in segment 1:" << std::endl;
-  print_elements<viennagrid::vertex_tag>(seg1);
+  print_elements(seg1, 0);
 
   std::cout << "Printing cells in segment 0:" << std::endl;
-  print_elements<CellTag>(seg0);
+  print_elements(seg0, viennagrid::cell_dimension(seg0));
 
   std::cout << "Printing cells in segment 1:" << std::endl;
-  print_elements<CellTag>(seg1);
+  print_elements(seg1, viennagrid::cell_dimension(seg1));
 
   std::cout << "Test for direct operator[] access: " << std::endl;
   //viennagrid::ncells<0>(mesh.segments()[0])[0].print_short();
@@ -214,11 +213,11 @@ inline void test_hexahedral3d()
 inline void test_triangle2d()
 {
   typedef viennagrid::mesh_t                         MeshType;
-  typedef viennagrid::result_of::cell_tag<MeshType>::type         CellTag;
+//   typedef viennagrid::result_of::cell_tag<MeshType>::type         CellTag;
   typedef viennagrid::result_of::region<MeshType>::type    RegionType;
 
   typedef viennagrid::result_of::point<MeshType>::type            PointType;
-  typedef viennagrid::result_of::vertex<MeshType>::type    VertexType;
+  typedef viennagrid::result_of::element<MeshType>::type    VertexType;
 
   MeshType mesh;
 
@@ -256,22 +255,22 @@ inline void test_triangle2d()
 
   std::cout << "Vertices in Segment 0: " << viennagrid::vertices(region0).size() << std::endl;
   std::cout << "Vertices in Segment 1: " << viennagrid::vertices(region1).size() << std::endl;
-  std::cout << "Edges in Segment 0: "    << viennagrid::lines(region0).size() << std::endl;
-  std::cout << "Edges in Segment 1: "    << viennagrid::lines(region1).size() << std::endl;
+  std::cout << "Edges in Segment 0: "    << viennagrid::elements<1>(region0).size() << std::endl;
+  std::cout << "Edges in Segment 1: "    << viennagrid::elements<1>(region1).size() << std::endl;
   std::cout << "Cells in Segment 0: "    << viennagrid::cells(region0).size() << std::endl;
   std::cout << "Cells in Segment 1: "    << viennagrid::cells(region1).size() << std::endl;
 
   std::cout << "Printing vertices in segment 0:" << std::endl;
-  print_elements<viennagrid::vertex_tag>(region0);
+  print_elements(region0, 0);
 
   std::cout << "Printing vertices in segment 1:" << std::endl;
-  print_elements<viennagrid::vertex_tag>(region1);
+  print_elements(region1, 0);
 
   std::cout << "Printing cells in segment 0:" << std::endl;
-  print_elements<CellTag>(region0);
+  print_elements(region0, viennagrid::cell_dimension(region0));
 
   std::cout << "Printing cells in segment 1:" << std::endl;
-  print_elements<CellTag>(region1);
+  print_elements(region1, viennagrid::cell_dimension(region1));
 
   std::cout << "Test for direct operator[] access: " << std::endl;
   //viennagrid::ncells<0>(mesh.segments()[0])[0].print_short();
@@ -285,11 +284,10 @@ inline void test_triangle2d()
 inline void test_quadrilateral2d()
 {
   typedef viennagrid::mesh_t                         MeshType;
-  typedef viennagrid::result_of::cell_tag<MeshType>::type         CellTag;
   typedef viennagrid::result_of::region<MeshType>::type    RegionType;
 
   typedef viennagrid::result_of::point<MeshType>::type            PointType;
-  typedef viennagrid::result_of::vertex<MeshType>::type    VertexType;
+  typedef viennagrid::result_of::element<MeshType>::type    VertexType;
 
   MeshType mesh;
 
@@ -326,22 +324,22 @@ inline void test_quadrilateral2d()
 
   std::cout << "Vertices in Segment 0: " << viennagrid::vertices(region0).size() << std::endl;
   std::cout << "Vertices in Segment 1: " << viennagrid::vertices(region1).size() << std::endl;
-  std::cout << "Edges in Segment 0: "    << viennagrid::lines(region0).size() << std::endl;
-  std::cout << "Edges in Segment 1: "    << viennagrid::lines(region1).size() << std::endl;
+  std::cout << "Edges in Segment 0: "    << viennagrid::elements<1>(region0).size() << std::endl;
+  std::cout << "Edges in Segment 1: "    << viennagrid::elements<1>(region1).size() << std::endl;
   std::cout << "Cells in Segment 0: "    << viennagrid::cells(region0).size() << std::endl;
   std::cout << "Cells in Segment 1: "    << viennagrid::cells(region1).size() << std::endl;
 
   std::cout << "Printing vertices in segment 0:" << std::endl;
-  print_elements<viennagrid::vertex_tag>(region0);
+  print_elements(region0, 0);
 
   std::cout << "Printing vertices in segment 1:" << std::endl;
-  print_elements<viennagrid::vertex_tag>(region1);
+  print_elements(region1, 0);
 
   std::cout << "Printing cells in segment 0:" << std::endl;
-  print_elements<CellTag>(region0);
+  print_elements(region0, viennagrid::cell_dimension(region0));
 
   std::cout << "Printing cells in segment 1:" << std::endl;
-  print_elements<CellTag>(region1);
+  print_elements(region1, viennagrid::cell_dimension(region1));
 
   std::cout << "Test for direct operator[] access: " << std::endl;
   //viennagrid::ncells<0>(mesh.segments()[0])[0].print_short();

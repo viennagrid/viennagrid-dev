@@ -28,14 +28,13 @@ int main()
   // Define the mesh and segmentation types
   //
   typedef viennagrid::mesh_t                                        MeshType;
-  typedef viennagrid::result_of::cell_tag<MeshType>::type             CellTag;
 
   //
   // Define the types of the elements in the mesh (derived from MeshType):
   //
-  typedef viennagrid::result_of::vertex<MeshType>::type               VertexType;
-  typedef viennagrid::result_of::facet<MeshType>::type                FacetType;
-  typedef viennagrid::result_of::cell<MeshType>::type                 CellType;
+  typedef viennagrid::result_of::element<MeshType>::type               VertexType;
+  typedef viennagrid::result_of::element<MeshType>::type               FacetType;
+  typedef viennagrid::result_of::element<MeshType>::type               CellType;
 
   std::cout << "--------------------------------------------------" << std::endl;
   std::cout << "-- ViennaGrid tutorial: Iteration over elements --" << std::endl;
@@ -79,7 +78,7 @@ int main()
   //
   // Define global edge, facet and cell ranges and their iterator types in the same way:
   //
-  typedef viennagrid::result_of::edge_range<MeshType>::type       EdgeRange;
+  typedef viennagrid::result_of::element_range<MeshType, 1>::type       EdgeRange;
   typedef viennagrid::result_of::iterator<EdgeRange>::type          EdgeIterator;
 
   typedef viennagrid::result_of::cell_range<MeshType>::type       CellRange;
@@ -105,15 +104,15 @@ int main()
   // Can be done like above. To show alternatives as well, this time the range is not set up explicitly in a named variable:
   // Note: the result of elements<>() is not assigned to a range, so an element tag is required!
   std::size_t num_edges = 0;
-  for (EdgeIterator eit = viennagrid::elements<viennagrid::line_tag>(mesh).begin();   //Note that the template parameter '1' is mandatory here to select edges
-                    eit != viennagrid::elements<viennagrid::line_tag>(mesh).end();
+  for (EdgeIterator eit = viennagrid::elements<1>(mesh).begin();   //Note that the template parameter '1' is mandatory here to select edges
+                    eit != viennagrid::elements<1>(mesh).end();
                   ++eit)
   {
     //do something with *eit here.
     ++num_edges;
   }
   std::cout << "Number of edges traversed: " << num_edges << std::endl;
-  std::cout << "Number of edges in mesh: " << viennagrid::elements<viennagrid::line_tag>(mesh).size() << std::endl;
+  std::cout << "Number of edges in mesh: " << viennagrid::elements<1>(mesh).size() << std::endl;
 
   //
   // Even though not recommended, it is also possible to iterate through the elements using operator[]:
@@ -127,7 +126,7 @@ int main()
     ++num_cells;
   }
   std::cout << "Number of cells traversed: " << num_cells << std::endl;
-  std::cout << "Number of cells in mesh: " << viennagrid::elements<CellTag>(mesh).size() << std::endl;
+  std::cout << "Number of cells in mesh: " << viennagrid::cells(mesh).size() << std::endl;
 
   //
   // In the same manner, iteration over all facets can be carried out using one of the three methods presented above
@@ -190,11 +189,11 @@ int main()
   // the second argument denotes the element tag of the element from which the coboundary elements are requested
   // the third argument denotes the element tag of the elements over which to iterate.
   //
-  typedef viennagrid::result_of::coboundary_range<MeshType, viennagrid::line_tag>::type     EdgeOnVertexRange;
+  typedef viennagrid::result_of::coboundary_range<MeshType, 1>::type     EdgeOnVertexRange;
   typedef viennagrid::result_of::iterator<EdgeOnVertexRange>::type                                                    EdgeOnVertexIterator;
 
   // Iteration over all edges connected to the first vertex in the mesh:
-  VertexType v0 = viennagrid::elements<viennagrid::vertex_tag>(mesh)[0];
+  VertexType v0 = viennagrid::vertices(mesh)[0];
   std::size_t num_v0edges = 0;
 
   // To set up the range, two arguments need to be passed to the ncells() function.

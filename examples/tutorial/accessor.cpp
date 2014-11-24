@@ -30,7 +30,7 @@ int main()
   typedef viennagrid::result_of::point<MeshType>::type            PointType;
 
   typedef viennagrid::result_of::element<MeshType>::type          CellType;
-  typedef viennagrid::result_of::vertex<MeshType>::type           VertexType;
+  typedef viennagrid::result_of::element<MeshType>::type          VertexType;
 
   std::cout << "------------------------------------------------------------ " << std::endl;
   std::cout << "-- ViennaGrid tutorial: Algorithms on points and elements -- " << std::endl;
@@ -69,13 +69,13 @@ int main()
   viennagrid::result_of::accessor< std::vector<double>, CellType >::type some_cell_data_accessor(some_cell_data_container);
 
   // simply using the accessor with operator()
-  some_cell_data_accessor( viennagrid::elements<viennagrid::tetrahedron_tag>(mesh)[0] ) = 42.0;
-  some_cell_data_accessor( viennagrid::elements<viennagrid::tetrahedron_tag>(mesh)[1] ) = 3.14;
-  double some_value = some_cell_data_accessor( viennagrid::elements<viennagrid::tetrahedron_tag>(mesh)[1] );
+  some_cell_data_accessor( viennagrid::cells(mesh)[0] ) = 42.0;
+  some_cell_data_accessor( viennagrid::cells(mesh)[1] ) = 3.14;
+  double some_value = some_cell_data_accessor( viennagrid::cells(mesh)[1] );
   std::cout << "Value for first cell (should be 3.14) = " << some_value << std::endl;
 
   // A helper function for creating an accessor is also provided
-  viennagrid::make_accessor<CellType>(some_cell_data_container)( viennagrid::elements<viennagrid::tetrahedron_tag>(mesh)[3] ) = 5.0;
+  viennagrid::make_accessor<CellType>(some_cell_data_container)( viennagrid::cells(mesh)[3] ) = 5.0;
 
 
 
@@ -85,11 +85,11 @@ int main()
   // default value will is -1
   viennagrid::result_of::field< std::vector<double>, CellType >::type some_cell_data_field(another_cell_data_container, -1.0);
 
-  some_cell_data_field( viennagrid::elements<viennagrid::tetrahedron_tag>(mesh)[0] ) = 12.0;
-  some_cell_data_field( viennagrid::elements<viennagrid::tetrahedron_tag>(mesh)[1] ) = 13.0;
+  some_cell_data_field( viennagrid::cells(mesh)[0] ) = 12.0;
+  some_cell_data_field( viennagrid::cells(mesh)[1] ) = 13.0;
 
   // A helper function for creating a field
-  viennagrid::make_field<CellType>(some_cell_data_container)( viennagrid::elements<viennagrid::tetrahedron_tag>(mesh)[3] ) = 5.0;
+  viennagrid::make_field<CellType>(some_cell_data_container)( viennagrid::cells(mesh)[3] ) = 5.0;
 
 
   // Similar to above, a container can be defined using the accessor_container meta function
@@ -98,8 +98,8 @@ int main()
   CellDataContainerType one_more_cell_data_container;
   viennagrid::result_of::field< CellDataContainerType, CellType >::type one_more_cell_data_accessor(one_more_cell_data_container);
 
-  one_more_cell_data_accessor( viennagrid::elements<viennagrid::tetrahedron_tag>(mesh)[0] ) = 1.0;
-  one_more_cell_data_accessor( viennagrid::elements<viennagrid::tetrahedron_tag>(mesh)[1] ) = -1.0;
+  one_more_cell_data_accessor( viennagrid::cells(mesh)[0] ) = 1.0;
+  one_more_cell_data_accessor( viennagrid::cells(mesh)[1] ) = -1.0;
 
 
   // Using an std::map as the underlying container type
@@ -107,8 +107,8 @@ int main()
   CellDataMapContainerType cell_data_map;
   viennagrid::result_of::field< CellDataMapContainerType, CellType >::type cell_data_map_accessor(cell_data_map);
 
-  cell_data_map_accessor( viennagrid::elements<viennagrid::tetrahedron_tag>(mesh)[0] ) = 2.5;
-  cell_data_map_accessor( viennagrid::elements<viennagrid::tetrahedron_tag>(mesh)[1] ) = -2.5;
+  cell_data_map_accessor( viennagrid::cells(mesh)[0] ) = 2.5;
+  cell_data_map_accessor( viennagrid::cells(mesh)[1] ) = -2.5;
 
 
   //

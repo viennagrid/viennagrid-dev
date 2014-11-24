@@ -24,8 +24,8 @@ int main()
 {
   typedef viennagrid::mesh_t                        MeshType;
 
-  typedef viennagrid::result_of::vertex< MeshType >::type            VertexType;
-  typedef viennagrid::result_of::triangle< MeshType >::type          TriangleType;
+  typedef viennagrid::result_of::element< MeshType >::type          VertexType;
+  typedef viennagrid::result_of::element< MeshType >::type          TriangleType;
 
   // defining the segment type and segment id type
   typedef   viennagrid::result_of::region<MeshType>::type RegionType;
@@ -152,7 +152,7 @@ int main()
 //   std::cout << std::endl;
 
   // printing all triangles from all segments
-  typedef viennagrid::result_of::triangle_range<RegionType>::type RangeType;
+  typedef viennagrid::result_of::cell_range<RegionType>::type RangeType;
 
   std::cout << "Triangles of Segment 0" << std::endl;
   RangeType range( region0 );

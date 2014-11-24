@@ -107,18 +107,18 @@ namespace viennagrid
         typedef typename viennagrid::result_of::coord<PointType>::type CoordType;
 //         static const int geometric_dim = viennagrid::result_of::static_size<PointType>::value;
 
-        typedef typename viennagrid::result_of::cell_tag<MeshType>::type CellTag;
+//         typedef typename viennagrid::result_of::cell_tag<MeshType>::type CellTag;
 
         typedef typename result_of::element<MeshType, viennagrid::vertex_tag>::type                           VertexType;
-        typedef typename result_of::element<MeshType, CellTag>::type     CellType;
+        typedef typename result_of::element<MeshType>::type     CellType;
 
-        typedef typename viennagrid::result_of::const_element_range<MeshType, viennagrid::vertex_tag>::type   VertexRange;
+        typedef typename viennagrid::result_of::const_vertex_range<MeshType>::type   VertexRange;
         typedef typename viennagrid::result_of::iterator<VertexRange>::type              VertexIterator;
 
-        typedef typename viennagrid::result_of::const_element_range<MeshType, CellTag>::type     CellRange;
+        typedef typename viennagrid::result_of::const_cell_range<MeshType>::type     CellRange;
         typedef typename viennagrid::result_of::iterator<CellRange>::type                                        CellIterator;
 
-        typedef typename viennagrid::result_of::const_element_range<CellType, viennagrid::vertex_tag>::type      VertexOnCellRange;
+        typedef typename viennagrid::result_of::const_vertex_range<CellType>::type      VertexOnCellRange;
         typedef typename viennagrid::result_of::iterator<VertexOnCellRange>::type         VertexOnCellIterator;
 
         typedef base_dynamic_field<const double, VertexType> VertexScalarBaseAccessor;
@@ -147,7 +147,7 @@ namespace viennagrid
             throw cannot_open_file_exception("* ViennaGrid: opendx_writer::operator(): File " + filename + ": Cannot open file!");
           }
 
-          std::size_t pointnum = viennagrid::elements<vertex_tag>(mesh_obj).size();
+          std::size_t pointnum = viennagrid::vertices(mesh_obj).size();
 
           writer << "object \"points\" class array type float rank 1 shape " << geometric_dim << " items ";
           writer << pointnum << " data follows" << std::endl;
@@ -165,7 +165,7 @@ namespace viennagrid
           writer << std::endl;
 
           //Cells:
-          std::size_t cellnum = viennagrid::elements<CellTag>(mesh_obj).size();
+          std::size_t cellnum = viennagrid::cells(mesh_obj).size();
           writer << "object \"grid_Line_One\" class array type int rank 1 shape " << (geometric_dim + 1) << " items " << cellnum << " data follows" << std::endl;
 
           CellRange cells(mesh_obj);
@@ -173,7 +173,7 @@ namespace viennagrid
               cit != cells.end();
               ++cit)
           {
-            VertexOnCellRange vertices_for_cell = viennagrid::elements<vertex_tag>(*cit);
+            VertexOnCellRange vertices_for_cell(*cit);
             for (VertexOnCellIterator vocit = vertices_for_cell.begin();
                 vocit != vertices_for_cell.end();
                 ++vocit)

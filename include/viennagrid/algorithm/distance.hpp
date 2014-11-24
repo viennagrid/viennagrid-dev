@@ -290,12 +290,12 @@ namespace viennagrid
   typename result_of::coord< base_mesh_region<mesh_region_is_const> >::type distance( base_element<element_is_const> const & line, base_mesh_region<mesh_region_is_const> const & region )
   {
     typedef base_mesh_region<mesh_region_is_const> RegionType;
-    typedef typename result_of::const_line_range<RegionType>::type ConstLineRangeType;
+    typedef typename result_of::const_element_range<RegionType>::type ConstLineRangeType;
     typedef typename result_of::iterator<ConstLineRangeType>::type ConstLineIteratorType;
 
     typedef typename result_of::coord<RegionType>::type CoordType;
 
-    ConstLineRangeType lines(region);
+    ConstLineRangeType lines(region, 1);
     if (lines.empty())
       return -1;
 

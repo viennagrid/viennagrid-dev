@@ -21,7 +21,7 @@ template <typename MeshType>
 void setup(MeshType & mesh, viennagrid::element_tag_t element_tag)
 {
   typedef typename viennagrid::result_of::point<MeshType>::type               PointType;
-  typedef typename viennagrid::result_of::vertex<MeshType>::type       VertexType;
+  typedef typename viennagrid::result_of::element<MeshType>::type       VertexType;
 
   if (element_tag.is_hexahedron())
   {
@@ -85,12 +85,12 @@ void setup(MeshType & mesh, viennagrid::element_tag_t element_tag)
 void test(std::string outfile, viennagrid::element_tag_t element_tag)
 {
   typedef viennagrid::mesh_t MeshType;
-  typedef viennagrid::result_of::cell_tag<MeshType>::type            CellTag;
+//   typedef viennagrid::result_of::cell_tag<MeshType>::type            CellTag;
 
   typedef viennagrid::result_of::vertex_range<MeshType>::type       VertexContainer;
   typedef viennagrid::result_of::iterator<VertexContainer>::type    VertexIterator;
 
-  typedef viennagrid::result_of::line_range<MeshType>::type       EdgeContainer;
+  typedef viennagrid::result_of::element_range<MeshType, 1>::type       EdgeContainer;
   typedef viennagrid::result_of::iterator<EdgeContainer>::type      EdgeIterator;
 
   typedef viennagrid::result_of::facet_range<MeshType>::type   FacetContainer;

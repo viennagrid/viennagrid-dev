@@ -46,8 +46,8 @@ inline void setup_mesh(viennagrid::mesh_t & mesh)
   typedef viennagrid::line_tag                                    CellTag;
 
   typedef viennagrid::result_of::point<MeshType>::type          PointType;
-  typedef viennagrid::result_of::vertex<MeshType>::type       VertexType;
-  typedef viennagrid::result_of::cell<MeshType>::type        CellType;
+  typedef viennagrid::result_of::element<MeshType>::type       VertexType;
+  typedef viennagrid::result_of::element<MeshType>::type        CellType;
 
   const size_t s = 6;
   PointType p[s];
@@ -76,10 +76,10 @@ inline void setup_mesh(viennagrid::mesh_t & mesh)
 inline void test()
 {
   typedef viennagrid::mesh_t                            Mesh;
-  typedef viennagrid::line_tag                                          CellTag;
+//   typedef viennagrid::line_tag                                          CellTag;
 
   typedef viennagrid::result_of::point<Mesh>::type                PointType;
-  typedef viennagrid::result_of::cell<Mesh>::type  CellType;
+  typedef viennagrid::result_of::element<Mesh>::type  CellType;
 
   Mesh mesh;
 
@@ -94,9 +94,9 @@ inline void test()
   PointType G = viennagrid::make_point(3.5);
   PointType H = viennagrid::make_point(4.0);
 
-  CellType line0 = viennagrid::elements<CellTag>(mesh)[0];
-  CellType line1 = viennagrid::elements<CellTag>(mesh)[1];
-  CellType line2 = viennagrid::elements<CellTag>(mesh)[2];
+  CellType line0 = viennagrid::cells(mesh)[0];
+  CellType line1 = viennagrid::cells(mesh)[1];
+  CellType line2 = viennagrid::cells(mesh)[2];
 
   //
   // Distance checks for t0

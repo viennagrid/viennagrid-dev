@@ -15,8 +15,8 @@ namespace viennagrid
     typedef typename viennagrid::result_of::element<MeshT>::type element_type;
 
     typedef typename viennagrid::result_of::point<MeshT>::type point_type;
-    typedef typename viennagrid::result_of::vertex<MeshT>::type vertex_type;
-    typedef typename viennagrid::result_of::const_vertex<MeshT>::type const_vertex_type;
+    typedef typename viennagrid::result_of::element<MeshT>::type vertex_type;
+    typedef typename viennagrid::result_of::const_element<MeshT>::type const_vertex_type;
 
     point_accessor_t(MeshT mesh_in) : mesh_(mesh_in) {}
 

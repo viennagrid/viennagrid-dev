@@ -57,7 +57,7 @@ namespace viennagrid
       typedef typename viennagrid::result_of::coord<RegionT>::type NumericType;
       PointType normal = viennagrid::normal_vector( triangle );
 
-      typedef typename viennagrid::result_of::const_neighbor_range<RegionT, viennagrid::vertex_tag, viennagrid::triangle_tag>::type NeigborTriangleRangeType;
+      typedef typename viennagrid::result_of::const_neighbor_range<RegionT, 0, 2>::type NeigborTriangleRangeType;
       typedef typename viennagrid::result_of::iterator<NeigborTriangleRangeType>::type NeigborTriangleIteratorType;
 
       NeigborTriangleRangeType neighbor_triangles( region, triangle );
@@ -91,7 +91,7 @@ namespace viennagrid
     void mark_segment_hull_contacts( MeshT const & mesh, AccessorType & contact_index_accessor )
     {
       typedef typename viennagrid::result_of::region<MeshT>::type RegionType;
-      typedef typename viennagrid::result_of::const_triangle_range<MeshT>::type ConstTriangleRangeType;
+      typedef typename viennagrid::result_of::const_element_range<MeshT, 2>::type ConstTriangleRangeType;
       typedef typename viennagrid::result_of::iterator<ConstTriangleRangeType>::type ConstTriangleIteratorType;
 
       ConstTriangleRangeType triangles(mesh);
@@ -106,7 +106,7 @@ namespace viennagrid
       RegionRangeType region_range(mesh);
       for (RegionRangeIterator rit = region_range.begin(); rit != region_range.end(); ++rit)
       {
-        typedef typename viennagrid::result_of::const_triangle_range<RegionType>::type ConstTriangleOnSegmentRangeType;
+        typedef typename viennagrid::result_of::const_element_range<RegionType, 2>::type ConstTriangleOnSegmentRangeType;
         typedef typename viennagrid::result_of::iterator<ConstTriangleOnSegmentRangeType>::type ConstTriangleOnSegmentIteratorType;
 
         ConstTriangleOnSegmentRangeType triangles_on_segment(*rit);
@@ -116,11 +116,10 @@ namespace viennagrid
           {
             contact_index_accessor(*tsit) = current_contact_index;
 
-            typedef typename viennagrid::result_of::triangle<MeshT>::type TriangleType;
-            typedef typename viennagrid::result_of::region_range<MeshT, TriangleType>::type TriangleRegionRangeType;
+            typedef typename viennagrid::result_of::element<MeshT>::type TriangleType;
+            typedef typename viennagrid::result_of::const_region_range<MeshT, TriangleType>::type TriangleRegionRangeType;
 
             TriangleRegionRangeType triangle_regions = viennagrid::regions(mesh, *tsit);
-
             mark_planar_neighbors(*rit, contact_index_accessor, *tsit, current_contact_index, triangle_regions);
 
             ++current_contact_index;
@@ -151,18 +150,18 @@ namespace viennagrid
       void operator()(MeshT const & mesh, std::string const & filename) const
       {
         typedef typename viennagrid::result_of::point<MeshT>::type PointType;
-        typedef typename viennagrid::result_of::vertex_id<MeshT>::type VertexIDType;
-        typedef typename viennagrid::result_of::triangle_id<MeshT>::type TriangleIDType;
+        typedef typename viennagrid::result_of::element_id<MeshT>::type VertexIDType;
+        typedef typename viennagrid::result_of::element_id<MeshT>::type TriangleIDType;
 
-        typedef typename viennagrid::result_of::triangle<MeshT>::type TriangleType;
+        typedef typename viennagrid::result_of::element<MeshT>::type TriangleType;
 
 
         typedef typename viennagrid::result_of::const_vertex_range<MeshT>::type ConstVertexRangeType;
         typedef typename viennagrid::result_of::iterator<ConstVertexRangeType>::type ConstVertexIteratorType;
 
-        typedef typename viennagrid::result_of::const_triangle_range<MeshT>::type ConstTriangleRangeType;
+        typedef typename viennagrid::result_of::const_element_range<MeshT, 2>::type ConstTriangleRangeType;
 
-        typedef typename viennagrid::result_of::const_tetrahedron_range<MeshT>::type ConstTetrahedronRangeType;
+        typedef typename viennagrid::result_of::const_element_range<MeshT, 3>::type ConstTetrahedronRangeType;
         typedef typename viennagrid::result_of::iterator<ConstTetrahedronRangeType>::type ConstTetrahedronIteratorType;
 
 
@@ -242,7 +241,7 @@ namespace viennagrid
 
         ConstTriangleRangeType triangles(mesh);
 
-        typedef typename viennagrid::result_of::const_triangle<MeshT>::type ConstTriangleType;
+        typedef typename viennagrid::result_of::const_element<MeshT>::type ConstTriangleType;
         typedef triangle_information<ConstTriangleType> TriInfoType;
 
         std::map<TriangleIDType, TriInfoType> used_triangles;
@@ -257,7 +256,7 @@ namespace viennagrid
         RegionRangeType regions = viennagrid::regions(mesh);
         for (RegionRangeIterator rit = regions.begin(); rit != regions.end(); ++rit)
         {
-          typedef typename viennagrid::result_of::const_triangle_range<RegionType>::type TriangleOnRegionRangeType;
+          typedef typename viennagrid::result_of::const_element_range<RegionType, 2>::type TriangleOnRegionRangeType;
           typedef typename viennagrid::result_of::iterator<TriangleOnRegionRangeType>::type TriangleOnRegionIteratorType;
 
           TriangleOnRegionRangeType triangles(*rit);
@@ -272,7 +271,7 @@ namespace viennagrid
               PointType triangle_normal = viennagrid::normal_vector(*tit);
               PointType triangle_center = viennagrid::centroid(*tit);
 
-              typedef typename viennagrid::result_of::const_coboundary_range<RegionType, viennagrid::tetrahedron_tag>::type CoboundaryTetrahedronRangeType;
+              typedef typename viennagrid::result_of::const_coboundary_range<RegionType, 3>::type CoboundaryTetrahedronRangeType;
 
               CoboundaryTetrahedronRangeType coboundary_tetrahedrons(*rit, *tit);
               if (coboundary_tetrahedrons.size() != 1)
@@ -322,7 +321,7 @@ namespace viennagrid
         // writing the vertex indices of the triangles
         for (typename std::map<TriangleIDType, TriInfoType>::const_iterator utit = used_triangles.begin(); utit != used_triangles.end(); ++utit)
         {
-          typedef typename viennagrid::result_of::triangle<MeshT>::type TriangleType;
+          typedef typename viennagrid::result_of::element<MeshT>::type TriangleType;
           typedef typename viennagrid::result_of::const_vertex_range<TriangleType>::type VertexOnTriangleRangeType;
           typedef typename viennagrid::result_of::iterator<VertexOnTriangleRangeType>::type VertexOnTriangleIteratorType;
 
@@ -361,14 +360,14 @@ namespace viennagrid
         writer << "4 # nodes per element\n";
         writer << "\n";
         // number of tetrahedra
-        writer << viennagrid::tetrahedra(mesh).size() << " # number of tetrahedron\n";
+        writer << viennagrid::cells(mesh).size() << " # number of tetrahedron\n";
         writer << "\n";
 
         // writing the vertex indices of the tetrahedra
         ConstTetrahedronRangeType tetrahedrons(mesh);
         for (ConstTetrahedronIteratorType tit = tetrahedrons.begin(); tit != tetrahedrons.end(); ++tit)
         {
-          typedef typename viennagrid::result_of::tetrahedron<MeshT>::type TetrahedronType;
+          typedef typename viennagrid::result_of::element<MeshT>::type TetrahedronType;
           typedef typename viennagrid::result_of::const_vertex_range<TetrahedronType>::type VertexOnTetrahedronRangeType;
           typedef typename viennagrid::result_of::iterator<VertexOnTetrahedronRangeType>::type VertexOnTetrahedronIteratorType;
 
@@ -386,15 +385,12 @@ namespace viennagrid
         writer << "4\n";
         writer << "0\n";
         writer << "\n";
-        writer << viennagrid::tetrahedra(mesh).size() << " # number of tetrahedron\n";
+        writer << viennagrid::cells(mesh).size() << " # number of tetrahedron\n";
 
         for (ConstTetrahedronIteratorType tit = tetrahedrons.begin(); tit != tetrahedrons.end(); ++tit)
         {
-          typedef typename viennagrid::result_of::tetrahedron<MeshT>::type TetrahedronType;
-
-
-
-          typedef typename viennagrid::result_of::region_range<MeshT, TetrahedronType>::type TetrahedronRegionRangeType;
+          typedef typename viennagrid::result_of::element<MeshT>::type TetrahedronType;
+          typedef typename viennagrid::result_of::const_region_range<MeshT, TetrahedronType>::type TetrahedronRegionRangeType;
 
           TetrahedronRegionRangeType tetrahedron_regions = viennagrid::regions(mesh, *tit);
           writer << (*tetrahedron_regions.begin()).id()+1 << "\n";

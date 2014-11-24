@@ -68,7 +68,7 @@ namespace viennagrid
            typename EdgeRefinementFlagAccessorT, typename RefinementVertexAccessorT>
   void simple_refine(base_mesh<mesh_is_const> const & mesh_in,
                      mesh_t & mesh_out,
-                     element_tag_t cell_tag, element_tag_t cell_tag_end,
+                     viennagrid_int topologic_dimension,
                      VertexCopyMapT & vertex_copy_map_,
                      EdgeRefinementFlagAccessorT const & edge_refinement_flag_accessor,
                      RefinementVertexAccessorT const & edge_to_vertex_handle_accessor)
@@ -79,14 +79,14 @@ namespace viennagrid
     typedef typename viennagrid::result_of::const_element_range<InputMeshType>::type  ElementRange;
     typedef typename viennagrid::result_of::iterator<ElementRange>::type                                 ElementIterator;
 
-    for (; cell_tag != cell_tag_end; ++cell_tag)
-    {
-      ElementRange cells(mesh_in, cell_tag);
+//     for (; cell_tag != cell_tag_end; ++cell_tag)
+//     {
+      ElementRange cells(mesh_in, topologic_dimension);
       for (ElementIterator cit  = cells.begin();
                         cit != cells.end();
                       ++cit)
       {
-        typedef typename viennagrid::result_of::vertex<OutputMeshType>::type OutputVertexType;
+        typedef typename viennagrid::result_of::element<OutputMeshType>::type OutputVertexType;
         typedef std::vector<OutputVertexType> VertexHandlesContainerType;
         typedef std::vector<VertexHandlesContainerType> ElementsContainerType;
         ElementsContainerType elements_vertices;
@@ -96,9 +96,9 @@ namespace viennagrid
         for (typename ElementsContainerType::iterator it = elements_vertices.begin();
               it != elements_vertices.end();
               ++it)
-          viennagrid::make_element( mesh_out, cell_tag, it->begin(), it->end() );
+          viennagrid::make_element( mesh_out, (*cit).tag(), it->begin(), it->end() );
       }
-    }
+//     }
   }
 
 
@@ -211,7 +211,7 @@ namespace viennagrid
              typename EdgeRefinementFlagAccessorT, typename RefinementVertexAccessorT>
     void refine_impl(base_mesh<mesh_is_const> const & mesh_in,
                      mesh_t & mesh_out,
-                     element_tag_t cell_tag_begin, element_tag_t cell_tag_end,
+                     viennagrid_int topologic_dimension,
                      PointAccessorT const point_accessor_in,
                      VertexCopyMapT & vertex_copy_map_,
                      EdgeRefinementFlagAccessorT const & edge_refinement_flag_accessor,
@@ -219,7 +219,7 @@ namespace viennagrid
     {
       typedef base_mesh<mesh_is_const>       InputMeshType;
 
-      typedef typename viennagrid::result_of::const_line_range<InputMeshType>::type                 EdgeRange;
+      typedef typename viennagrid::result_of::const_element_range<InputMeshType, 1>::type                 EdgeRange;
       typedef typename viennagrid::result_of::iterator<EdgeRange>::type                             EdgeIterator;
 
       //
@@ -240,7 +240,7 @@ namespace viennagrid
       // Step 2: Now write new cells to new mesh
       //
       simple_refine(mesh_in, mesh_out,
-                    cell_tag_begin, cell_tag_end,
+                    topologic_dimension,
                     vertex_copy_map_, edge_refinement_flag_accessor, edge_to_vertex_handle_accessor);
     }
 
@@ -296,18 +296,19 @@ namespace viennagrid
   /** @brief Ensures refinement of the longest edge of each cell. If any edge is tagged for refinement in a cell, then the longest edge is refined as well. */
   template<bool mesh_is_const, typename EdgeRefinementFlagAccessorT>
   void ensure_longest_edge_refinement(base_mesh<mesh_is_const> const & mesh_in,
-                                      element_tag_t cell_tag_begin, element_tag_t cell_tag_end,
+                                      viennagrid_int topologic_dimension,
+//                                       element_tag_t cell_tag_begin, element_tag_t cell_tag_end,
                                       EdgeRefinementFlagAccessorT edge_refinement_flag_accessor)
   {
     typedef base_mesh<mesh_is_const>                                            MeshInType;
 
     typedef typename viennagrid::result_of::element<MeshInType>::type    CellType;
-    typedef typename viennagrid::result_of::vertex<MeshInType>::type     VertexType;
-    typedef typename viennagrid::result_of::line<MeshInType>::type       EdgeType;
+    typedef typename viennagrid::result_of::element<MeshInType>::type     VertexType;
+    typedef typename viennagrid::result_of::element<MeshInType>::type       EdgeType;
 
-    typedef typename viennagrid::result_of::const_element_range<MeshInType>::type    CellRange;
+    typedef typename viennagrid::result_of::const_cell_range<MeshInType>::type    CellRange;
     typedef typename viennagrid::result_of::iterator<CellRange>::type                CellIterator;
-    typedef typename viennagrid::result_of::const_line_range<CellType>::type         EdgeOnCellRange;
+    typedef typename viennagrid::result_of::const_element_range<CellType, 1>::type         EdgeOnCellRange;
     typedef typename viennagrid::result_of::iterator<EdgeOnCellRange>::type          EdgeOnCellIterator;
     typedef typename viennagrid::result_of::const_vertex_range<EdgeType>::type       VertexOnEdgeRange;
     typedef typename viennagrid::result_of::iterator<VertexOnEdgeRange>::type        VertexOnEdgeIterator;
@@ -320,9 +321,9 @@ namespace viennagrid
     {
       something_changed = false;
 
-      for (element_tag_t cell_tag = cell_tag_begin; cell_tag != cell_tag_end; ++cell_tag)
-      {
-        CellRange cells = viennagrid::elements(mesh_in, cell_tag);
+//       for (element_tag_t cell_tag = cell_tag_begin; cell_tag != cell_tag_end; ++cell_tag)
+//       {
+        CellRange cells = viennagrid::elements(mesh_in, topologic_dimension);
         for (CellIterator cit  = cells.begin();
                           cit != cells.end();
                         ++cit)
@@ -377,7 +378,7 @@ namespace viennagrid
           }
 
         } //for cells
-      }
+//       }
 
 
     } //while
@@ -386,7 +387,7 @@ namespace viennagrid
   /** @brief Transfers tags for refinement from the cell to edges */
   template<bool mesh_is_const, typename CellRefinementFlagAccessorT, typename EdgeRefinementFlagAccessorT>
   void cell_refinement_to_edge_refinement(base_mesh<mesh_is_const> const & mesh_in,
-                                          element_tag_t cell_tag, element_tag_t cell_tag_end,
+                                          viennagrid_int topologic_dimension,
                                           CellRefinementFlagAccessorT cell_refinement_flag, EdgeRefinementFlagAccessorT edge_refinement_flag_accessor)
   {
     typedef base_mesh<mesh_is_const>                                                        MeshInType;
@@ -395,14 +396,14 @@ namespace viennagrid
 
     typedef typename viennagrid::result_of::const_element_range<MeshInType>::type      ElementRange;
     typedef typename viennagrid::result_of::iterator<ElementRange>::type               ElementIterator;
-    typedef typename viennagrid::result_of::const_line_range<ElementType>::type           EdgeOnElementRange;
+    typedef typename viennagrid::result_of::const_element_range<ElementType, 1>::type           EdgeOnElementRange;
     typedef typename viennagrid::result_of::iterator<EdgeOnElementRange>::type                         EdgeOnCellIterator;
 
     std::size_t cells_for_refinement = 0;
 
-    for (; cell_tag != cell_tag_end; ++cell_tag)
-    {
-      ElementRange elements(mesh_in, cell_tag);
+//     for (; cell_tag != cell_tag_end; ++cell_tag)
+//     {
+      ElementRange elements(mesh_in, topologic_dimension);
       for (ElementIterator eit  = elements.begin();
                           eit != elements.end();
                         ++eit)
@@ -420,7 +421,7 @@ namespace viennagrid
           }
         }
       }
-    }
+//     }
 
   }
 
@@ -431,7 +432,7 @@ namespace viennagrid
   {
     typedef base_mesh<mesh_is_const>                                                                MeshInType;
 
-    typedef typename viennagrid::result_of::const_line_range<MeshInType>::type   LineRange;
+    typedef typename viennagrid::result_of::const_element_range<MeshInType, 1>::type   LineRange;
     typedef typename viennagrid::result_of::iterator<LineRange>::type                                       LineIterator;
 
     LineRange lines(mesh_in);
@@ -449,7 +450,7 @@ namespace viennagrid
                             NumericConfigT numeric_config)
   {
     typedef typename viennagrid::result_of::coord<SrcMeshT>::type NumericType;
-    typedef typename viennagrid::result_of::const_line_range<SrcMeshT>::type ConstLineRangeType;
+    typedef typename viennagrid::result_of::const_element_range<SrcMeshT, 1>::type ConstLineRangeType;
     typedef typename viennagrid::result_of::iterator<ConstLineRangeType>::type ConstLineIteratorType;
 
     ConstLineRangeType lines(src_mesh);
@@ -503,14 +504,14 @@ namespace viennagrid
            typename EdgeRefinementFlagAccessorT, typename RefinementVertexAccessor>
   void refine(base_mesh<mesh_is_const> const & mesh_in,
               mesh_t & mesh_out,
-              element_tag_t cell_tag_begin, element_tag_t cell_tag_end,
+              viennagrid_int topologic_dimension,
               PointAccessorType point_accessor_in,
               VertexCopyMapT & vertex_copy_map_,
               EdgeRefinementFlagAccessorT const & edge_refinement_flag_accessor,
               RefinementVertexAccessor & edge_to_vertex_handle_accessor)
   {
     detail::refine_impl(mesh_in, mesh_out,
-                        cell_tag_begin, cell_tag_end,
+                        topologic_dimension,
                         point_accessor_in,
                         vertex_copy_map_,
                         edge_refinement_flag_accessor, edge_to_vertex_handle_accessor);
@@ -530,22 +531,22 @@ namespace viennagrid
            typename EdgeRefinementFlagAccessorT>
   void refine(base_mesh<mesh_is_const> const & mesh_in,
               mesh_t & mesh_out,
-              element_tag_t cell_tag_begin, element_tag_t cell_tag_end,
+              viennagrid_int topologic_dimension,
               PointAccessorType point_accessor_in,
               EdgeRefinementFlagAccessorT const & edge_refinement_flag_accessor)
   {
     typedef base_mesh<mesh_is_const>                                             MeshInType;
     typedef mesh_t                                             MeshOutType;
 
-    typedef typename viennagrid::result_of::line<MeshOutType>::type                     EdgeType;
-    typedef typename viennagrid::result_of::vertex<MeshOutType>::type            VertexType;
+    typedef typename viennagrid::result_of::element<MeshOutType>::type                     EdgeType;
+    typedef typename viennagrid::result_of::element<MeshOutType>::type            VertexType;
 
     typename viennagrid::result_of::element_copy_map<MeshInType, MeshOutType>::type copy_map(mesh_out);
     std::deque<VertexType> edge_refinement_vertex_handle_container;
     typename viennagrid::result_of::accessor<std::deque<VertexType>, EdgeType>::type edge_refinement_vertex_handle_accessor(edge_refinement_vertex_handle_container);
 
     refine(mesh_in, mesh_out,
-           cell_tag_begin, cell_tag_end,
+           topologic_dimension,
            point_accessor_in,
            copy_map,
            edge_refinement_flag_accessor,
@@ -584,24 +585,24 @@ namespace viennagrid
            typename CellRefinementFlagAccessorT>
   void element_refine(base_mesh<mesh_is_const> const & mesh_in,
                       mesh_t & mesh_out,
-                      element_tag_t cell_tag_begin, element_tag_t cell_tag_end,
+                      viennagrid_int topologic_dimension,
                       PointAccessorType point_accessor_in, CellRefinementFlagAccessorT const cell_refinement_flag_accessor)
   {
     typedef base_mesh<mesh_is_const>                                             MeshOutType;
 
-    typedef typename viennagrid::result_of::line<MeshOutType>::type                     EdgeType;
+    typedef typename viennagrid::result_of::element<MeshOutType>::type                     EdgeType;
 
     std::deque<bool> edge_refinement_flag;
 
 //     edge_refinement_flag.resize( static_cast<std::size_t>(viennagrid::id_upper_bound<EdgeType>(mesh_in).get()) );
-    edge_refinement_flag.resize( static_cast<std::size_t>( viennagrid::lines(mesh_in).size() ) );
+    edge_refinement_flag.resize( static_cast<std::size_t>( viennagrid::elements<1>(mesh_in).size() ) );
 
     cell_refinement_to_edge_refinement(mesh_in,
-                                       cell_tag_begin, cell_tag_end,
+                                       topologic_dimension,
                                        cell_refinement_flag_accessor,
                                        viennagrid::make_accessor<EdgeType>(edge_refinement_flag));
 
-    refine(mesh_in, mesh_out, cell_tag_begin, cell_tag_end,
+    refine(mesh_in, mesh_out, topologic_dimension,
            point_accessor_in, viennagrid::make_accessor<EdgeType>(edge_refinement_flag));
   }
 
@@ -616,10 +617,10 @@ namespace viennagrid
            typename CellRefinementFlagAccessorT>
   void element_refine(base_mesh<mesh_is_const> const & mesh_in,
                       mesh_t & mesh_out,
-                      element_tag_t cell_tag_begin, element_tag_t cell_tag_end,
+                      viennagrid_int topologic_dimension,
                       CellRefinementFlagAccessorT const cell_refinement_flag_accessor)
   {
-    element_refine(mesh_in, mesh_out, cell_tag_begin, cell_tag_end,
+    element_refine(mesh_in, mesh_out, topologic_dimension,
                    point_accessor(mesh_in), cell_refinement_flag_accessor);
   }
 
@@ -635,7 +636,8 @@ namespace viennagrid
                    mesh_t & mesh_out,
                    CellRefinementFlagAccessorT const cell_refinement_flag_accessor)
   {
-    element_refine(mesh_in, mesh_out, viennagrid::cell_tag_begin(mesh_in), viennagrid::cell_tag_end(mesh_in),
+    element_refine(mesh_in, mesh_out,
+                   viennagrid::cell_dimension(mesh_in),
                    point_accessor(mesh_in), cell_refinement_flag_accessor);
   }
 
@@ -683,12 +685,13 @@ namespace viennagrid
            typename EdgeRefinementFlagAccessorT>
   void refine_uniformly(base_mesh<mesh_is_const> const & mesh_in,
                         mesh_t & mesh_out,
-                        element_tag_t cell_tag_begin, element_tag_t cell_tag_end,
+                        viennagrid_int topologic_dimension,
+//                         element_tag_t cell_tag_begin, element_tag_t cell_tag_end,
                         PointAccessorType point_accessor_in,
                         EdgeRefinementFlagAccessorT const & edge_refinement_flag_accessor)
   {
     mark_all_edge_refinement( mesh_in, edge_refinement_flag_accessor );
-    refine(mesh_in, mesh_out, cell_tag_begin, cell_tag_end, point_accessor_in, edge_refinement_flag_accessor);
+    refine(mesh_in, mesh_out, topologic_dimension, point_accessor_in, edge_refinement_flag_accessor);
   }
 
   /** @brief Public interface for uniform refinement of a mesh with edge refinement accessor.
@@ -702,10 +705,10 @@ namespace viennagrid
            typename EdgeRefinementFlagAccessorT>
   void refine_uniformly(base_mesh<mesh_is_const> const & mesh_in,
                         mesh_t & mesh_out,
-                        element_tag_t cell_tag_begin, element_tag_t cell_tag_end,
+                        viennagrid_int topologic_dimension,
                         EdgeRefinementFlagAccessorT const & edge_refinement_flag_accessor)
   {
-    refine_uniformly(mesh_in, mesh_out, cell_tag_begin, cell_tag_end,
+    refine_uniformly(mesh_in, mesh_out, topologic_dimension,
                      point_accessor(mesh_in), edge_refinement_flag_accessor);
   }
 
@@ -718,13 +721,13 @@ namespace viennagrid
   template<bool mesh_is_const>
   void refine_uniformly(base_mesh<mesh_is_const> const & mesh_in,
                         mesh_t & mesh_out,
-                        element_tag_t cell_tag_begin, element_tag_t cell_tag_end)
+                        viennagrid_int topologic_dimension)
   {
     typedef base_mesh<mesh_is_const>                            MeshOutType;
-    typedef typename viennagrid::result_of::line<MeshOutType>::type     EdgeType;
+    typedef typename viennagrid::result_of::element<MeshOutType>::type     EdgeType;
     std::deque<bool> edge_refinement_flag;
 
-    refine_uniformly(mesh_in, mesh_out, cell_tag_begin, cell_tag_end,
+    refine_uniformly(mesh_in, mesh_out, topologic_dimension,
                      viennagrid::make_accessor<EdgeType>(edge_refinement_flag));
   }
 
@@ -740,7 +743,7 @@ namespace viennagrid
     typedef base_mesh<mesh_is_const>                            MeshInType;
 //     typedef typename viennagrid::result_of::cell<MeshInType>::type    CellType;
 
-    refine_uniformly(mesh_in, mesh_out, viennagrid::cell_tag_begin(mesh_in), viennagrid::cell_tag_end(mesh_in));
+    refine_uniformly(mesh_in, mesh_out, viennagrid::cell_dimension(mesh_in));
   }
 
   /** @brief Refines a mesh based on a hyperplane. All elements which intersects the hyperplane are refined in a way that they don't intersect the hyperplane afterwards.
@@ -757,9 +760,8 @@ namespace viennagrid
                          NumericConfigT numeric_config)
   {
 //     typedef typename viennagrid::result_of::cell_tag<SrcMeshT>::type CellTag;
-    typedef typename viennagrid::result_of::line<SrcMeshT>::type LineType;
-
-    typedef typename viennagrid::result_of::vertex<DstMeshT>::type DstMeshVertexType;
+    typedef typename viennagrid::result_of::element<SrcMeshT>::type LineType;
+    typedef typename viennagrid::result_of::element<DstMeshT>::type DstMeshVertexType;
 
     viennagrid::result_of::element_copy_map<SrcMeshT, DstMeshT> copy_map( dst_mesh );
 
@@ -772,7 +774,7 @@ namespace viennagrid
     mark_edges_for_hyperplane_refine(src_mesh, dst_mesh, hyperplane_point, hyperplane_normal, line_refinement_tag_accessor, line_refinement_vertex_handle_accessor, numeric_config);
 
     viennagrid::simple_refine(src_mesh, dst_mesh,
-                              viennagrid::cell_tag_begin(src_mesh), viennagrid::cell_tag_end(src_mesh),
+                              viennagrid::cell_dimension(src_mesh),
                               copy_map,
                               line_refinement_tag_accessor,
                               line_refinement_vertex_handle_accessor);

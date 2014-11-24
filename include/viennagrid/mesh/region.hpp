@@ -120,7 +120,7 @@ namespace viennagrid
     base_region_range(element_type element_) : mesh_hierarchy_( element_.mesh_hierarchy() )
     {
       viennagrid_get_regions(mesh_hierarchy_.internal(),
-                             element_.tag().internal(),
+                             viennagrid::topologic_dimension(element_),
                              element_.id(),
                              const_cast<viennagrid_region **>(&begin_),
                              const_cast<viennagrid_region **>(&end_));
@@ -165,6 +165,12 @@ namespace viennagrid
     struct region_range< base_mesh_hierarchy<false>, base_element<false> >
     {
       typedef base_region_range<false> type;
+    };
+
+    template<bool is_const, typename ElementT>
+    struct const_region_range< base_mesh_hierarchy<is_const>, ElementT >
+    {
+      typedef base_region_range<true> type;
     };
   }
 
@@ -269,13 +275,15 @@ namespace viennagrid
 
     base_mesh_region_range(mesh_type mesh_in) : mesh_(mesh_in)
     {
-      viennagrid_regions_get(mesh_.mesh_hierarchy().internal(), &begin_, &end_);
+      viennagrid_regions_get(mesh_.mesh_hierarchy().internal(),
+                             const_cast<viennagrid_region **>(&begin_),
+                             const_cast<viennagrid_region **>(&end_));
     }
 
     base_mesh_region_range(mesh_type mesh_in, element_t element_) : mesh_(mesh_in)
     {
       viennagrid_get_regions(mesh_.mesh_hierarchy().internal(),
-                             element_.tag().internal(),
+                             viennagrid::topologic_dimension(element_),
                              element_.id(),
                              const_cast<viennagrid_region **>(&begin_),
                              const_cast<viennagrid_region **>(&end_));
@@ -322,6 +330,12 @@ namespace viennagrid
     {
       typedef base_mesh_region_range<false> type;
     };
+
+    template<bool is_const,  typename ElementT>
+    struct const_region_range< base_mesh<is_const>, ElementT >
+    {
+      typedef base_mesh_region_range<true> type;
+    };
   }
 
 
@@ -346,7 +360,7 @@ namespace viennagrid
   template<typename SomethingT>
   typename viennagrid::result_of::region_range<SomethingT>::type regions(SomethingT something);
   template<typename SomethingT, typename ElementT>
-  typename viennagrid::result_of::region_range<SomethingT>::type regions(SomethingT something, ElementT element);
+  typename viennagrid::result_of::region_range<SomethingT, ElementT>::type regions(SomethingT something, ElementT element);
 
 
   template<typename RegionRangeT1, typename RegionRangeT2>

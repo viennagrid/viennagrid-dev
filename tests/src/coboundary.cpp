@@ -28,8 +28,8 @@ void test(std::string infile)
   //typedef typename ConfigType::cell_tag                                   CellTag;
 //   typedef typename viennagrid::result_of::segmentation<MeshType>::type       SegmentationType;
 
-  typedef viennagrid::result_of::vertex<MeshType>::type       VertexType;
-  typedef viennagrid::result_of::facet<MeshType>::type FacetType;
+  typedef viennagrid::result_of::element<MeshType>::type       VertexType;
+  typedef viennagrid::result_of::element<MeshType>::type FacetType;
 
   typedef viennagrid::result_of::vertex_range<MeshType>::type       VertexContainer;
   typedef viennagrid::result_of::iterator<VertexContainer>::type    VertexIterator;
@@ -60,14 +60,14 @@ void test(std::string infile)
   std::cout << "*" << std::endl;
   std::cout << "* Test 2: Iteration over all edges adjacent to each vertex" << std::endl;
   std::cout << "*" << std::endl;
-  VertexContainer vertices = viennagrid::elements<viennagrid::vertex_tag>(mesh);
+  VertexContainer vertices(mesh);
   for (VertexIterator vit = vertices.begin();
        vit != vertices.end();
        ++vit)
   {
     const VertexType & vertex = *vit;//viennagrid::dereference_hook(mesh, *vit);
     std::cout << vertex << std::endl;
-    typedef viennagrid::result_of::coboundary_range<MeshType, viennagrid::line_tag>::type          EdgeOnVertexContainer;
+    typedef viennagrid::result_of::coboundary_range<MeshType, 1>::type          EdgeOnVertexContainer;
     typedef viennagrid::result_of::iterator<EdgeOnVertexContainer>::type     EdgeOnVertexIterator;
 
     EdgeOnVertexContainer edges (mesh, *vit);
@@ -97,7 +97,7 @@ void test(std::string infile)
     typedef viennagrid::result_of::coboundary_range<MeshType>::type   CellOnFacetContainer;
     typedef viennagrid::result_of::iterator<CellOnFacetContainer>::type                          CellOnFacetIterator;
 
-    CellOnFacetContainer cells(mesh, *fit, mesh.cell_tag());
+    CellOnFacetContainer cells(mesh, *fit, viennagrid::cell_dimension(mesh));
     for (CellOnFacetIterator eovit = cells.begin();
          eovit != cells.end();
          ++eovit)

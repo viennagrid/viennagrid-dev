@@ -34,16 +34,18 @@ namespace viennagrid
     /** @brief Implementation for the calculation of the surface of a mesh or region */
     template<typename MeshT>
     typename viennagrid::result_of::coord< MeshT >::type
-    surface_meshregion(MeshT const & mesh_obj, element_tag_t facet_tag, element_tag_t facet_end)
+    surface_meshregion(MeshT const & mesh_obj, viennagrid_int facet_dimension)
+
+//                        element_tag_t facet_tag, element_tag_t facet_end)
     {
       typedef typename viennagrid::result_of::const_element_range<MeshT>::type  ElementRange;
       typedef typename viennagrid::result_of::iterator<ElementRange>::type      ElementIterator;
 
       typename viennagrid::result_of::coord<MeshT>::type result = 0;
 
-      for (; facet_tag != facet_end; ++facet_tag)
-      {
-        ElementRange facets(mesh_obj, facet_tag);
+//       for (; facet_tag != facet_end; ++facet_tag)
+//       {
+        ElementRange facets(mesh_obj, facet_dimension);
         for (ElementIterator fit = facets.begin();
                             fit != facets.end();
                           ++fit)
@@ -51,7 +53,7 @@ namespace viennagrid
           if (is_boundary(mesh_obj, *fit))
             result += viennagrid::volume(*fit);
         }
-      }
+//       }
 
 
       return result;
@@ -77,16 +79,16 @@ namespace viennagrid
 
     value_type result = 0;
 
-    for (element_tag_t facet_tag = facet_tag_begin(element); facet_tag != facet_tag_end(element); ++facet_tag)
+//     for (element_tag_t facet_tag = facet_tag_begin(element); facet_tag != facet_tag_end(element); ++facet_tag)
+//     {
+    ElementBoundaryRange boundary(element, viennagrid::facet_dimension(element));
+    for (ElementBoundaryIterator ebit = boundary.begin();
+                                ebit != boundary.end();
+                              ++ebit)
     {
-      ElementBoundaryRange boundary(element, facet_tag);
-      for (ElementBoundaryIterator ebit = boundary.begin();
-                                  ebit != boundary.end();
-                                ++ebit)
-      {
-        result += viennagrid::volume(accessor, *ebit);
-      }
+      result += viennagrid::volume(accessor, *ebit);
     }
+//     }
 
     return result;
   }
@@ -115,7 +117,7 @@ namespace viennagrid
   typename viennagrid::result_of::coord< base_mesh<mesh_is_const> >::type
   surface(base_mesh<mesh_is_const> const & d)
   {
-    return detail::surface_meshregion(d, facet_tag_begin(d), facet_tag_end(d));
+    return detail::surface_meshregion(d, viennagrid::facet_dimension(d));
   }
 
   /** @brief Returns the surface of a region*/
@@ -123,62 +125,62 @@ namespace viennagrid
   typename viennagrid::result_of::coord< base_mesh_region<mesh_region_is_const> >::type
   surface(base_mesh_region<mesh_region_is_const> const & region)
   {
-    return detail::surface_meshregion(region, facet_tag_begin(region), facet_tag_end(region));
+    return detail::surface_meshregion(region, viennagrid::facet_dimension(region));
   }
 
 
 
   /** @brief Returns a handle to the boundary element with the smallest volume */
-  template<typename BoundaryElementTTag, typename MeshT, typename ElementT>
-  typename viennagrid::result_of::element<MeshT, BoundaryElementTTag>::type
-  smallest_boundary_volume( MeshT & mesh_obj, ElementT & element )
+  template<typename MeshT, typename ElementT>
+  typename viennagrid::result_of::element<MeshT>::type
+  smallest_boundary_volume( MeshT & mesh_obj, viennagrid_int boundary_topologic_dimension, ElementT & element )
   {
-    typedef typename viennagrid::result_of::coord<MeshT>::type numeric_type;
-    typedef typename viennagrid::result_of::element<ElementT, BoundaryElementTTag>::type           boundary_element_handle;
-    typedef typename viennagrid::result_of::element_range<ElementT, BoundaryElementTTag>::type    boundary_element_range_type;
-    typedef typename viennagrid::result_of::iterator<boundary_element_range_type>::type           boundary_element_range_iterator;
+    typedef typename viennagrid::result_of::coord<MeshT>::type NumericType;
+    typedef typename viennagrid::result_of::element<ElementT>::type           BoundaryElementType;
+    typedef typename viennagrid::result_of::element_range<ElementT>::type    BoundaryElementRangeType;
+    typedef typename viennagrid::result_of::iterator<BoundaryElementRangeType>::type           BoundaryElementRangeIterator;
 
-    boundary_element_range_type boundary_elements( element );
-    boundary_element_range_iterator it = boundary_elements.begin();
+    BoundaryElementRangeType boundary_elements( element, boundary_topologic_dimension );
+    BoundaryElementRangeIterator it = boundary_elements.begin();
 
-    boundary_element_handle best_handle = it.handle();
-    numeric_type best_volume = viennagrid::volume( mesh_obj, *it );
+    BoundaryElementType best = *it;
+    NumericType best_volume = viennagrid::volume( mesh_obj, *it );
 
     for (; it != boundary_elements.end(); ++it)
     {
-      numeric_type volume = viennagrid::volume( mesh_obj, *it );
+      NumericType volume = viennagrid::volume( mesh_obj, *it );
       if (volume < best_volume)
       {
-        best_handle = it.handle();
+        best = *it;
         best_volume = volume;
       }
     }
 
-    return best_handle;
+    return best;
   }
 
   /** @brief Returns a const handle to the boundary element with the smallest volume */
-  template<typename BoundaryElementTTag, typename MeshT, typename ElementT>
-  typename viennagrid::result_of::const_element<MeshT, BoundaryElementTTag>::type
-  smallest_boundary_volume( MeshT const & mesh_obj, ElementT const & element )
+  template<typename MeshT, typename ElementT>
+  typename viennagrid::result_of::const_element<MeshT>::type
+  smallest_boundary_volume( MeshT const & mesh_obj, viennagrid_int boundary_topologic_dimension, ElementT const & element )
   {
-    typedef typename viennagrid::result_of::coord<MeshT>::type numeric_type;
-    typedef typename viennagrid::result_of::const_element<ElementT, BoundaryElementTTag>::type          boundary_element_handle;
-    typedef typename viennagrid::result_of::const_element_range<ElementT, BoundaryElementTTag>::type   boundary_element_range_type;
-    typedef typename viennagrid::result_of::iterator<boundary_element_range_type>::type                boundary_element_range_iterator;
+    typedef typename viennagrid::result_of::coord<MeshT>::type NumericType;
+    typedef typename viennagrid::result_of::const_element<ElementT>::type          BoundaryElementType;
+    typedef typename viennagrid::result_of::const_element_range<ElementT>::type   BoundaryElementRangeType;
+    typedef typename viennagrid::result_of::iterator<BoundaryElementRangeType>::type                BoundaryElementRangeIterator;
 
-    boundary_element_range_type boundary_elements( element );
-    boundary_element_range_iterator it = boundary_elements.begin();
+    BoundaryElementRangeType boundary_elements( element, boundary_topologic_dimension );
+    BoundaryElementRangeIterator it = boundary_elements.begin();
 
-    boundary_element_handle best_handle = it.handle();
-    numeric_type best_volume = viennagrid::volume( mesh_obj, *it );
+    BoundaryElementType best_handle = *it;
+    NumericType best_volume = viennagrid::volume( mesh_obj, *it );
 
     for (; it != boundary_elements.end(); ++it)
     {
-      numeric_type volume = viennagrid::volume( mesh_obj, *it );
+      NumericType volume = viennagrid::volume( mesh_obj, *it );
       if (volume < best_volume)
       {
-        best_handle = it.handle();
+        best_handle = *it;
         best_volume = volume;
       }
     }
@@ -187,26 +189,26 @@ namespace viennagrid
   }
 
   /** @brief Returns a handle to the boundary element with the largest volume */
-  template<typename BoundaryElementTTag, typename MeshT, typename ElementT>
-  typename viennagrid::result_of::element<MeshT, BoundaryElementTTag>::type largest_boundary_volume( MeshT & mesh_obj, ElementT & element )
+  template<typename MeshT, typename ElementT>
+  typename viennagrid::result_of::element<MeshT>::type largest_boundary_volume( MeshT & mesh_obj, viennagrid_int boundary_topologic_dimension, ElementT & element )
   {
-    typedef typename viennagrid::result_of::coord<MeshT>::type numeric_type;
-    typedef typename viennagrid::result_of::element<ElementT, BoundaryElementTTag>::type           boundary_element_handle;
-    typedef typename viennagrid::result_of::element_range<ElementT, BoundaryElementTTag>::type    boundary_element_range_type;
-    typedef typename viennagrid::result_of::iterator<boundary_element_range_type>::type           boundary_element_range_iterator;
+    typedef typename viennagrid::result_of::coord<MeshT>::type NumericType;
+    typedef typename viennagrid::result_of::element<ElementT>::type           BoundaryElementType;
+    typedef typename viennagrid::result_of::element_range<ElementT>::type    BoundaryElementRangeType;
+    typedef typename viennagrid::result_of::iterator<BoundaryElementRangeType>::type           BoundaryElementRangeIterator;
 
-    boundary_element_range_type boundary_elements( element );
-    boundary_element_range_iterator it = boundary_elements.begin();
+    BoundaryElementRangeType boundary_elements( element, boundary_topologic_dimension );
+    BoundaryElementRangeIterator it = boundary_elements.begin();
 
-    boundary_element_handle best_handle = it.handle();
-    numeric_type best_volume = viennagrid::volume( mesh_obj, *it );
+    BoundaryElementType best_handle = *it;
+    NumericType best_volume = viennagrid::volume( mesh_obj, *it );
 
     for (; it != boundary_elements.end(); ++it)
     {
-      numeric_type volume = viennagrid::volume( mesh_obj, *it );
+      NumericType volume = viennagrid::volume( mesh_obj, *it );
       if (volume > best_volume)
       {
-        best_handle = it.handle();
+        best_handle = *it;
         best_volume = volume;
       }
     }
@@ -215,26 +217,26 @@ namespace viennagrid
   }
 
   /** @brief Returns a const handle to the boundary element with the largest volume */
-  template<typename BoundaryElementTTag, typename MeshT, typename ElementT>
-  typename viennagrid::result_of::const_element<MeshT, BoundaryElementTTag>::type largest_boundary_volume( MeshT const & mesh_obj, ElementT const & element )
+  template<typename MeshT, typename ElementT>
+  typename viennagrid::result_of::const_element<MeshT>::type largest_boundary_volume( MeshT const & mesh_obj, viennagrid_int boundary_topologic_dimension, ElementT const & element )
   {
-    typedef typename viennagrid::result_of::coord<MeshT>::type numeric_type;
-    typedef typename viennagrid::result_of::const_element<ElementT, BoundaryElementTTag>::type            boundary_element_handle;
-    typedef typename viennagrid::result_of::const_element_range<ElementT, BoundaryElementTTag>::type     boundary_element_range_type;
-    typedef typename viennagrid::result_of::iterator<boundary_element_range_type>::type                  boundary_element_range_iterator;
+    typedef typename viennagrid::result_of::coord<MeshT>::type NumericType;
+    typedef typename viennagrid::result_of::const_element<ElementT>::type            BoundaryElementType;
+    typedef typename viennagrid::result_of::const_element_range<ElementT>::type     BoundaryElementRangeType;
+    typedef typename viennagrid::result_of::iterator<BoundaryElementRangeType>::type                  BoundaryElementRangeIterator;
 
-    boundary_element_range_type boundary_elements( element );
-    boundary_element_range_iterator it = boundary_elements.begin();
+    BoundaryElementRangeType boundary_elements( element, boundary_topologic_dimension );
+    BoundaryElementRangeIterator it = boundary_elements.begin();
 
-    boundary_element_handle best_handle = it.handle();
-    numeric_type best_volume = viennagrid::volume( mesh_obj, *it );
+    BoundaryElementType best_handle = *it;
+    NumericType best_volume = viennagrid::volume( mesh_obj, *it );
 
     for (; it != boundary_elements.end(); ++it)
     {
-      numeric_type volume = viennagrid::volume( mesh_obj, *it );
+      NumericType volume = viennagrid::volume( mesh_obj, *it );
       if (volume > best_volume)
       {
-        best_handle = it.handle();
+        best_handle = *it;
         best_volume = volume;
       }
     }

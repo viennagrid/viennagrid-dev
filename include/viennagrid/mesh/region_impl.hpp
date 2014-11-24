@@ -13,7 +13,7 @@ namespace viennagrid
   }
 
   template<typename SomethingT, typename ElementT>
-  typename viennagrid::result_of::region_range<SomethingT>::type regions(SomethingT something, ElementT element)
+  typename viennagrid::result_of::region_range<SomethingT, ElementT>::type regions(SomethingT something, ElementT element)
   {
     return typename viennagrid::result_of::region_range<SomethingT, ElementT>::type(something, element);
   }
@@ -51,7 +51,7 @@ namespace viennagrid
   inline void add( region_t region, element_t element )
   {
     viennagrid_add_to_region(element.mesh_hierarchy().internal(),
-                             element.tag().internal(),
+                             viennagrid::topologic_dimension(element),
                              element.id(),
                              region.internal() );
 
@@ -76,7 +76,7 @@ namespace viennagrid
     viennagrid_region * end;
 
     viennagrid_get_regions(element.mesh_hierarchy().internal(),
-                           element.tag().internal(),
+                           viennagrid::topologic_dimension(element),
                            element.id(),
                            &it,
                            &end);
@@ -110,10 +110,14 @@ namespace viennagrid
 
 
   template<bool element_is_const, bool region_is_const>
-  bool is_boundary( base_mesh_region<region_is_const> r, base_element<element_is_const> e )
+  bool is_boundary( base_mesh_region<region_is_const> region, base_element<element_is_const> element )
   {
     viennagrid_bool result;
-    viennagrid_is_boundary_region(r.region().internal(), r.mesh().internal(), e.tag().internal(), e.id(), &result);
+    viennagrid_is_boundary_region(region.region().internal(),
+                                  region.mesh().internal(),
+                                  viennagrid::topologic_dimension(element),
+                                  element.id(),
+                                  &result);
     return result == VIENNAGRID_TRUE;
   }
 

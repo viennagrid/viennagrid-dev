@@ -41,8 +41,8 @@ int main()
   // typedefs for the element types
   //
 
-  typedef viennagrid::result_of::vertex<MeshType>::type    VertexType;
-  typedef viennagrid::result_of::triangle<MeshType>::type         TriangleType;
+  typedef viennagrid::result_of::element<MeshType>::type    VertexType;
+  typedef viennagrid::result_of::element<MeshType>::type    TriangleType;
 
 
 
@@ -94,7 +94,7 @@ int main()
 
 
   // we now want to iterate over all co-boundary triangles of vertex 4, which should be triangle 1, 2, 5 and 6
-  typedef viennagrid::result_of::coboundary_range<MeshType, viennagrid::triangle_tag>::type CoboundaryRangeType;
+  typedef viennagrid::result_of::coboundary_range<MeshType, 2>::type CoboundaryRangeType;
   CoboundaryRangeType coboundary_range(mesh, v4);
   cout << "All triangles connected to vh4 (should be triangle 1, 2, 5, and 6)" << endl;
     std::copy( coboundary_range.begin(), coboundary_range.end(), std::ostream_iterator<TriangleType>(cout, "\n") );
@@ -110,7 +110,7 @@ int main()
 
   // now we do the same but with a constant mesh
   MeshType const & cmesh = mesh;
-  typedef viennagrid::result_of::const_coboundary_range<MeshType, viennagrid::triangle_tag>::type ConstCoboundaryRangeType;
+  typedef viennagrid::result_of::const_coboundary_range<MeshType, 2>::type ConstCoboundaryRangeType;
 
   ConstCoboundaryRangeType const_coboundary_range(cmesh, v4);
   cout << "All triangles connected to vh4 (should be triangle 1, 2, 5, and 6)" << endl;

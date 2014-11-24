@@ -64,22 +64,6 @@ namespace viennagrid
     mesh_type root();
     const_mesh_type root() const;
 
-//     element_tag_type cell_tag() const
-//     {
-//       viennagrid_element_tag tmp;
-//       viennagrid_mesh_hierarchy_get_cell_tag(internal(), &tmp);
-//       return element_tag_type(tmp);
-//     }
-//     element_tag_type facet_tag() const { return cell_tag().facet_tag(); }
-//     element_tag_type unpack_element_tag(element_tag_type et)
-//     {
-//       if (et == viennagrid::cell_tag())
-//         return element_tag_type(cell_tag());
-//       else if (et == viennagrid::facet_tag())
-//         return element_tag_type(facet_tag());
-//       return et;
-//     }
-
     viennagrid_mesh_hierarchy internal() const { return const_cast<viennagrid_mesh_hierarchy>(internal_mesh_hierarchy_); }
 
     std::size_t region_count() const
@@ -149,28 +133,15 @@ namespace viennagrid
 
 
   template<typename SomethingT>
-  element_tag_t cell_tag_begin( SomethingT const & something )
+  viennagrid_int cell_dimension( SomethingT const & something )
   {
-    return element_tag_t::topologic_dimension_begin( topologic_dimension(something) );
+    return topologic_dimension(mesh_hierarchy(something));
   }
 
   template<typename SomethingT>
-  element_tag_t cell_tag_end( SomethingT const & something )
+  viennagrid_int facet_dimension( SomethingT const & something )
   {
-    return element_tag_t::topologic_dimension_end( topologic_dimension(something) );
-  }
-
-
-  template<typename SomethingT>
-  element_tag_t facet_tag_begin( SomethingT const & something )
-  {
-    return element_tag_t::topologic_dimension_begin( topologic_dimension(something)-1 );
-  }
-
-  template<typename SomethingT>
-  element_tag_t facet_tag_end( SomethingT const & something )
-  {
-    return element_tag_t::topologic_dimension_end( topologic_dimension(something)-1 );
+    return cell_dimension(mesh_hierarchy(something)) - 1;
   }
 
 

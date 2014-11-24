@@ -21,14 +21,15 @@ namespace viennagrid
 
     typedef viennagrid_index id_type;
     typedef element_tag_t tag_type;
+    typedef viennagrid_dimension dimension_type;
 
     typedef typename result_of::const_nonconst<mesh_hierarchy_t, is_const>::type mesh_hierarchy_type;
     typedef typename result_of::const_nonconst<mesh_hierarchy_t, true>::type const_mesh_hierarchy_type;
 
     base_element() : mesh_hierarchy_(0), id_(-1) {}
     base_element(mesh_hierarchy_type mesh_hierarchy_in,
-                 viennagrid_int topologic_dimension_in,
-                 viennagrid_index id_in) :
+                 dimension_type topologic_dimension_in,
+                 id_type id_in) :
                  mesh_hierarchy_(mesh_hierarchy_in),
                  topologic_dimension_(topologic_dimension_in),
                  id_(id_in) {}
@@ -46,11 +47,11 @@ namespace viennagrid
       viennagrid_element_get_tag( mesh_hierarchy().internal(), topologic_dimension(), id(), &tag);
       return tag_type(tag);
     }
-    viennagrid_int topologic_dimension() const { return topologic_dimension_; }
+    dimension_type topologic_dimension() const { return topologic_dimension_; }
 
   private:
     mesh_hierarchy_type mesh_hierarchy_;
-    viennagrid_int topologic_dimension_;
+    dimension_type topologic_dimension_;
     id_type id_;
   };
 

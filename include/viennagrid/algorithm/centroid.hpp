@@ -42,7 +42,7 @@ namespace viennagrid
       typedef typename viennagrid::result_of::point< PointAccessorT, ElementT >::type PointType;
       typedef typename viennagrid::result_of::coord<PointType>::type    CoordType;
 
-      typedef typename viennagrid::result_of::const_element_range<ElementT, vertex_tag>::type         VertexOnCellRange;
+      typedef typename viennagrid::result_of::const_vertex_range<ElementT>::type         VertexOnCellRange;
       typedef typename viennagrid::result_of::iterator<VertexOnCellRange>::type            VertexOnCellIterator;
 
       PointType p0( viennagrid::geometric_dimension(cell) );
@@ -124,7 +124,7 @@ namespace viennagrid
     template<typename MeshSegmentHandleType, typename PointAccessorT>
     typename viennagrid::result_of::point< PointAccessorT, typename viennagrid::result_of::element<MeshSegmentHandleType>::type >::type
     centroid_mesh(PointAccessorT const point_accessor, MeshSegmentHandleType const & mesh_obj,
-                  element_tag_t cell_tag, element_tag_t cell_end)
+                  viennagrid_int topologic_dimension)
     {
       typedef typename viennagrid::result_of::point<MeshSegmentHandleType>::type          PointType;
       typedef typename viennagrid::result_of::const_element_range<MeshSegmentHandleType>::type         CellRange;
@@ -133,9 +133,9 @@ namespace viennagrid
       PointType result( viennagrid::geometric_dimension(mesh_obj) );
       double volume = 0;
 
-      for (; cell_tag != cell_end; ++cell_tag)
+//       for (; cell_tag != cell_end; ++cell_tag)
       {
-        CellRange cells(mesh_obj, cell_tag);
+        CellRange cells(mesh_obj, topologic_dimension);
         for (CellIterator cit = cells.begin(); cit != cells.end(); ++cit)
         {
           double vol_cell = viennagrid::volume( point_accessor, *cit );
@@ -198,8 +198,7 @@ namespace viennagrid
   typename viennagrid::result_of::point< base_mesh<mesh_is_const> >::type
   centroid(PointAccessorT const point_accessor, base_mesh<mesh_is_const> const & mesh_obj)
   {
-    return detail::centroid_mesh(point_accessor, mesh_obj,
-                                 cell_tag_begin(mesh_obj), cell_tag_end(mesh_obj));
+    return detail::centroid_mesh(point_accessor, mesh_obj, viennagrid::cell_dimension(mesh_obj));
   }
 
 

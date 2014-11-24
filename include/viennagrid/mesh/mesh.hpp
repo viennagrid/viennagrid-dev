@@ -144,12 +144,7 @@ namespace viennagrid
 
 
   template<bool element_is_const, bool mesh_is_const>
-  bool is_boundary( base_mesh<mesh_is_const> m, base_element<element_is_const> e )
-  {
-    viennagrid_bool result;
-    viennagrid_is_boundary_mesh(m.internal(), e.tag().internal(), e.id(), &result);
-    return result == VIENNAGRID_TRUE;
-  }
+  bool is_boundary( base_mesh<mesh_is_const> mesh, base_element<element_is_const> element );
 
   template<typename SomethingFirstT, typename SomethingSecondT, typename ElementT>
   bool is_interface( SomethingFirstT first, SomethingSecondT second, ElementT element )

@@ -40,8 +40,8 @@ int main()
   // typedefs for the element types
   //
 
-  typedef viennagrid::result_of::vertex<MeshType>::type        VertexType;
-  typedef viennagrid::result_of::triangle<MeshType>::type             TriangleType;
+  typedef viennagrid::result_of::element<MeshType>::type        VertexType;
+  typedef viennagrid::result_of::element<MeshType>::type             TriangleType;
 
 
   //
@@ -100,7 +100,7 @@ int main()
 
 
   {
-    typedef viennagrid::result_of::neighbor_range<MeshType, viennagrid::vertex_tag, viennagrid::triangle_tag>::type NeighborRangeType;
+    typedef viennagrid::result_of::neighbor_range<MeshType, 0, 2>::type NeighborRangeType;
 
     // we now want to iterate over all neighbor triangles of triangle 1 which share a common vertex. These should be the triangles 0, 2, 3, 4, 5 and 6
     NeighborRangeType neighbor_range(mesh, t1);
@@ -120,7 +120,7 @@ int main()
     // now we do the same but with a constant mesh
 
     MeshType const & cmesh = mesh;
-    typedef viennagrid::result_of::const_neighbor_range<MeshType, viennagrid::vertex_tag, viennagrid::triangle_tag>::type ConstNeighborRangeType;
+    typedef viennagrid::result_of::const_neighbor_range<MeshType, 0, 2>::type ConstNeighborRangeType;
 
     ConstNeighborRangeType const_neighbor_range(cmesh, t1); //viennagrid::neighbor_elements<viennagrid::triangle_tag, viennagrid::vertex_tag>(cmesh, th1);
     cout << "All triangles neighboring t1 using vertices and const ranges (should be triangle 0, 2, 3, 4, 5 and 6)" << endl;
@@ -135,7 +135,7 @@ int main()
 
 
   {
-    typedef viennagrid::result_of::neighbor_range<MeshType, viennagrid::line_tag, viennagrid::triangle_tag>::type NeighborRangeType;
+    typedef viennagrid::result_of::neighbor_range<MeshType, 1, 2>::type NeighborRangeType;
 
     // we now want to iterate over all neighbor triangles of triangle 1 which share a common edge. These should be the triangles 0, 2 and 5
     NeighborRangeType neighbor_range = NeighborRangeType(mesh, t1);

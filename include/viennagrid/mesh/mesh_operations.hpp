@@ -41,10 +41,10 @@ namespace viennagrid
 
     typedef typename viennagrid::result_of::coord<DstMeshT>::type DstNumericType;
 
-    typedef typename viennagrid::result_of::vertex<SrcMeshHierarchyT>::type SrcVertexType;
-    typedef typename viennagrid::result_of::vertex_id<SrcMeshHierarchyT>::type SrcVertexIDType;
+    typedef typename viennagrid::result_of::element<SrcMeshHierarchyT>::type SrcVertexType;
+    typedef typename viennagrid::result_of::element_id<SrcMeshHierarchyT>::type SrcVertexIDType;
 
-    typedef typename viennagrid::result_of::vertex<DstMeshT>::type DstVertexType;
+    typedef typename viennagrid::result_of::element<DstMeshT>::type DstVertexType;
     typedef typename viennagrid::result_of::element<DstMeshT>::type DstElementType;
 
     /** @brief The constructor, requires the destination mesh where the elements are copied to.
