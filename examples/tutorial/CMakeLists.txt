@@ -51,18 +51,21 @@ target_link_libraries(read_plc viennagrid)
 add_executable(dump_info            dump_info.cpp)
 target_link_libraries(dump_info viennagrid)
 
-# add_executable(vmesh_creator        vmesh_creator.cpp)
+add_executable(vmesh_creator        vmesh_creator.cpp)
+target_link_libraries(vmesh_creator viennagrid)
 
 add_executable(copy_elements        copy_elements.cpp)
 target_link_libraries(copy_elements viennagrid)
-
-# add_executable(thin_mesh            thin_mesh.cpp)
 
 add_executable(convert_to_mphtxt    convert_to_mphtxt.cpp)
 target_link_libraries(convert_to_mphtxt viennagrid)
 
 add_executable(hybrid    hybrid.cpp)
 target_link_libraries(hybrid viennagrid)
+
+add_executable(plc_test    plc_test.cpp)
+target_link_libraries(plc_test viennagrid)
+
 
 
 
@@ -80,6 +83,7 @@ target_link_libraries(hybrid viennagrid)
 #add_executable(mesh_test_4                old/mesh_test_4.cpp)
 #add_executable(mesh_test_5                old/mesh_test_5.cpp)
 #add_executable(trigate_read_test            old/trigate_read_test.cpp)
+# add_executable(thin_mesh            thin_mesh.cpp)
 
 #add_executable(plc_reader_test              old/plc_reader_test.cpp)
 #add_executable(handle_test                  old/handle_test.cpp)

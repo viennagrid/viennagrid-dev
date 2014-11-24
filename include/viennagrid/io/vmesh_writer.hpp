@@ -18,9 +18,7 @@
 #include <sstream>
 #include <iostream>
 
-#include "viennagrid/forwards.hpp"
-#include "viennagrid/mesh/segmentation.hpp"
-#include "viennagrid/mesh/mesh.hpp"
+#include "viennagrid/core.hpp"
 #include "viennagrid/io/helper.hpp"
 #include "viennagrid/io/vtk_common.hpp"
 
@@ -38,7 +36,7 @@ namespace viennagrid
      * @tparam MeshType         Type of the ViennaGrid mesh.
      * @tparam SegmentationType   Type of the ViennaGrid segmentation. Default is the default segmentation of MeshType
      */
-    template < typename MeshType, typename SegmentationType = typename viennagrid::result_of::segmentation<MeshType>::type >
+    template < typename MeshType >
     class vmesh_writer
     {
     public:
@@ -56,7 +54,7 @@ namespace viennagrid
        * @param outputfile The outputfile path
        *
        */
-      void operator()(MeshType const & mesh_obj, SegmentationType const & segmentation, std::string const & inputfile, std::string const & outputfile)
+      void operator()(MeshType const & mesh_obj, std::string const & inputfile, std::string const & outputfile)
       {
         std::stringstream ss;
         if(outputfile.substr( outputfile.rfind(".")+1 ) == "vmesh")
@@ -68,19 +66,25 @@ namespace viennagrid
         writer << "<mesh>" << std::endl;
         writer << indent_ << "<file>" << inputfile << "</file>" << std::endl;
         writer << indent_ << "<geomdim>" << typename viennagrid::result_of::point<MeshType>::type().size() << "</geomdim>" << std::endl;
-        writer << indent_ << "<celltype>" << viennagrid::result_of::cell_tag<MeshType>::type::name() << "</celltype>" << std::endl;
+        writer << indent_ << "<topodim>" << viennagrid::topologic_dimension(mesh_obj) << "</topodim>" << std::endl;
         writer << indent_ << "<vertices>" << viennagrid::vertices(mesh_obj).size() << "</vertices>" << std::endl;
         writer << indent_ << "<cells>" << viennagrid::cells(mesh_obj).size() << "</cells>" << std::endl;
-        writer << indent_ << "<segments>" << segmentation.size() << "</segments>" << std::endl;
+        writer << indent_ << "<regions>" << mesh_obj.region_count() << "</regions>" << std::endl;
         writer << indent_ << "<segmentation>" << std::endl;
-        for (typename SegmentationType::const_iterator it = segmentation.begin(); it != segmentation.end(); ++it)
+
+
+        typedef typename viennagrid::result_of::region_range<MeshType>::type RegionRangeType;
+        typedef typename viennagrid::result_of::iterator<RegionRangeType>::type RegionRangeIterator;
+        RegionRangeType regions(mesh_obj);
+//         for (typename SegmentationType::const_iterator it = segmentation.begin(); it != segmentation.end(); ++it)
+        for (RegionRangeIterator it = regions.begin(); it != regions.end(); ++it)
         {
-          writer << indent_ << indent_ << "<segment>" << std::endl;
-          writer << indent_ << indent_ << indent_ << "<id>" << it->id() << "</id>" << std::endl;
+          writer << indent_ << indent_ << "<region>" << std::endl;
+          writer << indent_ << indent_ << indent_ << "<id>" << (*it).id() << "</id>" << std::endl;
           writer << indent_ << indent_ << indent_ << "<name>" << empty_ << "</name>" << std::endl;
           writer << indent_ << indent_ << indent_ << "<vertices>" << viennagrid::vertices(*it).size() << "</vertices>" << std::endl;
           writer << indent_ << indent_ << indent_ << "<cells>" << viennagrid::cells(*it).size() << "</cells>" << std::endl;
-          writer << indent_ << indent_ << "</segment>" << std::endl;
+          writer << indent_ << indent_ << "</region>" << std::endl;
         }
         writer << indent_ << "</segmentation>" << std::endl;
         writer << "</mesh>" << std::endl;

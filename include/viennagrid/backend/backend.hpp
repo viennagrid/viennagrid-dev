@@ -359,11 +359,12 @@ private:
     return get_element( element_key(indices, index_count) );
   }
 
-  viennagrid_index make_element(viennagrid_element_tag element_tag_, viennagrid_index * indices, viennagrid_int index_count);
+  viennagrid_index make_element(viennagrid_mesh_hierarchy mesh_hierarchy,
+                                viennagrid_element_tag element_tag_,
+                                viennagrid_index * indices,
+                                viennagrid_int index_count);
 
   viennagrid_index size() const { return parents.size(); }
-//   viennagrid_index boundary_index(viennagrid_element_tag boundary_tag) const
-//   { return viennagrid_boundary_buffer_index_from_element_tag(element_tag, boundary_tag); }
 
 
   viennagrid_dimension topologic_dimension;
@@ -496,7 +497,7 @@ public:
 
   viennagrid_index make_vertex(const viennagrid_numeric * coords)
   {
-    viennagrid_index id = element_buffer(0).make_element(VIENNAGRID_ELEMENT_TAG_VERTEX, 0, 0);
+    viennagrid_index id = element_buffer(0).make_element(this, VIENNAGRID_ELEMENT_TAG_VERTEX, 0, 0);
 
     viennagrid_int prev_size = vertex_buffer.size();
     vertex_buffer.resize( vertex_buffer.size() + geometric_dimension() );

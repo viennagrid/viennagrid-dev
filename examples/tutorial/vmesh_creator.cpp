@@ -14,8 +14,7 @@
   #pragma warning( disable : 4503 )     //truncated name decoration
 #endif
 
-#include "viennagrid/forwards.hpp"
-#include "viennagrid/config/default_configs.hpp"
+#include "viennagrid/core.hpp"
 #include "viennagrid/io/netgen_reader.hpp"
 #include "viennagrid/io/vtk_reader.hpp"
 #include "viennagrid/io/vmesh_writer.hpp"
@@ -24,16 +23,14 @@
 template<typename MeshT, typename ReaderT>
 bool dump_information(std::string const & filename, std::string const & outputfile)
 {
-  // defining and creating a mesh and a segmentation
-  typedef typename viennagrid::result_of::segmentation<MeshT>::type SegmentationType;
+  // defining and creating a mesh
   MeshT mesh;
-  SegmentationType segmentation(mesh);
 
   // trying to read the file
   try
   {
     ReaderT reader;
-    reader(mesh, segmentation, filename);
+    reader(mesh, filename);
   }
   catch (std::exception & e)
   {
@@ -43,7 +40,7 @@ bool dump_information(std::string const & filename, std::string const & outputfi
   }
 
   viennagrid::io::vmesh_writer<MeshT> writer;
-  writer(mesh, segmentation, filename, outputfile);
+  writer(mesh, filename, outputfile);
 
   return true;
 }
@@ -55,6 +52,8 @@ bool dump_information(std::string const & filename, std::string const & outputfi
 
 int main(int argc, char *argv[])
 {
+  typedef viennagrid::mesh_t MeshType;
+
   // checking number of arguments
   if (argc != 4)
   {
@@ -91,8 +90,6 @@ int main(int argc, char *argv[])
   // call the corresponding dump_info method using the correct mesh type and reader class
   if (type == "tet3d")
   {
-    typedef viennagrid::tetrahedral_3d_mesh MeshType;
-
     if (extension == "mesh")
       return dump_information<MeshType, viennagrid::io::netgen_reader>(filename, outputfile);
     else if ((extension == "pvd") || (extension == "vtk"))
@@ -100,8 +97,6 @@ int main(int argc, char *argv[])
   }
   else if(type == "tri2d")
   {
-    typedef viennagrid::triangular_2d_mesh MeshType;
-
     if (extension == "mesh")
       return dump_information<MeshType, viennagrid::io::netgen_reader>(filename, outputfile);
     else if ((extension == "pvd") || (extension == "vtk"))
@@ -109,8 +104,6 @@ int main(int argc, char *argv[])
   }
   else if(type == "tri3d")
   {
-    typedef viennagrid::triangular_3d_mesh MeshType;
-
     if (extension == "mesh")
       return dump_information<MeshType, viennagrid::io::netgen_reader>(filename, outputfile);
     else if ((extension == "pvd") || (extension == "vtk"))
