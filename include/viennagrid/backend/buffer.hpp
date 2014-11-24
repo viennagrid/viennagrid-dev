@@ -2,6 +2,11 @@
 #define VIENNAGRID_BACKEND_BUFFER_HPP
 
 
+#include <iostream>
+#include <vector>
+#include <map>
+
+
 template<typename IndexT, typename T, typename PointerT = T *, typename ConstPointerT = T const *>
 struct dense_multibuffer
 {
