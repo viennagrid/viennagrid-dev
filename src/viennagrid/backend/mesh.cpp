@@ -18,16 +18,11 @@ void viennagrid_mesh_::add_element(viennagrid_dimension element_topo_dim,
     {
       if (parent_id >= 0)
       {
-//         bool parent_is_in_parent_mesh = parent()->element_handle_buffer(element_topo_dim).element_present(parent_id);
-//         bool is_in_parent_mesh = parent()->element_handle_buffer(element_topo_dim).element_present(element_id);
-
         assert( parent()->element_handle_buffer(element_topo_dim).element_present(parent_id) ||
                 parent()->element_handle_buffer(element_topo_dim).element_present(element_id) );
       }
       else
       {
-//         bool is_in_parent_mesh = parent()->element_handle_buffer(element_topo_dim).element_present(element_id);
-
         assert( parent()->element_handle_buffer(element_topo_dim).element_present(element_id) );
       }
     }
@@ -109,16 +104,19 @@ viennagrid_index viennagrid_mesh_::make_refined_element(
     for (; boundary != end; ++boundary)
     {
       viennagrid_int boundary_id = *boundary;
-
       add_element(boundary_dim, boundary_id);
 
+      // no parents for vertices
       if (boundary_dim == 0)
         continue;
 
-      std::vector<viennagrid_index> boundary_vertices;
+
       viennagrid_index * bv = boundary_begin(boundary_dim, boundary_id, 0);
       viennagrid_index * bv_end = boundary_end(boundary_dim, boundary_id, 0);
-      std::copy(bv, bv_end, std::back_inserter(boundary_vertices));
+
+      std::vector<viennagrid_index> boundary_vertices(bv_end-bv);
+
+      std::copy(bv, bv_end, boundary_vertices.begin());
       std::sort(boundary_vertices.begin(), boundary_vertices.end());
 
       if (mesh_hierarchy()->element_buffer(boundary_dim).parent_id(boundary_id) < 0)
@@ -127,22 +125,17 @@ viennagrid_index viennagrid_mesh_::make_refined_element(
 
         for (std::map<viennagrid_index, std::vector<viennagrid_index> >::iterator kt = intersected_elements.begin(); kt != intersected_elements.end(); ++kt)
         {
-          std::vector<viennagrid_index> intersected_element_indices;
+          viennagrid_index * iv = boundary_begin(boundary_dim, kt->first, 0);
+          viennagrid_index * iv_end = boundary_end(boundary_dim, kt->first, 0);
 
-          viennagrid_index * intersects = boundary_begin(boundary_dim, kt->first, 0);
-          viennagrid_index * intersects_end = boundary_end(boundary_dim, kt->first, 0);
+          std::vector<viennagrid_index> intersected_element_indices(iv_end-iv + kt->second.size());
 
-          std::copy(intersects, intersects_end, std::back_inserter(intersected_element_indices));
-          std::copy(kt->second.begin(), kt->second.end(), std::back_inserter(intersected_element_indices));
+          std::copy(iv, iv_end, intersected_element_indices.begin());
+          std::copy(kt->second.begin(), kt->second.end(), &intersected_element_indices[iv_end-iv]);
           std::sort(intersected_element_indices.begin(), intersected_element_indices.end());
 
           if ( is_subset(boundary_vertices, intersected_element_indices) )
-          {
-//               std::cout << "FOUND MATCH!" << std::endl;
-//               std::cout << boundary_dim << "/" << kt->first << " is a parent of " << boundary_dim << "/" << boundary_id << std::endl;
-
             mesh_hierarchy()->element_buffer(boundary_dim).set_parent_id(boundary_id, kt->first);
-          }
         }
       }
     }
@@ -160,10 +153,6 @@ bool viennagrid_mesh_::is_root() const { return hierarchy_->root() == this; }
 
 viennagrid_dimension viennagrid_mesh_::geometric_dimension() { return hierarchy_->geometric_dimension(); }
 viennagrid_dimension viennagrid_mesh_::cell_dimension() { return hierarchy_->cell_dimension(); }
-
-// inline viennagrid_element_tag viennagrid_mesh_::unpack_element_tag(viennagrid_element_tag et)
-// { return mesh_hierarchy()->unpack_element_tag(et); }
-
 
 viennagrid_index * viennagrid_mesh_::boundary_begin(viennagrid_dimension element_topo_dim, viennagrid_index element_id, viennagrid_dimension boundary_topo_dim)
 { return mesh_hierarchy()->boundary_begin(element_topo_dim, element_id, boundary_topo_dim); }
@@ -468,31 +457,6 @@ viennagrid_index viennagrid_element_buffer::make_element(viennagrid_mesh_hierarc
 
   return id;
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-// viennagrid_index viennagrid_mesh_hierarchy_::delete_element_simple(viennagrid_element_tag element_tag, viennagrid_index element_id)
-// {
-//
-// }
-//
-// viennagrid_index viennagrid_mesh_hierarchy_::delete_element(viennagrid_element_tag element_tag, viennagrid_index element_id);
-
-
 
 
 
