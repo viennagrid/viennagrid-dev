@@ -139,6 +139,7 @@ namespace viennagrid
     return set_point(region.mesh(), vertex, point);
   }
 
+
 }
 
 #endif

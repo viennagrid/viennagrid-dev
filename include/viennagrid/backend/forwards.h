@@ -30,14 +30,8 @@ typedef int viennagrid_dimension;
 
 
 typedef struct viennagrid_mesh_hierarchy_ * viennagrid_mesh_hierarchy;
-// typedef const struct viennagrid_mesh_hierarchy * viennagrid_mesh_hierarchy_const_handle;
-
 typedef struct viennagrid_mesh_ * viennagrid_mesh;
-// typedef const struct viennagrid_mesh * viennagrid_mesh_const_handle;
-
 typedef struct viennagrid_region_ * viennagrid_region;
-// typedef const struct viennagrid_region * viennagrid_region_const_handle;
-
 
 
 

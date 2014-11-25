@@ -63,6 +63,9 @@ target_link_libraries(convert_to_mphtxt viennagrid)
 add_executable(hybrid    hybrid.cpp)
 target_link_libraries(hybrid viennagrid)
 
+add_executable(hierarchy    hierarchy.cpp)
+target_link_libraries(hierarchy viennagrid)
+
 add_executable(plc_test    plc_test.cpp)
 target_link_libraries(plc_test viennagrid)
 

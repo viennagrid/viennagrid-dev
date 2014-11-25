@@ -16,7 +16,7 @@ VIENNAGRID_DYNAMIC_EXPORT viennagrid_error viennagrid_mesh_hierarchy_release(vie
 //                                                                              viennagrid_element_tag * cell_tag);
 
 // queries the topologic dimension of a mesh_hierarchy
-VIENNAGRID_DYNAMIC_EXPORT viennagrid_error viennagrid_mesh_hierarchy_get_topologic_dimension(viennagrid_mesh_hierarchy mesh_hierarchy,
+VIENNAGRID_DYNAMIC_EXPORT viennagrid_error viennagrid_mesh_hierarchy_get_cell_dimension(viennagrid_mesh_hierarchy mesh_hierarchy,
                                                                               viennagrid_dimension * topologic_dimension);
 
 // queries the geometric dimension of a mesh_hierarchy
@@ -66,7 +66,24 @@ VIENNAGRID_DYNAMIC_EXPORT viennagrid_error viennagrid_element_create(viennagrid_
                                                                     viennagrid_element_tag element_tag,
                                                                     viennagrid_int index_count,
                                                                     viennagrid_index * indices,
+                                                                    viennagrid_dimension * topo_dims,
                                                                     viennagrid_index * element_index);
+
+
+VIENNAGRID_DYNAMIC_EXPORT viennagrid_error viennagrid_element_create_refinement(
+                                                            viennagrid_mesh mesh,
+                                                            viennagrid_dimension element_topo_dim,
+                                                            viennagrid_index element_id,
+                                                            viennagrid_element_tag    refined_element_tag,
+                                                            viennagrid_int            refined_element_base_count,
+                                                            viennagrid_index *        refined_element_base_indices,
+                                                            viennagrid_dimension *    refined_element_base_dimensions,
+                                                            viennagrid_int            intersects_count,
+                                                            viennagrid_index *        intersect_vertices_indices,
+                                                            viennagrid_index *        intersects_indices,
+                                                            viennagrid_dimension *    intersects_topo_dims,
+                                                            viennagrid_index *        id);
+
 
 VIENNAGRID_DYNAMIC_EXPORT viennagrid_error viennagrid_element_get_tag(viennagrid_mesh_hierarchy mesh_hierarchy,
                                                                       viennagrid_dimension element_topo_dim,
@@ -119,6 +136,17 @@ VIENNAGRID_DYNAMIC_EXPORT viennagrid_error viennagrid_elements_get(viennagrid_me
 VIENNAGRID_DYNAMIC_EXPORT viennagrid_error viennagrid_element_add(viennagrid_mesh mesh,
                                                                   viennagrid_dimension element_topo_dim,
                                                                   viennagrid_index element_id);
+
+VIENNAGRID_DYNAMIC_EXPORT viennagrid_error viennagrid_element_parent_get(viennagrid_mesh_hierarchy mesh_hierarchy,
+                                                                         viennagrid_dimension element_topo_dim,
+                                                                         viennagrid_index element_id,
+                                                                         viennagrid_index * element_parent_id);
+
+VIENNAGRID_DYNAMIC_EXPORT viennagrid_error viennagrid_element_parent_set(viennagrid_mesh_hierarchy mesh_hierarchy,
+                                                                         viennagrid_dimension element_topo_dim,
+                                                                         viennagrid_index element_id,
+                                                                         viennagrid_index element_parent_id);
+
 
 
 

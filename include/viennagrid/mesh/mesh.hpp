@@ -72,9 +72,6 @@ namespace viennagrid
       release();
     }
 
-//     element_tag_type cell_tag() const { return mesh_hierarchy().cell_tag(); }
-// //     element_tag_type facet_tag() const { return mesh_hierarchy().facet_tag(); }
-
     mesh_hierarchy_type mesh_hierarchy()
     {
       viennagrid_mesh_hierarchy tmp;
@@ -89,7 +86,19 @@ namespace viennagrid
       return const_mesh_hierarchy_type(tmp);
     }
 
+    mesh_t make_child()
+    {
+      viennagrid_mesh tmp;
+      viennagrid_mesh_create( internal(), &tmp );
+      return mesh_t(tmp);
+    }
+
     viennagrid_mesh internal() const { return const_cast<viennagrid_mesh>(internal_mesh_); }
+
+    bool is_root() const { return mesh_hierarchy().root() == *this; }
+
+    bool operator==(base_mesh<is_const> const & rhs) const { return internal() == rhs.internal(); }
+    bool operator!=(base_mesh<is_const> const & rhs) const { return !(*this == rhs); }
 
     std::size_t region_count() const;
     region_type get_make_region(region_id_type region_id);
@@ -99,7 +108,6 @@ namespace viennagrid
     region_type get_make_region(std::string const & name);
     const_region_type get_region(std::string const & name) const;
 
-//     element_tag_type unpack_element_tag(element_tag_type et) { return mesh_hierarchy().unpack_element_tag(et); }
   private:
 
     void retain() const
@@ -151,6 +159,11 @@ namespace viennagrid
   {
     return is_boundary(first, element) && is_boundary(second, element);
   }
+
+
+
+  void non_recursive_add(mesh_t mesh, element_t const & element);
+  void add(mesh_t & mesh, element_t const & element);
 
 
 }

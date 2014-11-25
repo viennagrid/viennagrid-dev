@@ -1,6 +1,7 @@
 #ifndef VIENNAGRID_MESH_IMPL_HPP
 #define VIENNAGRID_MESH_IMPL_HPP
 
+#include "viennagrid/range.hpp"
 #include "viennagrid/mesh/mesh.hpp"
 #include "viennagrid/element/element.hpp"
 
@@ -68,6 +69,29 @@ namespace viennagrid
                                 element.id(),
                                 &result);
     return result == VIENNAGRID_TRUE;
+  }
+
+
+
+
+  inline void non_recursive_add(mesh_t mesh, element_t const & element)
+  {
+    viennagrid_element_add(mesh.internal(),
+                           viennagrid::topologic_dimension(element),
+                           element.id());
+  }
+
+  inline void add(mesh_t & mesh, element_t const & element)
+  {
+    non_recursive_add(mesh, element);
+
+    for (viennagrid_int i = 0; i < viennagrid::topologic_dimension(element); ++i)
+    {
+      typedef viennagrid::result_of::element_range<element_t>::type ElementRangeType;
+      ElementRangeType elements(element, i);
+      for (ElementRangeType::iterator it = elements.begin(); it != elements.end(); ++it)
+        non_recursive_add(mesh, *it);
+    }
   }
 
 

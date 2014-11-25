@@ -1,6 +1,11 @@
 #ifndef VIENNAGRID_BACKEND_REGION_HPP
 #define VIENNAGRID_BACKEND_REGION_HPP
 
+#include <set>
+#include <string>
+
+#include "viennagrid/backend/forwards.h"
+
 struct viennagrid_region_
 {
   friend struct viennagrid_mesh_hierarchy_;

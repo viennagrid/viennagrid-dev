@@ -120,7 +120,7 @@ namespace viennagrid
   viennagrid_int topologic_dimension( base_mesh_hierarchy<is_const> const & mesh_hierarchy )
   {
     viennagrid_int tmp;
-    viennagrid_mesh_hierarchy_get_topologic_dimension(mesh_hierarchy.internal(), &tmp);
+    viennagrid_mesh_hierarchy_get_cell_dimension(mesh_hierarchy.internal(), &tmp);
     return tmp;
   }
 

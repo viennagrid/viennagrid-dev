@@ -38,6 +38,8 @@ namespace viennagrid
     base_element(base_element<other_is_const> element) : mesh_hierarchy_(element.mesh_hierarchy_), topologic_dimension_(element.topologic_dimension_), id_(element.id_) {}
 
     id_type id() const { return id_; }
+    bool valid() const { return id() >= 0; }
+
     mesh_hierarchy_type mesh_hierarchy() { return mesh_hierarchy_; }
     const_mesh_hierarchy_type mesh_hierarchy() const { return mesh_hierarchy_; }
 
@@ -75,8 +77,29 @@ namespace viennagrid
 
 
   template<bool is_const>
-  base_mesh_hierarchy<is_const> mesh_hierarchy( base_element<is_const> element )
+  base_mesh_hierarchy<is_const> mesh_hierarchy( base_element<is_const> const & element )
   { return element.mesh_hierarchy(); }
+
+
+  template<bool is_const>
+  base_element<is_const> parent(base_element<is_const> const & element)
+  {
+    viennagrid_index parent_id;
+    viennagrid_element_parent_get(element.mesh_hierarchy().internal(),
+                                  viennagrid::topologic_dimension(element),
+                                  element.id(),
+                                  &parent_id);
+    return base_element<is_const>(element.mesh_hierarchy(), viennagrid::topologic_dimension(element), parent_id);
+  }
+
+  template<bool is_const>
+  void set_parent(base_element<false> element, base_element<is_const> const & parent)
+  {
+    viennagrid_element_parent_set(element.mesh_hierarchy().internal(),
+                                  viennagrid::topologic_dimension(element),
+                                  element.id(),
+                                  parent.id());
+  }
 
 
 
@@ -86,37 +109,43 @@ namespace viennagrid
   template<bool is_const>
   std::ostream& operator << (std::ostream & os, base_element<is_const> const & element)
   {
-    std::cout << element.tag().name() << " [id = " << element.id() << "] ";
+    if (!element.valid())
+    {
+      os << "Invalid Element";
+      return os;
+    }
+
+    os << element.tag().name() << " [id = " << element.id() << "] ";
 
     if (element.tag().is_vertex())
     {
-      std::cout << viennagrid::get_point(element);
+      os << viennagrid::get_point(element);
     }
     else if (element.tag().is_plc())
     {
       typedef typename viennagrid::result_of::const_element_range< base_element<is_const> >::type ConstLineRangeType;
       ConstLineRangeType lines(element, 1);
 
-      std::cout <<  "{";
+      os <<  "{";
       typename ConstLineRangeType::iterator lit = lines.begin();
-      std::cout << *lit++;
+      os << *lit++;
 
       for (; lit != lines.end(); ++lit)
-        std::cout << ", " << *lit;
-      std::cout << " }";
+        os << ", " << *lit;
+      os << " }";
     }
     else
     {
       typedef typename viennagrid::result_of::const_element_range< base_element<is_const> >::type ConstVertexRangeType;
       ConstVertexRangeType vertices(element, 0);
 
-      std::cout <<  "{";
+      os <<  "{";
       typename ConstVertexRangeType::iterator vit = vertices.begin();
-      std::cout << *vit++;
+      os << *vit++;
 
       for (; vit != vertices.end(); ++vit)
-        std::cout << ", " << *vit;
-      std::cout << " }";
+        os << ", " << *vit;
+      os << " }";
     }
 
 
