@@ -40,12 +40,8 @@ namespace viennagrid
   public:
 
     typedef typename viennagrid::result_of::coord<DstMeshT>::type DstNumericType;
-
-    typedef typename viennagrid::result_of::element<SrcMeshHierarchyT>::type SrcVertexType;
-    typedef typename viennagrid::result_of::element_id<SrcMeshHierarchyT>::type SrcVertexIDType;
-
-    typedef typename viennagrid::result_of::element<DstMeshT>::type DstVertexType;
     typedef typename viennagrid::result_of::element<DstMeshT>::type DstElementType;
+    typedef typename viennagrid::result_of::element_id<SrcMeshHierarchyT>::type SrcElementIDType;
 
     /** @brief The constructor, requires the destination mesh where the elements are copied to.
       *
@@ -59,8 +55,14 @@ namespace viennagrid
       * @param  src_vertex              The vertex to be copied
       */
     template<bool element_is_const>
-    DstVertexType operator()( base_element<element_is_const> const & src )
+    DstElementType operator()( base_element<element_is_const> const & src )
     {
+      if (src.mesh_hierarchy() == dst_mesh.mesh_hierarchy())
+      {
+        viennagrid::add( dst_mesh, src );
+        return src;
+      }
+
       if (src.tag().is_vertex())
         return copy_vertex(src);
       return copy_element(src);
@@ -99,12 +101,12 @@ namespace viennagrid
     template<bool element_is_const>
     DstElementType copy_vertex( base_element<element_is_const> const & src )
     {
-      typename std::map<SrcVertexIDType, DstVertexType>::iterator vit = vertex_map.find( src.id() );
+      typename std::map<SrcElementIDType, DstElementType>::iterator vit = vertex_map.find( src.id() );
       if (vit != vertex_map.end())
         return vit->second;
       else
       {
-        DstVertexType vtx = viennagrid::make_unique_vertex(dst_mesh,
+        DstElementType vtx = viennagrid::make_unique_vertex(dst_mesh,
                                                            viennagrid::get_point(src),
                                                            nc_);
         vertex_map[src.id()] = vtx;
@@ -126,7 +128,7 @@ namespace viennagrid
       typedef typename viennagrid::result_of::const_element_range<SrcElementType>::type ConstVerticesOnElementRangeType;
       typedef typename viennagrid::result_of::iterator<ConstVerticesOnElementRangeType>::type ConstVerticesOnElementIteratorType;
 
-      std::vector<DstVertexType> dst_vertices;
+      std::vector<DstElementType> dst_vertices;
       ConstVerticesOnElementRangeType vertices(src, 0);
       for (ConstVerticesOnElementIteratorType vit = vertices.begin(); vit != vertices.end(); ++vit)
         dst_vertices.push_back( (*this)(*vit) );
@@ -176,7 +178,7 @@ namespace viennagrid
 
 
     DstMeshT & dst_mesh;
-    std::map<SrcVertexIDType, DstVertexType> vertex_map;
+    std::map<SrcElementIDType, DstElementType> vertex_map;
 
     NumericConfigT nc_;
   };
