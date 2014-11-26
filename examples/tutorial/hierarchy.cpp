@@ -16,6 +16,7 @@
 
 #include "viennagrid/core.hpp"
 #include "viennagrid/io/vtk_writer.hpp"
+#include "viennagrid/algorithm/refine.hpp"
 
 
 int main()
@@ -54,8 +55,8 @@ int main()
   ElementType v1 = viennagrid::make_vertex(mesh, 1, 0); // id = 1
   ElementType v2 = viennagrid::make_vertex(mesh, 0, 1);
   ElementType v3 = viennagrid::make_vertex(mesh, 1, 1);
-  ElementType v4 = viennagrid::make_vertex(mesh, 0.5, 0);
-  ElementType v5 = viennagrid::make_vertex(mesh, 0, 0.5); // id = 5
+//   ElementType v4 = viennagrid::make_vertex(mesh, 0.5, 0);
+//   ElementType v5 = viennagrid::make_vertex(mesh, 0, 0.5); // id = 5
 
   //
   // Step 3: Fill the two segments with cells.
@@ -67,47 +68,76 @@ int main()
   ElementType tri1 = viennagrid::make_triangle(mesh, v1, v2, v3);  //use the shortcut function
 
 
+
+
+
+
   ElementType line0 = viennagrid::make_line(mesh, v0, v1);
   ElementType line1 = viennagrid::make_line(mesh, v0, v2);
 
 
 
-  viennagrid::add(refined_mesh, tri1);
-
-  std::vector<ElementType> refined_triangle_vertices(3);
-  refined_triangle_vertices[0] = v0;
-  refined_triangle_vertices[1] = v4;
-  refined_triangle_vertices[2] = v5;
-
-  std::vector< std::pair<ElementType, ElementType> > intersects;
-  intersects.push_back( std::make_pair(v4, line0) );
-  intersects.push_back( std::make_pair(v5, line1) );
+//   viennagrid::add(refined_mesh, tri1);
 
 
-  ElementType tri3 = viennagrid::make_refined_element(refined_mesh, tri0, viennagrid::triangle_tag(),
-                                                      refined_triangle_vertices.begin(), refined_triangle_vertices.end(),
-                                                      intersects.begin(),
-                                                      intersects.end());
+  typedef viennagrid::result_of::accessor_container< ElementType, bool, viennagrid::std_map_tag >::type LineRefinementContainerType;
+  LineRefinementContainerType line_refinement_flag;
+
+  viennagrid::result_of::field< LineRefinementContainerType, ElementType >::type line_refinement_field(line_refinement_flag);
+
+  {
+    typedef viennagrid::result_of::const_element_range<MeshType,2>::type ElementRangeType;
+    typedef viennagrid::result_of::iterator<ElementRangeType>::type ElementRangeIterator;
+    ElementRangeType lines(mesh);
+    for (ElementRangeIterator lit = lines.begin(); lit != lines.end(); ++lit)
+      line_refinement_field(*lit) = false;
+
+    line_refinement_field(line0) = true;
+    line_refinement_field(line1) = true;
+  }
 
 
-  refined_triangle_vertices[0] = v4;
-  refined_triangle_vertices[1] = v1;
-  refined_triangle_vertices[2] = v5;
 
-  ElementType tri4 = viennagrid::make_refined_element(refined_mesh, tri0, viennagrid::triangle_tag(),
-                                                      refined_triangle_vertices.begin(), refined_triangle_vertices.end(),
-                                                      intersects.begin(),
-                                                      intersects.end());
+  viennagrid::refine(mesh, refined_mesh, 2, line_refinement_field);
 
 
-  refined_triangle_vertices[0] = v5;
-  refined_triangle_vertices[1] = v1;
-  refined_triangle_vertices[2] = v2;
 
-  ElementType tri5 = viennagrid::make_refined_element(refined_mesh, tri0, viennagrid::triangle_tag(),
-                                                      refined_triangle_vertices.begin(), refined_triangle_vertices.end(),
-                                                      intersects.begin(),
-                                                      intersects.end());
+
+
+//   std::vector<ElementType> refined_triangle_vertices(3);
+//   refined_triangle_vertices[0] = v0;
+//   refined_triangle_vertices[1] = v4;
+//   refined_triangle_vertices[2] = v5;
+//
+//   std::vector< std::pair<ElementType, ElementType> > intersects;
+//   intersects.push_back( std::make_pair(v4, line0) );
+//   intersects.push_back( std::make_pair(v5, line1) );
+//
+//
+//   ElementType tri3 = viennagrid::make_refined_element(refined_mesh, tri0, viennagrid::triangle_tag(),
+//                                                       refined_triangle_vertices.begin(), refined_triangle_vertices.end(),
+//                                                       intersects.begin(),
+//                                                       intersects.end());
+//
+//
+//   refined_triangle_vertices[0] = v4;
+//   refined_triangle_vertices[1] = v1;
+//   refined_triangle_vertices[2] = v5;
+//
+//   ElementType tri4 = viennagrid::make_refined_element(refined_mesh, tri0, viennagrid::triangle_tag(),
+//                                                       refined_triangle_vertices.begin(), refined_triangle_vertices.end(),
+//                                                       intersects.begin(),
+//                                                       intersects.end());
+//
+//
+//   refined_triangle_vertices[0] = v5;
+//   refined_triangle_vertices[1] = v1;
+//   refined_triangle_vertices[2] = v2;
+//
+//   ElementType tri5 = viennagrid::make_refined_element(refined_mesh, tri0, viennagrid::triangle_tag(),
+//                                                       refined_triangle_vertices.begin(), refined_triangle_vertices.end(),
+//                                                       intersects.begin(),
+//                                                       intersects.end());
 
   //
   // That's it. The mesh consisting of two segments is now set up.
