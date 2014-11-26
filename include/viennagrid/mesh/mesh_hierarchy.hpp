@@ -89,6 +89,14 @@ namespace viennagrid
   };
 
 
+  template<bool lhs_is_const, bool rhs_is_const>
+  bool operator==(base_mesh_hierarchy<lhs_is_const> const & lhs, base_mesh_hierarchy<rhs_is_const> const & rhs)
+  { return lhs.internal() == rhs.internal(); }
+
+  template<bool lhs_is_const, bool rhs_is_const>
+  bool operator!=(base_mesh_hierarchy<lhs_is_const> const & lhs, base_mesh_hierarchy<rhs_is_const> const & rhs)
+  { return !(lhs == rhs); }
+
 
 
   template<bool is_const>
