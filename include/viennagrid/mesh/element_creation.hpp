@@ -233,7 +233,7 @@ namespace viennagrid
 
   template<typename ElementIteratorT, typename IntersectionIteratorT>
   element_t make_refined_element(mesh_t mesh,
-                                 element_t element,
+                                 element_t parent,
                                  element_tag_t tag,
                                  ElementIteratorT elements_begin,
                                  ElementIteratorT elements_end,
@@ -263,8 +263,8 @@ namespace viennagrid
 
     viennagrid_index id;
     viennagrid_element_create_refinement(mesh.internal(),
-                                         viennagrid::topologic_dimension(element),
-                                         element.id(),
+                                         viennagrid::topologic_dimension(parent),
+                                         parent.id(),
                                          tag.internal(),
                                          internal_vertices_indices.size(),
                                          &internal_vertices_indices[0],
