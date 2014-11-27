@@ -56,22 +56,6 @@ void inverse_affine(PointT const & m0, PointT const & m1, PointT const & t,
 }
 
 
-
-template<typename PointT>
-PointT transform_affine(PointT const & p, PointT const & m0, PointT const & m1, PointT const & t)
-{
-  return m0*p[0] + m1*p[1] + t;
-}
-
-
-
-template<typename PointT>
-typename viennagrid::result_of::coord<PointT>::type eval(PointT const & p)
-{
-  return 1.0 - p[0] - p[1];
-}
-
-
 template<typename PointT>
 PointT fe_grad(PointT const & p0, PointT const & p1, PointT const & p2)
 {
@@ -79,11 +63,7 @@ PointT fe_grad(PointT const & p0, PointT const & p1, PointT const & p2)
   PointT A1;
   PointT it;
 
-  PointT d0 = p1-p0;
-  PointT d1 = p2-p0;
-  PointT t = p0;
-
-  inverse_affine( d0, d1, t, A0, A1, it );
+  inverse_affine( p1-p0, p2-p0, p0, A0, A1, it );
 
   return viennagrid::make_point( -A0[0]-A0[1], -A1[0]-A1[1] );
 }
@@ -98,6 +78,8 @@ PointT fe_grad(PointT const & p0, PointT const & p1, PointT const & p2, int inde
     return fe_grad(p1, p0, p2);
   if (index == 2)
     return fe_grad(p2, p0, p1);
+
+  return 0;
 }
 
 
@@ -109,9 +91,6 @@ typename viennagrid::result_of::coord<PointT>::type triangle_contribution(PointT
 {
   typedef typename viennagrid::result_of::coord<PointT>::type NumericType;
 
-  PointT d0 = p1-p0;
-  PointT d1 = p2-p0;
-
   PointT pts[3];
   pts[0] = p0;
   pts[1] = p1;
@@ -120,10 +99,30 @@ typename viennagrid::result_of::coord<PointT>::type triangle_contribution(PointT
   PointT fe_grad0 = fe_grad(p0, p1, p2, i0);
   PointT fe_grad1 = fe_grad(p0, p1, p2, i1);
 
-  NumericType triangle_volume = std::abs(d0[0]*d1[1]-d0[1]*d1[0])/2;
+  NumericType triangle_volume = viennagrid::spanned_volume(p0, p1, p2);
 
   return viennagrid::inner_prod(fe_grad0, fe_grad1) * triangle_volume;
 }
+
+
+template<typename PointT>
+typename viennagrid::result_of::coord<PointT>::type triangle_rhs_contribution(PointT const & p0,
+                                                                              PointT const & p1,
+                                                                              PointT const & p2)
+{
+  PointT centroid = (p0+p1+p2)/3.0;
+
+  PointT A0;
+  PointT A1;
+  PointT it;
+
+  inverse_affine( p1-p0, p2-p0, p0, A0, A1, it );
+
+  return (1 - it[0] - it[1] - (A0[0]+A0[1])*centroid[0] - (A1[0]+A1[1])*centroid[1]) *
+         viennagrid::spanned_volume(p0, p1, p2);
+}
+
+
 
 
 struct point_ordering
@@ -169,26 +168,7 @@ int main()
   //
   MeshHierarchyType hierarchy;
   MeshType mesh = hierarchy.root();
-  MeshType refined1 = mesh.make_child();
-  MeshType refined2 = refined1.make_child();
-  MeshType refined3 = refined2.make_child();
-  MeshType refined4 = refined3.make_child();
-  MeshType refined5 = refined4.make_child();
 
-  MeshType fem_mesh = refined5;
-
-  //
-  // Step 2: Add vertices to the mesh.
-  //         Note that vertices with IDs are enumerated in the order they are pushed to the mesh.
-  //
-//   ElementType v0 = viennagrid::make_vertex(mesh, -1, -1);
-//   ElementType v1 = viennagrid::make_vertex(mesh, 0, -1);
-//   ElementType v2 = viennagrid::make_vertex(mesh, -1, 0);
-//   ElementType v3 = viennagrid::make_vertex(mesh, 0, 0);
-//   ElementType v4 = viennagrid::make_vertex(mesh, 1, 0);
-//   ElementType v5 = viennagrid::make_vertex(mesh, -1, 1);
-//   ElementType v6 = viennagrid::make_vertex(mesh, 0, 1);
-//   ElementType v7 = viennagrid::make_vertex(mesh, 1, 1);
 
   ElementType v0 = viennagrid::make_vertex(mesh, 0, 0);
   ElementType v1 = viennagrid::make_vertex(mesh, 1, 0);
@@ -197,33 +177,30 @@ int main()
 
 
 
-  //
-  // Step 3: Fill the two segments with cells.
-  //         To do so, each cell must be linked with the defining vertex handles from the mesh
-  //
-
-  // First triangle, use vertex handles
-//   ElementType tri0 = viennagrid::make_triangle(mesh, v0, v1, v2);
-//   ElementType tri1 = viennagrid::make_triangle(mesh, v1, v3, v2);
-//   ElementType tri2 = viennagrid::make_triangle(mesh, v2, v3, v5);
-//   ElementType tri3 = viennagrid::make_triangle(mesh, v5, v3, v6);
-//   ElementType tri4 = viennagrid::make_triangle(mesh, v3, v4, v6);
-//   ElementType tri5 = viennagrid::make_triangle(mesh, v6, v4, v7);
-
   ElementType tri0 = viennagrid::make_triangle(mesh, v0, v1, v2);
   ElementType tri1 = viennagrid::make_triangle(mesh, v2, v1, v3);
 
 
 
+  MeshType refined1 = mesh.make_child();
   viennagrid::cell_refine_uniformly(mesh, refined1);
+
+  MeshType refined2 = refined1.make_child();
   viennagrid::cell_refine_uniformly(refined1, refined2);
+
+  MeshType refined3 = refined2.make_child();
   viennagrid::cell_refine_uniformly(refined2, refined3);
+
+  MeshType refined4 = refined3.make_child();
   viennagrid::cell_refine_uniformly(refined3, refined4);
+
+  MeshType refined5 = refined4.make_child();
   viennagrid::cell_refine_uniformly(refined4, refined5);
 
+  MeshType refined6 = refined5.make_child();
+  viennagrid::cell_refine_uniformly(refined5, refined6);
 
-
-
+  MeshType fem_mesh = refined6;
 
 
 
@@ -240,12 +217,6 @@ int main()
   for (ElementIterator vit = vertices.begin(); vit != vertices.end(); ++vit)
   {
     PointType p = viennagrid::get_point(*vit);
-
-//     if (p[1] < 0.01 && p[0] < 0.51)
-//       continue;
-//
-//     if (p[0] > 0.99 && p[1] > 0.49)
-//       continue;
 
     if (p[0] < 0.51 && p[1] < 0.51)
       continue;
@@ -306,94 +277,39 @@ int main()
 
     i = index(viennagrid::vertices(*cit0)[0]);
     if (i >= 0)
-    {
-      d0 = viennagrid::make_point(tp[1][0]-tp[0][0], tp[1][1]-tp[0][1], 0);
-      d1 = viennagrid::make_point(tp[2][0]-tp[0][0], tp[2][1]-tp[0][1], 0);
-
-      double contrib = viennagrid::spanned_volume(d0, d1, up);
-      rhs(i) += contrib;
-    }
+      rhs(i) += triangle_rhs_contribution(tp[0], tp[1], tp[2]);
 
     i = index(viennagrid::vertices(*cit0)[1]);
     if (i >= 0)
-    {
-      d0 = viennagrid::make_point(tp[0][0]-tp[1][0], tp[0][1]-tp[1][1], 0);
-      d1 = viennagrid::make_point(tp[2][0]-tp[1][0], tp[2][1]-tp[1][1], 0);
-
-      double contrib = viennagrid::spanned_volume(d0, d1, up);
-      rhs(i) += contrib;
-    }
+      rhs(i) = triangle_rhs_contribution(tp[1], tp[0], tp[2]);
 
     i = index(viennagrid::vertices(*cit0)[2]);
     if (i >= 0)
-    {
-      d0 = viennagrid::make_point(tp[0][0]-tp[2][0], tp[0][1]-tp[2][1], 0);
-      d1 = viennagrid::make_point(tp[1][0]-tp[2][0], tp[1][1]-tp[2][1], 0);
-
-      double contrib = viennagrid::spanned_volume(d0, d1, up);
-      rhs(i) += contrib;
-    }
+      rhs(i) += triangle_rhs_contribution(tp[2], tp[0], tp[1]);
   }
 
 
 
 
-  std::cout << A << std::endl;
-  std::cout << rhs << std::endl;
+//   std::cout << A << std::endl;
+//   std::cout << rhs << std::endl;
 
 
   ublas::vector<double> result = viennacl::linalg::solve(A, rhs, viennacl::linalg::cg_tag());
-
 
   std::vector<double> result_data(vertices.size(), 0);
   viennagrid::result_of::accessor< std::vector<double>, ElementType >::type results(result_data);
 
   for (std::map<int, ElementType>::iterator it = index_to_vertex_map.begin(); it != index_to_vertex_map.end(); ++it)
-  {
     results(it->second) = result(it->first);
-  }
-
-
-
-//   std::cout <<
-
-
-//   std::cout << "[";
-//   for (int i = 0; i < num_unknowns; ++i)
-//   {
-//
-//     for (int j = 0; j < num_unknowns; ++j)
-//     {
-//       std::cout << A(i,j);
-//       if (j == num_unknowns-1)
-//       {
-//         if (i == num_unknowns-1)
-//           std::cout << "]";
-//         else
-//           std::cout << ";";
-//       }
-//       else
-//         std::cout << ",";
-//     }
-//
-//     std::cout << std::endl;
-//   }
-//
-//   std::cout << "[";
-//   for (int i = 0; i < num_unknowns; ++i)
-//     std::cout << rhs(i) << ((i == num_unknowns-1) ? "]" : ",");
-//   std::cout << std::endl;
-
 
 
 
 
 
   viennagrid::io::vtk_writer<MeshType> writer;
-  writer(mesh, "finite_elements");
-
   writer.add_scalar_data_on_vertices( results, "results" );
-  writer(fem_mesh, "finite_elements_calculation");
+  writer(fem_mesh, "finite_elements");
 
 
   std::cout << "-----------------------------------------------" << std::endl;
