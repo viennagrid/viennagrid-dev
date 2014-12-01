@@ -169,7 +169,7 @@ namespace viennagrid
 
 
 
-  std::ostream& operator << (std::ostream & os, point_t const & p)
+  inline std::ostream& operator << (std::ostream & os, point_t const & p)
   {
     typedef point_t::size_type      size_type;
     os << "(";

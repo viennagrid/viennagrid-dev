@@ -96,6 +96,10 @@ viennagrid_error viennagrid_vertex_create(viennagrid_mesh_hierarchy hierarchy,
                                         viennagrid_index * vertex_id)
 {
   *vertex_id = hierarchy->make_vertex(coords);
+
+  viennagrid_mesh root = hierarchy->root();
+  root->add_element(0, *vertex_id);
+
   return VIENNAGRID_SUCCESS;
 }
 

@@ -1,3 +1,3 @@
 FILE(GLOB_RECURSE LIB_VIENNAGRID_SOURCES *.cpp)
 
-add_library(viennagrid ${LIB_VIENNAGRID_SOURCES})
+add_library(viennagrid SHARED ${LIB_VIENNAGRID_SOURCES})

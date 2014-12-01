@@ -29,7 +29,7 @@ namespace viennagrid
 {
   namespace io
   {
-    int vtk_element_tag( element_tag_t tag )
+    inline int vtk_element_tag( element_tag_t tag )
     {
       switch (tag.internal())
       {
@@ -53,7 +53,7 @@ namespace viennagrid
       }
     }
 
-    element_tag_t from_vtk_element_tag(int tag)
+    inline element_tag_t from_vtk_element_tag(int tag)
     {
       switch (tag)
       {

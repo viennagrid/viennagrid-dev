@@ -10,8 +10,8 @@
 
 namespace viennagrid
 {
-  element_t make_vertex(mesh_hierarchy_t mesh_hierarchy,
-                        point_t const & point)
+  inline element_t make_vertex(mesh_hierarchy_t mesh_hierarchy,
+                               point_t const & point)
   {
     if ( viennagrid::geometric_dimension(mesh_hierarchy) <= 0 && !point.empty() )
       viennagrid_mesh_hierarchy_set_geometric_dimension( mesh_hierarchy.internal(), point.size() );
@@ -21,31 +21,31 @@ namespace viennagrid
     return element_t(mesh_hierarchy, 0, id);
   }
 
-  element_t make_vertex(mesh_hierarchy_t mesh_hierarchy)
+  inline element_t make_vertex(mesh_hierarchy_t mesh_hierarchy)
   {
     return make_vertex(mesh_hierarchy, point_t());
   }
 
-  element_t make_vertex(mesh_t mesh, point_t const & point)
+  inline element_t make_vertex(mesh_t mesh, point_t const & point)
   {
     assert( mesh.is_root() );
     element_t vertex = make_vertex(mesh.mesh_hierarchy(), point);
     return vertex;
   }
 
-  element_t make_vertex(mesh_t mesh)
+  inline element_t make_vertex(mesh_t mesh)
   {
     return make_vertex(mesh, point_t());
   }
 
-  element_t make_vertex(mesh_region_t mr, point_t const & point)
+  inline element_t make_vertex(mesh_region_t mr, point_t const & point)
   {
     element_t vertex = make_vertex(mr.mesh(), point);
     add(mr, vertex);
     return vertex;
   }
 
-  element_t make_vertex(mesh_region_t mr)
+  inline element_t make_vertex(mesh_region_t mr)
   {
     return make_vertex(mr, point_t());
   }

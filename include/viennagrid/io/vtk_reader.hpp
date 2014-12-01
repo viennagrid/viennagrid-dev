@@ -455,14 +455,14 @@ namespace viennagrid
           }
 
 
-          std::cout << "Adding cell (type=" << local_cell_types[region_id][i].name() << ") with " << cell_vertex_handles.size() << " vertices" << std::endl;
+//           std::cout << "Adding cell (type=" << local_cell_types[region_id][i].name() << ") with " << cell_vertex_handles.size() << " vertices" << std::endl;
 
           CellType cell = viennagrid::make_element(mesh_obj,
                                                    cell_tag,
                                                    cell_vertex_handles.begin(),
                                                    cell_vertex_handles.end());
 
-          std::cout << cell << std::endl;
+//           std::cout << cell << std::endl;
 
           viennagrid::add( mesh_obj.get_make_region(region_id), cell );
           local_cell_handle[region_id].push_back( cell );
