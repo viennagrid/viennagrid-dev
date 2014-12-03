@@ -74,16 +74,19 @@ namespace viennagrid
 
     mesh_hierarchy_type mesh_hierarchy()
     {
-      viennagrid_mesh_hierarchy tmp;
-      viennagrid_mesh_get_mesh_hierarchy(internal(), &tmp);
-      return mesh_hierarchy_type(tmp);
+      return mesh_hierarchy_type(internal_mesh_hierarchy());
     }
 
     const_mesh_hierarchy_type mesh_hierarchy() const
     {
+      return const_mesh_hierarchy_type(internal_mesh_hierarchy());
+    }
+
+    viennagrid_mesh_hierarchy internal_mesh_hierarchy() const
+    {
       viennagrid_mesh_hierarchy tmp;
       viennagrid_mesh_get_mesh_hierarchy(internal(), &tmp);
-      return const_mesh_hierarchy_type(tmp);
+      return tmp;
     }
 
     mesh_t make_child()
@@ -95,7 +98,12 @@ namespace viennagrid
 
     viennagrid_mesh internal() const { return const_cast<viennagrid_mesh>(internal_mesh_); }
 
-    bool is_root() const { return mesh_hierarchy().root() == *this; }
+    bool is_root() const
+    {
+      viennagrid_mesh mesh;
+      viennagrid_mesh_hierarchy_get_root( internal_mesh_hierarchy(), &mesh);
+      return internal() == mesh;
+    }
 
     bool operator==(base_mesh<is_const> const & rhs) const { return internal() == rhs.internal(); }
     bool operator!=(base_mesh<is_const> const & rhs) const { return !(*this == rhs); }
@@ -113,13 +121,13 @@ namespace viennagrid
     void retain() const
     {
       if (internal())
-        mesh_hierarchy().retain();
+        viennagrid_mesh_hierarchy_retain( internal_mesh_hierarchy() );
     }
 
     void release() const
     {
       if (internal())
-        mesh_hierarchy().release();
+        viennagrid_mesh_hierarchy_release( internal_mesh_hierarchy() );
     }
 
     viennagrid_mesh internal_mesh_;
@@ -129,9 +137,22 @@ namespace viennagrid
 
 
   template<bool is_const>
-  base_mesh_hierarchy<is_const> mesh_hierarchy( base_mesh<is_const> mesh )
+  base_mesh_hierarchy<is_const> mesh_hierarchy( base_mesh<is_const> const & mesh )
   {
     return mesh.mesh_hierarchy();
+  }
+
+  inline viennagrid_mesh_hierarchy internal_mesh_hierarchy(viennagrid_mesh mesh)
+  {
+    viennagrid_mesh_hierarchy tmp;
+    viennagrid_mesh_get_mesh_hierarchy(mesh, &tmp);
+    return tmp;
+  }
+
+  template<bool is_const>
+  viennagrid_mesh_hierarchy internal_mesh_hierarchy( base_mesh<is_const> const & mesh )
+  {
+    return mesh.internal_mesh_hierarchy();
   }
 
 
@@ -139,31 +160,20 @@ namespace viennagrid
 
 
 
-  template<bool mesh_is_const, bool element_is_const>
-  typename result_of::point< base_element<element_is_const> >::type get_point(base_mesh<mesh_is_const> m, base_element<element_is_const> vertex);
-  inline void set_point(base_mesh<false> m, base_element<false> const & vertex, result_of::point< base_mesh<false> >::type const & point);
-
-
-  template<bool element_is_const>
-  typename result_of::point< base_element<element_is_const> >::type get_point(base_element<element_is_const> const & vertex);
-  inline void set_point(element_t vertex, result_of::point<element_t>::type const & point);
-
-
-
 
   template<bool element_is_const, bool mesh_is_const>
-  bool is_boundary( base_mesh<mesh_is_const> mesh, base_element<element_is_const> element );
+  bool is_boundary( base_mesh<mesh_is_const> const & mesh, base_element<element_is_const> const & element );
 
   template<typename SomethingFirstT, typename SomethingSecondT, typename ElementT>
-  bool is_interface( SomethingFirstT first, SomethingSecondT second, ElementT element )
+  bool is_interface( SomethingFirstT const & first, SomethingSecondT const & second, ElementT const & element )
   {
     return is_boundary(first, element) && is_boundary(second, element);
   }
 
 
 
-  void non_recursive_add(mesh_t mesh, element_t const & element);
-  void add(mesh_t & mesh, element_t const & element);
+  void non_recursive_add(mesh_t const & mesh, element_t const & element);
+  void add(mesh_t const & mesh, element_t const & element);
 
 
 }

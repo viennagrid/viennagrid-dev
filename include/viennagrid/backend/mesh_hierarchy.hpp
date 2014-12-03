@@ -130,7 +130,7 @@ struct viennagrid_mesh_hierarchy_
 public:
   viennagrid_mesh_hierarchy_() : geometric_dimension_(0), cell_dimension_(-1),
 //   cell_tag_(VIENNAGRID_ELEMENT_TAG_NO_ELEMENT),
-  root_( new viennagrid_mesh_(this) ), highest_region_id(0), change_counter_(0), use_count_(1)
+  root_( new viennagrid_mesh_(this) ), highest_region_id(0), change_counter_(0), use_count_(1), retain_release_count(0)
   {
     for (viennagrid_int i = 0; i < VIENNAGRID_TOPOLOGIC_DIMENSION_END; ++i)
       element_buffer(i).set_topologic_dimension(i);
@@ -138,7 +138,7 @@ public:
 
   ~viennagrid_mesh_hierarchy_()
   {
-//     std::cout << "DELETE HIERARCHY" << std::endl;
+    std::cout << "DELETE HIERARCHY (retain-release count=" << retain_release_count << ")" << std::endl;
 
     delete root_;
 
@@ -301,16 +301,6 @@ public:
     return false;
   }
 
-//   viennagrid_element_tag unpack_element_tag(viennagrid_element_tag et) const
-//   {
-//     if (et == VIENNAGRID_ELEMENT_TAG_CELL)
-//       return cell_tag();
-//     else if (et == VIENNAGRID_ELEMENT_TAG_FACET)
-//       return viennagrid_facet_tag(cell_tag());
-//     else
-//       return et;
-//   }
-
 
   bool is_obsolete( viennagrid_int change_counter_to_check ) const { return change_counter_to_check != change_counter_; }
   void update_change_counter( viennagrid_int & change_counter_to_update ) const { change_counter_to_update = change_counter_; }
@@ -323,8 +313,9 @@ public:
 
   void retain() const
   {
-//     std::cout << "MESH HIERARCHY RETAIN" << std::endl;
     ++use_count_;
+    ++retain_release_count;
+//     std::cout << "MESH HIERARCHY RETAIN (retain-release count=" << retain_release_count << ")" << std::endl;
   }
 
   bool release() const
@@ -402,6 +393,7 @@ private:
 
   viennagrid_int change_counter_;
   mutable viennagrid_int use_count_;
+  mutable viennagrid_int retain_release_count;
 };
 
 #endif

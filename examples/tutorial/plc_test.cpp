@@ -32,19 +32,19 @@ int main()
 
     std::vector<VertexType> v;
 
-    v.push_back( viennagrid::make_vertex( mesh, 0, 0 ) );
-    v.push_back( viennagrid::make_vertex( mesh, 10, 0 ) );
-    v.push_back( viennagrid::make_vertex( mesh, 20, 10 ) );
-    v.push_back( viennagrid::make_vertex( mesh, 20, 20 ) );
-    v.push_back( viennagrid::make_vertex( mesh, 10, 20 ) );
-    v.push_back( viennagrid::make_vertex( mesh, 0, 10 ) );
-    v.push_back( viennagrid::make_vertex( mesh, 5, 5 ) );
+    v.push_back( viennagrid::make_vertex( mesh, viennagrid::make_point(0, 0) ) );
+    v.push_back( viennagrid::make_vertex( mesh, viennagrid::make_point(10, 0) ) );
+    v.push_back( viennagrid::make_vertex( mesh, viennagrid::make_point(20, 10) ) );
+    v.push_back( viennagrid::make_vertex( mesh, viennagrid::make_point(20, 20) ) );
+    v.push_back( viennagrid::make_vertex( mesh, viennagrid::make_point(10, 20) ) );
+    v.push_back( viennagrid::make_vertex( mesh, viennagrid::make_point(0, 10) ) );
+    v.push_back( viennagrid::make_vertex( mesh, viennagrid::make_point(5, 5) ) );
 
-    v.push_back( viennagrid::make_vertex( mesh, 10, 10 ) );
-    v.push_back( viennagrid::make_vertex( mesh, 12, 10 ) );
-    v.push_back( viennagrid::make_vertex( mesh, 10, 12 ) );
+    v.push_back( viennagrid::make_vertex( mesh, viennagrid::make_point(10, 10) ) );
+    v.push_back( viennagrid::make_vertex( mesh, viennagrid::make_point(12, 10) ) );
+    v.push_back( viennagrid::make_vertex( mesh, viennagrid::make_point(10, 12) ) );
 
-    v.push_back( viennagrid::make_vertex( mesh, 8, 10 ) );
+    v.push_back( viennagrid::make_vertex( mesh, viennagrid::make_point(8, 10) ) );
 
 
     std::vector<LineType> lines;

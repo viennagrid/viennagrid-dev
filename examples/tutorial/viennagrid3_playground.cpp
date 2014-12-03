@@ -233,39 +233,39 @@ int main()
     viennagrid::io::vtk_reader<MeshType> reader;
     reader(vtk_root, "../data/tets_with_data_main.pvd");
 
-    std::cout << viennagrid::vertices(vtk_root).size() << std::endl;
-    std::cout << viennagrid::cells(vtk_root).size() << std::endl;
-    std::cout << vtk_root.region_count() << std::endl;
+//     std::cout << viennagrid::vertices(vtk_root).size() << std::endl;
+//     std::cout << viennagrid::cells(vtk_root).size() << std::endl;
+//     std::cout << vtk_root.region_count() << std::endl;
 
-    viennagrid::mesh_region_t vtk_region0 = vtk_root.get_make_region(0);
-    viennagrid::mesh_region_t vtk_region1 = vtk_root.get_make_region(1);
+//     viennagrid::mesh_region_t vtk_region0 = vtk_root.get_make_region(0);
+//     viennagrid::mesh_region_t vtk_region1 = vtk_root.get_make_region(1);
 
 
-    std::cout << std::endl;
-    std::cout << std::endl;
+//     std::cout << std::endl;
+//     std::cout << std::endl;
+//
+//     int count = 0;
+//     {
+//       typedef viennagrid::result_of::const_facet_range<MeshType>::type FacetRangeType;
+//       FacetRangeType facets(vtk_root);
+//       for (VertexRangeType::const_iterator it = facets.begin(); it != facets.end(); ++it)
+//       {
+//         if ( !viennagrid::is_boundary(vtk_root, *it) )
+//           continue;
+//
+//         std::cout << *it << std::endl;
+//         std::cout << std::endl;
+//         ++count;
+//       }
+//     }
+//
+//     std::cout << std::endl;
+//     std::cout << std::endl;
+//
+//     std::cout << "COUNT = " << count << std::endl;
 
-    int count = 0;
-    {
-      typedef viennagrid::result_of::const_facet_range<MeshType>::type FacetRangeType;
-      FacetRangeType facets(vtk_root);
-      for (VertexRangeType::const_iterator it = facets.begin(); it != facets.end(); ++it)
-      {
-        if ( !viennagrid::is_boundary(vtk_root, *it) )
-          continue;
-
-        std::cout << *it << std::endl;
-        std::cout << std::endl;
-        ++count;
-      }
-    }
-
-    std::cout << std::endl;
-    std::cout << std::endl;
-
-    std::cout << "COUNT = " << count << std::endl;
-
-    viennagrid::io::vtk_writer<MeshType> writer;
-    writer(vtk_root, "test");
+//     viennagrid::io::vtk_writer<MeshType> writer;
+//     writer(vtk_root, "test");
   }
 
 

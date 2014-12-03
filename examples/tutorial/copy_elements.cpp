@@ -33,12 +33,12 @@ int main()
   MeshType mesh;
 
   // create some vertices
-  VertexType v0 = viennagrid::make_vertex( mesh, 0, 0, 0 );
-  VertexType v1 = viennagrid::make_vertex( mesh, 1, 0, 0 );
-  VertexType v2 = viennagrid::make_vertex( mesh, 0, 1, 0 );
-  VertexType v3 = viennagrid::make_vertex( mesh, 0, 0, 1 );
-  VertexType v4 = viennagrid::make_vertex( mesh, 1, 0, 1 );
-  VertexType v5 = viennagrid::make_vertex( mesh, 0, 1, 1 );
+  VertexType v0 = viennagrid::make_vertex( mesh, viennagrid::make_point(0, 0, 0) );
+  VertexType v1 = viennagrid::make_vertex( mesh, viennagrid::make_point(1, 0, 0) );
+  VertexType v2 = viennagrid::make_vertex( mesh, viennagrid::make_point(0, 1, 0) );
+  VertexType v3 = viennagrid::make_vertex( mesh, viennagrid::make_point(0, 0, 1) );
+  VertexType v4 = viennagrid::make_vertex( mesh, viennagrid::make_point(1, 0, 1) );
+  VertexType v5 = viennagrid::make_vertex( mesh, viennagrid::make_point(0, 1, 1) );
 
   // create some triangles
   std::vector<TriangleType> t(4);

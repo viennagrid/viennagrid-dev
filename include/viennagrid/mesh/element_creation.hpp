@@ -10,83 +10,61 @@
 
 namespace viennagrid
 {
-  inline element_t make_vertex(mesh_hierarchy_t mesh_hierarchy,
+  inline element_t make_vertex(viennagrid_mesh_hierarchy mesh_hierarchy,
                                point_t const & point)
   {
     if ( viennagrid::geometric_dimension(mesh_hierarchy) <= 0 && !point.empty() )
-      viennagrid_mesh_hierarchy_set_geometric_dimension( mesh_hierarchy.internal(), point.size() );
+      viennagrid_mesh_hierarchy_set_geometric_dimension( mesh_hierarchy, point.size() );
 
     viennagrid_index id;
-    viennagrid_vertex_create( mesh_hierarchy.internal(), &point[0], &id );
+    viennagrid_vertex_create( mesh_hierarchy, &point[0], &id );
     return element_t(mesh_hierarchy, 0, id);
   }
 
-  inline element_t make_vertex(mesh_hierarchy_t mesh_hierarchy)
+
+  inline element_t make_vertex(mesh_hierarchy_t const & mesh_hierarchy,
+                               point_t const & point)
   {
-    return make_vertex(mesh_hierarchy, point_t());
+    return make_vertex( mesh_hierarchy.internal(), point );
   }
 
-  inline element_t make_vertex(mesh_t mesh, point_t const & point)
+
+  inline element_t make_vertex(mesh_hierarchy_t const & mesh_hierarchy)
+  {
+    return make_vertex( mesh_hierarchy.internal(), point_t() );
+  }
+
+  inline element_t make_vertex(mesh_t const & mesh, point_t const & point)
   {
     assert( mesh.is_root() );
-    element_t vertex = make_vertex(mesh.mesh_hierarchy(), point);
+    element_t vertex = make_vertex(mesh.internal_mesh_hierarchy(), point);
     return vertex;
   }
 
-  inline element_t make_vertex(mesh_t mesh)
+  inline element_t make_vertex(mesh_t const & mesh)
   {
-    return make_vertex(mesh, point_t());
+    return make_vertex(mesh.internal_mesh_hierarchy(), point_t());
   }
 
-  inline element_t make_vertex(mesh_region_t mr, point_t const & point)
+  inline element_t make_vertex(mesh_region_t const & mesh_region, point_t const & point)
   {
-    element_t vertex = make_vertex(mr.mesh(), point);
-    add(mr, vertex);
+    element_t vertex = make_vertex(mesh_region.internal_mesh_hierarchy(), point);
+    add(mesh_region, vertex);
     return vertex;
   }
 
-  inline element_t make_vertex(mesh_region_t mr)
+  inline element_t make_vertex(mesh_region_t const & mesh_region)
   {
-    return make_vertex(mr, point_t());
+    return make_vertex(mesh_region.internal_mesh_hierarchy(), point_t());
   }
 
-
-
-
-
-  template<typename SomethingT>
-  typename result_of::element<SomethingT>::type make_vertex(SomethingT something, viennagrid_numeric x)
-  {
-    typename viennagrid::result_of::point<SomethingT>::type pt(1);
-    pt[0] = x;
-    return make_vertex(something, pt);
-  }
-
-  template<typename SomethingT>
-  typename result_of::element<SomethingT>::type make_vertex(SomethingT something, viennagrid_numeric x, viennagrid_numeric y)
-  {
-    typename viennagrid::result_of::point<SomethingT>::type pt(2);
-    pt[0] = x;
-    pt[1] = y;
-    return make_vertex(something, pt);
-  }
-
-  template<typename SomethingT>
-  typename result_of::element<SomethingT>::type make_vertex(SomethingT something, viennagrid_numeric x, viennagrid_numeric y, viennagrid_numeric z)
-  {
-    typename viennagrid::result_of::point<SomethingT>::type pt(3);
-    pt[0] = x;
-    pt[1] = y;
-    pt[2] = z;
-    return make_vertex(something, pt);
-  }
 
 
 
 
   template<typename SomethingT, typename NumericConfigT>
   typename result_of::element<SomethingT>::type make_unique_vertex(
-        SomethingT & something,
+        SomethingT something,
         typename result_of::point<SomethingT>::type const & point,
         NumericConfigT nc)
   {
@@ -106,38 +84,6 @@ namespace viennagrid
     return make_vertex(something, point);
   }
 
-  template<typename SomethingT, typename NumericConfigT>
-  typename result_of::element<SomethingT>::type make_unique_vertex(SomethingT something, viennagrid_numeric x, NumericConfigT nc)
-  {
-    typename viennagrid::result_of::point<SomethingT>::type pt(1);
-    pt[1] = x;
-    return make_unique_vertex(something, pt, nc);
-  }
-
-  template<typename SomethingT, typename NumericConfigT>
-  typename result_of::element<SomethingT>::type make_unique_vertex(SomethingT something, viennagrid_numeric x, viennagrid_numeric y, NumericConfigT nc)
-  {
-    typename viennagrid::result_of::point<SomethingT>::type pt(2);
-    pt[0] = x;
-    pt[1] = y;
-    return make_unique_vertex(something, pt, nc);
-  }
-
-  template<typename SomethingT, typename NumericConfigT>
-  typename result_of::element<SomethingT>::type make_unique_vertex(SomethingT something, viennagrid_numeric x, viennagrid_numeric y, viennagrid_numeric z, NumericConfigT nc)
-  {
-    typename viennagrid::result_of::point<SomethingT>::type pt(3);
-    pt[0] = x;
-    pt[1] = y;
-    pt[2] = z;
-    return make_unique_vertex(something, pt, nc);
-  }
-
-
-
-
-
-
 
 
 
@@ -147,7 +93,7 @@ namespace viennagrid
 
 
   template<typename ElementIteratorT>
-  element_t make_element(mesh_hierarchy_t mesh_hierarchy,
+  element_t make_element(viennagrid_mesh_hierarchy mesh_hierarchy,
                          element_tag_t tag,
                          ElementIteratorT elements_begin,
                          ElementIteratorT elements_end)
@@ -162,7 +108,7 @@ namespace viennagrid
     }
 
     viennagrid_index id;
-    viennagrid_element_create(mesh_hierarchy.internal(),
+    viennagrid_element_create(mesh_hierarchy,
                               tag.internal(),
                               internal_vertices_indices.size(),
                               &internal_vertices_indices[0],
@@ -172,12 +118,21 @@ namespace viennagrid
     return element_t(mesh_hierarchy, tag.topologic_dimension(), id);
   }
 
-  template<typename ElementTagT, typename ElementIteratorT>
-  element_t make_element(mesh_hierarchy_t mh,
+  template<typename ElementIteratorT>
+  element_t make_element(mesh_hierarchy_t const & mesh_hierarchy,
+                         element_tag_t tag,
                          ElementIteratorT elements_begin,
                          ElementIteratorT elements_end)
   {
-    return make_element(mh, ElementTagT(), elements_begin, elements_end);
+    return make_element(mesh_hierarchy.internal(), tag, elements_begin, elements_end);
+  }
+
+  template<typename ElementTagT, typename ElementIteratorT>
+  element_t make_element(mesh_hierarchy_t const & mh,
+                         ElementIteratorT elements_begin,
+                         ElementIteratorT elements_end)
+  {
+    return make_element(mh.internal(), ElementTagT(), elements_begin, elements_end);
   }
 
 
@@ -185,22 +140,21 @@ namespace viennagrid
 
 
   template<typename ElementIteratorT>
-  element_t make_element(mesh_t mesh,
+  element_t make_element(mesh_t const & mesh,
                          element_tag_t tag,
                          ElementIteratorT elements_begin,
                          ElementIteratorT elements_end)
   {
     assert( mesh.is_root() );
-    element_t element = make_element(mesh.mesh_hierarchy(), tag, elements_begin, elements_end);
-    return element;
+    return make_element(mesh.internal_mesh_hierarchy(), tag, elements_begin, elements_end);
   }
 
   template<typename ElementTagT, typename ElementIteratorT>
-  element_t make_element(mesh_t mesh,
+  element_t make_element(mesh_t const & mesh,
                          ElementIteratorT elements_begin,
                          ElementIteratorT elements_end)
   {
-    return make_element(mesh, ElementTagT(), elements_begin, elements_end);
+    return make_element(mesh.internal_mesh_hierarchy(), ElementTagT(), elements_begin, elements_end);
   }
 
 
@@ -208,22 +162,24 @@ namespace viennagrid
 
 
   template<typename ElementIteratorT>
-  element_t make_element(mesh_region_t mr,
+  element_t make_element(mesh_region_t const & mr,
                          element_tag_t tag,
                          ElementIteratorT elements_begin,
                          ElementIteratorT elements_end)
   {
-    element_t element = make_element(mr.mesh(), tag, elements_begin, elements_end);
+    element_t element = make_element(mr.internal_mesh_hierarchy(), tag, elements_begin, elements_end);
     add(mr, element);
     return element;
   }
 
   template<typename ElementTagT, typename ElementIteratorT>
-  element_t make_element(mesh_region_t mr,
+  element_t make_element(mesh_region_t const & mr,
                          ElementIteratorT elements_begin,
                          ElementIteratorT elements_end)
   {
-    return make_element(mr, ElementTagT(), elements_begin, elements_end);
+    element_t element = make_element(mr.internal_mesh_hierarchy(), ElementTagT(), elements_begin, elements_end);
+    add(mr, element);
+    return element;
   }
 
 
@@ -232,7 +188,7 @@ namespace viennagrid
 
 
   template<typename ElementIteratorT, typename IntersectionIteratorT>
-  element_t make_refined_element(mesh_t mesh,
+  element_t make_refined_element(mesh_t const & mesh,
                                  element_t parent,
                                  element_tag_t tag,
                                  ElementIteratorT elements_begin,
@@ -284,7 +240,7 @@ namespace viennagrid
 
 
   template<typename SomethingT>
-  element_t make_line(SomethingT something, element_t v0, element_t v1)
+  element_t make_line(SomethingT const & something, element_t v0, element_t v1)
   {
     element_t v[2];
     v[0] = v0;
@@ -293,7 +249,7 @@ namespace viennagrid
   }
 
   template<typename SomethingT>
-  element_t make_triangle(SomethingT something, element_t v0, element_t v1, element_t v2)
+  element_t make_triangle(SomethingT const & something, element_t v0, element_t v1, element_t v2)
   {
     element_t v[3];
     v[0] = v0;
@@ -303,7 +259,7 @@ namespace viennagrid
   }
 
   template<typename SomethingT>
-  element_t make_quadrilateral(SomethingT something, element_t v0, element_t v1, element_t v2, element_t v3)
+  element_t make_quadrilateral(SomethingT const & something, element_t v0, element_t v1, element_t v2, element_t v3)
   {
     element_t v[4];
     v[0] = v0;
@@ -314,7 +270,7 @@ namespace viennagrid
   }
 
   template<typename SomethingT>
-  element_t make_tetrahedron(SomethingT something, element_t v0, element_t v1, element_t v2, element_t v3)
+  element_t make_tetrahedron(SomethingT const & something, element_t v0, element_t v1, element_t v2, element_t v3)
   {
     element_t v[4];
     v[0] = v0;
@@ -325,7 +281,7 @@ namespace viennagrid
   }
 
   template<typename SomethingT>
-  element_t make_hexahedron(SomethingT something, element_t v0, element_t v1, element_t v2, element_t v3,
+  element_t make_hexahedron(SomethingT const & something, element_t v0, element_t v1, element_t v2, element_t v3,
                                                   element_t v4, element_t v5, element_t v6, element_t v7)
   {
     element_t v[8];

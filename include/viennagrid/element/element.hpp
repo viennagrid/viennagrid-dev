@@ -27,10 +27,16 @@ namespace viennagrid
     typedef typename result_of::const_nonconst<mesh_hierarchy_t, true>::type const_mesh_hierarchy_type;
 
     base_element() : mesh_hierarchy_(0), id_(-1) {}
-    base_element(mesh_hierarchy_type mesh_hierarchy_in,
+    base_element(viennagrid_mesh_hierarchy mesh_hierarchy_in,
                  dimension_type topologic_dimension_in,
                  id_type id_in) :
                  mesh_hierarchy_(mesh_hierarchy_in),
+                 topologic_dimension_(topologic_dimension_in),
+                 id_(id_in) {}
+    base_element(mesh_hierarchy_type const & mesh_hierarchy_in,
+                 dimension_type topologic_dimension_in,
+                 id_type id_in) :
+                 mesh_hierarchy_(mesh_hierarchy_in.internal()),
                  topologic_dimension_(topologic_dimension_in),
                  id_(id_in) {}
 
@@ -40,19 +46,25 @@ namespace viennagrid
     id_type id() const { return id_; }
     bool valid() const { return id() >= 0; }
 
-    mesh_hierarchy_type mesh_hierarchy() { return mesh_hierarchy_; }
-    const_mesh_hierarchy_type mesh_hierarchy() const { return mesh_hierarchy_; }
+    mesh_hierarchy_type mesh_hierarchy()
+    { return mesh_hierarchy_type(mesh_hierarchy_); }
+
+    const_mesh_hierarchy_type mesh_hierarchy() const
+    { return const_mesh_hierarchy_type(mesh_hierarchy_); }
+
+    viennagrid_mesh_hierarchy internal_mesh_hierarchy() const { return const_cast<viennagrid_mesh_hierarchy>(mesh_hierarchy_); }
 
     tag_type tag() const
     {
       viennagrid_element_tag tag;
-      viennagrid_element_get_tag( mesh_hierarchy().internal(), topologic_dimension(), id(), &tag);
+      viennagrid_element_get_tag( internal_mesh_hierarchy(), topologic_dimension(), id(), &tag);
       return tag_type(tag);
     }
     dimension_type topologic_dimension() const { return topologic_dimension_; }
 
   private:
-    mesh_hierarchy_type mesh_hierarchy_;
+
+    viennagrid_mesh_hierarchy mesh_hierarchy_;
     dimension_type topologic_dimension_;
     id_type id_;
   };
@@ -80,12 +92,18 @@ namespace viennagrid
   base_mesh_hierarchy<is_const> mesh_hierarchy( base_element<is_const> const & element )
   { return element.mesh_hierarchy(); }
 
+  template<bool is_const>
+  viennagrid_mesh_hierarchy internal_mesh_hierarchy( base_element<is_const> const & element )
+  {
+    return element.internal_mesh_hierarchy();
+  }
+
 
   template<bool is_const>
   base_element<is_const> parent(base_element<is_const> const & element)
   {
     viennagrid_index parent_id;
-    viennagrid_element_parent_get(element.mesh_hierarchy().internal(),
+    viennagrid_element_parent_get(internal_mesh_hierarchy(element),
                                   viennagrid::topologic_dimension(element),
                                   element.id(),
                                   &parent_id);
@@ -95,7 +113,7 @@ namespace viennagrid
   template<bool is_const>
   void set_parent(base_element<false> element, base_element<is_const> const & parent)
   {
-    viennagrid_element_parent_set(element.mesh_hierarchy().internal(),
+    viennagrid_element_parent_set(internal_mesh_hierarchy(element),
                                   viennagrid::topologic_dimension(element),
                                   element.id(),
                                   parent.id());

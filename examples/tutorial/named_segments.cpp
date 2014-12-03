@@ -68,12 +68,12 @@ int main()
   // Step 2: Add vertices to the mesh.
   //         Note that vertices with IDs are enumerated in the order they are pushed to the mesh.
   //
-  VertexType v0 = viennagrid::make_vertex(mesh, 0, 0); // id = 0
-  VertexType v1 = viennagrid::make_vertex(mesh, 1, 0); // id = 1
-  VertexType v2 = viennagrid::make_vertex(mesh, 2, 0);
-  VertexType v3 = viennagrid::make_vertex(mesh, 2, 1);
-  VertexType v4 = viennagrid::make_vertex(mesh, 1, 1);
-  VertexType v5 = viennagrid::make_vertex(mesh, 0, 1); // id = 5
+  VertexType v0 = viennagrid::make_vertex(mesh, viennagrid::make_point(0, 0) ); // id = 0
+  VertexType v1 = viennagrid::make_vertex(mesh, viennagrid::make_point(1, 0) ); // id = 1
+  VertexType v2 = viennagrid::make_vertex(mesh, viennagrid::make_point(2, 0) );
+  VertexType v3 = viennagrid::make_vertex(mesh, viennagrid::make_point(2, 1) );
+  VertexType v4 = viennagrid::make_vertex(mesh, viennagrid::make_point(1, 1) );
+  VertexType v5 = viennagrid::make_vertex(mesh, viennagrid::make_point(0, 1) ); // id = 5
 
   //
   // Step 3: Fill the two segments with cells.

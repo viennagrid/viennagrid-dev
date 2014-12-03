@@ -45,13 +45,13 @@ int main()
 //   viennagrid::static_array<vertex_handle_type, 7> handles;
   std::vector<VertexType> vertices(7);
 
-  vertices[0] = viennagrid::make_vertex( mesh, 0, 0 );
-  vertices[1] = viennagrid::make_vertex( mesh, 1, 0 );
-  vertices[2] = viennagrid::make_vertex( mesh, 2, 1 );
-  vertices[3] = viennagrid::make_vertex( mesh, 2, 2 );
-  vertices[4] = viennagrid::make_vertex( mesh, 1, 2 );
-  vertices[5] = viennagrid::make_vertex( mesh, 0, 1 );
-  vertices[6] = viennagrid::make_vertex( mesh, 0.5, 0.5 );
+  vertices[0] = viennagrid::make_vertex( mesh, viennagrid::make_point(0, 0) );
+  vertices[1] = viennagrid::make_vertex( mesh, viennagrid::make_point(1, 0) );
+  vertices[2] = viennagrid::make_vertex( mesh, viennagrid::make_point(2, 1) );
+  vertices[3] = viennagrid::make_vertex( mesh, viennagrid::make_point(2, 2) );
+  vertices[4] = viennagrid::make_vertex( mesh, viennagrid::make_point(1, 2) );
+  vertices[5] = viennagrid::make_vertex( mesh, viennagrid::make_point(0, 1) );
+  vertices[6] = viennagrid::make_vertex( mesh, viennagrid::make_point(0.5, 0.5) );
 
 
   viennagrid::make_element<viennagrid::polygon_tag>( mesh, vertices.begin(), vertices.end() );

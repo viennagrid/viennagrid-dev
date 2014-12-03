@@ -45,7 +45,6 @@ namespace viennagrid
         typedef typename viennagrid::result_of::point<MeshType>::type    PointType;
         typedef typename viennagrid::result_of::coord<MeshType>::type    CoordType;
 
-//         typedef typename result_of::cell_tag<MeshType>::type CellTag;
         typedef typename result_of::element<MeshType>::type CellType;
 
         typedef typename result_of::element<MeshType, vertex_tag>::type                           VertexType;

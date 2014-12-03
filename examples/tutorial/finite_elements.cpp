@@ -170,10 +170,10 @@ int main()
   MeshType mesh = hierarchy.root();
 
 
-  ElementType v0 = viennagrid::make_vertex(mesh, 0, 0);
-  ElementType v1 = viennagrid::make_vertex(mesh, 1, 0);
-  ElementType v2 = viennagrid::make_vertex(mesh, 0, 1);
-  ElementType v3 = viennagrid::make_vertex(mesh, 1, 1);
+  ElementType v0 = viennagrid::make_vertex(mesh, viennagrid::make_point(0, 0) );
+  ElementType v1 = viennagrid::make_vertex(mesh, viennagrid::make_point(1, 0) );
+  ElementType v2 = viennagrid::make_vertex(mesh, viennagrid::make_point(0, 1) );
+  ElementType v3 = viennagrid::make_vertex(mesh, viennagrid::make_point(1, 1) );
 
 
 

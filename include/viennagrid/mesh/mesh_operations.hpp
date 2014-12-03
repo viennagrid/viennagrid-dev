@@ -68,31 +68,6 @@ namespace viennagrid
       return copy_element(src);
     }
 
-//     /** @brief Copies one vertex to the destination mesh. If the vertex is already present in the destination mesh, the vertex handle of this vertex is return, otherwise a new vertex is created in the destination mesh.
-//       *
-//       * @param  src_vertex              The vertex to be copied
-//       * @param  tol                     A geometric tolerance for vertex creation
-//       */
-//     template<typename OtherNumericConfigT>
-//     DstVertexType operator()( SrcVertexType const & src_vertex, OtherNumericConfigT nc )
-//     {
-//       typename std::map<SrcVertexIDType, DstVertexType>::iterator vit = vertex_map.find( src_vertex.id() );
-//       if (vit != vertex_map.end())
-//         return vit->second;
-//       else
-//       {
-//         DstVertexType vtx = viennagrid::make_unique_vertex(dst_mesh,
-//                                                            viennagrid::get_point(src_vertex),
-//                                                            nc);
-//         vertex_map[src_vertex.id()] = vtx;
-//         copy_region_information(src_vertex, vtx);
-//
-//         return vtx;
-//       }
-//     }
-
-
-
 
     /** @brief Copies a whole element including its vertices to the destination mesh.
       *
@@ -138,35 +113,10 @@ namespace viennagrid
       return dst;
     }
 
-//     /** @brief Copies a whole element including its vertices to the destination mesh.
-//       *
-//       * @param  el                      The element to be copied
-//       * @param  tol                     A geometric tolerance for vertex creation
-//       */
-//     template<bool element_is_const, typename OtherNumericConfigT>
-//     typename viennagrid::result_of::element<DstMeshT>::type copy_element( base_element<element_is_const> src, OtherNumericConfigT nc )
-//     {
-//       typedef base_element<element_is_const> SrcElementType;
-//       typedef typename viennagrid::result_of::element<DstMeshT>::type DstElementType;
-//       typedef typename viennagrid::result_of::const_vertex_range<SrcElementType>::type ConstVerticesOnElementRangeType;
-//       typedef typename viennagrid::result_of::iterator<ConstVerticesOnElementRangeType>::type ConstVerticesOnElementIteratorType;
-//
-//       std::vector<DstVertexType> dst_vertices;
-//       ConstVerticesOnElementRangeType vertices(src);
-//       for (ConstVerticesOnElementIteratorType vit = vertices.begin(); vit != vertices.end(); ++vit)
-//         dst_vertices.push_back( (*this)(*vit, nc) );
-//
-//       DstElementType dst = viennagrid::make_element( dst_mesh, src.tag(), dst_vertices.begin(), dst_vertices.end() );
-//       copy_region_information(src, dst);
-//       return dst;
-//     }
-
-
-
   private:
 
     template<typename SrcElementT, typename DstElementT>
-    void copy_region_information(SrcElementT src, DstElementT dst)
+    void copy_region_information(SrcElementT const & src, DstElementT const & dst)
     {
       typedef typename viennagrid::result_of::region_range<SrcMeshHierarchyT, SrcElementT>::type ElementRegionType;
       typedef typename viennagrid::result_of::iterator<ElementRegionType>::type ElementRegionIterator;

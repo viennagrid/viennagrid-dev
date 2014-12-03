@@ -224,19 +224,13 @@ namespace viennagrid
 
         std::set< ConstCellType > & current_used_cells_map = used_cell_map[region_id];
 
-//         int index = 0;
-//         for (element_tag_t cell_tag = cell_tag_begin(domseg); cell_tag != cell_tag_end(domseg); ++cell_tag)
-//         {
         CellRange cells(domseg, topologic_dimension(domseg));
         for (CellIterator cit  = cells.begin();
                           cit != cells.end();
-                        ++cit/*, ++index*/)
+                        ++cit)
             {
               current_used_cells_map.insert(*cit);
-
-//                 [ (*cit).id() ] = *cit;
             }
-//         }
 
         return current_used_cells_map.size();
       }
@@ -427,7 +421,7 @@ namespace viennagrid
        * @param mesh_obj   The ViennaGrid mesh.
        * @param filename   The file to write to
        */
-      void operator()(MeshType mesh_obj, std::string const & filename)
+      void operator()(MeshType const & mesh_obj, std::string const & filename)
       {
         if (mesh_obj.region_count() <= 1)
         {

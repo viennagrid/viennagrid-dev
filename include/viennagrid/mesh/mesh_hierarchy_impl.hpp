@@ -50,25 +50,20 @@ namespace viennagrid
 
 
 
-  template<bool mesh_hierarchy_is_const, bool element_is_const>
-  typename viennagrid::result_of::point< base_mesh_hierarchy<mesh_hierarchy_is_const> >::type get_point(
-    base_mesh_hierarchy<mesh_hierarchy_is_const> mesh_hierarchy,
-    base_element<element_is_const> const & vertex)
+  template<bool element_is_const>
+  point_t get_point(viennagrid_mesh_hierarchy mesh_hierarchy, base_element<element_is_const> const & vertex)
   {
-    typedef typename viennagrid::result_of::point< base_mesh_hierarchy<mesh_hierarchy_is_const> >::type PointType;
-    PointType result( viennagrid::geometric_dimension(mesh_hierarchy) );
+    point_t result( viennagrid::geometric_dimension(mesh_hierarchy) );
     viennagrid_numeric const * tmp;
-    viennagrid_vertex_get(mesh_hierarchy.internal(), vertex.id(), const_cast<viennagrid_numeric **>(&tmp));
+    viennagrid_vertex_get(mesh_hierarchy, vertex.id(), const_cast<viennagrid_numeric **>(&tmp));
     std::copy(tmp, tmp+result.size(), result.begin());
     return result;
   }
 
-  inline void set_point(base_mesh_hierarchy<false> mesh_hierarchy,
-                        base_element<false> const & vertex,
-                        viennagrid::result_of::point< base_mesh_hierarchy<false> >::type const & point)
+  inline void set_point(viennagrid_mesh_hierarchy mesh_hierarchy, base_element<false> const & vertex, point_t const & point)
   {
     viennagrid_numeric * tmp;
-    viennagrid_vertex_get(mesh_hierarchy.internal(), vertex.id(), &tmp);
+    viennagrid_vertex_get(mesh_hierarchy, vertex.id(), &tmp);
     std::copy(point.begin(), point.end(), tmp);
   }
 

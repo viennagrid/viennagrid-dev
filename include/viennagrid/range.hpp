@@ -22,7 +22,7 @@ namespace viennagrid
     typedef typename result_of::const_nonconst<value_type *, is_const>::type pointer;
     typedef value_type reference;
 
-    unpack_element_functor(mesh_hierarchy_type mesh_hierarchy_in, viennagrid_int topologic_dimension_in) : mesh_hierarchy_(mesh_hierarchy_in), topologic_dimension_(topologic_dimension_in) {}
+    unpack_element_functor(viennagrid_mesh_hierarchy mesh_hierarchy_in, viennagrid_int topologic_dimension_in) : mesh_hierarchy_(mesh_hierarchy_in), topologic_dimension_(topologic_dimension_in) {}
 
     template<bool other_is_const>
     unpack_element_functor(unpack_element_functor<other_is_const> const & other) : mesh_hierarchy_(other.mesh_hierarchy_), topologic_dimension_(other.topologic_dimension_) {}
@@ -31,7 +31,7 @@ namespace viennagrid
     value_type operator()(viennagrid_index & id) const { return value_type(mesh_hierarchy_, topologic_dimension_, id); }
     const_value_type operator()(viennagrid_index const & id) const { return const_value_type(mesh_hierarchy_, topologic_dimension_, id); }
 
-    mesh_hierarchy_type mesh_hierarchy_;
+    viennagrid_mesh_hierarchy mesh_hierarchy_;
     viennagrid_int topologic_dimension_;
   };
 
@@ -63,25 +63,24 @@ namespace viennagrid
     base_element_range(ViewFunctorT view_functor_) : mesh_hierarchy_(0), element_index_begin(0), element_index_end(0), view_functor(view_functor_) {}
 
 
-    template<bool mesh_is_const>
-    void from_mesh(base_mesh<mesh_is_const> mesh, viennagrid_int topologic_dimension_in)
+    void from_mesh(viennagrid_mesh mesh, viennagrid_int topologic_dimension_in)
     {
       topologic_dimension_ = topologic_dimension_in;
-      mesh_hierarchy_ = mesh.mesh_hierarchy();
+      mesh_hierarchy_ = viennagrid::internal_mesh_hierarchy(mesh);
 
-      viennagrid_elements_get(mesh.internal(),
+      viennagrid_elements_get(mesh,
                               topologic_dimension(),
                               const_cast<viennagrid_index **>(&element_index_begin),
                               const_cast<viennagrid_index **>(&element_index_end));
     }
 
     template<bool element_is_const>
-    void boundary_from_element(base_element<element_is_const> element, viennagrid_int topologic_dimension_in)
+    void boundary_from_element(base_element<element_is_const> const & element, viennagrid_int topologic_dimension_in)
     {
       topologic_dimension_ = topologic_dimension_in;
-      mesh_hierarchy_ = element.mesh_hierarchy();
+      mesh_hierarchy_ = element.internal_mesh_hierarchy();
 
-      viennagrid_element_boundary_elements(mesh_hierarchy().internal(),
+      viennagrid_element_boundary_elements(internal_mesh_hierarchy(),
                                            viennagrid::topologic_dimension(element),
                                            element.id(),
                                            topologic_dimension(),
@@ -89,13 +88,13 @@ namespace viennagrid
                                            const_cast<viennagrid_index **>(&element_index_end));
     }
 
-    template<bool mesh_is_const, bool element_is_const>
-    void coboundary_from_element(base_mesh<mesh_is_const> mesh, base_element<element_is_const> element, viennagrid_int coboundary_topo_dim_in)
+    template<bool element_is_const>
+    void coboundary_from_element(viennagrid_mesh mesh, base_element<element_is_const> const & element, viennagrid_int coboundary_topo_dim_in)
     {
       topologic_dimension_ = coboundary_topo_dim_in;
-      mesh_hierarchy_ = element.mesh_hierarchy();
+      mesh_hierarchy_ = element.internal_mesh_hierarchy();
 
-      viennagrid_element_coboundary_elements(mesh.internal(),
+      viennagrid_element_coboundary_elements(mesh,
                                              viennagrid::topologic_dimension(element),
                                              element.id(),
                                              topologic_dimension(),
@@ -103,13 +102,13 @@ namespace viennagrid
                                              const_cast<viennagrid_index **>(&element_index_end));
     }
 
-    template<bool mesh_is_const, bool element_is_const>
-    void neighbor_from_element(base_mesh<mesh_is_const> mesh, base_element<element_is_const> element, viennagrid_int connector_topo_dim_in, viennagrid_int neighbor_topo_dim_in)
+    template<bool element_is_const>
+    void neighbor_from_element(viennagrid_mesh mesh, base_element<element_is_const> const & element, viennagrid_int connector_topo_dim_in, viennagrid_int neighbor_topo_dim_in)
     {
       topologic_dimension_ = neighbor_topo_dim_in;
-      mesh_hierarchy_ = element.mesh_hierarchy();
+      mesh_hierarchy_ = element.internal_mesh_hierarchy();
 
-      viennagrid_element_neighbor_elements(mesh.internal(),
+      viennagrid_element_neighbor_elements(mesh,
                                            viennagrid::topologic_dimension(element),
                                            element.id(),
                                            connector_topo_dim_in,
@@ -134,15 +133,15 @@ namespace viennagrid
     iterator begin()
     {
       return iterator(transform_iterator(element_index_begin,
-                                         unpack_functor(mesh_hierarchy_, topologic_dimension_)),
+                                         unpack_functor(internal_mesh_hierarchy(), topologic_dimension_)),
                       transform_iterator(element_index_end,
-                                         unpack_functor(mesh_hierarchy_, topologic_dimension_)),
+                                         unpack_functor(internal_mesh_hierarchy(), topologic_dimension_)),
                       view_functor);
     }
     iterator end()
     {
       return iterator(transform_iterator(element_index_end,
-                                         unpack_functor(mesh_hierarchy_, topologic_dimension_)),
+                                         unpack_functor(internal_mesh_hierarchy(), topologic_dimension_)),
                       view_functor);
 
     }
@@ -151,15 +150,15 @@ namespace viennagrid
     const_iterator cbegin() const
     {
       return const_iterator(const_transform_iterator(element_index_begin,
-                                                     const_unpack_functor(mesh_hierarchy_, topologic_dimension_)),
+                                                     const_unpack_functor(internal_mesh_hierarchy(), topologic_dimension_)),
                             const_transform_iterator(element_index_end,
-                                                     const_unpack_functor(mesh_hierarchy_, topologic_dimension_)),
+                                                     const_unpack_functor(internal_mesh_hierarchy(), topologic_dimension_)),
                             view_functor);
     }
     const_iterator cend() const
     {
       return const_iterator(const_transform_iterator(element_index_end,
-                                                     const_unpack_functor(mesh_hierarchy_, topologic_dimension_)),
+                                                     const_unpack_functor(internal_mesh_hierarchy(), topologic_dimension_)),
                             view_functor);
 
     }
@@ -177,14 +176,25 @@ namespace viennagrid
 //     { return const_element_type(tag(), mesh_hierarchy(), element_index_begin[pos]); }
 
 
-    mesh_hierarchy_type mesh_hierarchy() { return mesh_hierarchy_; }
-    const_mesh_hierarchy_type mesh_hierarchy() const { return mesh_hierarchy_; }
+    mesh_hierarchy_type mesh_hierarchy()
+    {
+      return mesh_hierarchy_type(mesh_hierarchy_);
+//       return mesh_hierarchy_;
+    }
+    const_mesh_hierarchy_type mesh_hierarchy() const
+    {
+      return const_mesh_hierarchy_type(mesh_hierarchy_);
+//       return mesh_hierarchy_;
+    }
+
+    viennagrid_mesh_hierarchy internal_mesh_hierarchy() const { return const_cast<viennagrid_mesh_hierarchy>(mesh_hierarchy_); }
 
     viennagrid_int topologic_dimension() const { return topologic_dimension_; }
 
   protected:
     viennagrid_int topologic_dimension_;
-    mesh_hierarchy_type mesh_hierarchy_;
+//     mesh_hierarchy_type mesh_hierarchy_;
+    viennagrid_mesh_hierarchy mesh_hierarchy_;
     index_pointer_type element_index_begin;
     index_pointer_type element_index_end;
     ViewFunctorT view_functor;
@@ -203,8 +213,8 @@ namespace viennagrid
     typedef typename base_element_range<true_functor, is_const>::mesh_type mesh_type;
     typedef typename base_element_range<true_functor, is_const>::element_type element_type;
 
-    mesh_element_range(mesh_type mesh, viennagrid_int element_topo_dim_)
-    { this->from_mesh(mesh, element_topo_dim_); }
+    mesh_element_range(mesh_type const & mesh, viennagrid_int element_topo_dim_)
+    { this->from_mesh(mesh.internal(), element_topo_dim_); }
 
   private:
   };
@@ -217,8 +227,8 @@ namespace viennagrid
     typedef typename base_element_range<true_functor, is_const>::mesh_type mesh_type;
     typedef typename base_element_range<true_functor, is_const>::element_type element_type;
 
-    mesh_cell_range(mesh_type mesh)
-    { this->from_mesh(mesh, viennagrid::cell_dimension(mesh)); }
+    mesh_cell_range(mesh_type const & mesh)
+    { this->from_mesh(mesh.internal(), viennagrid::cell_dimension(mesh)); }
 
   private:
   };
@@ -231,8 +241,8 @@ namespace viennagrid
     typedef typename base_element_range<true_functor, is_const>::mesh_type mesh_type;
     typedef typename base_element_range<true_functor, is_const>::element_type element_type;
 
-    mesh_facet_range(mesh_type mesh)
-    { this->from_mesh(mesh, viennagrid::cell_dimension(mesh)-1); }
+    mesh_facet_range(mesh_type const & mesh)
+    { this->from_mesh(mesh.internal(), viennagrid::cell_dimension(mesh)-1); }
 
   private:
   };
@@ -246,7 +256,7 @@ namespace viennagrid
     typedef typename mesh_element_range<is_const>::mesh_type mesh_type;
     typedef typename mesh_element_range<is_const>::element_type element_type;
 
-    static_mesh_element_range(mesh_type mesh) : mesh_element_range<is_const>(mesh, topologic_dimension) {}
+    static_mesh_element_range(mesh_type const & mesh) : mesh_element_range<is_const>(mesh, topologic_dimension) {}
 
   private:
   };
@@ -261,7 +271,7 @@ namespace viennagrid
     typedef typename base_element_range<true_functor, is_const>::mesh_type mesh_type;
     typedef typename base_element_range<true_functor, is_const>::element_type element_type;
 
-    boundary_element_range(element_type element, viennagrid_int boundary_topo_dim)
+    boundary_element_range(element_type const & element, viennagrid_int boundary_topo_dim)
     { this->boundary_from_element(element, boundary_topo_dim); }
 
   private:
@@ -275,7 +285,7 @@ namespace viennagrid
     typedef typename base_element_range<true_functor, is_const>::mesh_type mesh_type;
     typedef typename base_element_range<true_functor, is_const>::element_type element_type;
 
-    boundary_facet_range(element_type element)
+    boundary_facet_range(element_type const & element)
     { this->boundary_from_element(element, viennagrid::topologic_dimension(element)-1); }
 
   private:
@@ -290,7 +300,7 @@ namespace viennagrid
     typedef typename boundary_element_range<is_const>::mesh_type mesh_type;
     typedef typename boundary_element_range<is_const>::element_type element_type;
 
-    static_boundary_element_range(element_type element) : boundary_element_range<is_const>(element, boundary_topologic_dimension) {}
+    static_boundary_element_range(element_type const & element) : boundary_element_range<is_const>(element, boundary_topologic_dimension) {}
 
   private:
   };
@@ -305,8 +315,8 @@ namespace viennagrid
     typedef typename base_element_range<true_functor, is_const>::mesh_type mesh_type;
     typedef typename base_element_range<true_functor, is_const>::element_type element_type;
 
-    coboundary_element_range(mesh_type mesh, element_type element, viennagrid_int coboundary_topo_dim_)
-    { this->coboundary_from_element(mesh, element, coboundary_topo_dim_); }
+    coboundary_element_range(mesh_type const & mesh, element_type const & element, viennagrid_int coboundary_topo_dim_)
+    { this->coboundary_from_element(mesh.internal(), element, coboundary_topo_dim_); }
 
   private:
   };
@@ -321,7 +331,7 @@ namespace viennagrid
     typedef typename coboundary_element_range<is_const>::mesh_type mesh_type;
     typedef typename coboundary_element_range<is_const>::element_type element_type;
 
-    static_coboundary_element_range(mesh_type mesh, element_type element) : coboundary_element_range<is_const>(mesh, element, coboundary_topologic_dimension) {}
+    static_coboundary_element_range(mesh_type const & mesh, element_type const & element) : coboundary_element_range<is_const>(mesh.internal(), element, coboundary_topologic_dimension) {}
 
   private:
   };
@@ -336,8 +346,8 @@ namespace viennagrid
     typedef typename base_element_range<true_functor, is_const>::mesh_type mesh_type;
     typedef typename base_element_range<true_functor, is_const>::element_type element_type;
 
-    neighbor_element_range(mesh_type mesh, element_type element, viennagrid_int connector_topo_dim_, viennagrid_int neighbor_topo_dim_)
-    { this->neighbor_from_element(mesh, element, connector_topo_dim_, neighbor_topo_dim_); }
+    neighbor_element_range(mesh_type const & mesh, element_type const & element, viennagrid_int connector_topo_dim_, viennagrid_int neighbor_topo_dim_)
+    { this->neighbor_from_element(mesh.internal(), element, connector_topo_dim_, neighbor_topo_dim_); }
 
   private:
   };
@@ -352,7 +362,7 @@ namespace viennagrid
     typedef typename neighbor_element_range<is_const>::mesh_type mesh_type;
     typedef typename neighbor_element_range<is_const>::element_type element_type;
 
-    static_neighbor_element_range(mesh_type mesh, element_type element) : neighbor_element_range<is_const>(mesh, element, connector_topologic_dimension, neighbor_topologic_dimension) {}
+    static_neighbor_element_range(mesh_type const & mesh, element_type const & element) : neighbor_element_range<is_const>(mesh, element, connector_topologic_dimension, neighbor_topologic_dimension) {}
 
   private:
   };
@@ -367,14 +377,14 @@ namespace viennagrid
 
   struct region_view_functor
   {
-    region_view_functor(const_mesh_region_t mesh_region_) : mesh_region(mesh_region_) {}
+    region_view_functor(const_mesh_region_t const & mesh_region_) : region(mesh_region_.region().internal()) {}
 
-    bool operator()(element_t element) const
-    { return is_in_region(mesh_region, element); }
-    bool operator()(const_element_t element) const
-    { return is_in_region(mesh_region, element); }
+    bool operator()(element_t const & element) const
+    { return is_in_region(region, element); }
+    bool operator()(const_element_t const & element) const
+    { return is_in_region(region, element); }
 
-    const_mesh_region_t mesh_region;
+    viennagrid_region region;
   };
 
 
@@ -390,8 +400,8 @@ namespace viennagrid
 
     typedef typename result_of::const_nonconst<mesh_region_t, is_const>::type mesh_region_type;
 
-    mesh_region_element_range(mesh_region_type region, viennagrid_int element_topo_dim_) : base_element_range<region_view_functor, is_const>( region_view_functor(region) )
-    { this->from_mesh(region.mesh(), element_topo_dim_); }
+    mesh_region_element_range(mesh_region_type const & region, viennagrid_int element_topo_dim_) : base_element_range<region_view_functor, is_const>( region_view_functor(region) )
+    { this->from_mesh(region.internal_mesh(), element_topo_dim_); }
 
   private:
   };
@@ -409,8 +419,8 @@ namespace viennagrid
 
     typedef typename result_of::const_nonconst<mesh_region_t, is_const>::type mesh_region_type;
 
-    mesh_region_cell_range(mesh_region_type region) : base_element_range<region_view_functor, is_const>( region_view_functor(region) )
-    { this->from_mesh(region.mesh(), viennagrid::cell_dimension(region)); }
+    mesh_region_cell_range(mesh_region_type const & region) : base_element_range<region_view_functor, is_const>( region_view_functor(region) )
+    { this->from_mesh(region.internal_mesh(), viennagrid::cell_dimension(region)); }
 
   private:
   };
@@ -427,8 +437,8 @@ namespace viennagrid
 
     typedef typename result_of::const_nonconst<mesh_region_t, is_const>::type mesh_region_type;
 
-    mesh_region_facet_range(mesh_region_type region) : base_element_range<region_view_functor, is_const>( region_view_functor(region) )
-    { this->from_mesh(region.mesh(), viennagrid::facet_dimension(region)); }
+    mesh_region_facet_range(mesh_region_type const & region) : base_element_range<region_view_functor, is_const>( region_view_functor(region) )
+    { this->from_mesh(region.internal_mesh(), viennagrid::facet_dimension(region)); }
 
   private:
   };
@@ -445,7 +455,7 @@ namespace viennagrid
 
     typedef typename result_of::const_nonconst<mesh_region_t, is_const>::type mesh_region_type;
 
-    static_mesh_region_element_range(mesh_region_type region) : mesh_region_element_range<is_const>(region, topologic_dimension) {}
+    static_mesh_region_element_range(mesh_region_type const & region) : mesh_region_element_range<is_const>(region, topologic_dimension) {}
 
   private:
   };
@@ -465,8 +475,8 @@ namespace viennagrid
 
     typedef typename result_of::const_nonconst<mesh_region_t, is_const>::type mesh_region_type;
 
-    coboundary_region_element_range(mesh_region_type region, element_type element, viennagrid_int coboundary_topo_dim_) : base_element_range<region_view_functor, is_const>( region_view_functor(region) )
-    { this->coboundary_from_element(region.mesh(), element, coboundary_topo_dim_); }
+    coboundary_region_element_range(mesh_region_type const & region, element_type const & element, viennagrid_int coboundary_topo_dim_) : base_element_range<region_view_functor, is_const>( region_view_functor(region) )
+    { this->coboundary_from_element(region.internal_mesh(), element, coboundary_topo_dim_); }
 
   private:
   };
@@ -483,7 +493,7 @@ namespace viennagrid
 
     typedef typename result_of::const_nonconst<mesh_region_t, is_const>::type mesh_region_type;
 
-    static_coboundary_region_element_range(mesh_region_type region, element_type element) : coboundary_region_element_range<is_const>(region, element, coboundary_topologic_dimension) {}
+    static_coboundary_region_element_range(mesh_region_type const & region, element_type const & element) : coboundary_region_element_range<is_const>(region, element, coboundary_topologic_dimension) {}
 
   private:
   };
@@ -501,8 +511,8 @@ namespace viennagrid
 
     typedef typename result_of::const_nonconst<mesh_region_t, is_const>::type mesh_region_type;
 
-    neighbor_region_element_range(mesh_region_type region, element_type element, viennagrid_int connector_topo_dim_, viennagrid_int neighbor_topo_dim_) : base_element_range<region_view_functor, is_const>( region_view_functor(region) )
-    { this->neighbor_from_element(region.mesh(), element, connector_topo_dim_, neighbor_topo_dim_); }
+    neighbor_region_element_range(mesh_region_type const & region, element_type element, viennagrid_int connector_topo_dim_, viennagrid_int neighbor_topo_dim_) : base_element_range<region_view_functor, is_const>( region_view_functor(region) )
+    { this->neighbor_from_element(region.internal_mesh(), element, connector_topo_dim_, neighbor_topo_dim_); }
 
   private:
   };
@@ -519,7 +529,7 @@ namespace viennagrid
 
     typedef typename result_of::const_nonconst<mesh_region_t, is_const>::type mesh_region_type;
 
-    static_neighbor_region_element_range(mesh_region_type region, element_type element) : neighbor_region_element_range<is_const>(region, element, connector_topologic_dimension, neighbor_topologic_dimension) {}
+    static_neighbor_region_element_range(mesh_region_type const & region, element_type const & element) : neighbor_region_element_range<is_const>(region, element, connector_topologic_dimension, neighbor_topologic_dimension) {}
 
   private:
   };
@@ -874,15 +884,21 @@ namespace viennagrid
 
 
   template<typename SomethingT>
-  typename viennagrid::result_of::element_range<SomethingT>::type elements(SomethingT something, viennagrid_int topologic_dimension)
+  typename viennagrid::result_of::element_range<SomethingT>::type elements(SomethingT & something, viennagrid_int topologic_dimension)
   { return typename viennagrid::result_of::element_range<SomethingT>::type(something, topologic_dimension); }
 
   template<int topologic_dimension, typename SomethingT>
-  typename viennagrid::result_of::element_range<SomethingT, topologic_dimension>::type elements(SomethingT something)
+  typename viennagrid::result_of::element_range<SomethingT, topologic_dimension>::type elements(SomethingT &  something)
   { return typename viennagrid::result_of::element_range<SomethingT, topologic_dimension>::type(something); }
 
 
+  template<typename SomethingT>
+  typename viennagrid::result_of::const_element_range<SomethingT>::type elements(SomethingT const & something, viennagrid_int topologic_dimension)
+  { return typename viennagrid::result_of::const_element_range<SomethingT>::type(something, topologic_dimension); }
 
+  template<int topologic_dimension, typename SomethingT>
+  typename viennagrid::result_of::const_element_range<SomethingT, topologic_dimension>::type elements(SomethingT const &  something)
+  { return typename viennagrid::result_of::const_element_range<SomethingT, topologic_dimension>::type(something); }
 
 
 
@@ -893,8 +909,13 @@ namespace viennagrid
     * @return                    A cell range
     */
   template<typename SomethingT>
-  typename result_of::cell_range<SomethingT>::type cells(SomethingT something)
+  typename result_of::cell_range<SomethingT>::type cells(SomethingT & something)
   { return typename result_of::cell_range<SomethingT>::type(something); }
+
+  template<typename SomethingT>
+  typename result_of::const_cell_range<SomethingT>::type cells(SomethingT const & something)
+  { return typename result_of::const_cell_range<SomethingT>::type(something); }
+
 
   /** @brief Function for retrieving a facet range object from a host object
     *
@@ -903,8 +924,12 @@ namespace viennagrid
     * @return                    A facet range
     */
   template<typename ElementT>
-  typename result_of::facet_range<ElementT>::type facets(ElementT element)
+  typename result_of::facet_range<ElementT>::type facets(ElementT & element)
   { return typename result_of::facet_range<ElementT>::type(element); }
+
+  template<typename ElementT>
+  typename result_of::const_facet_range<ElementT>::type facets(ElementT const & element)
+  { return typename result_of::const_facet_range<ElementT>::type(element); }
 
   /** @brief Function for retrieving a vertex range object from a host object
     *
@@ -913,8 +938,12 @@ namespace viennagrid
     * @return                    A vertex range
     */
   template<typename SomethingT>
-  typename result_of::element_range<SomethingT>::type vertices(SomethingT something)
+  typename result_of::element_range<SomethingT>::type vertices(SomethingT & something)
   { return typename result_of::element_range<SomethingT>::type(something,0); }
+
+  template<typename SomethingT>
+  typename result_of::const_element_range<SomethingT>::type vertices(SomethingT const & something)
+  { return typename result_of::const_element_range<SomethingT>::type(something,0); }
 
 //   /** @brief Function for retrieving a line range object from a host object (same as edges)
 //     *

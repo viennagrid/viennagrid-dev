@@ -7,13 +7,13 @@ namespace viennagrid
 {
 
   template<typename SomethingT>
-  typename viennagrid::result_of::region_range<SomethingT>::type regions(SomethingT something)
+  typename viennagrid::result_of::region_range<SomethingT>::type regions(SomethingT const & something)
   {
     return typename viennagrid::result_of::region_range<SomethingT>::type(something);
   }
 
   template<typename SomethingT, typename ElementT>
-  typename viennagrid::result_of::region_range<SomethingT, ElementT>::type regions(SomethingT something, ElementT element)
+  typename viennagrid::result_of::region_range<SomethingT, ElementT>::type regions(SomethingT const & something, ElementT const & element)
   {
     return typename viennagrid::result_of::region_range<SomethingT, ElementT>::type(something, element);
   }
@@ -22,7 +22,7 @@ namespace viennagrid
 
 
   template<typename RegionRangeT1, typename RegionRangeT2>
-  bool equal_regions(RegionRangeT1 region1, RegionRangeT2 region2)
+  bool equal_regions(RegionRangeT1 const & region1, RegionRangeT2 const & region2)
   {
     if (region1.size() != region2.size())
       return false;
@@ -47,15 +47,12 @@ namespace viennagrid
 
 
 
-
-  inline void add( region_t region, element_t element )
+  inline void add(viennagrid_region region, element_t const & element)
   {
-    viennagrid_add_to_region(element.mesh_hierarchy().internal(),
+    viennagrid_add_to_region(internal_mesh_hierarchy(element),
                              viennagrid::topologic_dimension(element),
                              element.id(),
-                             region.internal() );
-
-//     std::cout << "Adding " << element << " to region " << region.id() << std::endl;
+                             region );
 
     if ( element.tag().facet_tag().valid() )
     {
@@ -69,13 +66,13 @@ namespace viennagrid
   }
 
 
-  template<bool region_is_const, bool element_is_const>
-  bool is_in_region( base_region<region_is_const> region, base_element<element_is_const> element )
+  template<bool element_is_const>
+  bool is_in_region( viennagrid_region region, base_element<element_is_const> const & element )
   {
     viennagrid_region * it;
     viennagrid_region * end;
 
-    viennagrid_get_regions(element.mesh_hierarchy().internal(),
+    viennagrid_get_regions(internal_mesh_hierarchy(element),
                            viennagrid::topologic_dimension(element),
                            element.id(),
                            &it,
@@ -83,10 +80,7 @@ namespace viennagrid
 
     for (; it != end; ++it)
     {
-      viennagrid_index id_;
-      viennagrid_region_get_id(*it, &id_);
-
-      if (id_ == region.id())
+      if (*it == region)
         return true;
     }
 
@@ -94,19 +88,6 @@ namespace viennagrid
   }
 
 
-
-
-
-  inline void add( mesh_region_t mr, element_t element )
-  {
-    add( mr.region(), element );
-  }
-
-  template<bool region_is_const, bool element_is_const>
-  bool is_in_region( base_mesh_region<region_is_const> mesh_region, base_element<element_is_const> element )
-  {
-    return is_in_region(mesh_region.region(), element);
-  }
 
 
   template<bool element_is_const, bool region_is_const>
@@ -119,24 +100,6 @@ namespace viennagrid
                                   element.id(),
                                   &result);
     return result == VIENNAGRID_TRUE;
-  }
-
-
-
-
-  template<bool mesh_region_is_const, bool element_is_const>
-  typename result_of::point< base_mesh_region<mesh_region_is_const> >::type
-            get_point(base_mesh_region<mesh_region_is_const> const & region,
-                      base_element<element_is_const> const & vertex)
-  {
-    return get_point(region.mesh(), vertex);
-  }
-
-  inline void set_point(base_mesh_region<false> region,
-                        base_element<false> vertex,
-                        result_of::point< base_mesh_region<false> >::type const & point)
-  {
-    return set_point(region.mesh(), vertex, point);
   }
 
 
