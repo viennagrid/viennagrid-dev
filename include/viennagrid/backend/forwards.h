@@ -25,7 +25,7 @@ typedef int viennagrid_int;
 typedef viennagrid_int viennagrid_error;
 typedef double viennagrid_numeric;
 typedef viennagrid_int viennagrid_index;
-typedef char viennagrid_element_tag;
+typedef unsigned char viennagrid_element_tag;
 typedef int viennagrid_dimension;
 
 
@@ -49,7 +49,7 @@ typedef struct viennagrid_region_ * viennagrid_region;
 
 
 // VIENNAGRID ELEMENT TYPES
-#define VIENNAGRID_ELEMENT_TAG_NO_ELEMENT -1
+#define VIENNAGRID_ELEMENT_TAG_NO_ELEMENT 255 // -1
 #define VIENNAGRID_ELEMENT_TAG_START 0
 #define VIENNAGRID_ELEMENT_TAG_VERTEX 0
 #define VIENNAGRID_ELEMENT_TAG_LINE 1

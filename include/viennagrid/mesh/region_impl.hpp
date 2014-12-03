@@ -53,16 +53,6 @@ namespace viennagrid
                              viennagrid::topologic_dimension(element),
                              element.id(),
                              region );
-
-    if ( element.tag().facet_tag().valid() )
-    {
-      typedef viennagrid::result_of::element_range<element_t>::type FacetElemenRangeType;
-      typedef viennagrid::result_of::iterator<FacetElemenRangeType>::type FacetElemenRangeIterator;
-
-      FacetElemenRangeType elements( element, element.topologic_dimension()-1 );
-      for (FacetElemenRangeIterator eit = elements.begin(); eit != elements.end(); ++eit)
-        add(region, *eit);
-    }
   }
 
 
@@ -91,7 +81,7 @@ namespace viennagrid
 
 
   template<bool element_is_const, bool region_is_const>
-  bool is_boundary( base_mesh_region<region_is_const> region, base_element<element_is_const> element )
+  bool is_boundary( base_mesh_region<region_is_const> const & region, base_element<element_is_const> const & element )
   {
     viennagrid_bool result;
     viennagrid_is_boundary_region(region.region().internal(),

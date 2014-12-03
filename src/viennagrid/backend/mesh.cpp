@@ -208,7 +208,7 @@ void viennagrid_mesh_::make_element_children(viennagrid_mesh child, viennagrid_i
 
 
 
-  viennagrid_element_children_buffer & element_children_buffer = element_children[child_mesh_index_].children_indices_buffer(element_topo_dim);
+  ViennaGridElementChildrenBufferType & element_children_buffer = element_children[child_mesh_index_].children_indices_buffer(element_topo_dim);
   element_children_buffer.clear();
 
 
@@ -241,7 +241,7 @@ void viennagrid_mesh_::make_coboundary(viennagrid_int element_topo_dim, viennagr
   }
 
 
-  viennagrid_coboundary_buffer & coboundary_buffer = element_handle_buffer(element_topo_dim).coboundary_buffer(coboundary_topo_dim);
+  ViennaGridCoBoundaryBufferType & coboundary_buffer = element_handle_buffer(element_topo_dim).coboundary_buffer(coboundary_topo_dim);
 
   coboundary_buffer.clear();
   for (std::map< viennagrid_index, std::vector<viennagrid_index> >::iterator it = tmp.begin(); it != tmp.end(); ++it)
@@ -271,7 +271,7 @@ void viennagrid_mesh_::make_neighbor(viennagrid_int element_topo_dim, viennagrid
   viennagrid_int element_count = element_handle_buffer(element_topo_dim).count();
 
 
-  viennagrid_neighbor_buffer & neighbor_buffer = element_handle_buffer(element_topo_dim).neighbor_buffer(connector_topo_dim, neighbor_topo_dim);
+  ViennaGridNeighborBufferType & neighbor_buffer = element_handle_buffer(element_topo_dim).neighbor_buffer(connector_topo_dim, neighbor_topo_dim);
   neighbor_buffer.clear();
 
   for (viennagrid_int i = 0; i < element_count; ++i)

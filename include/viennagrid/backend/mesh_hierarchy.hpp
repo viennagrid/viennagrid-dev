@@ -11,8 +11,13 @@
 
 
 
-typedef dense_multibuffer<viennagrid_index, viennagrid_index> viennagrid_boundary_buffer;
-typedef dense_multibuffer<viennagrid_index, viennagrid_numeric> viennagrid_hole_point_buffer;
+// typedef dense_packed_multibuffer<viennagrid_index, viennagrid_index> ViennaGridBoundaryBufferType;
+// typedef dense_packed_multibuffer<viennagrid_index, viennagrid_numeric> ViennaGridHolePointBufferType;
+// typedef dense_packed_multibuffer<viennagrid_index, viennagrid_region> ViennaGridRegionBufferType;
+
+typedef dense_multibuffer<viennagrid_index, viennagrid_index> ViennaGridBoundaryBufferType;
+typedef dense_multibuffer<viennagrid_index, viennagrid_numeric> ViennaGridHolePointBufferType;
+typedef dense_multibuffer<viennagrid_index, viennagrid_region> ViennaGridRegionBufferType;
 
 
 struct element_key
@@ -83,10 +88,10 @@ public:
 
 private:
 
-  viennagrid_boundary_buffer & boundary_buffer(viennagrid_dimension boundary_topo_dim)
+  ViennaGridBoundaryBufferType & boundary_buffer(viennagrid_dimension boundary_topo_dim)
   { return boundary_indices[boundary_topo_dim]; }
-  viennagrid_boundary_buffer const & boundary_buffer(viennagrid_dimension boundary_topo_dim) const
-  { return boundary_indices[boundary_topo_dim]; }
+//   viennagrid_boundary_buffer const & boundary_buffer(viennagrid_dimension boundary_topo_dim) const
+//   { return boundary_indices[boundary_topo_dim]; }
 
   viennagrid_index get_element(element_key const & key)
   {
@@ -117,7 +122,7 @@ private:
   dense_multibuffer<viennagrid_index, viennagrid_region> region_buffer;
 
 
-  std::vector<viennagrid_boundary_buffer> boundary_indices;
+  std::vector<ViennaGridBoundaryBufferType> boundary_indices;
   std::map<element_key, viennagrid_index> element_map;
 };
 
@@ -129,11 +134,13 @@ struct viennagrid_mesh_hierarchy_
 {
 public:
   viennagrid_mesh_hierarchy_() : geometric_dimension_(0), cell_dimension_(-1),
-//   cell_tag_(VIENNAGRID_ELEMENT_TAG_NO_ELEMENT),
   root_( new viennagrid_mesh_(this) ), highest_region_id(0), change_counter_(0), use_count_(1), retain_release_count(0)
   {
     for (viennagrid_int i = 0; i < VIENNAGRID_TOPOLOGIC_DIMENSION_END; ++i)
       element_buffer(i).set_topologic_dimension(i);
+
+    for (viennagrid_int i = 0; i < VIENNAGRID_ELEMENT_TAG_COUNT; ++i)
+      element_counts[i] = 0;
   }
 
   ~viennagrid_mesh_hierarchy_()
@@ -307,7 +314,7 @@ public:
   void increment_change_counter() { ++change_counter_; }
 
 
-
+  viennagrid_int element_count( viennagrid_element_tag element_tag ) const { return element_counts[element_tag]; }
 
 
 
@@ -377,6 +384,7 @@ private:
 
 
   viennagrid_element_buffer element_buffers[VIENNAGRID_TOPOLOGIC_DIMENSION_END];
+  viennagrid_int element_counts[VIENNAGRID_ELEMENT_TAG_COUNT];
 
   viennagrid_dimension geometric_dimension_;
   viennagrid_dimension cell_dimension_;
@@ -385,7 +393,7 @@ private:
   viennagrid_mesh root_;
 
   std::vector<viennagrid_numeric> vertex_buffer;
-  viennagrid_hole_point_buffer hole_point_buffer;
+  ViennaGridHolePointBufferType hole_point_buffer;
 
   std::vector<viennagrid_region> regions;
   viennagrid_index highest_region_id;

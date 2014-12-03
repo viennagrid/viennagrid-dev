@@ -7,6 +7,8 @@
 #include <map>
 
 
+
+
 template<typename IndexT, typename T, typename PointerT = T *, typename ConstPointerT = T const *>
 struct dense_multibuffer
 {
@@ -20,7 +22,83 @@ public:
   typedef pointer iterator;
   typedef const_pointer const_iterator;
 
-  dense_multibuffer() : offsets(1,0) {}
+  dense_multibuffer() {}
+
+  iterator begin(size_type index) { return (values.empty() || values[index].empty()) ? 0 : &values[index][0]; }
+  iterator end(size_type index) { return (values.empty() || values[index].empty()) ? 0 : &values[index][0] + values[index].size(); }
+
+  const_iterator cbegin(size_type index) const { return (values.empty() || values[index].empty()) ? 0 : &values[index][0]; }
+  const_iterator cend(size_type index) const { return (values.empty() || values[index].empty()) ? 0 : &values[index][0] + values[index].size(); }
+
+  const_iterator begin(size_type index) const { return cbegin(index); }
+  const_iterator end(size_type index) const { return cend(index); }
+
+  size_type size(size_type index) const { return end(index)-begin(index); }
+
+
+  pointer push_back(size_type count)
+  {
+    values.push_back( std::vector<value_type>() );
+    values.back().resize(count);
+    return &values.back()[0];
+  }
+
+  pointer resize(size_type index, size_type count)
+  {
+    values[index].resize(count);
+    return begin(index);
+  }
+
+  void add(size_type index, value_type to_add)
+  {
+    size_type old_size = size(index);
+    pointer p = resize(index, old_size+1);
+    p[old_size] = to_add;
+  }
+
+  void clear()
+  {
+    values.clear();
+  }
+
+//   void print() const
+//   {
+//     for (std::size_t i = 0; i != offsets.size()-1; ++i)
+//     {
+//       std::cout << "Entry " << i << " [size=" << size(i) << "] :";
+//       for (const_iterator it = begin(i); it != end(i); ++it)
+//         std::cout << *it << " ";
+//       std::cout << std::endl;
+//     }
+//   }
+
+private:
+  std::vector< std::vector<value_type> > values;
+};
+
+
+
+
+
+
+
+
+
+
+template<typename IndexT, typename T, typename PointerT = T *, typename ConstPointerT = T const *>
+struct dense_packed_multibuffer
+{
+public:
+
+  typedef T value_type;
+  typedef PointerT pointer;
+  typedef ConstPointerT const_pointer;
+  typedef IndexT size_type;
+
+  typedef pointer iterator;
+  typedef const_pointer const_iterator;
+
+  dense_packed_multibuffer() : offsets(1,0) {}
 
   iterator begin(size_type index) { return values.empty() ? 0 : &values[0] + offsets[index]; }
   iterator end(size_type index) { return values.empty() ? 0 : &values[0] + offsets[index+1]; }
@@ -92,16 +170,16 @@ public:
     values.clear();
   }
 
-  void print() const
-  {
-    for (std::size_t i = 0; i != offsets.size()-1; ++i)
-    {
-      std::cout << "Entry " << i << " [size=" << size(i) << "] :";
-      for (const_iterator it = begin(i); it != end(i); ++it)
-        std::cout << *it << " ";
-      std::cout << std::endl;
-    }
-  }
+//   void print() const
+//   {
+//     for (std::size_t i = 0; i != offsets.size()-1; ++i)
+//     {
+//       std::cout << "Entry " << i << " [size=" << size(i) << "] :";
+//       for (const_iterator it = begin(i); it != end(i); ++it)
+//         std::cout << *it << " ";
+//       std::cout << std::endl;
+//     }
+//   }
 
 private:
   std::vector<value_type> values;
@@ -112,7 +190,7 @@ private:
 
 
 template<typename IndexT, typename T, typename PointerT = T *, typename ConstPointerT = T const *>
-struct sparse_multibuffer
+struct sparse_packed_multibuffer
 {
 public:
 
@@ -124,7 +202,7 @@ public:
   typedef std::vector<value_type> ValueContainer;
   typedef std::map<size_type, typename ValueContainer::size_type> OffsetMap;
 
-  sparse_multibuffer() {}
+  sparse_packed_multibuffer() {}
 
   typedef pointer iterator;
   typedef const_pointer const_iterator;
@@ -252,16 +330,16 @@ public:
     values.clear();
   }
 
-  void print() const
-  {
-    for (typename OffsetMap::const_iterator it = offsets.begin(); it != offsets.end(); ++it)
-    {
-      std::cout << "Entry " << it->first << " [size=" << size(it->first) << "] :";
-      for (const_iterator jt = begin(it->first); jt != end(it->first); ++jt)
-        std::cout << *jt << " ";
-      std::cout << std::endl;
-    }
-  }
+//   void print() const
+//   {
+//     for (typename OffsetMap::const_iterator it = offsets.begin(); it != offsets.end(); ++it)
+//     {
+//       std::cout << "Entry " << it->first << " [size=" << size(it->first) << "] :";
+//       for (const_iterator jt = begin(it->first); jt != end(it->first); ++jt)
+//         std::cout << *jt << " ";
+//       std::cout << std::endl;
+//     }
+//   }
 
 private:
   ValueContainer values;

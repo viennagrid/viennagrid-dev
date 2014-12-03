@@ -99,6 +99,63 @@ namespace viennagrid
 
 
 
+
+
+  inline viennagrid_int element_count( viennagrid_mesh_hierarchy mesh_hierarchy, viennagrid_element_tag element_tag )
+  {
+    viennagrid_int count;
+    viennagrid_mesh_hierarchy_element_count(mesh_hierarchy, element_tag, &count);
+    return count;
+  }
+
+
+  template<bool is_const>
+  viennagrid_int element_count( base_mesh_hierarchy<is_const> const & mesh_hierarchy,
+                                                element_tag_t element_tag)
+  {
+    return element_count( internal_mesh_hierarchy(mesh_hierarchy), element_tag.internal() );
+  }
+
+  template<bool is_const>
+  viennagrid_int vertex_count(base_mesh_hierarchy<is_const> const & mesh_hierarchy)
+  { return element_count( internal_mesh_hierarchy(mesh_hierarchy), VIENNAGRID_ELEMENT_TAG_VERTEX ); }
+
+  template<bool is_const>
+  viennagrid_int line_count(base_mesh_hierarchy<is_const> const & mesh_hierarchy)
+  { return element_count( internal_mesh_hierarchy(mesh_hierarchy), VIENNAGRID_ELEMENT_TAG_LINE ); }
+
+  template<bool is_const>
+  viennagrid_int edge_count(base_mesh_hierarchy<is_const> const & mesh_hierarchy)
+  { return element_count( internal_mesh_hierarchy(mesh_hierarchy), VIENNAGRID_ELEMENT_TAG_EDGE ); }
+
+  template<bool is_const>
+  viennagrid_int triangle_count(base_mesh_hierarchy<is_const> const & mesh_hierarchy)
+  { return element_count( internal_mesh_hierarchy(mesh_hierarchy), VIENNAGRID_ELEMENT_TAG_TRIANGLE ); }
+
+  template<bool is_const>
+  viennagrid_int quadrilateral_count(base_mesh_hierarchy<is_const> const & mesh_hierarchy)
+  { return element_count( internal_mesh_hierarchy(mesh_hierarchy), VIENNAGRID_ELEMENT_TAG_QUADRILATERAL ); }
+
+  template<bool is_const>
+  viennagrid_int polygon_count(base_mesh_hierarchy<is_const> const & mesh_hierarchy)
+  { return element_count( internal_mesh_hierarchy(mesh_hierarchy), VIENNAGRID_ELEMENT_TAG_POLYGON ); }
+
+  template<bool is_const>
+  viennagrid_int plc_count(base_mesh_hierarchy<is_const> const & mesh_hierarchy)
+  { return element_count( internal_mesh_hierarchy(mesh_hierarchy), VIENNAGRID_ELEMENT_TAG_PLC ); }
+
+  template<bool is_const>
+  viennagrid_int tetrahedron_count(base_mesh_hierarchy<is_const> const & mesh_hierarchy)
+  { return element_count( internal_mesh_hierarchy(mesh_hierarchy), VIENNAGRID_ELEMENT_TAG_TETRAHEDRON ); }
+
+  template<bool is_const>
+  viennagrid_int hexahedron_count(base_mesh_hierarchy<is_const> const & mesh_hierarchy)
+  { return element_count( internal_mesh_hierarchy(mesh_hierarchy), VIENNAGRID_ELEMENT_TAG_HEXAHEDRON ); }
+
+
+
+
+
   template<bool is_const>
   base_mesh_hierarchy<is_const> mesh_hierarchy( base_mesh_hierarchy<is_const> const & mesh_hierarchy )
   {
@@ -115,31 +172,31 @@ namespace viennagrid
 
 
 
-  inline viennagrid_int geometric_dimension( viennagrid_mesh_hierarchy mesh_hierarchy )
+  inline viennagrid_dimension geometric_dimension( viennagrid_mesh_hierarchy mesh_hierarchy )
   {
-    viennagrid_int tmp;
+    viennagrid_dimension tmp;
     viennagrid_mesh_hierarchy_get_geometric_dimension(mesh_hierarchy, &tmp);
     return tmp;
   }
 
   template<typename SomethingT>
-  viennagrid_int geometric_dimension( SomethingT const & something )
+  viennagrid_dimension geometric_dimension( SomethingT const & something )
   {
     return geometric_dimension( internal_mesh_hierarchy(something) );
   }
 
 
 
-  inline viennagrid_int topologic_dimension( viennagrid_mesh_hierarchy mesh_hierarchy )
+  inline viennagrid_dimension topologic_dimension( viennagrid_mesh_hierarchy mesh_hierarchy )
   {
-    viennagrid_int tmp;
+    viennagrid_dimension tmp;
     viennagrid_mesh_hierarchy_get_cell_dimension(mesh_hierarchy, &tmp);
     return tmp;
   }
 
 
   template<typename SomethingT>
-  viennagrid_int topologic_dimension( SomethingT const & something )
+  viennagrid_dimension topologic_dimension( SomethingT const & something )
   {
     return topologic_dimension( internal_mesh_hierarchy(something) );
   }
@@ -147,13 +204,13 @@ namespace viennagrid
 
 
   template<typename SomethingT>
-  viennagrid_int cell_dimension( SomethingT const & something )
+  viennagrid_dimension cell_dimension( SomethingT const & something )
   {
     return topologic_dimension(mesh_hierarchy(something));
   }
 
   template<typename SomethingT>
-  viennagrid_int facet_dimension( SomethingT const & something )
+  viennagrid_dimension facet_dimension( SomethingT const & something )
   {
     return cell_dimension(mesh_hierarchy(something)) - 1;
   }

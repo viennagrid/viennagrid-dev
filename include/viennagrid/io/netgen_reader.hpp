@@ -133,10 +133,12 @@ namespace viennagrid
           std::vector<viennagrid_int> vertex_indices;
           line >> segment_index;
 
-          std::copy( std::istream_iterator<viennagrid_int>(line),
-                     std::istream_iterator<viennagrid_int>(),
-                     std::back_inserter(vertex_indices) );
-
+          while (line.good())
+          {
+            viennagrid_int index;
+            line >> index;
+            vertex_indices.push_back(index);
+          }
 
 
           std::vector<VertexType> cell_vertex_handles( vertex_indices.size() );

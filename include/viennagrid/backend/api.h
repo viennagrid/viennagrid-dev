@@ -47,6 +47,10 @@ VIENNAGRID_DYNAMIC_EXPORT viennagrid_error viennagrid_mesh_get_child(viennagrid_
 
 
 
+VIENNAGRID_DYNAMIC_EXPORT viennagrid_error viennagrid_mesh_hierarchy_element_count(viennagrid_mesh_hierarchy mesh_hierarchy,
+                                                                                   viennagrid_element_tag element_tag,
+                                                                                   viennagrid_int * count);
+
 // creates a set of vertices in a mesh_hierarchy
 VIENNAGRID_DYNAMIC_EXPORT viennagrid_error viennagrid_vertex_create(viennagrid_mesh_hierarchy mesh_hierarchy,
                                                                     const viennagrid_numeric * coords,

@@ -210,6 +210,103 @@ namespace viennagrid
     FunctorT functor;
   };
 
+
+
+
+
+
+
+
+
+  template<typename IteratorT>
+  class view_iterator<IteratorT, true_functor>
+  {
+    template<typename OtherIteratorT, typename OtherFunctorT>
+    friend class view_iterator;
+
+  public:
+    typedef view_iterator<IteratorT, true_functor> self_type;
+
+    typedef typename IteratorT::difference_type difference_type;
+    typedef typename IteratorT::value_type value_type;
+    typedef typename IteratorT::pointer pointer;
+    typedef typename IteratorT::reference reference;
+    typedef typename IteratorT::iterator_category iterator_category;
+
+    view_iterator(IteratorT iterator_, true_functor functor_) : iterator(iterator_) {}
+
+    view_iterator(IteratorT iterator_, IteratorT end_iterator_, true_functor functor_) : iterator(iterator_) {}
+
+    template<typename OtherIteratorT, typename OtherFunctorT>
+    view_iterator(view_iterator<OtherIteratorT, OtherFunctorT> const & vi) : iterator(vi.iterator) {}
+
+    bool operator==(self_type const & rhs) const { return iterator == rhs.iterator; }
+    bool operator!=(self_type const & rhs) const { return iterator != rhs.iterator; }
+
+    reference operator*() { return *iterator; }
+    const reference operator*() const { return *iterator; }
+
+    pointer operator->() { return iterator.operator->(); }
+    const pointer operator->() const { return iterator.operator->(); }
+
+
+
+    self_type & operator++()
+    {
+      ++iterator;
+      return *this;
+    }
+
+    self_type operator++(int)
+    {
+      self_type result = *this;
+      ++(*this);
+      return result;
+    }
+
+    self_type & operator+=(difference_type diff)
+    {
+      iterator += diff;
+      return *this;
+    }
+
+
+
+    self_type & operator--()
+    {
+      --iterator;
+      return *this;
+    }
+
+    self_type operator--(int)
+    {
+      self_type result = *this;
+      --(*this);
+      return result;
+    }
+
+    self_type & operator-=(difference_type diff)
+    {
+      iterator -= diff;
+      return *this;
+    }
+
+
+
+    difference_type operator-(self_type const & rhs) const
+    {
+      return iterator - rhs.iterator;
+    }
+
+
+  private:
+
+    IteratorT iterator;
+  };
+
+
+
+
 }
 
 

@@ -91,6 +91,17 @@ viennagrid_error viennagrid_mesh_get_child(viennagrid_mesh mesh,
   return VIENNAGRID_SUCCESS;
 }
 
+
+
+
+viennagrid_error viennagrid_mesh_hierarchy_element_count(viennagrid_mesh_hierarchy mesh_hierarchy,
+                                                         viennagrid_element_tag element_tag,
+                                                         viennagrid_int * count)
+{
+  *count = mesh_hierarchy->element_count(element_tag);
+  return VIENNAGRID_SUCCESS;
+}
+
 viennagrid_error viennagrid_vertex_create(viennagrid_mesh_hierarchy hierarchy,
                                         const viennagrid_numeric * coords,
                                         viennagrid_index * vertex_id)
@@ -119,7 +130,6 @@ viennagrid_error viennagrid_element_create(viennagrid_mesh_hierarchy hierarchy,
                                            viennagrid_dimension * topo_dims,
                                            viennagrid_index * element_id)
 {
-//   element_tag = hierarchy->unpack_element_tag(element_tag);
   *element_id = hierarchy->get_make_element(element_tag, indices, topo_dims, index_count);
 
   viennagrid_mesh root = hierarchy->root();
@@ -131,9 +141,6 @@ viennagrid_error viennagrid_element_create(viennagrid_mesh_hierarchy hierarchy,
   {
     viennagrid_index * boundary = hierarchy->boundary_begin(element_topo_dim, *element_id, boundary_topo_dim);
     viennagrid_index * boundary_end = hierarchy->boundary_end(element_topo_dim, *element_id, boundary_topo_dim);
-
-//     ->element_buffer(element_topo_dim).boundary_indices_begin(boundary_topo_dim, *element_id);
-//     viennagrid_index * boundary_end = hierarchy->element_buffer(element_topo_dim).boundary_indices_end(boundary_topo_dim, *element_id);
 
     for (; boundary != boundary_end; ++boundary)
       root->add_element(boundary_topo_dim, *boundary);
@@ -399,6 +406,17 @@ viennagrid_error viennagrid_add_to_region(viennagrid_mesh_hierarchy hierarchy,
 //   element_tag = hierarchy->unpack_element_tag(element_tag);
 
   hierarchy->element_buffer(element_topo_dim).add_to_region(element_id, region);
+
+  for (viennagrid_dimension boundary_topo_dim = 0; boundary_topo_dim != element_topo_dim; ++boundary_topo_dim)
+  {
+    viennagrid_index * boundary = hierarchy->boundary_begin(element_topo_dim, element_id, boundary_topo_dim);
+    viennagrid_index * boundary_end = hierarchy->boundary_end(element_topo_dim, element_id, boundary_topo_dim);
+
+    for (; boundary != boundary_end; ++boundary)
+      hierarchy->element_buffer(boundary_topo_dim).add_to_region(*boundary, region);
+  }
+
+
   return VIENNAGRID_SUCCESS;
 }
 

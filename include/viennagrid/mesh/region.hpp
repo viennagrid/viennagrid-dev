@@ -415,16 +415,7 @@ namespace viennagrid
 
 
   template<bool element_is_const, bool region_is_const>
-  bool is_boundary( base_mesh_region<region_is_const> r, base_element<element_is_const> e );
-
-
-//   template<bool mesh_region_is_const, bool element_is_const>
-//   typename result_of::point< base_mesh_region<mesh_region_is_const> >::type
-//             get_point(base_mesh_region<mesh_region_is_const> const & region,
-//                       base_element<element_is_const> const & vertex);
-//   inline void set_point(base_mesh_region<false> const & region,
-//                         base_element<false> const & vertex,
-//                         result_of::point< base_mesh_region<false> >::type const & point);
+  bool is_boundary( base_mesh_region<region_is_const> const & region, base_element<element_is_const> const & element );
 }
 
 #endif

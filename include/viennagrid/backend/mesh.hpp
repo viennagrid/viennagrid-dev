@@ -9,8 +9,9 @@
 #include "viennagrid/utils.hpp"
 
 
-typedef sparse_multibuffer<viennagrid_index, viennagrid_index> viennagrid_coboundary_buffer;
-typedef sparse_multibuffer<viennagrid_index, viennagrid_index> viennagrid_neighbor_buffer;
+typedef sparse_packed_multibuffer<viennagrid_index, viennagrid_index> ViennaGridCoBoundaryBufferType;
+typedef sparse_packed_multibuffer<viennagrid_index, viennagrid_index> ViennaGridNeighborBufferType;
+typedef sparse_packed_multibuffer<viennagrid_index, viennagrid_index> ViennaGridElementChildrenBufferType;
 
 
 struct viennagrid_element_handle_buffer
@@ -56,9 +57,9 @@ public:
   { return indices.empty() ? 0 : &indices[0]; }
   viennagrid_int count() const { return indices.size(); }
 
-  viennagrid_coboundary_buffer & coboundary_buffer(viennagrid_dimension coboundary_topo_dim)
+  ViennaGridCoBoundaryBufferType & coboundary_buffer(viennagrid_dimension coboundary_topo_dim)
   { return coboundary_indices[coboundary_topo_dim]; }
-  viennagrid_neighbor_buffer & neighbor_buffer(viennagrid_dimension connector_topo_dim,
+  ViennaGridNeighborBufferType & neighbor_buffer(viennagrid_dimension connector_topo_dim,
                                                viennagrid_dimension neighbor_topo_dim)
   { return neighbor_indices[connector_topo_dim][neighbor_topo_dim]; }
 
@@ -66,14 +67,10 @@ private:
   std::vector<viennagrid_index> indices;
   std::map<viennagrid_index, viennagrid_index> index_map;
 
-  viennagrid_coboundary_buffer coboundary_indices[VIENNAGRID_TOPOLOGIC_DIMENSION_END];
-  viennagrid_neighbor_buffer neighbor_indices[VIENNAGRID_TOPOLOGIC_DIMENSION_END][VIENNAGRID_TOPOLOGIC_DIMENSION_END];
+  ViennaGridCoBoundaryBufferType coboundary_indices[VIENNAGRID_TOPOLOGIC_DIMENSION_END];
+  ViennaGridNeighborBufferType neighbor_indices[VIENNAGRID_TOPOLOGIC_DIMENSION_END][VIENNAGRID_TOPOLOGIC_DIMENSION_END];
 };
 
-
-
-
-typedef sparse_multibuffer<viennagrid_index, viennagrid_index> viennagrid_element_children_buffer;
 
 struct viennagrid_element_children_
 {
@@ -82,10 +79,10 @@ public:
 
   viennagrid_int & change_counter(viennagrid_int element_topo_dim) { return change_counters[element_topo_dim]; }
 
-  viennagrid_element_children_buffer & children_indices_buffer(viennagrid_int element_topo_dim) { return children_indices_buffers[element_topo_dim]; }
+  ViennaGridElementChildrenBufferType & children_indices_buffer(viennagrid_int element_topo_dim) { return children_indices_buffers[element_topo_dim]; }
 
 private:
-  viennagrid_element_children_buffer children_indices_buffers[VIENNAGRID_TOPOLOGIC_DIMENSION_END];
+  ViennaGridElementChildrenBufferType children_indices_buffers[VIENNAGRID_TOPOLOGIC_DIMENSION_END];
   viennagrid_int change_counters[VIENNAGRID_TOPOLOGIC_DIMENSION_END];
 };
 
