@@ -60,6 +60,8 @@ viennagrid_index viennagrid_mesh_hierarchy_::get_make_element(viennagrid_element
       for (viennagrid_int i = 0; i < count-1; ++i)
         ptr[index++] = get_make_element(VIENNAGRID_ELEMENT_TAG_LINE, indices, i, i+1);
       ptr[index++] = get_make_element(VIENNAGRID_ELEMENT_TAG_LINE, indices, count-1, 0);
+
+      return id;
     }
 
     case VIENNAGRID_ELEMENT_TAG_PLC:
@@ -68,6 +70,8 @@ viennagrid_index viennagrid_mesh_hierarchy_::get_make_element(viennagrid_element
       ptr = make_boundary_indices(VIENNAGRID_ELEMENT_TAG_PLC, VIENNAGRID_ELEMENT_TAG_LINE, count);
 
       std::copy( indices, indices+count, ptr );
+
+      return id;
 
 //       ptr[index++] = indices
 

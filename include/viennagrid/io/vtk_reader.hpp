@@ -386,14 +386,14 @@ namespace viennagrid
       /////////////////////////// Routines for pushing everything to mesh ///////////////
 
       /** @brief Pushes the vertices read to the mesh */
-      void setupVertices(mesh_type & mesh_obj)
+      void setupVertices(mesh_type const & mesh_obj)
       {
         for (std::size_t i=0; i<global_points_2.size(); ++i)
           viennagrid::make_vertex( mesh_obj, global_points_2[i] );
       }
 
       /** @brief Pushes the cells read to the mesh. Preserves region information. */
-      void setupCells(mesh_type & mesh_obj, region_id_type region_id)
+      void setupCells(mesh_type const & mesh_obj, region_id_type region_id)
       {
         //***************************************************
         // building up the cells in ViennaGrid
@@ -471,7 +471,7 @@ namespace viennagrid
 
       /** @brief Writes data for vertices to the ViennaGrid mesh using ViennaData */
       template <typename ContainerType>
-      void setupDataVertex(mesh_type & mesh_obj, region_id_type region_id, ContainerType const & container, std::size_t num_components)
+      void setupDataVertex(mesh_type const & mesh_obj, region_id_type region_id, ContainerType const & container, std::size_t num_components)
       {
         std::string const & name = container.first;
 
@@ -568,7 +568,7 @@ namespace viennagrid
 
       /** @brief Writes data for cells to the ViennaGrid mesh using ViennaData */
       template <typename ContainerType>
-      void setupDataCell(mesh_type &, RegionType & region, region_id_type region_id, ContainerType const & container, std::size_t num_components)
+      void setupDataCell(mesh_type const &, RegionType & region, region_id_type region_id, ContainerType const & container, std::size_t num_components)
       {
         std::string const & name = container.first;
 
@@ -659,7 +659,7 @@ namespace viennagrid
       }
 
       /** @brief Writes all data read from files to the mesh */
-      void setupData(mesh_type & mesh_obj, region_id_type region_id)
+      void setupData(mesh_type const & mesh_obj, region_id_type region_id)
       {
         RegionType region = mesh_obj.get_make_region(region_id);
 
@@ -881,7 +881,7 @@ namespace viennagrid
        * @param regionation  The regionation to which the file content is read
        * @param filename      Name of the file containing the mesh. Either .pvd (multi-region) or .vtu (single region)
        */
-      void operator()(mesh_type & mesh_obj, std::string const & filename)
+      void operator()(mesh_type const & mesh_obj, std::string const & filename)
       {
         geometric_dim = viennagrid::geometric_dimension(mesh_obj);
         pre_clear();

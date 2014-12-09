@@ -16,16 +16,16 @@ namespace viennagrid
     return end-begin;
   }
 
-  template<bool is_const>
-  typename base_mesh<is_const>::region_type base_mesh<is_const>::get_make_region(region_id_type region_id)
+  template<>
+  inline typename base_mesh<false>::region_type base_mesh<false>::get_make_region(region_id_type region_id) const
   {
     viennagrid_region region;
     viennagrid_region_get_create( internal_mesh_hierarchy(), region_id, &region );
     return region_type(internal(), region);
   }
 
-  template<bool is_const>
-  typename base_mesh<is_const>::region_type base_mesh<is_const>::make_region()
+  template<>
+  inline typename base_mesh<false>::region_type base_mesh<false>::make_region() const
   {
     viennagrid_region region;
     viennagrid_region_create( internal_mesh_hierarchy(), &region );
@@ -41,8 +41,8 @@ namespace viennagrid
   }
 
 
-  template<bool is_const>
-  typename base_mesh<is_const>::region_type base_mesh<is_const>::get_make_region(std::string const & name)
+  template<>
+  inline typename base_mesh<false>::region_type base_mesh<false>::get_make_region(std::string const & name) const
   { return region_type(internal(), mesh_hierarchy().get_make_region(name).internal()); }
 
   template<bool is_const>

@@ -109,11 +109,11 @@ namespace viennagrid
     bool operator!=(base_mesh<is_const> const & rhs) const { return !(*this == rhs); }
 
     std::size_t region_count() const;
-    region_type get_make_region(region_id_type region_id);
-    region_type make_region();
+    region_type get_make_region(region_id_type region_id) const;
+    region_type make_region() const;
     const_region_type get_region(region_id_type region_id) const;
 
-    region_type get_make_region(std::string const & name);
+    region_type get_make_region(std::string const & name) const;
     const_region_type get_region(std::string const & name) const;
 
   private:
