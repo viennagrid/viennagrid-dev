@@ -5,19 +5,34 @@
 
 namespace viennagrid
 {
-  inline void add_hole_point(base_mesh_hierarchy<false> mesh_hierarchy, base_element<false> element, point_t const & point)
+  inline void add_hole_point(base_mesh_hierarchy<false> const & mesh_hierarchy,
+                             base_element<false> const & element,
+                             point_t const & point)
   {
     assert( element.tag().is_plc() );
     viennagrid_plc_add_hole_point( mesh_hierarchy.internal(), element.id(), &point[0] );
   }
 
-  inline void add_hole_point(base_element<false> element, point_t const & point)
+  inline void add_hole_point(base_element<false> const & element, point_t const & point)
   {
     add_hole_point(element.mesh_hierarchy(), element, point);
   }
 
+  template<typename PointIteratorT>
+  void add_hole_points(base_element<false> const & element, PointIteratorT it, PointIteratorT end)
+  {
+    for (; it != end; ++it)
+      add_hole_point(element, *it);
+  }
 
-  inline std::vector< point_t > hole_points(base_mesh_hierarchy<false> mesh_hierarchy, base_element<false> element)
+  template<typename ContainerT>
+  void add_hole_points(base_element<false> const & element, ContainerT const & point_container)
+  {
+    add_hole_points(element, point_container.begin(), point_container.end());
+  }
+
+  inline std::vector< point_t > hole_points(base_mesh_hierarchy<false> const & mesh_hierarchy,
+                                            base_element<false> const & element)
   {
     assert( element.tag().is_plc() );
 

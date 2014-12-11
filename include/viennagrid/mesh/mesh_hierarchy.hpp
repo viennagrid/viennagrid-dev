@@ -156,6 +156,7 @@ namespace viennagrid
 
 
 
+
   template<bool is_const>
   base_mesh_hierarchy<is_const> mesh_hierarchy( base_mesh_hierarchy<is_const> const & mesh_hierarchy )
   {
@@ -169,7 +170,16 @@ namespace viennagrid
   }
 
 
+  inline void clear( viennagrid_mesh_hierarchy mesh_hierarchy )
+  {
+    viennagrid_mesh_hierarchy_clear( mesh_hierarchy );
+  }
 
+  template<typename SomethingT>
+  void clear( SomethingT const & something )
+  {
+    clear( internal_mesh_hierarchy(something) );
+  }
 
 
   inline viennagrid_dimension geometric_dimension( viennagrid_mesh_hierarchy mesh_hierarchy )
@@ -233,6 +243,9 @@ namespace viennagrid
   {
     return get_point( internal_mesh_hierarchy(vertex), vertex );
   }
+
+  template<bool element_is_const>
+  point_t get_point(base_element<element_is_const> const & element, viennagrid_int index);
 
   void set_point(viennagrid_mesh_hierarchy mesh_hierarchy, base_element<false> const & vertex, point_t const & point);
 

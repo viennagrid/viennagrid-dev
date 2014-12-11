@@ -133,15 +133,12 @@ namespace viennagrid
       PointType result( viennagrid::geometric_dimension(mesh_obj) );
       double volume = 0;
 
-//       for (; cell_tag != cell_end; ++cell_tag)
+      CellRange cells(mesh_obj, topologic_dimension);
+      for (CellIterator cit = cells.begin(); cit != cells.end(); ++cit)
       {
-        CellRange cells(mesh_obj, topologic_dimension);
-        for (CellIterator cit = cells.begin(); cit != cells.end(); ++cit)
-        {
-          double vol_cell = viennagrid::volume( point_accessor, *cit );
-          result += vol_cell * centroid( point_accessor, *cit);
-          volume += vol_cell;
-        }
+        double vol_cell = viennagrid::volume( point_accessor, *cit );
+        result += vol_cell * centroid( point_accessor, *cit);
+        volume += vol_cell;
       }
 
       return result / volume;
@@ -209,7 +206,7 @@ namespace viennagrid
    */
   template<typename ElementTOrTagT, bool mesh_is_const>
   typename viennagrid::result_of::point< base_mesh<mesh_is_const> >::type
-  centroid(const_mesh_t const & mesh_obj)
+  centroid(base_mesh<mesh_is_const> const & mesh_obj)
   {
     return centroid<ElementTOrTagT>(point_accessor(mesh_obj), mesh_obj);
   }

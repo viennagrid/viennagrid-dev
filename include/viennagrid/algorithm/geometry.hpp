@@ -218,8 +218,8 @@ namespace viennagrid
     typedef typename viennagrid::result_of::point<MeshT>::type      PointType;
     typedef typename viennagrid::result_of::coord<MeshT>::type      NumericType;
 
-    PointType lower_left;
-    PointType upper_right;
+    PointType lower_left( viennagrid::geometric_dimension(mesh) );
+    PointType upper_right( viennagrid::geometric_dimension(mesh) );
 
     std::fill( lower_left.begin(), lower_left.end(), std::numeric_limits<NumericType>::max() );
     std::fill( upper_right.begin(), upper_right.end(), - std::numeric_limits<NumericType>::max() );

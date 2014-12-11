@@ -66,8 +66,8 @@ namespace viennagrid
   template<bool mesh_is_const,
            typename VertexCopyMapT,
            typename EdgeRefinementFlagAccessorT, typename RefinementVertexAccessorT>
-  void simple_refine(base_mesh<mesh_is_const> const & mesh_in,
-                     mesh_t & mesh_out,
+  void simple_refine(viennagrid::base_mesh<mesh_is_const> const & mesh_in,
+                     viennagrid::mesh_t const & mesh_out,
                      viennagrid_int topologic_dimension,
                      VertexCopyMapT & vertex_copy_map_,
                      EdgeRefinementFlagAccessorT const & edge_refinement_flag_accessor,
@@ -541,7 +541,7 @@ namespace viennagrid
     typedef typename viennagrid::result_of::element<MeshOutType>::type                     EdgeType;
     typedef typename viennagrid::result_of::element<MeshOutType>::type            VertexType;
 
-    typename viennagrid::result_of::element_copy_map<MeshInType, MeshOutType>::type copy_map(mesh_out);
+    typename viennagrid::result_of::element_copy_map<>::type copy_map(mesh_out);
     std::deque<VertexType> edge_refinement_vertex_handle_container;
     typename viennagrid::result_of::accessor<std::deque<VertexType>, EdgeType>::type edge_refinement_vertex_handle_accessor(edge_refinement_vertex_handle_container);
 
@@ -754,16 +754,18 @@ namespace viennagrid
    * @param hyperplane_normal   The normale vector representing the hyperplane
    * @param numeric_config      The numeric config
    */
-  template<typename SrcMeshT, typename DstMeshT, typename PointT, typename NumericConfigT>
-  void hyperplane_refine(SrcMeshT const & src_mesh, DstMeshT & dst_mesh,
+  template<bool mesh_is_const, typename PointT, typename NumericConfigT>
+  void hyperplane_refine(viennagrid::base_mesh<mesh_is_const> const & src_mesh, viennagrid::mesh_t const & dst_mesh,
                          PointT const & hyperplane_point, PointT const & hyperplane_normal,
                          NumericConfigT numeric_config)
   {
-//     typedef typename viennagrid::result_of::cell_tag<SrcMeshT>::type CellTag;
-    typedef typename viennagrid::result_of::element<SrcMeshT>::type LineType;
-    typedef typename viennagrid::result_of::element<DstMeshT>::type DstMeshVertexType;
+    typedef viennagrid::base_mesh<mesh_is_const> SrcMeshType;
+    typedef viennagrid::mesh_t DstMeshType;
 
-    viennagrid::result_of::element_copy_map<SrcMeshT, DstMeshT> copy_map( dst_mesh );
+    typedef typename viennagrid::result_of::element<SrcMeshType>::type LineType;
+    typedef typename viennagrid::result_of::element<DstMeshType>::type DstMeshVertexType;
+
+    viennagrid::result_of::element_copy_map<>::type copy_map( dst_mesh );
 
     std::deque<bool> line_refinement_tag_container;
     typename viennagrid::result_of::accessor<std::deque<bool>, LineType>::type line_refinement_tag_accessor(line_refinement_tag_container);

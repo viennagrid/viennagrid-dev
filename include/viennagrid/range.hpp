@@ -168,6 +168,7 @@ namespace viennagrid
 
 
     size_type size() const { return end()-begin(); }
+    bool empty() const { return size() == 0; }
 
     element_type operator[](size_type pos)
     { return *viennagrid::advance(begin(), pos); }
@@ -557,14 +558,14 @@ namespace viennagrid
     };
 
 
-    template<>
-    struct const_element_range<mesh_t, -1>
+    template<bool mesh_is_const>
+    struct const_element_range<base_mesh<mesh_is_const>, -1>
     {
       typedef mesh_element_range<true> type;
     };
 
-    template<int topologic_dimension>
-    struct const_element_range<mesh_t, topologic_dimension>
+    template<bool mesh_is_const, int topologic_dimension>
+    struct const_element_range<base_mesh<mesh_is_const>, topologic_dimension>
     {
       typedef static_mesh_element_range<topologic_dimension, true> type;
     };
@@ -772,14 +773,21 @@ namespace viennagrid
       typedef coboundary_element_range<false> type;
     };
 
+    template<bool mesh_is_const>
+    struct const_coboundary_range<base_mesh<mesh_is_const>, -1>
+    {
+      typedef coboundary_element_range<true> type;
+    };
+
+
     template<int coboundary_topologic_dimension>
     struct coboundary_range<mesh_t, coboundary_topologic_dimension>
     {
       typedef static_coboundary_element_range<coboundary_topologic_dimension, false> type;
     };
 
-    template<int coboundary_topologic_dimension>
-    struct const_coboundary_range<mesh_t, coboundary_topologic_dimension>
+    template<bool mesh_is_const, int coboundary_topologic_dimension>
+    struct const_coboundary_range<base_mesh<mesh_is_const>, coboundary_topologic_dimension>
     {
       typedef static_coboundary_element_range<coboundary_topologic_dimension, true> type;
     };
@@ -807,20 +815,26 @@ namespace viennagrid
 
 
 
-    template<bool mesh_is_const>
-    struct const_neighbor_range<base_mesh<mesh_is_const>, -1>
+    template<>
+    struct const_neighbor_range<mesh_t, -1, -1>
     {
       typedef neighbor_element_range<true> type;
     };
 
     template<>
-    struct neighbor_range<mesh_t, -1>
+    struct const_neighbor_range<const_mesh_t, -1, -1>
+    {
+      typedef neighbor_element_range<true> type;
+    };
+
+    template<>
+    struct neighbor_range<mesh_t, -1, -1>
     {
       typedef neighbor_element_range<false> type;
     };
 
     template<>
-    struct neighbor_range<const_mesh_t, -1>
+    struct neighbor_range<const_mesh_t, -1, -1>
     {
       typedef typename const_neighbor_range<const_mesh_t>::type type;
     };

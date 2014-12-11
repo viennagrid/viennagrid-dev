@@ -3,6 +3,7 @@
 
 #include "viennagrid/mesh/mesh_hierarchy.hpp"
 #include "viennagrid/mesh/mesh.hpp"
+#include "viennagrid/range.hpp"
 
 namespace viennagrid
 {
@@ -67,6 +68,12 @@ namespace viennagrid
     std::copy(point.begin(), point.end(), tmp);
   }
 
+
+  template<bool element_is_const>
+  point_t get_point(base_element<element_is_const> const & element, viennagrid_int index)
+  {
+    return get_point( viennagrid::vertices(element)[index] );
+  }
 
 
 

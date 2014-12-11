@@ -68,12 +68,12 @@ namespace viennagrid
         typename result_of::point<SomethingT>::type const & point,
         NumericConfigT nc)
   {
-    typedef typename result_of::const_element_range<SomethingT>::type VertexRangeType;
+    typedef typename result_of::const_vertex_range<SomethingT>::type VertexRangeType;
     typedef typename result_of::iterator<VertexRangeType>::type VertexRangeIterator;
 
     if (nc > 0)
     {
-      VertexRangeType vertices(something, 0);
+      VertexRangeType vertices(something);
       for (VertexRangeIterator vit = vertices.begin(); vit != vertices.end(); ++vit)
       {
         if ( detail::is_equal_point(point, viennagrid::get_point(something, *vit), nc) )
@@ -267,6 +267,12 @@ namespace viennagrid
     v[2] = v2;
     v[3] = v3;
     return make_element<quadrilateral_tag>(something, v, v+4);
+  }
+
+  template<typename SomethingT, typename ElementIteratorT>
+  element_t make_plc(SomethingT const & something, ElementIteratorT elements_begin, ElementIteratorT elements_end)
+  {
+    return make_element<viennagrid::plc_tag>(something, elements_begin, elements_end);
   }
 
   template<typename SomethingT>

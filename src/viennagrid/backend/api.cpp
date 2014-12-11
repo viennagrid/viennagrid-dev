@@ -51,6 +51,12 @@ viennagrid_error viennagrid_mesh_hierarchy_set_geometric_dimension(viennagrid_me
   return VIENNAGRID_SUCCESS;
 }
 
+viennagrid_error viennagrid_mesh_hierarchy_clear(viennagrid_mesh_hierarchy mesh_hierarchy)
+{
+  mesh_hierarchy->clear();
+  return VIENNAGRID_SUCCESS;
+}
+
 
 
 viennagrid_error viennagrid_mesh_hierarchy_get_root(viennagrid_mesh_hierarchy mesh_hierarchy,

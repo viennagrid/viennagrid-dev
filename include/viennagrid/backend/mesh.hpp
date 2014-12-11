@@ -18,6 +18,8 @@ struct viennagrid_element_handle_buffer
 {
 public:
 
+  viennagrid_element_handle_buffer() { clear(); }
+
   bool element_present(viennagrid_index element_id) const
   {
     return index_map.find(element_id) != index_map.end();
@@ -63,6 +65,19 @@ public:
                                                viennagrid_dimension neighbor_topo_dim)
   { return neighbor_indices[connector_topo_dim][neighbor_topo_dim]; }
 
+  void clear()
+  {
+    indices.clear();
+    index_map.clear();
+
+    for (int i = 0; i != VIENNAGRID_TOPOLOGIC_DIMENSION_END; ++i)
+      coboundary_indices[i].clear();
+
+    for (int i = 0; i != VIENNAGRID_TOPOLOGIC_DIMENSION_END; ++i)
+      for (int j = 0; j != VIENNAGRID_TOPOLOGIC_DIMENSION_END; ++j)
+        neighbor_indices[i][j].clear();
+  }
+
 private:
   std::vector<viennagrid_index> indices;
   std::map<viennagrid_index, viennagrid_index> index_map;
@@ -93,8 +108,8 @@ private:
 struct viennagrid_mesh_
 {
 public:
-  viennagrid_mesh_(viennagrid_mesh_hierarchy hierarchy_in) : hierarchy_(hierarchy_in), parent_(0) { init(); }
-  viennagrid_mesh_(viennagrid_mesh_hierarchy hierarchy_in, viennagrid_mesh parent_in) : hierarchy_(hierarchy_in), parent_(parent_in) { init(); }
+  viennagrid_mesh_(viennagrid_mesh_hierarchy hierarchy_in) : hierarchy_(hierarchy_in), parent_(0) { clear(); }
+  viennagrid_mesh_(viennagrid_mesh_hierarchy hierarchy_in, viennagrid_mesh parent_in) : hierarchy_(hierarchy_in), parent_(parent_in) { clear(); }
 
   ~viennagrid_mesh_()
   {
@@ -233,11 +248,17 @@ public:
   void make_element_children(viennagrid_mesh child, viennagrid_int element_topo_dim);
 
 
-
-private:
-
-  void init()
+  void clear()
   {
+    children.clear();
+    element_children.clear();
+    mesh_children_map.clear();
+
+    for (viennagrid_int i = 0; i != VIENNAGRID_TOPOLOGIC_DIMENSION_END; ++i)
+    {
+      element_handle_buffers[i].clear();
+    }
+
     for (viennagrid_int i = 0; i != VIENNAGRID_TOPOLOGIC_DIMENSION_END; ++i)
       for (viennagrid_int j = 0; j != VIENNAGRID_TOPOLOGIC_DIMENSION_END; ++j)
         coboundary_change_counters[i][j] = 0;
@@ -246,7 +267,17 @@ private:
       for (viennagrid_int j = 0; j != VIENNAGRID_TOPOLOGIC_DIMENSION_END; ++j)
         for (viennagrid_int k = 0; k != VIENNAGRID_TOPOLOGIC_DIMENSION_END; ++k)
           neighbor_change_counters[i][j][k] = 0;
+
+    for (viennagrid_int i = 0; i != VIENNAGRID_TOPOLOGIC_DIMENSION_END; ++i)
+    {
+      boundary_elements_[i].clear();
+    }
+
+    boundary_elements_change_counter = 0;
   }
+
+
+private:
 
   viennagrid_mesh_hierarchy hierarchy_;
 

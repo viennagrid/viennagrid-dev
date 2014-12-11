@@ -185,20 +185,6 @@ namespace viennagrid
     bool operator>(element_tag_t rhs) const { return rhs < *this;}
     bool operator>=(element_tag_t rhs) const { return !(*this < rhs);}
 
-    element_tag_t & operator++()
-    {
-      ++element_tag_;
-      return *this;
-    }
-
-    element_tag_t operator++(int)
-    {
-      element_tag_t result = *this;
-      ++result;
-      return result;
-    }
-
-
     viennagrid_int topologic_dimension() const
     { return viennagrid_topological_dimension(internal()); }
 
@@ -262,6 +248,20 @@ namespace viennagrid
 
   namespace result_of
   {
+    /** @brief Metafunction for obtaining the id type of an element
+     *
+     * @tparam ElementT           The host element type
+     */
+    template<typename SomethingT>
+    struct id
+    {
+      typedef typename SomethingT::id_type type;
+    };
+
+
+
+
+
     template<typename SomethingT>
     struct const_type;
 
@@ -462,6 +462,12 @@ namespace viennagrid
       typedef mesh_region_t type;
     };
 
+    template<typename SomethingT>
+    struct region_id
+    {
+      typedef typename id< typename region<SomethingT>::type >::type type;
+    };
+
 
     template<typename SomethingT>
     struct const_region;
@@ -503,18 +509,6 @@ namespace viennagrid
     {
       typedef viennagrid::const_element_t type;
     };
-
-
-    /** @brief Metafunction for obtaining the id type of an element
-     *
-     * @tparam ElementT           The host element type
-     */
-    template<typename ElementT>
-    struct id
-    {
-      typedef typename ElementT::id_type type;
-    };
-
 
 
     template<typename SomethingT>

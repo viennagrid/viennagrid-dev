@@ -28,11 +28,11 @@ namespace viennagrid
    * @param func                    The functor object, has to be a function or provide an operator(). Interface: MeshPointType func(MeshPointType)
    * @param accessor                Point accessor for input points
    */
-  template<typename PointAccessorT, typename MeshT, typename FunctorT>
-  void geometric_transform(PointAccessorT accessor, MeshT & mesh, FunctorT func)
+  template<typename PointAccessorT, typename FunctorT>
+  void geometric_transform(PointAccessorT accessor, viennagrid::mesh_t const & mesh, FunctorT func)
   {
-    typedef typename viennagrid::result_of::vertex_range<MeshT>::type   VertexContainer;
-    typedef typename viennagrid::result_of::iterator<VertexContainer>::type                      VertexIterator;
+    typedef viennagrid::result_of::vertex_range<viennagrid::mesh_t>::type   VertexContainer;
+    typedef viennagrid::result_of::iterator<VertexContainer>::type                      VertexIterator;
 
     VertexContainer vertices(mesh);
     for ( VertexIterator vit = vertices.begin();
@@ -46,8 +46,8 @@ namespace viennagrid
    * @param mesh                    The input mesh
    * @param func                    The functor object, has to be a function or provide an operator(). Interface: MeshPointType func(MeshPointType)
    */
-  template<typename MeshT, typename FunctorT>
-  void geometric_transform(MeshT & mesh, FunctorT func)
+  template<typename FunctorT>
+  void geometric_transform(viennagrid::mesh_t const & mesh, FunctorT func)
   {
     geometric_transform(viennagrid::point_accessor(mesh), mesh, func);
   }
@@ -85,10 +85,10 @@ namespace viennagrid
    * @param factor                  The scaling factor
    * @param scaling_center          The center of the scaling operation
    */
-  template<typename MeshT, typename ScalarT, typename PointType>
-  void scale(MeshT & mesh, ScalarT factor, PointType const & scaling_center)
+  template<typename ScalarT, typename PointType>
+  void scale(viennagrid::mesh_t const & mesh, ScalarT factor, PointType const & scaling_center)
   {
-    scale_functor<MeshT> func(factor, scaling_center);
+    scale_functor<viennagrid::mesh_t> func(factor, scaling_center);
     geometric_transform(mesh, func);
   }
 
@@ -97,11 +97,11 @@ namespace viennagrid
    * @param mesh                    The input mesh
    * @param factor                  The scaling factor
    */
-  template<typename MeshT, typename ScalarT>
-  void scale(MeshT & mesh, ScalarT factor)
+  template<typename ScalarT>
+  void scale(viennagrid::mesh_t const & mesh, ScalarT factor)
   {
-    typedef typename viennagrid::result_of::point<MeshT>::type PointType;
-    scale_functor<MeshT> func(factor, PointType(viennagrid::geometric_dimension(mesh)));
+    typedef typename viennagrid::result_of::point<viennagrid::mesh_t>::type PointType;
+    scale_functor<viennagrid::mesh_t> func(factor, PointType(viennagrid::geometric_dimension(mesh)));
     geometric_transform(mesh, func);
   }
 
@@ -146,12 +146,11 @@ namespace viennagrid
    * @param matrix                  The matrix representing the linear transformation part, row major layout. Attention! There are no out-of boundary checks, the user is responsible to provide a suitable matrix pointer.
    * @param translation             The translation vector
    */
-  template<typename MeshT>
-  void affine_transform( MeshT & mesh,
-                         typename viennagrid::result_of::coord<MeshT>::type const * matrix,
-                         typename viennagrid::result_of::point<MeshT>::type const & translation )
+  inline void affine_transform(viennagrid::mesh_t const & mesh,
+                               viennagrid::result_of::coord<viennagrid::mesh_t>::type const * matrix,
+                               viennagrid::result_of::point<viennagrid::mesh_t>::type const & translation )
   {
-    affine_transform_functor<MeshT> func(matrix, translation);
+    affine_transform_functor<viennagrid::mesh_t> func(matrix, translation);
     geometric_transform(mesh, func);
   }
 

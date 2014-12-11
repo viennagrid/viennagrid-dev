@@ -52,7 +52,7 @@ namespace viennagrid
 
 
 
-  template<bool element_is_const, bool mesh_is_const>
+  template<bool mesh_is_const, bool element_is_const>
   bool is_boundary( base_mesh<mesh_is_const> const & mesh, base_element<element_is_const> const & element )
   {
     viennagrid_bool result;
@@ -63,7 +63,21 @@ namespace viennagrid
     return result == VIENNAGRID_TRUE;
   }
 
+  template<bool mesh_is_const, bool element_is_const>
+  bool is_any_boundary(base_mesh<mesh_is_const> const & mesh, base_element<element_is_const> const & element)
+  {
+    typedef typename viennagrid::result_of::region_range< base_mesh<mesh_is_const>, base_element<element_is_const> >::type RegionRangeType;
+    typedef typename viennagrid::result_of::iterator<RegionRangeType>::type RegionRangeIterator;
 
+    RegionRangeType regions(mesh, element);
+    for (RegionRangeIterator rit = regions.begin(); rit != regions.end(); ++rit)
+    {
+      if (is_boundary(*rit, element))
+        return true;
+    }
+
+    return false;
+  }
 
 
   inline void non_recursive_add(mesh_t const & mesh, element_t const & element)

@@ -85,6 +85,16 @@ public:
   viennagrid_region * regions_begin(viennagrid_index element_id) { return region_buffer.begin(element_id); }
   viennagrid_region * regions_end(viennagrid_index element_id) { return region_buffer.end(element_id); }
 
+  void clear()
+  {
+    element_tags.clear();
+    parents.clear();
+    region_buffer.clear();
+
+    boundary_indices.clear();
+    element_map.clear();
+  }
+
 
 private:
 
@@ -136,16 +146,13 @@ public:
   viennagrid_mesh_hierarchy_() : geometric_dimension_(0), cell_dimension_(-1),
   root_( new viennagrid_mesh_(this) ), highest_region_id(0), change_counter_(0), use_count_(1), retain_release_count(0)
   {
-    for (viennagrid_int i = 0; i < VIENNAGRID_TOPOLOGIC_DIMENSION_END; ++i)
-      element_buffer(i).set_topologic_dimension(i);
-
-    for (viennagrid_int i = 0; i < VIENNAGRID_ELEMENT_TAG_COUNT; ++i)
-      element_counts[i] = 0;
+    clear();
+//     std::cout << "NEW HIERARCHY " << this << std::endl;
   }
 
   ~viennagrid_mesh_hierarchy_()
   {
-    std::cout << "DELETE HIERARCHY (retain-release count=" << retain_release_count << ")" << std::endl;
+//     std::cout << "DELETE HIERARCHY " << this << " (retain-release count=" << retain_release_count << ")" << std::endl;
 
     delete root_;
 
@@ -317,6 +324,33 @@ public:
   viennagrid_int element_count( viennagrid_element_tag element_tag ) const { return element_counts[element_tag]; }
 
 
+  void clear()
+  {
+    for (int i = 0; i != VIENNAGRID_TOPOLOGIC_DIMENSION_END; ++i)
+    {
+      element_buffer(i).set_topologic_dimension(i);
+      element_buffer(i).clear();
+      element_counts[i] = 0;
+    }
+
+    geometric_dimension_ = 0;
+    cell_dimension_ = -1;
+
+    root_->clear();
+
+    vertex_buffer.clear();
+    hole_point_buffer.clear();
+
+    for (std::vector<viennagrid_region>::iterator it = regions.begin(); it != regions.end(); ++it)
+      delete *it;
+    regions.clear();
+    highest_region_id = 0;
+    region_id_map.clear();
+
+    change_counter_ = 0;
+//     use_count_ = 1;
+//     retain_release_count = 0;
+  }
 
   void retain() const
   {

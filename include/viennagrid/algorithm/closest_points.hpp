@@ -858,42 +858,35 @@ namespace viennagrid
       PairType closest_pair;
       double shortest_distance = std::numeric_limits<double>::max();
 
+      viennagrid_dimension facet_dimension1 = viennagrid::topologic_dimension(el1);
+      viennagrid_dimension facet_dimension2 = viennagrid::topologic_dimension(el2);
 
+      FacetRange1 facets1(el1, facet_dimension1);
 
-      for (element_tag_t facet_tag1 = facet_tag_begin(el1); facet_tag1 != facet_tag_end(el1); ++facet_tag1)
+      for (FacetIterator1 fit1 = facets1.begin();
+                          fit1 != facets1.end();
+                        ++fit1)
       {
-        FacetRange1 facets1(el1);
+        if (!is_boundary(el1, *fit1))
+          continue;
 
-        for (FacetIterator1 fit1 = facets1.begin();
-                            fit1 != facets1.end();
-                          ++fit1)
+        FacetRange2 facets2(el2, facet_dimension2);
+        for (FacetIterator2 fit2 = facets2.begin();
+                            fit2 != facets2.end();
+                          ++fit2)
         {
-          if (!is_boundary(el1, *fit1))
+          if (!is_boundary(el2, *fit2))
             continue;
 
-          for (element_tag_t facet_tag2 = facet_tag_begin(el2); facet_tag2 != facet_tag_end(el2); ++facet_tag2)
+          PairType p = closest_points_impl(accessor, *fit1, *fit2);
+          double cur_norm = norm_2(p.first - p.second);
+          if (cur_norm < shortest_distance)
           {
-            FacetRange2 facets2(el2);
-            for (FacetIterator2 fit2 = facets2.begin();
-                                fit2 != facets2.end();
-                              ++fit2)
-            {
-              if (!is_boundary(el2, *fit2))
-                continue;
-
-              PairType p = closest_points_impl(accessor, *fit1, *fit2);
-              double cur_norm = norm_2(p.first - p.second);
-              if (cur_norm < shortest_distance)
-              {
-                closest_pair = p;
-                shortest_distance = cur_norm;
-              }
-            }
+            closest_pair = p;
+            shortest_distance = cur_norm;
           }
         }
       }
-
-
 
       return closest_pair;
     }
