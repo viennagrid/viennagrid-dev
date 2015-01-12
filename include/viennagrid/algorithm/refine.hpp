@@ -74,6 +74,7 @@ namespace viennagrid
                      RefinementVertexAccessorT const & edge_to_vertex_handle_accessor)
   {
     typedef base_mesh<mesh_is_const>       InputMeshType;
+    typedef typename viennagrid::result_of::mesh_hierarchy<InputMeshType>::type InputMeshHierarchyType;
     typedef mesh_t      OutputMeshType;
 
     typedef typename viennagrid::result_of::element<InputMeshType>::type  ElementType;
@@ -100,7 +101,16 @@ namespace viennagrid
         for (typename ElementsContainerType::iterator it = elements_vertices.begin();
               it != elements_vertices.end();
               ++it)
-          viennagrid::make_element( mesh_out, (*cit).tag(), it->begin(), it->end() );
+        {
+          ElementType new_element = viennagrid::make_element( mesh_out, (*cit).tag(), it->begin(), it->end() );
+
+          typedef typename viennagrid::result_of::region_range<InputMeshHierarchyType, ElementType>::type ElementRegionType;
+          typedef typename viennagrid::result_of::iterator<ElementRegionType>::type ElementRegionIterator;
+
+          ElementRegionType regions(*cit);
+          for (ElementRegionIterator rit = regions.begin(); rit != regions.end(); ++rit)
+            viennagrid::add( mesh_out.get_make_region((*rit).id()), new_element );
+        }
       }
       else
       {
@@ -121,12 +131,19 @@ namespace viennagrid
               it != elements_vertices.end();
               ++it)
         {
-          viennagrid::make_refined_element(mesh_out, *cit,
+          ElementType new_element = viennagrid::make_refined_element(mesh_out, *cit,
                                            (*cit).tag(),
                                            it->begin(),
                                            it->end(),
                                            intersects.begin(),
                                            intersects.end());
+
+          typedef typename viennagrid::result_of::region_range<InputMeshHierarchyType, ElementType>::type ElementRegionType;
+          typedef typename viennagrid::result_of::iterator<ElementRegionType>::type ElementRegionIterator;
+
+          ElementRegionType regions(*cit);
+          for (ElementRegionIterator rit = regions.begin(); rit != regions.end(); ++rit)
+            viennagrid::add( *rit, new_element );
         }
       }
 
