@@ -64,8 +64,8 @@ int main()
   //
 
   // First triangle, use vertex handles
-  ElementType tri0 = viennagrid::make_triangle(mesh, v0, v1, v2); // creates an element with vertex handles
-  ElementType tri1 = viennagrid::make_triangle(mesh, v1, v2, v3);  //use the shortcut function
+  /*ElementType tri0 =*/ viennagrid::make_triangle(mesh, v0, v1, v2); // creates an element with vertex handles
+  /*ElementType tri1 =*/ viennagrid::make_triangle(mesh, v1, v2, v3);  //use the shortcut function
 
 
 

@@ -177,8 +177,8 @@ int main()
 
 
 
-  ElementType tri0 = viennagrid::make_triangle(mesh, v0, v1, v2);
-  ElementType tri1 = viennagrid::make_triangle(mesh, v2, v1, v3);
+  /*ElementType tri0 =*/ viennagrid::make_triangle(mesh, v0, v1, v2);
+  /*ElementType tri1 =*/ viennagrid::make_triangle(mesh, v2, v1, v3);
 
 
 

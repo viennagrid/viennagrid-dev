@@ -233,9 +233,9 @@ namespace viennagrid
     typedef typename IteratorT::reference reference;
     typedef typename IteratorT::iterator_category iterator_category;
 
-    view_iterator(IteratorT iterator_, true_functor functor_) : iterator(iterator_) {}
+    view_iterator(IteratorT iterator_, true_functor) : iterator(iterator_) {}
 
-    view_iterator(IteratorT iterator_, IteratorT end_iterator_, true_functor functor_) : iterator(iterator_) {}
+    view_iterator(IteratorT iterator_, IteratorT, true_functor) : iterator(iterator_) {}
 
     template<typename OtherIteratorT, typename OtherFunctorT>
     view_iterator(view_iterator<OtherIteratorT, OtherFunctorT> const & vi) : iterator(vi.iterator) {}
