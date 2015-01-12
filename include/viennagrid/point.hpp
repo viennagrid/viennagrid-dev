@@ -17,6 +17,7 @@ namespace viennagrid
   public:
 
     point_t() {}
+    point_t(std::vector<viennagrid_numeric> const & pt) : std::vector<viennagrid_numeric>(pt) {}
     point_t(size_type size_in) : std::vector<viennagrid_numeric>(size_in)
     { std::fill(begin(), end(), value_type(0)); }
 
