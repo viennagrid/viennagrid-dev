@@ -449,7 +449,7 @@ namespace viennagrid
             std::size_t global_vertex_index = local_to_global_map[region_id][local_index];
 
             cell_vertex_handles[j] = vertices[global_vertex_index];
-            viennagrid::add( mesh_obj.get_make_region(region_id), cell_vertex_handles[j] );
+//             viennagrid::add( mesh_obj.get_make_region(region_id), cell_vertex_handles[j] );
 
             cell_vertex_ids[j] = cell_vertex_handles[j].id();
           }
