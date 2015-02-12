@@ -17,4 +17,4 @@ endif()
 
 # Set up variables
 set(VIENNAGRID_INCLUDE_DIRS ${VIENNAGRID_INCLUDE_DIR})
-set(VIENNAGRID_LIBRARIES "")
+set(VIENNAGRID_LIBRARIES viennagrid)

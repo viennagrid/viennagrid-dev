@@ -6,6 +6,9 @@ include(CMakeDependentOption)
 
 set(INSTALL_INCLUDE_DIR include CACHE PATH
    "Installation directory for headers")
+
+message("Install dir !!: ${INSTALL_INCLUDE_DIR}")
+
 if(WIN32 AND NOT CYGWIN)
    set(DEF_INSTALL_CMAKE_DIR CMake)
 else()

@@ -280,8 +280,9 @@ namespace viennagrid
 //           CellType const & cell = it->second; //viennagrid::dereference_handle(domseg, it->second);
 //             CellType const & cell = *cit;
 
-          std::vector<VertexIDType> viennagrid_vertices( (*it).tag().vertex_count() );
+
           VertexOnCellRange vertices_on_cell(*it, 0);
+          std::vector<VertexIDType> viennagrid_vertices( vertices_on_cell.size() );
           std::size_t j = 0;
           for (VertexOnCellIterator vocit = vertices_on_cell.begin();
               vocit != vertices_on_cell.end();

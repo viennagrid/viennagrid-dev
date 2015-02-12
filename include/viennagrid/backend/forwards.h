@@ -66,11 +66,12 @@ typedef struct viennagrid_region_ * viennagrid_region;
 
 
 
-inline viennagrid_bool viennagrid_native_element_tag(viennagrid_element_tag et)
+inline viennagrid_bool viennagrid_is_topological_dimension_valid(viennagrid_int topological_dimension)
 {
-  return (et >= VIENNAGRID_ELEMENT_TAG_START && et < VIENNAGRID_ELEMENT_TAG_COUNT) ? VIENNAGRID_TRUE : VIENNAGRID_FALSE;
+  if ((topological_dimension >= 0) && (topological_dimension < VIENNAGRID_TOPOLOGIC_DIMENSION_END))
+    return VIENNAGRID_TRUE;
+  return VIENNAGRID_FALSE;
 }
-
 
 inline viennagrid_int viennagrid_topological_dimension(viennagrid_element_tag et)
 {
@@ -94,41 +95,13 @@ inline viennagrid_int viennagrid_topological_dimension(viennagrid_element_tag et
 }
 
 
-
-inline viennagrid_element_tag viennagrid_element_tag_of_topological_dimension_begin(viennagrid_int topological_dimension)
+inline viennagrid_element_tag viennagrid_topological_max(viennagrid_element_tag lhs, viennagrid_element_tag rhs)
 {
-  switch (topological_dimension)
-  {
-    case 0:
-      return VIENNAGRID_ELEMENT_TAG_VERTEX;
-    case 1:
-      return VIENNAGRID_ELEMENT_TAG_LINE;
-    case 2:
-      return VIENNAGRID_ELEMENT_TAG_TRIANGLE;
-    case 3:
-      return VIENNAGRID_ELEMENT_TAG_TETRAHEDRON;
-    default:
-      return -1;
-  }
+  if (viennagrid_topological_dimension(lhs) >= viennagrid_topological_dimension(rhs))
+    return lhs;
+  else
+    return rhs;
 }
-
-inline viennagrid_element_tag viennagrid_element_tag_of_topological_dimension_end(viennagrid_int topological_dimension)
-{
-  switch (topological_dimension)
-  {
-    case 0:
-      return VIENNAGRID_ELEMENT_TAG_VERTEX+1;
-    case 1:
-      return VIENNAGRID_ELEMENT_TAG_LINE+1;
-    case 2:
-      return VIENNAGRID_ELEMENT_TAG_TRIANGLE+4;
-    case 3:
-      return VIENNAGRID_ELEMENT_TAG_TETRAHEDRON+2;
-    default:
-      return -1;
-  }
-}
-
 
 
 inline viennagrid_bool viennagrid_dynamic_storage(viennagrid_element_tag et)

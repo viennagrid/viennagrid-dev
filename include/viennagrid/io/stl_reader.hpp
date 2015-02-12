@@ -101,15 +101,21 @@ namespace viennagrid
       *
       * See http://en.wikipedia.org/wiki/STL_(file_format) for a description of the file format
       */
-    struct stl_reader
+    template<typename NumericConfigT = double>
+    class stl_reader
     {
+    public:
+
+      stl_reader() : nc(1e-6) {}
+      stl_reader(NumericConfigT const & nc_) : nc(nc_) {}
+
       /** @brief The functor interface triggering the read operation. Segmentations are not supported
        *
        * @param mesh          The mesh where the file content is written to
        * @param filename      Name of the file
        */
       template <typename MeshT>
-      void operator()(MeshT & mesh, std::string const & filename) const
+      void operator()(MeshT const & mesh, std::string const & filename) const
       {
         std::ifstream file(filename.c_str(), std::ios::in | std::ios::binary);
         if (!file)
@@ -132,7 +138,7 @@ namespace viennagrid
 
 
       template <typename MeshT>
-      void read_ascii(MeshT & mesh, std::string const & filename) const
+      void read_ascii(MeshT const & mesh, std::string const & filename) const
       {
         // TODO implement!!
       }
@@ -144,17 +150,16 @@ namespace viennagrid
        * @param filename      Name of the file
        */
       template <typename MeshT>
-      void read_binary(MeshT & mesh, std::string const & filename) const
+      void read_binary(MeshT const & mesh, std::string const & filename) const
       {
         typedef typename viennagrid::result_of::point<MeshT>::type           PointType;
 
-        static const std::size_t point_dim = viennagrid::result_of::static_size<PointType>::value;
+//         static const std::size_t point_dim = viennagrid::result_of::static_size<PointType>::value;
 
-        typedef typename result_of::element<MeshT, vertex_tag>::type         VertexType;
-        typedef typename result_of::handle<MeshT, vertex_tag>::type          VertexHandleType;
+        typedef typename result_of::element<MeshT>::type         VertexType;
         typedef typename VertexType::id_type VertexIDType;
 
-        typedef typename result_of::handle<MeshT, line_tag>::type            LineHandleType;
+//         typedef typename result_of::element<MeshT>::type            LineType;
 
         std::ifstream file(filename.c_str(), std::ios::in | std::ios::binary);
 
@@ -172,30 +177,33 @@ namespace viennagrid
 
         file.read( (char*)(&triangle_count), sizeof(UInt32Type) );
 
-
         for (UInt32Type i = 0; i < triangle_count; ++i)
         {
           float pt_in[3];
-          PointType pt;
+          PointType pt(3);
 
           file.read( buffer, sizeof(float)*3 ); // skipping normal vector
 
-          VertexHandleType vertices[3];
+          VertexType vertices[3];
 
           for (std::size_t j = 0; j < 3; ++j)
           {
             file.read( (char*)(pt_in), sizeof(float)*3 );
             std::copy(pt_in, pt_in+3, pt.begin());
-            vertices[j] = viennagrid::make_vertex(mesh, pt);
+            vertices[j] = viennagrid::make_unique_vertex(mesh, pt, nc);
           }
 
-          viennagrid::make_cell(mesh, vertices, vertices+3);
+          viennagrid::make_element(mesh, viennagrid::triangle_tag(), vertices, vertices+3);
 
           file.read( buffer, sizeof(char)*2 ); // skipping attribute count
         }
 
 
       } //operator()
+
+    private:
+
+      NumericConfigT nc;
 
     }; //class std_reader
 

@@ -287,8 +287,16 @@ viennagrid_error viennagrid_elements_get(viennagrid_mesh mesh,
 {
 //   element_tag = mesh->unpack_element_tag(element_tag);
 
-  *element_index_begin = mesh->elements_begin(element_topo_dim);
-  *element_index_end = mesh->elements_end(element_topo_dim);
+  if (viennagrid_is_topological_dimension_valid(element_topo_dim) == VIENNAGRID_FALSE)
+  {
+    *element_index_begin = 0;
+    *element_index_end = 0;
+  }
+  else
+  {
+    *element_index_begin = mesh->elements_begin(element_topo_dim);
+    *element_index_end = mesh->elements_end(element_topo_dim);
+  }
   return VIENNAGRID_SUCCESS;
 }
 

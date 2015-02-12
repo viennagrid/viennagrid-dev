@@ -76,7 +76,7 @@ namespace viennagrid
       VertexRangeType vertices(something);
       for (VertexRangeIterator vit = vertices.begin(); vit != vertices.end(); ++vit)
       {
-        if ( detail::is_equal_point(point, viennagrid::get_point(something, *vit), nc) )
+        if ( detail::is_equal(nc, point, viennagrid::get_point(something, *vit)) )
           return *vit;
       }
     }

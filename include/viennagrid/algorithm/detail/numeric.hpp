@@ -77,11 +77,17 @@ namespace viennagrid
       return (std::abs(first-second) < relative_tolerance(nc, first));
     }
 
-    template<typename PointT, typename NumericConfigT>
-    bool is_equal_point(PointT const & p0, PointT const & p1, NumericConfigT nc)
+    template<typename NumericConfigT, typename PointT>
+    bool is_equal_point(NumericConfigT nc, PointT const & p0, PointT const & p1)
     {
       return viennagrid::norm_2(p0 - p1) < viennagrid::detail::relative_tolerance(nc, viennagrid::norm_2(p0)) ||
              viennagrid::norm_2(p0 - p1) < viennagrid::detail::relative_tolerance(nc, viennagrid::norm_2(p1));
+    }
+
+    template<typename NumericConfigT>
+    bool is_equal( NumericConfigT nc, point_t const & first, point_t const & second )
+    {
+      return is_equal_point(nc, first, second);
     }
 
     template<typename NumericConfigT, typename NumericT>

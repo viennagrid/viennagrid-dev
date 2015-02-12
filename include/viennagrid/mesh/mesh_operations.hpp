@@ -48,8 +48,8 @@ namespace viennagrid
       *
       * @param  dst_mesh_                The destination mesh
       */
-    element_copy_map( DstMeshType const & dst_mesh_ ) : dst_mesh(dst_mesh_), nc_(-1.0) {}
-    element_copy_map( DstMeshType const & dst_mesh_, NumericConfigT nc_in ) : dst_mesh(dst_mesh_), nc_(nc_in) {}
+    element_copy_map( DstMeshType const & dst_mesh_, bool copy_region_information_in = true ) : copy_region_information_(copy_region_information_in), dst_mesh(dst_mesh_), nc_(-1.0) {}
+    element_copy_map( DstMeshType const & dst_mesh_, NumericConfigT nc_in, bool copy_region_information_in = true ) : copy_region_information_(copy_region_information_in), dst_mesh(dst_mesh_), nc_(nc_in) {}
 
     /** @brief Copies one vertex to the destination mesh. If the vertex is already present in the destination mesh, the vertex handle of this vertex is return, otherwise a new vertex is created in the destination mesh.
       *
@@ -84,7 +84,8 @@ namespace viennagrid
       {
         DstElementType vtx = viennagrid::make_unique_vertex(dst_mesh, viennagrid::get_point(src), nc_);
         vertex_map[src.id()] = vtx;
-        copy_region_information(src, vtx);
+        if (copy_region_information_)
+          copy_region_information(src, vtx);
 
         return vtx;
       }
@@ -108,7 +109,8 @@ namespace viennagrid
         dst_vertices.push_back( (*this)(*vit) );
 
       DstElementType dst = viennagrid::make_element( dst_mesh, src.tag(), dst_vertices.begin(), dst_vertices.end() );
-      copy_region_information(src, dst);
+      if (copy_region_information_)
+        copy_region_information(src, dst);
       return dst;
     }
 
@@ -126,6 +128,7 @@ namespace viennagrid
     }
 
 
+    bool copy_region_information_;
     DstMeshType const & dst_mesh;
     std::map<SrcElementIDType, DstElementType> vertex_map;
 
@@ -155,14 +158,14 @@ namespace viennagrid
     * @param  dst_mesh                The destination mesh
     * @param  functor                 Boolean functor, if functor(cell) returns true, the cell is copied.
     */
-  template<bool mesh_is_const, typename NumericConfigT, typename ToCopyFunctorT>
+  template<typename SrcMeshType, typename NumericConfigT, typename ToCopyFunctorT>
   void copy(element_copy_map<NumericConfigT> & vertex_map,
-            viennagrid::base_mesh<mesh_is_const> const & src_mesh, viennagrid::mesh_t const & dst_mesh,
+            SrcMeshType const & src_mesh, viennagrid::mesh_t const & dst_mesh,
             ToCopyFunctorT functor)
   {
     clear(dst_mesh);
 
-    typedef typename viennagrid::result_of::const_cell_range<viennagrid::const_mesh_t>::type ConstCellRangeType;
+    typedef typename viennagrid::result_of::const_cell_range<SrcMeshType>::type ConstCellRangeType;
     typedef typename viennagrid::result_of::iterator<ConstCellRangeType>::type ConstCellRangeIterator;
 
     ConstCellRangeType cells(src_mesh);
@@ -179,8 +182,8 @@ namespace viennagrid
     * @param  dst_mesh                The destination mesh
     * @param  functor                 Boolean functor, if functor(cell) returns true, the cell is copied.
     */
-  template<bool mesh_is_const, typename ToCopyFunctorT>
-  void copy(viennagrid::base_mesh<mesh_is_const> const & src_mesh, viennagrid::mesh_t const & dst_mesh, ToCopyFunctorT functor)
+  template<typename SrcMeshType, typename ToCopyFunctorT>
+  void copy(SrcMeshType const & src_mesh, viennagrid::mesh_t const & dst_mesh, ToCopyFunctorT functor)
   {
     typedef viennagrid::result_of::coord<viennagrid::const_mesh_t>::type NumericType;
     viennagrid::result_of::element_copy_map<NumericType>::type vertex_map(dst_mesh);
@@ -192,8 +195,8 @@ namespace viennagrid
     * @param  src_mesh                The source mesh
     * @param  dst_mesh                The destination mesh
     */
-  template<bool mesh_is_const>
-  void copy(viennagrid::base_mesh<mesh_is_const> const & src_mesh, viennagrid::mesh_t const & dst_mesh)
+  template<typename SrcMeshType>
+  void copy(SrcMeshType const & src_mesh, viennagrid::mesh_t const & dst_mesh)
   {
     copy(src_mesh, dst_mesh, viennagrid::true_functor());
   }

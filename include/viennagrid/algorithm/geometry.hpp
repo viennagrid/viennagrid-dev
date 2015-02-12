@@ -188,8 +188,11 @@ namespace viennagrid
     typedef typename std::iterator_traits<PointIteratorT>::value_type   PointType;
     typedef typename viennagrid::result_of::coord<PointType>::type      NumericType;
 
-    PointType lower_left;
-    PointType upper_right;
+    if (it == it_end)
+      return std::make_pair(PointType(),PointType());
+
+    PointType lower_left( (*it).size() );
+    PointType upper_right( (*it).size() );
 
     std::fill( lower_left.begin(), lower_left.end(), std::numeric_limits<NumericType>::max() );
     std::fill( upper_right.begin(), upper_right.end(), - std::numeric_limits<NumericType>::max() );
@@ -209,14 +212,14 @@ namespace viennagrid
    *
    * @param mesh              The input mesh
    */
-  template<typename MeshT>
+  template<typename MeshElementT>
   std::pair<
-    typename viennagrid::result_of::point<MeshT>::type,
-    typename viennagrid::result_of::point<MeshT>::type
-  > bounding_box( MeshT const & mesh )
+    typename viennagrid::result_of::point<MeshElementT>::type,
+    typename viennagrid::result_of::point<MeshElementT>::type
+  > bounding_box( MeshElementT const & mesh )
   {
-    typedef typename viennagrid::result_of::point<MeshT>::type      PointType;
-    typedef typename viennagrid::result_of::coord<MeshT>::type      NumericType;
+    typedef typename viennagrid::result_of::point<MeshElementT>::type      PointType;
+    typedef typename viennagrid::result_of::coord<MeshElementT>::type      NumericType;
 
     PointType lower_left( viennagrid::geometric_dimension(mesh) );
     PointType upper_right( viennagrid::geometric_dimension(mesh) );
@@ -225,7 +228,7 @@ namespace viennagrid
     std::fill( upper_right.begin(), upper_right.end(), - std::numeric_limits<NumericType>::max() );
     //std::fill( upper_right.begin(), upper_right.end(), std::numeric_limits<NumericType>::lowest() );    C++11
 
-    typedef typename viennagrid::result_of::const_vertex_range<MeshT>::type ConstVertexRangeType;
+    typedef typename viennagrid::result_of::const_vertex_range<MeshElementT>::type ConstVertexRangeType;
     typedef typename viennagrid::result_of::iterator<ConstVertexRangeType>::type ConstVertexIteratorType;
 
     ConstVertexRangeType vertices(mesh);

@@ -65,13 +65,6 @@ namespace viennagrid
       typedef typename viennagrid::result_of::element_range<mesh_type, 1>::type     EdgeRange;
       typedef typename viennagrid::result_of::iterator<EdgeRange>::type                               EdgeIterator;
 
-//       typedef typename viennagrid::result_of::facet_range<mesh_type>::type   FacetRange;
-//       typedef typename viennagrid::result_of::iterator<FacetRange>::type                                   FacetIterator;
-
-//       typedef typename viennagrid::result_of::cell_range<mesh_type>::type     CellRange;
-//       typedef typename viennagrid::result_of::iterator<CellRange>::type                  CellIterator;
-
-
       typedef std::vector<double> vector_data_type;
 
       typedef std::map< std::string, base_dynamic_field<double, VertexType> * >             VertexScalarOutputFieldContainer;
@@ -87,11 +80,12 @@ namespace viennagrid
       std::ifstream                                        reader;
 
       std::size_t                                          geometric_dim;
-//       element_tag_t                                        cell_tag;
 
       typedef point_t                                      PointType;
       std::map<PointType, std::size_t, point_less>         global_points;
       std::map<std::size_t, PointType>                     global_points_2;
+      bool                                                 use_local_points_;
+
       std::map<int, std::deque<std::size_t> >              local_to_global_map;
       std::map<int, std::deque<std::size_t> >              local_cell_vertices;
       std::map<int, std::deque<std::size_t> >              local_cell_offsets;
@@ -242,12 +236,14 @@ namespace viennagrid
           }
 
           //add point to global list if not already there
-          if (global_points.find(p) == global_points.end())
+          if (use_local_points() || (global_points.find(p) == global_points.end()))
           {
-            std::size_t new_global_id = global_points.size();
-            global_points.insert( std::make_pair(p, new_global_id) );
+            std::size_t new_global_id = global_points_2.size();
             global_points_2.insert( std::make_pair(new_global_id, p) );
             local_to_global_map[region_id][i] = new_global_id;
+
+            if (!use_local_points())
+              global_points.insert( std::make_pair(p, new_global_id) );
           }
           else
           {
@@ -388,8 +384,37 @@ namespace viennagrid
       /** @brief Pushes the vertices read to the mesh */
       void setupVertices(mesh_type const & mesh_obj)
       {
-        for (std::size_t i=0; i<global_points_2.size(); ++i)
-          viennagrid::make_vertex( mesh_obj, global_points_2[i] );
+        std::size_t corrected_geometric_dim = 0;
+        for (std::map<std::size_t, PointType>::iterator it = global_points_2.begin();
+                                                        it != global_points_2.end();
+                                                      ++it)
+        {
+          for (std::size_t i = 0; i != (*it).second.size(); ++i)
+          {
+            if ( std::abs((*it).second[i]) > 1e-8)
+              corrected_geometric_dim = std::max(i, corrected_geometric_dim);
+          }
+
+          if (corrected_geometric_dim == geometric_dim)
+            break;
+        }
+
+        corrected_geometric_dim++;
+
+        std::cout << "Corrected geometric dim = " << corrected_geometric_dim << std::endl;
+
+        for (std::map<std::size_t, PointType>::iterator it = global_points_2.begin();
+                                                        it != global_points_2.end();
+                                                      ++it)
+        {
+          PointType p(corrected_geometric_dim);
+          std::copy( it->second.begin(), it->second.begin()+corrected_geometric_dim, p.begin() );
+          viennagrid::make_vertex( mesh_obj, p );
+        }
+
+
+//         for (std::size_t i=0; i<global_points_2.size(); ++i)
+//           viennagrid::make_vertex( mesh_obj, global_points_2[i] );
       }
 
       /** @brief Pushes the cells read to the mesh. Preserves region information. */
@@ -568,7 +593,13 @@ namespace viennagrid
 
       /** @brief Writes data for cells to the ViennaGrid mesh using ViennaData */
       template <typename ContainerType>
-      void setupDataCell(mesh_type const &, RegionType & region, region_id_type region_id, ContainerType const & container, std::size_t num_components)
+      void setupDataCell(mesh_type const &,
+#ifdef NDEBUG
+                         RegionType &,
+#else
+                         RegionType & region,
+#endif
+                         region_id_type region_id, ContainerType const & container, std::size_t num_components)
       {
         std::string const & name = container.first;
 
@@ -871,8 +902,11 @@ namespace viennagrid
 
     public:
 
-
+      explicit vtk_reader(bool use_local_points_in = true) : use_local_points_(use_local_points_in) {}
       ~vtk_reader() { pre_clear(); post_clear(); }
+
+      bool use_local_points() const { return use_local_points_; }
+      bool set_use_local_points(bool use_local_points_in) { use_local_points_ = use_local_points_in; }
 
 
       /** @brief Triggers the read process.

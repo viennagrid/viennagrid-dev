@@ -157,11 +157,6 @@ namespace viennagrid
     static element_tag_t tetrahedron() { return element_tag_t(VIENNAGRID_ELEMENT_TAG_TETRAHEDRON); }
     static element_tag_t hexahedron() { return element_tag_t(VIENNAGRID_ELEMENT_TAG_HEXAHEDRON); }
 
-    static element_tag_t topologic_dimension_begin(viennagrid_int topologic_dimension)
-    { return element_tag_t(viennagrid_element_tag_of_topological_dimension_begin(topologic_dimension)); }
-    static element_tag_t topologic_dimension_end(viennagrid_int topologic_dimension)
-    { return element_tag_t(viennagrid_element_tag_of_topological_dimension_end(topologic_dimension)); }
-
     bool valid() const { return internal() != VIENNAGRID_ELEMENT_TAG_NO_ELEMENT; }
     bool is_vertex() const { return *this == vertex(); }
     bool is_line() const { return *this == line(); }
@@ -172,10 +167,6 @@ namespace viennagrid
     bool is_plc() const { return *this == plc(); }
     bool is_tetrahedron() const { return *this == tetrahedron(); }
     bool is_hexahedron() const { return *this == hexahedron(); }
-
-
-//     static element_tag_t cell() { return element_tag_t(VIENNAGRID_ELEMENT_TAG_CELL); }
-//     static element_tag_t facet() { return element_tag_t(VIENNAGRID_ELEMENT_TAG_FACET); }
 
     bool operator==(element_tag_t rhs) const { return internal() == rhs.internal();}
     bool operator!=(element_tag_t rhs) const { return !(*this == rhs);}
@@ -192,14 +183,14 @@ namespace viennagrid
     bool is_boundary(element_tag_t host_tag) const
     { return viennagrid_is_boundary_tag(host_tag.internal(), internal()) == VIENNAGRID_TRUE; }
 
-    bool is_native() const
-    { return viennagrid_native_element_tag(internal()) == VIENNAGRID_TRUE; }
-
     viennagrid_int boundary_element_count(element_tag_t boundary_tag) const
     { return viennagrid_boundary_element_count_from_element_tag( internal(), boundary_tag.internal() ); }
     viennagrid_int vertex_count() const { return boundary_element_count( vertex() ); }
 
     std::string name() const { return std::string( viennagrid_element_tag_string(internal()) ); }
+
+    static element_tag_t from_internal(viennagrid_element_tag element_tag_in)
+    { return element_tag_t(element_tag_in); }
 
   private:
     element_tag_t(viennagrid_element_tag element_tag_in) : element_tag_(element_tag_in) {}
