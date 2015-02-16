@@ -2,7 +2,7 @@
 
 viennagrid_index viennagrid_mesh_hierarchy_::get_make_element(viennagrid_element_tag element_tag,
                                                               viennagrid_index * indices,
-                                                              viennagrid_dimension * topo_dims,
+                                                              viennagrid_dimension * /*topo_dims*/,
                                                               viennagrid_int count)
 {
   viennagrid_int element_topologic_dimension = viennagrid_topological_dimension(element_tag);
