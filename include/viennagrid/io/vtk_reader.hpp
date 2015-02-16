@@ -902,7 +902,7 @@ namespace viennagrid
 
     public:
 
-      explicit vtk_reader(bool use_local_points_in = true) : use_local_points_(use_local_points_in) {}
+      explicit vtk_reader(bool use_local_points_in = false) : use_local_points_(use_local_points_in) {}
       ~vtk_reader() { pre_clear(); post_clear(); }
 
       bool use_local_points() const { return use_local_points_; }
