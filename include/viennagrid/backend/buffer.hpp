@@ -5,6 +5,7 @@
 #include <iostream>
 #include <vector>
 #include <map>
+#include <cassert>
 
 
 
@@ -99,6 +100,7 @@ public:
   typedef const_pointer const_iterator;
 
   dense_packed_multibuffer() : offsets(1,0) {}
+  ~dense_packed_multibuffer() {}
 
   iterator begin(size_type index) { return values.empty() ? 0 : &values[0] + offsets[index]; }
   iterator end(size_type index) { return values.empty() ? 0 : &values[0] + offsets[index+1]; }
@@ -109,18 +111,7 @@ public:
   const_iterator begin(size_type index) const { return cbegin(index); }
   const_iterator end(size_type index) const { return cend(index); }
 
-
-  iterator values_begin() { return &values[0]; }
-  iterator values_end() { return &values[0] + values.size(); }
-
-  const_iterator values_cbegin() const { return &values[0]; }
-  const_iterator values_cend() const { return &values[0] + values.size(); }
-
-  const_iterator values_begin() const { return cbegin(); }
-  const_iterator values_end() const { return cend(); }
-
-
-  size_type size(size_type index) const { return end(index)-begin(index); }
+  size_type size(size_type index) const { assert(!values.empty()); return end(index)-begin(index); }
 
 
   pointer push_back(size_type count)
@@ -133,23 +124,20 @@ public:
 
   pointer resize(size_type index, size_type count)
   {
+    assert( index < static_cast<size_type>(offsets.size()) );
     size_type old_count = size(index);
 
     if (count > old_count)
     {
       size_type count_increase = count-old_count;
-      values.resize( values.size()+count_increase );
-      for (iterator it = values_end()-1; it != begin(index)+count-1; --it)
-        *it = *(it-count_increase);
+      values.insert( values.begin() + offsets[index+1], count_increase, -1 );
       for (size_type i = index+1; i != static_cast<size_type>(offsets.size()); ++i)
         offsets[i] += count_increase;
     }
     else if (count < old_count)
     {
       size_type count_decrease = old_count-count;
-      for (iterator it = begin(index)+count; it != values_end()-count_decrease-1; ++it)
-        *it = *(it+count_decrease);
-      values.resize( values.size()-count_decrease );
+      values.erase( values.begin() + offsets[index] + count, values.begin() + offsets[index+1] );
       for (size_type i = index+1; i != static_cast<size_type>(offsets.size()); ++i)
         offsets[i] -= count_decrease;
     }
