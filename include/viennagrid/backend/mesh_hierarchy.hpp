@@ -11,13 +11,13 @@
 
 
 
-// typedef dense_packed_multibuffer<viennagrid_index, viennagrid_index> ViennaGridBoundaryBufferType;
-// typedef dense_packed_multibuffer<viennagrid_index, viennagrid_numeric> ViennaGridHolePointBufferType;
-// typedef dense_packed_multibuffer<viennagrid_index, viennagrid_region> ViennaGridRegionBufferType;
+typedef dense_packed_multibuffer<viennagrid_index, viennagrid_index> ViennaGridBoundaryBufferType;
+typedef dense_packed_multibuffer<viennagrid_index, viennagrid_numeric> ViennaGridHolePointBufferType;
+typedef dense_packed_multibuffer<viennagrid_index, viennagrid_region> ViennaGridRegionBufferType;
 
-typedef dense_multibuffer<viennagrid_index, viennagrid_index> ViennaGridBoundaryBufferType;
-typedef dense_multibuffer<viennagrid_index, viennagrid_numeric> ViennaGridHolePointBufferType;
-typedef dense_multibuffer<viennagrid_index, viennagrid_region> ViennaGridRegionBufferType;
+// typedef dense_multibuffer<viennagrid_index, viennagrid_index> ViennaGridBoundaryBufferType;
+// typedef dense_multibuffer<viennagrid_index, viennagrid_numeric> ViennaGridHolePointBufferType;
+// typedef dense_multibuffer<viennagrid_index, viennagrid_region> ViennaGridRegionBufferType;
 
 
 struct element_key
@@ -328,8 +328,8 @@ public:
   {
     for (int i = 0; i != VIENNAGRID_TOPOLOGIC_DIMENSION_END; ++i)
     {
-      element_buffer(i).set_topologic_dimension(i);
       element_buffer(i).clear();
+      element_buffer(i).set_topologic_dimension(i);
       element_counts[i] = 0;
     }
 
