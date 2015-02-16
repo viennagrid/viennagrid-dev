@@ -55,7 +55,9 @@ namespace viennagrid
 
   inline element_t make_vertex(mesh_region_t const & mesh_region)
   {
-    return make_vertex(mesh_region.internal_mesh_hierarchy(), point_t());
+    element_t vertex = make_vertex(mesh_region.internal_mesh_hierarchy(), point_t());
+    add(mesh_region, vertex);
+    return vertex;
   }
 
 
