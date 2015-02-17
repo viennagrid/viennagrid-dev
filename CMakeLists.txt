@@ -35,12 +35,8 @@ ENDIF()
 
 option(BUILD_TESTING "Build the tests" ON)
 
-option(ENABLE_PEDANTIC_FLAGS "Enable pedantic compiler flags" ON)
-if(ENABLE_PEDANTIC_FLAGS)
-  SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -pedantic")
-endif()
-
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ")
+message(STATUS "CXX FLAGS: ${CMAKE_CXX_FLAGS}")
+message(STATUS "C FLAGS: ${CMAKE_C_FLAGS}")
 
 cmake_dependent_option(ENABLE_DIST "Enable the the distribution tarball target" ON "BUILD_DOXYGEN_DOCS;BUILD_MANUAL" OFF)
 
