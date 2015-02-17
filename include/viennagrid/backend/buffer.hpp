@@ -111,7 +111,15 @@ public:
   const_iterator begin(size_type index) const { return cbegin(index); }
   const_iterator end(size_type index) const { return cend(index); }
 
-  size_type size(size_type index) const { assert(!values.empty()); return end(index)-begin(index); }
+  size_type size(size_type index) const
+  {
+    assert( index < static_cast<size_type>(offsets.size()) );
+    return end(index)-begin(index);
+  }
+  size_type size() const
+  {
+    return offsets.size()-1;
+  }
 
 
   pointer push_back(size_type count)
@@ -130,7 +138,7 @@ public:
     if (count > old_count)
     {
       size_type count_increase = count-old_count;
-      values.insert( values.begin() + offsets[index+1], count_increase, -1 );
+      values.insert( values.begin() + offsets[index+1], count_increase, value_type() );
       for (size_type i = index+1; i != static_cast<size_type>(offsets.size()); ++i)
         offsets[i] += count_increase;
     }
@@ -147,6 +155,7 @@ public:
 
   void add(size_type index, value_type to_add)
   {
+    assert( index < static_cast<size_type>(offsets.size()) );
     size_type old_size = size(index);
     pointer p = resize(index, old_size+1);
     p[old_size] = to_add;
@@ -154,7 +163,7 @@ public:
 
   void clear()
   {
-    offsets = std::vector< typename std::vector<value_type>::size_type >(1,0);
+    offsets = std::vector<size_type>(1,0);
     values.clear();
   }
 
@@ -169,9 +178,12 @@ public:
 //     }
 //   }
 
+  size_type * offset_pointer() { return &offsets[0]; }
+  value_type * values_pointer() { return &values[0]; }
+
 private:
   std::vector<value_type> values;
-  std::vector< typename std::vector<value_type>::size_type > offsets;
+  std::vector<size_type> offsets;
 };
 
 
