@@ -108,8 +108,8 @@ private:
 struct viennagrid_mesh_
 {
 public:
-  viennagrid_mesh_(viennagrid_mesh_hierarchy hierarchy_in) : hierarchy_(hierarchy_in), parent_(0) { clear(); }
-  viennagrid_mesh_(viennagrid_mesh_hierarchy hierarchy_in, viennagrid_mesh parent_in) : hierarchy_(hierarchy_in), parent_(parent_in) { clear(); }
+  viennagrid_mesh_(viennagrid_mesh_hierarchy hierarchy_in);
+  viennagrid_mesh_(viennagrid_mesh_hierarchy hierarchy_in, viennagrid_mesh parent_in);
 
   ~viennagrid_mesh_()
   {
@@ -132,6 +132,15 @@ public:
   }
 
   viennagrid_int children_count() { return children.size(); }
+  viennagrid_int total_children_count()
+  {
+    viennagrid_int count = 0;
+    for (viennagrid_int i = 0; i != children_count(); ++i)
+      count += get_child(i)->total_children_count();
+    count += children_count();
+    return count;
+  }
+
   viennagrid_mesh get_child(viennagrid_int id) { return children[id]; }
 
 

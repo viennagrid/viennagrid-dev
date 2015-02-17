@@ -4,6 +4,18 @@
 
 
 
+viennagrid_mesh_::viennagrid_mesh_(viennagrid_mesh_hierarchy hierarchy_in) : hierarchy_(hierarchy_in), parent_(0)
+{
+  hierarchy_in->add_mesh(this);
+  clear();
+}
+viennagrid_mesh_::viennagrid_mesh_(viennagrid_mesh_hierarchy hierarchy_in, viennagrid_mesh parent_in) : hierarchy_(hierarchy_in), parent_(parent_in)
+{
+  hierarchy_in->add_mesh(this);
+  clear();
+}
+
+
 void viennagrid_mesh_::add_element(viennagrid_dimension element_topo_dim,
                                    viennagrid_index element_id)
 {
