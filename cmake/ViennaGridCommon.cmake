@@ -45,6 +45,7 @@ INCLUDE_DIRECTORIES("${PROJECT_SOURCE_DIR}/external/")
 # Set high warning level on GCC
 if(ENABLE_PEDANTIC_FLAGS)
   set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -Wextra -pedantic")
+  set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -Wall -Wextra -pedantic")
 endif()
 
 if(ENABLE_VIENNADATA)
