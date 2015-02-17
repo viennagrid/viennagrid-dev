@@ -95,6 +95,13 @@ public:
     element_map.clear();
   }
 
+  viennagrid_int size() const { return parents.size(); }
+  viennagrid_element_tag * element_tags_pointer() { return &element_tags[0]; }
+  viennagrid_index * vertex_offsets_pointer() { return boundary_buffer(0).offset_pointer(); }
+  viennagrid_index * vertex_indices_pointer() { return boundary_buffer(0).values_pointer(); }
+  viennagrid_index * parent_id_pointer() { return &parents[0]; }
+  viennagrid_index * region_offsets_pointer() { return region_buffer.offset_pointer(); }
+
 
 private:
 
@@ -122,14 +129,13 @@ private:
                                 viennagrid_index * indices,
                                 viennagrid_int index_count);
 
-  viennagrid_index size() const { return parents.size(); }
-
 
   viennagrid_dimension topologic_dimension;
 
   std::vector<viennagrid_element_tag> element_tags;
   std::vector<viennagrid_index> parents;
-  dense_multibuffer<viennagrid_index, viennagrid_region> region_buffer;
+//   dense_multibuffer<viennagrid_index, viennagrid_region> region_buffer;
+  dense_packed_multibuffer<viennagrid_index, viennagrid_region> region_buffer;
 
 
   std::vector<ViennaGridBoundaryBufferType> boundary_indices;
@@ -161,6 +167,10 @@ public:
   }
 
   viennagrid_mesh root() { return root_; }
+  void add_mesh(viennagrid_mesh mesh_)
+  {
+    meshes_.push_back(mesh_);
+  }
 
   viennagrid_dimension geometric_dimension() const { return geometric_dimension_; }
   void set_geometric_dimension(viennagrid_dimension geometric_dimension_in)
@@ -229,6 +239,11 @@ public:
     return &vertex_buffer[id * geometric_dimension()];
   }
 
+  viennagrid_int vertex_count() const
+  {
+    return vertex_buffer.size() / geometric_dimension();
+  }
+
 
 
   viennagrid_index get_make_element(viennagrid_element_tag element_tag,
@@ -264,6 +279,10 @@ public:
     std::copy(hole_point, hole_point+geometric_dimension(), hp+old_count);
   }
 
+  viennagrid_int hole_point_element_count() const { return hole_point_buffer.size(); }
+  viennagrid_index * hole_points_offsets() { return hole_point_buffer.offset_pointer(); }
+  viennagrid_numeric * hole_points_pointer() { return hole_point_buffer.values_pointer(); }
+
 
 
 
@@ -273,6 +292,11 @@ public:
 
   viennagrid_index delete_element_simple(viennagrid_dimension element_topo_dim, viennagrid_index element_id);
   viennagrid_index delete_element(viennagrid_dimension element_topo_dim, viennagrid_index element_id);
+
+  viennagrid_index region_count()
+  {
+    return regions.size();
+  }
 
   viennagrid_region get_region(viennagrid_index region_id)
   {
@@ -337,6 +361,8 @@ public:
     cell_dimension_ = -1;
 
     root_->clear();
+    meshes_.clear();
+    meshes_.push_back(root());
 
     vertex_buffer.clear();
     hole_point_buffer.clear();
@@ -370,6 +396,12 @@ public:
 
     return true;
   }
+
+
+  viennagrid_int mesh_count() const { return meshes_.size(); }
+  viennagrid_mesh mesh(viennagrid_index i) { return meshes_[i]; }
+
+
 
 private:
 
@@ -424,6 +456,7 @@ private:
   viennagrid_dimension cell_dimension_;
 
 //   viennagrid_element_tag cell_tag_;
+  std::vector<viennagrid_mesh> meshes_;
   viennagrid_mesh root_;
 
   std::vector<viennagrid_numeric> vertex_buffer;
