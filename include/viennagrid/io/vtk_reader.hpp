@@ -401,8 +401,6 @@ namespace viennagrid
 
         corrected_geometric_dim++;
 
-        std::cout << "Corrected geometric dim = " << corrected_geometric_dim << std::endl;
-
         for (std::map<std::size_t, PointType>::iterator it = global_points_2.begin();
                                                         it != global_points_2.end();
                                                       ++it)
