@@ -150,7 +150,6 @@ int main()
 
   typedef viennagrid::mesh_hierarchy_t MeshHierarchyType;
   typedef viennagrid::result_of::mesh<MeshHierarchyType>::type MeshType;
-  typedef viennagrid::result_of::region<MeshType>::type RegionType;
 
   typedef viennagrid::result_of::point<MeshType>::type            PointType;
   typedef viennagrid::result_of::element<MeshType>::type           ElementType;
@@ -246,10 +245,6 @@ int main()
                        cit0 != cells.end();
                      ++cit0)
   {
-    typedef viennagrid::result_of::vertex_range<ElementType>::type VertexOnElementRangeType;
-    typedef viennagrid::result_of::iterator<VertexOnElementRangeType>::type VertexOnElementRangeIterator;
-
-
     PointType tp[3];
     tp[0] = viennagrid::get_point( viennagrid::vertices(*cit0)[0] );
     tp[1] = viennagrid::get_point( viennagrid::vertices(*cit0)[1] );

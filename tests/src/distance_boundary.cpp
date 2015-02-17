@@ -45,11 +45,9 @@ inline void setup_meshs(viennagrid::mesh_t & mesh0,
 {
   typedef viennagrid::mesh_t                      MeshType;
   typedef viennagrid::result_of::region<MeshType>::type                 RegionType;
-//   typedef viennagrid::triangle_tag                                      CellTag;
 
   typedef viennagrid::result_of::point<MeshType>::type          PointType;
   typedef viennagrid::result_of::element<MeshType>::type       VertexType;
-  typedef viennagrid::result_of::element<MeshType>::type        CellType;
 
   // Mesh d0
   {
@@ -218,7 +216,6 @@ inline void setup_meshs(viennagrid::mesh_t & mesh0,
 inline void test()
 {
   typedef viennagrid::mesh_t                      Mesh;
-  typedef viennagrid::triangle_tag                                      CellTag;
 
   typedef viennagrid::result_of::point<Mesh>::type                PointType;
 

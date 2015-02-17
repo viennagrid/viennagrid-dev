@@ -904,7 +904,7 @@ namespace viennagrid
       ~vtk_reader() { pre_clear(); post_clear(); }
 
       bool use_local_points() const { return use_local_points_; }
-      bool set_use_local_points(bool use_local_points_in) { use_local_points_ = use_local_points_in; }
+      void set_use_local_points(bool use_local_points_in) { use_local_points_ = use_local_points_in; }
 
 
       /** @brief Triggers the read process.

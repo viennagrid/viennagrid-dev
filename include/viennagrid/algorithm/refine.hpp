@@ -552,7 +552,6 @@ namespace viennagrid
               PointAccessorType point_accessor_in,
               EdgeRefinementFlagAccessorT const & edge_refinement_flag_accessor)
   {
-    typedef base_mesh<mesh_is_const>                                             MeshInType;
     typedef mesh_t                                             MeshOutType;
 
     typedef typename viennagrid::result_of::element<MeshOutType>::type                     EdgeType;
@@ -757,9 +756,6 @@ namespace viennagrid
   void cell_refine_uniformly(base_mesh<mesh_is_const> const & mesh_in,
                              mesh_t & mesh_out)
   {
-    typedef base_mesh<mesh_is_const>                            MeshInType;
-//     typedef typename viennagrid::result_of::cell<MeshInType>::type    CellType;
-
     refine_uniformly(mesh_in, mesh_out, viennagrid::cell_dimension(mesh_in));
   }
 

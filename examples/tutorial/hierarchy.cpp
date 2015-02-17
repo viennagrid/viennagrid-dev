@@ -27,9 +27,7 @@ int main()
 
   typedef viennagrid::mesh_hierarchy_t MeshHierarchyType;
   typedef viennagrid::result_of::mesh<MeshHierarchyType>::type MeshType;
-  typedef viennagrid::result_of::region<MeshType>::type RegionType;
 
-  typedef viennagrid::result_of::point<MeshType>::type            PointType;
   typedef viennagrid::result_of::element<MeshType>::type           ElementType;
 
   typedef viennagrid::result_of::element_range<MeshType>::type      ElementRange;

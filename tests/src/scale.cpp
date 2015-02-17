@@ -49,11 +49,9 @@ void fuzzy_check(PointType const & a, PointType const & b)
 inline void setup_triangular2d_mesh(viennagrid::mesh_t & mesh)
 {
   typedef viennagrid::mesh_t                      MeshType;
-  typedef viennagrid::triangle_tag                                      CellTag;
 
   typedef viennagrid::result_of::point<MeshType>::type          PointType;
   typedef viennagrid::result_of::element<MeshType>::type       VertexType;
-  typedef viennagrid::result_of::element<MeshType>::type        CellType;
 
   const size_t s = 4;
   PointType p[s];
@@ -91,7 +89,6 @@ template<int dimension, typename CellTagT>
 void test()
 {
   typedef viennagrid::mesh_t                 Mesh;
-  typedef viennagrid::result_of::point<Mesh>::type       PointType;
 
 
   Mesh mesh;

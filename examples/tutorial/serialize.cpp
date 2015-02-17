@@ -27,8 +27,6 @@ int main()
 
   typedef viennagrid::mesh_hierarchy_t MeshHierarchyType;
   typedef viennagrid::result_of::mesh<MeshHierarchyType>::type MeshType;
-  typedef viennagrid::result_of::region<MeshType>::type RegionType;
-
 
   viennagrid_serialized_mesh_hierarchy serialized_mesh;
   viennagrid_serialized_mesh_hierarchy_make(&serialized_mesh);

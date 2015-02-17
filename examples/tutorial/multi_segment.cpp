@@ -26,12 +26,8 @@ int main()
   typedef viennagrid::mesh_t MeshType;
   typedef viennagrid::result_of::region<MeshType>::type RegionType;
 
-//   typedef viennagrid::result_of::facet_tag<MeshType>::type            FacetTag;
-
   typedef viennagrid::result_of::const_element<MeshType>::type               ConstVertexType;
-  typedef viennagrid::result_of::element<MeshType>::type                 EdgeType;
   typedef viennagrid::result_of::element<MeshType>::type                FacetType;
-  typedef viennagrid::result_of::element<MeshType>::type                 CellType;
 
   typedef viennagrid::result_of::facet_range<MeshType>::type          FacetRange;
   typedef viennagrid::result_of::iterator<FacetRange>::type             FacetIterator;

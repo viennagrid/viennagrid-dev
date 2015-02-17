@@ -46,8 +46,6 @@ int main()
 
   typedef viennagrid::result_of::point<MeshType>::type point_type;
 
-  typedef viennagrid::result_of::element<MeshType>::type   VertexType;
-  typedef viennagrid::result_of::element<MeshType>::type       LineType;
   typedef viennagrid::result_of::element<MeshType>::type         PLCType;
 
   //

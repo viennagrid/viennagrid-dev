@@ -42,12 +42,8 @@ namespace viennagrid
       template <typename MeshType>
       void operator()(MeshType const & mesh_obj, std::string const & filename) const
       {
-        typedef typename viennagrid::result_of::point<MeshType>::type    PointType;
-        typedef typename viennagrid::result_of::coord<MeshType>::type    CoordType;
-
-        typedef typename result_of::element<MeshType>::type CellType;
-
-        typedef typename result_of::element<MeshType, vertex_tag>::type                           VertexType;
+        typedef typename viennagrid::result_of::coord<MeshType>::type     CoordType;
+        typedef typename result_of::element<MeshType, vertex_tag>::type   VertexType;
 
         std::ifstream reader(filename.c_str());
         std::string tmp;

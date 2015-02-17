@@ -37,9 +37,7 @@ int main()
   // typedefs for the element types
   //
 
-  typedef viennagrid::result_of::point<MeshType>::type PointType;
   typedef viennagrid::result_of::element<MeshType>::type VertexType;
-  typedef viennagrid::result_of::element<MeshType>::type PolygonType;
 
 
 //   viennagrid::static_array<vertex_handle_type, 7> handles;

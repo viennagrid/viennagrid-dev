@@ -45,8 +45,6 @@ int main()
   typedef viennagrid::result_of::point<MeshType>::type            PointType;
 
   typedef viennagrid::result_of::element<MeshType>::type          CellType;
-  typedef viennagrid::result_of::element<MeshType>::type          EdgeType;
-  typedef viennagrid::result_of::element<MeshType>::type          VertexType;
 
   typedef viennagrid::result_of::vertex_range<MeshType>::type     VertexRange;
 

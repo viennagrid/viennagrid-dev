@@ -39,10 +39,8 @@ int main()
   typedef viennagrid::mesh_t                  MeshType;
   typedef viennagrid::result_of::region<MeshType>::type RegionType;
 
-  typedef viennagrid::result_of::point<MeshType>::type            PointType;
   typedef viennagrid::result_of::element<MeshType>::type    VertexType;
 
-  typedef viennagrid::result_of::element<MeshType>::type             CellType;
   typedef viennagrid::result_of::cell_range<RegionType>::type      CellRange;
   typedef viennagrid::result_of::iterator<CellRange>::type          CellIterator;
 
