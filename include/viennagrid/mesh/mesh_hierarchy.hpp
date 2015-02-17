@@ -80,6 +80,21 @@ namespace viennagrid
     region_type get_make_region(std::string const & name);
     const_region_type get_region(std::string const & name) const;
 
+
+    void serialize(viennagrid_serialized_mesh_hierarchy serialized_mesh_hierarchy, bool copy_data = true)
+    {
+      viennagrid_serialize_mesh_hierarchy( internal(),
+                                           serialized_mesh_hierarchy,
+                                           copy_data ? VIENNAGRID_TRUE : VIENNAGRID_FALSE );
+    }
+
+    void deserialize(viennagrid_serialized_mesh_hierarchy serialized_mesh_hierarchy)
+    {
+      viennagrid_mesh_hierarchy deserialized;
+      viennagrid_deserialize_mesh_hierarchy( serialized_mesh_hierarchy, &deserialized );
+      *this = base_mesh_hierarchy(deserialized);
+    }
+
   private:
 
     void retain() const { viennagrid_mesh_hierarchy_retain(internal()); }
