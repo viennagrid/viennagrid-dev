@@ -19,6 +19,8 @@ list(APPEND CMAKE_MODULE_PATH "${PROJECT_SOURCE_DIR}/cmake")
 # Common options
 ################
 
+find_package(Boost)
+
 include(ViennaGridCommon)
 
 # Set release build:
@@ -76,7 +78,7 @@ add_subdirectory(doc)
 # Install
 #########
 
-message("Install dir: ${INSTALL_INCLUDE_DIR}")
+message(STATUS "Install dir: ${INSTALL_INCLUDE_DIR}")
 install(DIRECTORY viennagrid ${CMAKE_CURRENT_SOURCE_DIR}/include/viennagrid
    DESTINATION ${INSTALL_INCLUDE_DIR} COMPONENT dev
    FILES_MATCHING PATTERN "*.h" PATTERN "*.hpp")

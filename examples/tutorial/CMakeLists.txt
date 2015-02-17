@@ -21,8 +21,11 @@ target_link_libraries(mesh_setup    viennagrid)
 # ADD_EXECUTABLE(finite_volumes       finite_volumes.cpp)
 # target_link_libraries(finite_volumes    viennagrid)
 
-ADD_EXECUTABLE(finite_elements       finite_elements.cpp)
-target_link_libraries(finite_elements    viennagrid)
+if (Boost_FOUND)
+  include_directories(${Boost_INCLUDE_DIRS})
+  ADD_EXECUTABLE(finite_elements       finite_elements.cpp)
+  target_link_libraries(finite_elements    viennagrid)
+endif()
 
 ADD_EXECUTABLE(io                   io.cpp)
 target_link_libraries(io     viennagrid)
