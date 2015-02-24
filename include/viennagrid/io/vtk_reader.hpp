@@ -55,9 +55,8 @@ namespace viennagrid
 
       typedef typename viennagrid::result_of::coord<mesh_type>::type CoordType;
 
-      typedef typename result_of::element<mesh_type>::type                          VertexType;
+      typedef typename result_of::element<mesh_type>::type                          ElementType;
       typedef typename result_of::element_id<mesh_type>::type                       VertexIDType;
-      typedef typename result_of::element<mesh_type>::type     CellType;
 
       typedef typename viennagrid::result_of::vertex_range<mesh_type>::type   VertexRange;
       typedef typename viennagrid::result_of::iterator<VertexRange>::type                             VertexIterator;
@@ -65,13 +64,13 @@ namespace viennagrid
       typedef typename viennagrid::result_of::element_range<mesh_type, 1>::type     EdgeRange;
       typedef typename viennagrid::result_of::iterator<EdgeRange>::type                               EdgeIterator;
 
-      typedef std::vector<double> vector_data_type;
+      typedef std::vector<viennagrid_numeric> vector_data_type;
 
-      typedef std::map< std::string, base_dynamic_field<double, VertexType> * >             VertexScalarOutputFieldContainer;
-      typedef std::map< std::string, base_dynamic_field<vector_data_type, VertexType> * >   VertexVectorOutputFieldContainer;
+      typedef std::map< std::string, base_dynamic_accessor<viennagrid_numeric, ElementType> * >             VertexScalarOutputFieldContainer;
+      typedef std::map< std::string, base_dynamic_accessor<vector_data_type, ElementType> * >   VertexVectorOutputFieldContainer;
 
-      typedef std::map< std::string, base_dynamic_field<double, CellType> * >               CellScalarOutputFieldContainer;
-      typedef std::map< std::string, base_dynamic_field<vector_data_type, CellType> * >     CellVectorOutputFieldContainer;
+      typedef std::map< std::string, base_dynamic_accessor<viennagrid_numeric, ElementType> * >               CellScalarOutputFieldContainer;
+      typedef std::map< std::string, base_dynamic_accessor<vector_data_type, ElementType> * >     CellVectorOutputFieldContainer;
 
 
 
@@ -91,7 +90,7 @@ namespace viennagrid
       std::map<int, std::deque<std::size_t> >              local_cell_offsets;
       std::map<int, std::deque<element_tag_t> >            local_cell_types;
       std::map<int, std::size_t>                           local_cell_num;
-      std::map<int, std::deque<CellType> >                 local_cell_handle;
+      std::map<int, std::deque<ElementType> >                 local_cell_handle;
 
       //data containers:
       std::map<int, std::deque<std::pair<std::string, std::deque<double> > > >  local_scalar_vertex_data;
@@ -457,7 +456,7 @@ namespace viennagrid
           //****************************************************
 
 //           viennagrid::static_array<VertexHandleType, boundary_elements<CellTag, vertex_tag>::num> cell_vertex_handles;
-          std::vector<VertexType> cell_vertex_handles( numVertices );
+          std::vector<ElementType> cell_vertex_handles( numVertices );
           std::vector<VertexIDType> cell_vertex_ids(numVertices);
 
           VertexRange vertices(mesh_obj);
@@ -480,10 +479,10 @@ namespace viennagrid
 
 //           std::cout << "Adding cell (type=" << local_cell_types[region_id][i].name() << ") with " << cell_vertex_handles.size() << " vertices" << std::endl;
 
-          CellType cell = viennagrid::make_element(mesh_obj,
-                                                   cell_tag,
-                                                   cell_vertex_handles.begin(),
-                                                   cell_vertex_handles.end());
+          ElementType cell = viennagrid::make_element(mesh_obj,
+                                                      cell_tag,
+                                                      cell_vertex_handles.begin(),
+                                                      cell_vertex_handles.end());
 
 //           std::cout << cell << std::endl;
 
@@ -506,9 +505,9 @@ namespace viennagrid
             for (std::size_t i=0; i<container.second.size(); ++i)
             {
               std::size_t global_vertex_id = local_to_global_map[region_id][i];
-              VertexType vertex(mesh_obj.mesh_hierarchy(), 0, global_vertex_id);
+              ElementType vertex(mesh_obj.mesh_hierarchy(), 0, global_vertex_id);
 
-              (*registered_vertex_scalar_data[name])(vertex) = (container.second)[i];
+              (*registered_vertex_scalar_data[name]).set(vertex, (container.second)[i]);
             }
           }
           else if (current_registered_region_vertex_scalar_data.find(name) != current_registered_region_vertex_scalar_data.end())
@@ -516,9 +515,9 @@ namespace viennagrid
             for (std::size_t i=0; i<container.second.size(); ++i)
             {
               std::size_t global_vertex_id = local_to_global_map[region_id][i];
-              VertexType vertex(mesh_obj.mesh_hierarchy(), 0, global_vertex_id);
+              ElementType vertex(mesh_obj.mesh_hierarchy(), 0, global_vertex_id);
 
-              (*current_registered_region_vertex_scalar_data[name])(vertex) = (container.second)[i];
+              (*current_registered_region_vertex_scalar_data[name]).set(vertex, (container.second)[i]);
             }
           }
           else
@@ -545,12 +544,13 @@ namespace viennagrid
             for (std::size_t i=0; i<container.second.size()/3; ++i)
             {
               std::size_t global_vertex_id = local_to_global_map[region_id][i];
-              VertexType vertex(mesh_obj.mesh_hierarchy(), 0, global_vertex_id);
+              ElementType vertex(mesh_obj.mesh_hierarchy(), 0, global_vertex_id);
 
-              (*registered_vertex_vector_data[name])(vertex).resize(3);
-              (*registered_vertex_vector_data[name])(vertex)[0] = (container.second)[3*i+0];
-              (*registered_vertex_vector_data[name])(vertex)[1] = (container.second)[3*i+1];
-              (*registered_vertex_vector_data[name])(vertex)[2] = (container.second)[3*i+2];
+              std::vector<viennagrid_numeric> tmp(3);
+              for (std::size_t j = 0; j != 3; ++j)
+                tmp[i] = (container.second)[3*i+j];
+
+              (*registered_vertex_vector_data[name]).set(vertex, tmp);
             }
           }
           else if (current_registered_region_vertex_vector_data.find(name) != current_registered_region_vertex_vector_data.end())
@@ -558,12 +558,13 @@ namespace viennagrid
             for (std::size_t i=0; i<container.second.size(); ++i)
             {
               std::size_t global_vertex_id = local_to_global_map[region_id][i];
-              VertexType vertex(mesh_obj.mesh_hierarchy(), 0, global_vertex_id);
+              ElementType vertex(mesh_obj.mesh_hierarchy(), 0, global_vertex_id);
 
-              (*current_registered_region_vertex_vector_data[name])(vertex).resize(3);
-              (*current_registered_region_vertex_vector_data[name])(vertex)[0] = (container.second)[3*i+0];
-              (*current_registered_region_vertex_vector_data[name])(vertex)[1] = (container.second)[3*i+1];
-              (*current_registered_region_vertex_vector_data[name])(vertex)[2] = (container.second)[3*i+2];
+              std::vector<viennagrid_numeric> tmp(3);
+              for (std::size_t j = 0; j != 3; ++j)
+                tmp[i] = (container.second)[3*i+j];
+
+              (*current_registered_region_vertex_vector_data[name]).set(vertex, tmp);
             }
           }
           else
@@ -608,18 +609,18 @@ namespace viennagrid
           {
             for (std::size_t i=0; i<container.second.size(); ++i)
             {
-              CellType const & cell = local_cell_handle[region_id][i];
+              ElementType const & cell = local_cell_handle[region_id][i];
 
-              (*registered_cell_scalar_data[name])(cell) = (container.second)[i];
+              (*registered_cell_scalar_data[name]).set(cell, (container.second)[i]);
             }
           }
           else if (current_registered_region_cell_scalar_data.find(name) != current_registered_region_cell_scalar_data.end())
           {
             for (std::size_t i=0; i<container.second.size(); ++i)
             {
-              CellType const & cell = local_cell_handle[region_id][i];
+              ElementType const & cell = local_cell_handle[region_id][i];
 
-              (*current_registered_region_cell_scalar_data[name])(cell) = (container.second)[i];
+              (*current_registered_region_cell_scalar_data[name]).set(cell, (container.second)[i]);
             }
           }
           else
@@ -630,9 +631,9 @@ namespace viennagrid
             #endif
             for (std::size_t i=0; i<container.second.size(); ++i)
             {
-              CellType const & cell = local_cell_handle[region_id][i];
+              ElementType const & cell = local_cell_handle[region_id][i];
 
-              if ( static_cast<typename result_of::id<CellType>::type>(cell_scalar_data[container.first][region_id].size()) <= cell.id())
+              if ( static_cast<typename result_of::id<ElementType>::type>(cell_scalar_data[container.first][region_id].size()) <= cell.id())
                 cell_scalar_data[container.first][region_id].resize(static_cast<std::size_t>(cell.id()+1));
               cell_scalar_data[container.first][region_id][static_cast<std::size_t>(cell.id())] = (container.second)[i];
             }
@@ -645,24 +646,26 @@ namespace viennagrid
           {
             for (std::size_t i=0; i<container.second.size()/3; ++i)
             {
-              CellType const & cell = local_cell_handle[region_id][i];
+              ElementType const & cell = local_cell_handle[region_id][i];
 
-              (*registered_cell_vector_data[name])(cell).resize(3);
-              (*registered_cell_vector_data[name])(cell)[0] = (container.second)[3*i+0];
-              (*registered_cell_vector_data[name])(cell)[1] = (container.second)[3*i+1];
-              (*registered_cell_vector_data[name])(cell)[2] = (container.second)[3*i+2];
+              std::vector<viennagrid_numeric> tmp(3);
+              for (std::size_t j = 0; j != 3; ++j)
+                tmp[i] = (container.second)[3*i+j];
+
+              (*registered_cell_vector_data[name]).set(cell, tmp);
             }
           }
           else if (current_registered_region_cell_vector_data.find(name) != current_registered_region_cell_vector_data.end())
           {
             for (std::size_t i=0; i<container.second.size(); ++i)
             {
-              CellType const & cell = local_cell_handle[region_id][i];
+              ElementType const & cell = local_cell_handle[region_id][i];
 
-              (*current_registered_region_cell_vector_data[name])(cell).resize(3);
-              (*current_registered_region_cell_vector_data[name])(cell)[0] = (container.second)[3*i+0];
-              (*current_registered_region_cell_vector_data[name])(cell)[1] = (container.second)[3*i+1];
-              (*current_registered_region_cell_vector_data[name])(cell)[2] = (container.second)[3*i+2];
+              std::vector<viennagrid_numeric> tmp(3);
+              for (std::size_t j = 0; j != 3; ++j)
+                tmp[i] = (container.second)[3*i+j];
+
+              (*current_registered_region_cell_vector_data[name]).set(cell, tmp);
             }
           }
           else
@@ -674,9 +677,9 @@ namespace viennagrid
             assert( 3 * viennagrid::cells(region).size() == container.second.size());
             for (std::size_t i=0; i<container.second.size() / 3; ++i)
             {
-              CellType const & cell = local_cell_handle[region_id][i];
+              ElementType const & cell = local_cell_handle[region_id][i];
 
-              if ( static_cast<typename result_of::id<CellType>::type>(cell_vector_data[container.first][region_id].size()) <= cell.id())
+              if ( static_cast<typename result_of::id<ElementType>::type>(cell_vector_data[container.first][region_id].size()) <= cell.id())
                 cell_vector_data[container.first][region_id].resize(static_cast<std::size_t>(cell.id()+1));
               cell_vector_data[container.first][region_id][static_cast<std::size_t>(cell.id())].resize(3);
               cell_vector_data[container.first][region_id][static_cast<std::size_t>(cell.id())][0] = (container.second)[3*i+0];
@@ -1054,159 +1057,159 @@ namespace viennagrid
 
     private:
 
-      template<typename MapType, typename AccessorOrFieldType>
-      void register_to_map(MapType & map, AccessorOrFieldType accessor_or_field, std::string const & name)
+      template<typename ValueT, typename MapT, typename AccessorT>
+      void register_to_map(MapT & map, AccessorT & accessor, std::string const & name)
       {
-          typename MapType::iterator it = map.find(name);
+          typename MapT::iterator it = map.find(name);
           if (it != map.end())
           {
             delete it->second;
-            it->second = new dynamic_field_wrapper<AccessorOrFieldType>( accessor_or_field );
+            it->second = new dynamic_accessor_wrapper<ValueT, ElementType, AccessorT>( accessor );
           }
           else
-            map[name] = new dynamic_field_wrapper<AccessorOrFieldType>( accessor_or_field );
+            map[name] = new dynamic_accessor_wrapper<ValueT, ElementType, AccessorT>( accessor );
       }
 
 
     public:
 
-      /** @brief Registers a vertex scalar accessor/field with a given quantity name */
-      template<typename AccessorOrFieldType>
-      void register_vertex_scalar(AccessorOrFieldType accessor_or_field, std::string const & quantity_name)
-      { register_to_map(registered_vertex_scalar_data, accessor_or_field, quantity_name); }
+      /** @brief Registers a vertex scalar accessor with a given quantity name */
+      template<typename AccessorT>
+      void register_vertex_scalar(AccessorT accessor, std::string const & quantity_name)
+      { register_to_map<viennagrid_numeric>(registered_vertex_scalar_data, accessor, quantity_name); }
 
-      /** @brief Registers a vertex scalar accessor/field with a given quantity name for a given region ID */
-      template<typename AccessorOrFieldType>
-      void register_vertex_scalar(region_id_type region_id, AccessorOrFieldType accessor_or_field, std::string const & quantity_name)
-      { register_to_map(registered_region_vertex_scalar_data[region_id], accessor_or_field, quantity_name); }
+      /** @brief Registers a vertex scalar accessor with a given quantity name for a given region ID */
+      template<typename AccessorT>
+      void register_vertex_scalar(region_id_type region_id, AccessorT accessor, std::string const & quantity_name)
+      { register_to_map<viennagrid_numeric>(registered_region_vertex_scalar_data[region_id], accessor, quantity_name); }
 
-      /** @brief Registers a vertex scalar accessor/field with a given quantity name for a given region */
-      template<typename AccessorOrFieldType>
-      void register_vertex_scalar(RegionType const & region, AccessorOrFieldType accessor_or_field, std::string const & quantity_name)
-      { register_vertex_scalar(region.id(), accessor_or_field, quantity_name); }
-
-
-      /** @brief Registers a vertex vector accessor/field with a given quantity name */
-      template<typename AccessorOrFieldType>
-      void register_vertex_vector(AccessorOrFieldType accessor_or_field, std::string const & quantity_name)
-      { register_to_map(registered_vertex_vector_data, accessor_or_field, quantity_name); }
-
-      /** @brief Registers a vertex vector accessor/field with a given quantity name for a given region ID */
-      template<typename AccessorOrFieldType>
-      void register_vertex_vector(region_id_type region_id, AccessorOrFieldType accessor_or_field, std::string const & quantity_name)
-      { register_to_map(registered_region_vertex_vector_data[region_id], accessor_or_field, quantity_name); }
-
-      /** @brief Registers a vertex vector accessor/field with a given quantity name for a given region */
-      template<typename AccessorOrFieldType>
-      void register_vertex_vector(RegionType const & region, AccessorOrFieldType accessor_or_field, std::string const & quantity_name)
-      { register_vertex_vector(region.id(), accessor_or_field, quantity_name); }
+      /** @brief Registers a vertex scalar accessor with a given quantity name for a given region */
+      template<typename AccessorT>
+      void register_vertex_scalar(RegionType const & region, AccessorT accessor, std::string const & quantity_name)
+      { register_vertex_scalar(region.id(), accessor, quantity_name); }
 
 
+      /** @brief Registers a vertex vector accessor with a given quantity name */
+      template<typename AccessorT>
+      void register_vertex_vector(AccessorT accessor, std::string const & quantity_name)
+      { register_to_map<vector_data_type>(registered_vertex_vector_data, accessor, quantity_name); }
 
+      /** @brief Registers a vertex vector accessor with a given quantity name for a given region ID */
+      template<typename AccessorT>
+      void register_vertex_vector(region_id_type region_id, AccessorT accessor, std::string const & quantity_name)
+      { register_to_map<vector_data_type>(registered_region_vertex_vector_data[region_id], accessor, quantity_name); }
 
-      /** @brief Registers a cell scalar accessor/field with a given quantity name */
-      template<typename AccessorOrFieldType>
-      void register_cell_scalar(AccessorOrFieldType accessor_or_field, std::string const & quantity_name)
-      { register_to_map(registered_cell_scalar_data, accessor_or_field, quantity_name); }
-
-      /** @brief Registers a cell scalar accessor/field with a given quantity name for a given region ID */
-      template<typename AccessorOrFieldType>
-      void register_cell_scalar(region_id_type region_id, AccessorOrFieldType accessor_or_field, std::string const & quantity_name)
-      { register_to_map(registered_region_cell_scalar_data[region_id], accessor_or_field, quantity_name); }
-
-      /** @brief Registers a cell scalar accessor/field with a given quantity name for a given region */
-      template<typename AccessorOrFieldType>
-      void register_cell_scalar(RegionType const & region, AccessorOrFieldType accessor_or_field, std::string const & quantity_name)
-      { register_cell_scalar(region.id(), accessor_or_field, quantity_name); }
-
-
-      /** @brief Registers a cell vector accessor/field with a given quantity name */
-      template<typename AccessorOrFieldType>
-      void register_cell_vector(AccessorOrFieldType accessor_or_field, std::string const & quantity_name)
-      { register_to_map(registered_cell_vector_data, accessor_or_field, quantity_name); }
-
-      /** @brief Registers a cell vector accessor/field with a given quantity name for a given region ID */
-      template<typename AccessorOrFieldType>
-      void register_cell_vector(region_id_type region_id, AccessorOrFieldType accessor_or_field, std::string const & quantity_name)
-      { register_to_map(registered_region_cell_vector_data[region_id], accessor_or_field, quantity_name); }
-
-      /** @brief Registers a cell vector accessor/field with a given quantity name for a given region */
-      template<typename AccessorOrFieldType>
-      void register_cell_vector(RegionType const & region, AccessorOrFieldType accessor_or_field, std::string const & quantity_name)
-      { register_cell_vector(region.id(), accessor_or_field, quantity_name); }
+      /** @brief Registers a vertex vector accessor with a given quantity name for a given region */
+      template<typename AccessorT>
+      void register_vertex_vector(RegionType const & region, AccessorT accessor, std::string const & quantity_name)
+      { register_vertex_vector(region.id(), accessor, quantity_name); }
 
 
 
 
+      /** @brief Registers a cell scalar accessor with a given quantity name */
+      template<typename AccessorT>
+      void register_cell_scalar(AccessorT accessor, std::string const & quantity_name)
+      { register_to_map<viennagrid_numeric>(registered_cell_scalar_data, accessor, quantity_name); }
+
+      /** @brief Registers a cell scalar accessor with a given quantity name for a given region ID */
+      template<typename AccessorT>
+      void register_cell_scalar(region_id_type region_id, AccessorT accessor, std::string const & quantity_name)
+      { register_to_map<viennagrid_numeric>(registered_region_cell_scalar_data[region_id], accessor, quantity_name); }
+
+      /** @brief Registers a cell scalar accessor with a given quantity name for a given region */
+      template<typename AccessorT>
+      void register_cell_scalar(RegionType const & region, AccessorT accessor, std::string const & quantity_name)
+      { register_cell_scalar(region.id(), accessor, quantity_name); }
 
 
-      /** @brief Returns the vertex scalar field for a given quantity name and a given region ID. If the quantity name was registered before an invalid field is returned. */
-      typename viennagrid::result_of::field<const std::deque<double>, VertexType >::type vertex_scalar_field( std::string const & quantity_name, region_id_type region_id ) const
+      /** @brief Registers a cell vector accessor with a given quantity name */
+      template<typename AccessorT>
+      void register_cell_vector(AccessorT accessor, std::string const & quantity_name)
+      { register_to_map<vector_data_type>(registered_cell_vector_data, accessor, quantity_name); }
+
+      /** @brief Registers a cell vector accessor with a given quantity name for a given region ID */
+      template<typename AccessorT>
+      void register_cell_vector(region_id_type region_id, AccessorT accessor, std::string const & quantity_name)
+      { register_to_map<vector_data_type>(registered_region_cell_vector_data[region_id], accessor, quantity_name); }
+
+      /** @brief Registers a cell vector accessor with a given quantity name for a given region */
+      template<typename AccessorT>
+      void register_cell_vector(RegionType const & region, AccessorT accessor, std::string const & quantity_name)
+      { register_cell_vector(region.id(), accessor, quantity_name); }
+
+
+
+
+
+
+      /** @brief Returns the vertex scalar accessor for a given quantity name and a given region ID. If the quantity name was registered before an invalid accessor is returned. */
+      typename viennagrid::result_of::accessor< std::deque<double>, ElementType >::type vertex_scalar_accessor( std::string const & quantity_name, region_id_type region_id )
       {
-        typename std::map< std::string, std::map<region_id_type, std::deque<double> > >::const_iterator it = vertex_scalar_data.find(quantity_name);
-        if (it == vertex_scalar_data.end()) return typename viennagrid::result_of::field<const std::deque<double>, VertexType >::type();
+        typename std::map< std::string, std::map<region_id_type, std::deque<double> > >::iterator it = vertex_scalar_data.find(quantity_name);
+        if (it == vertex_scalar_data.end()) return typename viennagrid::result_of::accessor<std::deque<double>, ElementType >::type();
 
-        typename std::map<region_id_type, std::deque<double> >::const_iterator jt = it->second.find( region_id );
-        if (jt == it->second.end()) return typename viennagrid::result_of::field<const std::deque<double>, VertexType >::type();
+        typename std::map<region_id_type, std::deque<double> >::iterator jt = it->second.find( region_id );
+        if (jt == it->second.end()) return typename viennagrid::result_of::accessor<std::deque<double>, ElementType >::type();
 
-        return viennagrid::make_field<VertexType>( jt->second );
+        return viennagrid::make_accessor<ElementType>( jt->second );
       }
 
-      /** @brief Returns the vertex scalar field for a given quantity name and a given region. If the quantity name was registered before an invalid field is returned. */
-      typename viennagrid::result_of::field<const std::deque<double>, VertexType >::type vertex_scalar_field( std::string const & quantity_name, RegionType const & region ) const
-      { return vertex_scalar_field(quantity_name, region.id()); }
+      /** @brief Returns the vertex scalar accessor for a given quantity name and a given region. If the quantity name was registered before an invalid accessor is returned. */
+      typename viennagrid::result_of::accessor< std::deque<double>, ElementType >::type vertex_scalar_accessor( std::string const & quantity_name, RegionType const & region )
+      { return vertex_scalar_accessor(quantity_name, region.id()); }
 
 
-      /** @brief Returns the vertex vector field for a given quantity name and a given region ID. If the quantity name was registered before an invalid field is returned. */
-      typename viennagrid::result_of::field<const std::deque<vector_data_type>, VertexType >::type vertex_vector_field( std::string const & quantity_name, region_id_type region_id ) const
+      /** @brief Returns the vertex vector accessor for a given quantity name and a given region ID. If the quantity name was registered before an invalid accessor is returned. */
+      typename viennagrid::result_of::accessor< std::deque<vector_data_type>, ElementType >::type vertex_vector_accessor( std::string const & quantity_name, region_id_type region_id )
       {
-        typename std::map< std::string, std::map<region_id_type, std::deque<vector_data_type> > >::const_iterator it = vertex_vector_data.find(quantity_name);
-        if (it == vertex_vector_data.end()) return typename viennagrid::result_of::field<const std::deque<vector_data_type>, VertexType >::type();
+        typename std::map< std::string, std::map<region_id_type, std::deque<vector_data_type> > >::iterator it = vertex_vector_data.find(quantity_name);
+        if (it == vertex_vector_data.end()) return typename viennagrid::result_of::accessor<std::deque<vector_data_type>, ElementType >::type();
 
-        typename std::map<region_id_type, std::deque<vector_data_type> >::const_iterator jt = it->second.find( region_id );
-        if (jt == it->second.end()) return typename viennagrid::result_of::field<const std::deque<vector_data_type>, VertexType >::type();
+        typename std::map<region_id_type, std::deque<vector_data_type> >::iterator jt = it->second.find( region_id );
+        if (jt == it->second.end()) return typename viennagrid::result_of::accessor<std::deque<vector_data_type>, ElementType >::type();
 
-        return viennagrid::make_field<VertexType>( jt->second );
+        return viennagrid::make_accessor<ElementType>( jt->second );
       }
 
-      /** @brief Returns the vertex vector field for a given quantity name and a given region. If the quantity name was registered before an invalid field is returned. */
-      typename viennagrid::result_of::field<const std::deque<vector_data_type>, VertexType >::type vertex_vector_field( std::string const & quantity_name, RegionType const & region )
-      { return vertex_vector_field(quantity_name, region.id()); }
+      /** @brief Returns the vertex vector accessor for a given quantity name and a given region. If the quantity name was registered before an invalid accessor is returned. */
+      typename viennagrid::result_of::accessor< std::deque<vector_data_type>, ElementType >::type vertex_vector_accessor( std::string const & quantity_name, RegionType const & region )
+      { return vertex_vector_accessor(quantity_name, region.id()); }
 
 
 
-      /** @brief Returns the cell scalar field for a given quantity name and a given region ID. If the quantity name was registered before an invalid field is returned. */
-      typename viennagrid::result_of::field<const std::deque<double>, CellType >::type cell_scalar_field( std::string const & quantity_name, region_id_type region_id ) const
+      /** @brief Returns the cell scalar accessor for a given quantity name and a given region ID. If the quantity name was registered before an invalid accessor is returned. */
+      typename viennagrid::result_of::accessor< std::deque<double>, ElementType >::type cell_scalar_accessor( std::string const & quantity_name, region_id_type region_id )
       {
-        typename std::map< std::string, std::map<region_id_type, std::deque<double> > >::const_iterator it = cell_scalar_data.find(quantity_name);
-        if (it == cell_scalar_data.end()) return typename viennagrid::result_of::field<const std::deque<double>, CellType >::type();
+        typename std::map< std::string, std::map<region_id_type, std::deque<double> > >::iterator it = cell_scalar_data.find(quantity_name);
+        if (it == cell_scalar_data.end()) return typename viennagrid::result_of::accessor<std::deque<double>, ElementType >::type();
 
-        typename std::map<region_id_type, std::deque<double> >::const_iterator jt = it->second.find( region_id );
-        if (jt == it->second.end()) return typename viennagrid::result_of::field<const std::deque<double>, CellType >::type();
+        typename std::map<region_id_type, std::deque<double> >::iterator jt = it->second.find( region_id );
+        if (jt == it->second.end()) return typename viennagrid::result_of::accessor<std::deque<double>, ElementType >::type();
 
-        return viennagrid::make_field<CellType>( jt->second );
+        return viennagrid::make_accessor<ElementType>( jt->second );
       }
 
-      /** @brief Returns the cell scalar field for a given quantity name and a given region. If the quantity name was registered before an invalid field is returned. */
-      typename viennagrid::result_of::field<const std::deque<double>, CellType >::type cell_scalar_field( std::string const & quantity_name, RegionType const & region ) const
-      { return cell_scalar_field(quantity_name, region.id()); }
+      /** @brief Returns the cell scalar accessor for a given quantity name and a given region. If the quantity name was registered before an invalid accessor is returned. */
+      typename viennagrid::result_of::accessor< std::deque<double>, ElementType >::type cell_scalar_accessor( std::string const & quantity_name, RegionType const & region )
+      { return cell_scalar_accessor(quantity_name, region.id()); }
 
 
-      /** @brief Returns the cell vector field for a given quantity name and a given region ID. If the quantity name was registered before an invalid field is returned. */
-      typename viennagrid::result_of::field<const std::deque<vector_data_type>, CellType >::type cell_vector_field( std::string const & quantity_name, region_id_type region_id ) const
+      /** @brief Returns the cell vector accessor for a given quantity name and a given region ID. If the quantity name was registered before an invalid accessor is returned. */
+      typename viennagrid::result_of::accessor< std::deque<vector_data_type>, ElementType >::type cell_vector_accessor( std::string const & quantity_name, region_id_type region_id )
       {
-        typename std::map< std::string, std::map<region_id_type, std::deque<vector_data_type> > >::const_iterator it = cell_vector_data.find(quantity_name);
-        if (it == cell_vector_data.end()) return typename viennagrid::result_of::field<const std::deque<vector_data_type>, CellType >::type();
+        typename std::map< std::string, std::map<region_id_type, std::deque<vector_data_type> > >::iterator it = cell_vector_data.find(quantity_name);
+        if (it == cell_vector_data.end()) return typename viennagrid::result_of::accessor<std::deque<vector_data_type>, ElementType >::type();
 
-        typename std::map<region_id_type, std::deque<vector_data_type> >::const_iterator jt = it->second.find( region_id );
-        if (jt == it->second.end()) return typename viennagrid::result_of::field<const std::deque<vector_data_type>, CellType >::type();
+        typename std::map<region_id_type, std::deque<vector_data_type> >::iterator jt = it->second.find( region_id );
+        if (jt == it->second.end()) return typename viennagrid::result_of::accessor<std::deque<vector_data_type>, ElementType >::type();
 
-        return viennagrid::make_field<CellType>( jt->second );
+        return viennagrid::make_accessor<ElementType>( jt->second );
       }
 
-      /** @brief Returns the cell vector field for a given quantity name and a given region. If the quantity name was registered before an invalid field is returned. */
-      typename viennagrid::result_of::field<const std::deque<vector_data_type>, CellType >::type cell_vector_field( std::string const & quantity_name, RegionType const & region ) const
-      { return cell_vector_field(quantity_name, region.id()); }
+      /** @brief Returns the cell vector accessor for a given quantity name and a given region. If the quantity name was registered before an invalid accessor is returned. */
+      typename viennagrid::result_of::accessor< std::deque<vector_data_type>, ElementType >::type cell_vector_accessor( std::string const & quantity_name, RegionType const & region )
+      { return cell_vector_accessor(quantity_name, region.id()); }
 
 
     private:
@@ -1256,34 +1259,34 @@ namespace viennagrid
     /** @brief Registers scalar-valued data on vertices at the VTK reader
       *
       * @tparam MeshT             The mesh type to be read to
-      * @tparam AccessorOrFieldT    An accessor/field holding scalar data
+      * @tparam AccessorOrFieldT    An accessor holding scalar data
       * @param  reader              The VTK reader object for which the data should be registered
-      * @param  accessor_or_field   The accessor object holding scalar data on vertices
+      * @param  accessor   The accessor object holding scalar data on vertices
       * @param  quantity_name       The quantity name within the VTK file
       */
     template <typename MeshT, typename AccessorOrFieldT>
     vtk_reader<MeshT> & add_scalar_data_on_vertices(vtk_reader<MeshT> & reader,
-                                                    AccessorOrFieldT const accessor_or_field,
+                                                    AccessorOrFieldT const accessor,
                                                     std::string const & quantity_name)
     {
-      reader.register_vertex_scalar(accessor_or_field, quantity_name);
+      reader.register_vertex_scalar(accessor, quantity_name);
       return reader;
     }
 
     /** @brief Registers vector-valued data on vertices at the VTK reader
       *
       * @tparam MeshT             The mesh type to be read to
-      * @tparam AccessorOrFieldT    An accessor/field holding vector data
+      * @tparam AccessorOrFieldT    An accessor holding vector data
       * @param  reader              The VTK reader object for which the data should be registered
-      * @param  accessor_or_field   The accessor object holding vector data on vertices
+      * @param  accessor   The accessor object holding vector data on vertices
       * @param  quantity_name       The quantity name within the VTK file
       */
     template <typename MeshT, typename AccessorOrFieldT>
     vtk_reader<MeshT> & add_vector_data_on_vertices(vtk_reader<MeshT> & reader,
-                                                    AccessorOrFieldT const accessor_or_field,
+                                                    AccessorOrFieldT const accessor,
                                                     std::string const & quantity_name)
     {
-      reader.register_vertex_vector(accessor_or_field, quantity_name);
+      reader.register_vertex_vector(accessor, quantity_name);
       return reader;
     }
 
@@ -1296,15 +1299,15 @@ namespace viennagrid
       * @tparam MeshT             The mesh type to be read to
       * @tparam AccessorOrFieldT    An accessor/field holding scalar data
       * @param  reader              The VTK reader object for which the data should be registered
-      * @param  accessor_or_field   The accessor object holding scalar data on cells
+      * @param  accessor   The accessor object holding scalar data on cells
       * @param  quantity_name       The quantity name within the VTK file
       */
     template <typename MeshT, typename AccessorOrFieldT>
     vtk_reader<MeshT> & add_scalar_data_on_cells(vtk_reader<MeshT> & reader,
-                                                  AccessorOrFieldT const accessor_or_field,
+                                                  AccessorOrFieldT const accessor,
                                                   std::string const & quantity_name)
     {
-      reader.register_cell_scalar(accessor_or_field, quantity_name);
+      reader.register_cell_scalar(accessor, quantity_name);
       return reader;
     }
 
@@ -1313,15 +1316,15 @@ namespace viennagrid
       * @tparam MeshT             The mesh type to be read to
       * @tparam AccessorOrFieldT    An accessor/field holding vector data
       * @param  reader              The VTK reader object for which the data should be registered
-      * @param  accessor_or_field   The accessor object holding vector data on cells
+      * @param  accessor   The accessor object holding vector data on cells
       * @param  quantity_name       The quantity name within the VTK file
       */
     template <typename MeshT, typename AccessorOrFieldT>
     vtk_reader<MeshT> & add_vector_data_on_cells(vtk_reader<MeshT> & reader,
-                                                  AccessorOrFieldT const accessor_or_field,
+                                                  AccessorOrFieldT const accessor,
                                                   std::string const & quantity_name)
     {
-      reader.register_cell_vector(accessor_or_field, quantity_name);
+      reader.register_cell_vector(accessor, quantity_name);
       return reader;
     }
 

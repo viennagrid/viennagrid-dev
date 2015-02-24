@@ -38,7 +38,7 @@ namespace viennagrid
     for ( VertexIterator vit = vertices.begin();
           vit != vertices.end();
           ++vit )
-      accessor( *vit, func(accessor(*vit)) );
+      accessor.set( *vit, func(accessor.get(*vit)) );
   }
 
   /** @brief Transforms all points of a mesh based on a functor

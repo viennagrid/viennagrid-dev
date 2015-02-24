@@ -135,30 +135,30 @@ namespace viennagrid
 
     template <typename PointAccessorT, bool element_is_const>
     std::pair<point_t, typename viennagrid::result_of::point<PointAccessorT, base_element<element_is_const> >::type>
-    closest_points_impl(PointAccessorT const accessor,
+    closest_points_impl(PointAccessorT const & accessor,
                         point_t const & p1,
                         base_element<element_is_const> const & v2, vertex_tag)
     {
-      return closest_points_impl(p1, accessor(v2));
+      return closest_points_impl(p1, accessor.get(v2));
     }
 
     template <typename PointAccessorT, bool element_is_const>
     std::pair<typename viennagrid::result_of::point< base_element<element_is_const> >::type, point_t >
-    closest_points_impl(PointAccessorT const accessor,
+    closest_points_impl(PointAccessorT const & accessor,
                         base_element<element_is_const> const & v1, vertex_tag,
                         point_t const & p2)
     {
-      return closest_points_impl(accessor(v1), p2);
+      return closest_points_impl(accessor.get(v1), p2);
     }
 
     // Closest points between vertices:
     template <typename PointAccessorT, bool element1_is_const, bool element2_is_const>
     std::pair<typename viennagrid::result_of::point< base_element<element1_is_const> >::type, typename viennagrid::result_of::point< base_element<element2_is_const> >::type>
-    closest_points_impl(PointAccessorT const accessor,
+    closest_points_impl(PointAccessorT const & accessor,
                         base_element<element1_is_const> const & v1, vertex_tag,
                         base_element<element2_is_const> const & v2, vertex_tag)
     {
-      return closest_points_impl( accessor(v1), accessor(v2) );
+      return closest_points_impl( accessor.get(v1), accessor.get(v2) );
     }
 
 
@@ -192,24 +192,24 @@ namespace viennagrid
     //convenience overload: point and simplex line
     template <typename PointAccessorT, bool element_is_const>
     std::pair<point_t, typename viennagrid::result_of::point<PointAccessorT, base_element<element_is_const> >::type>
-            closest_points_impl(PointAccessorT const accessor,
+            closest_points_impl(PointAccessorT const & accessor,
                                 point_t const & p,
                                 base_element<element_is_const> const & el, line_tag)
     {
       return closest_points_point_line(p,
-                                       accessor(vertices(el)[0]),
-                                       accessor(vertices(el)[1]));
+                                       accessor.get(vertices(el)[0]),
+                                       accessor.get(vertices(el)[1]));
     }
 
     //convenience overload: vertex and simplex line
     template <typename PointAccessorT, bool element1_is_const, bool element2_is_const>
     std::pair<typename viennagrid::result_of::point<PointAccessorT, base_element<element1_is_const> >::type,
               typename viennagrid::result_of::point<PointAccessorT, base_element<element2_is_const> >::type>
-            closest_points_impl(PointAccessorT const accessor,
+            closest_points_impl(PointAccessorT const & accessor,
                                 base_element<element1_is_const> const & v, vertex_tag,
                                 base_element<element2_is_const> const & el, line_tag)
     {
-      return closest_points_impl(accessor, accessor(v), el, line_tag());
+      return closest_points_impl(accessor, accessor.get(v), el, line_tag());
     }
 
     //
@@ -281,14 +281,14 @@ namespace viennagrid
     template <typename PointAccessorT, bool element1_is_const, bool element2_is_const>
     std::pair<typename viennagrid::result_of::point<PointAccessorT, base_element<element1_is_const> >::type,
               typename viennagrid::result_of::point<PointAccessorT, base_element<element2_is_const> >::type>
-            closest_points_impl(PointAccessorT const accessor,
+            closest_points_impl(PointAccessorT const & accessor,
                                 base_element<element1_is_const> const & line0, line_tag,
                                 base_element<element2_is_const> const & line1, line_tag)
     {
-      return closest_points_line_line(accessor(vertices(line0)[0]),
-                                      accessor(vertices(line0)[1]),
-                                      accessor(vertices(line1)[0]),
-                                      accessor(vertices(line1)[1]));
+      return closest_points_line_line(accessor.get(vertices(line0)[0]),
+                                      accessor.get(vertices(line0)[1]),
+                                      accessor.get(vertices(line1)[0]),
+                                      accessor.get(vertices(line1)[1]));
     }
 
     //
@@ -366,25 +366,25 @@ namespace viennagrid
     //convenience overload: point
     template <typename PointAccessorT, bool element_is_const>
     std::pair<point_t, typename viennagrid::result_of::point<PointAccessorT, base_element<element_is_const> >::type >
-            closest_points_impl(PointAccessorT const accessor,
+            closest_points_impl(PointAccessorT const & accessor,
                                 point_t const & p,
                                 base_element<element_is_const> const & el, triangle_tag)
     {
       return closest_points_point_triangle(p,
-                                           accessor(vertices(el)[0]),
-                                           accessor(vertices(el)[1]),
-                                           accessor(vertices(el)[2]));
+                                           accessor.get(vertices(el)[0]),
+                                           accessor.get(vertices(el)[1]),
+                                           accessor.get(vertices(el)[2]));
     }
 
     //convenience overload: vertex
     template <typename PointAccessorT, bool element1_is_const, bool element2_is_const>
     std::pair<typename viennagrid::result_of::point<PointAccessorT, base_element<element1_is_const> >::type,
               typename viennagrid::result_of::point<PointAccessorT, base_element<element2_is_const> >::type >
-    closest_points_impl(PointAccessorT const accessor,
+    closest_points_impl(PointAccessorT const & accessor,
                         base_element<element1_is_const> const & v, vertex_tag,
                         base_element<element2_is_const> const & el, triangle_tag)
     {
-      return closest_points_impl( accessor, accessor(v), el, triangle_tag() );
+      return closest_points_impl( accessor, accessor.get(v), el, triangle_tag() );
     }
 
 
@@ -408,18 +408,18 @@ namespace viennagrid
     //
     template <typename PointAccessorT, bool element_is_const>
     std::pair<point_t, typename viennagrid::result_of::point<PointAccessorT, base_element<element_is_const> >::type>
-            closest_points_impl(PointAccessorT const accessor,
+            closest_points_impl(PointAccessorT const & accessor,
                                 point_t const & p,
                                 base_element<element_is_const> const & el, quadrilateral_tag)
     {
       return point_pair_with_shortest_distance(closest_points_point_triangle(p,
-                                                                             accessor(vertices(el)[0]),
-                                                                             accessor(vertices(el)[1]),
-                                                                             accessor(vertices(el)[2])),
+                                                                             accessor.get(vertices(el)[0]),
+                                                                             accessor.get(vertices(el)[1]),
+                                                                             accessor.get(vertices(el)[2])),
                                                closest_points_point_triangle(p,
-                                                                             accessor(vertices(el)[1]),
-                                                                             accessor(vertices(el)[3]),
-                                                                             accessor(vertices(el)[2]))
+                                                                             accessor.get(vertices(el)[1]),
+                                                                             accessor.get(vertices(el)[3]),
+                                                                             accessor.get(vertices(el)[2]))
                                               );
     }
 
@@ -427,11 +427,11 @@ namespace viennagrid
     template <typename PointAccessorT, bool element1_is_const, bool element2_is_const>
     std::pair<typename viennagrid::result_of::point<PointAccessorT, base_element<element1_is_const> >::type,
               typename viennagrid::result_of::point<PointAccessorT, base_element<element2_is_const> >::type>
-            closest_points_impl(PointAccessorT const accessor,
+            closest_points_impl(PointAccessorT const & accessor,
                                 base_element<element1_is_const> const & v, vertex_tag,
                                 base_element<element2_is_const> const & el, quadrilateral_tag)
     {
-      return closest_points_impl( accessor(v), el);
+      return closest_points_impl( accessor.get(v), el);
     }
 
 
@@ -529,26 +529,26 @@ namespace viennagrid
     //convenience overload: point
     template <typename PointAccessorT, bool element_is_const>
     std::pair<point_t, typename viennagrid::result_of::point<PointAccessorT, base_element<element_is_const> >::type>
-            closest_points_impl(PointAccessorT const accessor,
+            closest_points_impl(PointAccessorT const & accessor,
                                 point_t const & p,
                                 base_element<element_is_const> const & el, tetrahedron_tag)
     {
       return closest_points_point_tetrahedron(p,
-                                              accessor(vertices(el)[0]),
-                                              accessor(vertices(el)[1]),
-                                              accessor(vertices(el)[2]),
-                                              accessor(vertices(el)[3]));
+                                              accessor.get(vertices(el)[0]),
+                                              accessor.get(vertices(el)[1]),
+                                              accessor.get(vertices(el)[2]),
+                                              accessor.get(vertices(el)[3]));
     }
 
     //convenience overload: vertex
     template <typename PointAccessorT, bool element1_is_const, bool element2_is_const>
     std::pair<typename viennagrid::result_of::point<PointAccessorT, base_element<element1_is_const> >::type,
               typename viennagrid::result_of::point<PointAccessorT, base_element<element1_is_const> >::type>
-            closest_points_impl(PointAccessorT const accessor,
+            closest_points_impl(PointAccessorT const & accessor,
                                 base_element<element1_is_const> const & v, vertex_tag,
                                 base_element<element2_is_const> const & el, tetrahedron_tag)
     {
-      return closest_points_impl(accessor, accessor(v), el, tetrahedron_tag());
+      return closest_points_impl(accessor, accessor.get(v), el, tetrahedron_tag());
     }
 
 
@@ -560,40 +560,40 @@ namespace viennagrid
     //convenience overload: point
     template <typename PointAccessorT, bool element_is_const>
     std::pair<point_t, typename viennagrid::result_of::point<PointAccessorT, base_element<element_is_const> >::type >
-            closest_points_impl(PointAccessorT const accessor,
+            closest_points_impl(PointAccessorT const & accessor,
                                 point_t const & p,
                                 base_element<element_is_const> const & el, hexahedron_tag)
     {
       return point_pair_with_shortest_distance(closest_points_point_tetrahedron(p,
-                                                                                accessor(vertices(el)[0]),
-                                                                                accessor(vertices(el)[1]),
-                                                                                accessor(vertices(el)[3]),
-                                                                                accessor(vertices(el)[7])),
+                                                                                accessor.get(vertices(el)[0]),
+                                                                                accessor.get(vertices(el)[1]),
+                                                                                accessor.get(vertices(el)[3]),
+                                                                                accessor.get(vertices(el)[7])),
                                                closest_points_point_tetrahedron(p,
-                                                                                accessor(vertices(el)[0]),
-                                                                                accessor(vertices(el)[1]),
-                                                                                accessor(vertices(el)[7]),
-                                                                                accessor(vertices(el)[5])),
+                                                                                accessor.get(vertices(el)[0]),
+                                                                                accessor.get(vertices(el)[1]),
+                                                                                accessor.get(vertices(el)[7]),
+                                                                                accessor.get(vertices(el)[5])),
                                                closest_points_point_tetrahedron(p,
-                                                                                accessor(vertices(el)[0]),
-                                                                                accessor(vertices(el)[2]),
-                                                                                accessor(vertices(el)[6]),
-                                                                                accessor(vertices(el)[7])),
+                                                                                accessor.get(vertices(el)[0]),
+                                                                                accessor.get(vertices(el)[2]),
+                                                                                accessor.get(vertices(el)[6]),
+                                                                                accessor.get(vertices(el)[7])),
                                                closest_points_point_tetrahedron(p,
-                                                                                accessor(vertices(el)[0]),
-                                                                                accessor(vertices(el)[3]),
-                                                                                accessor(vertices(el)[2]),
-                                                                                accessor(vertices(el)[7])),
+                                                                                accessor.get(vertices(el)[0]),
+                                                                                accessor.get(vertices(el)[3]),
+                                                                                accessor.get(vertices(el)[2]),
+                                                                                accessor.get(vertices(el)[7])),
                                                closest_points_point_tetrahedron(p,
-                                                                                accessor(vertices(el)[0]),
-                                                                                accessor(vertices(el)[5]),
-                                                                                accessor(vertices(el)[7]),
-                                                                                accessor(vertices(el)[4])),
+                                                                                accessor.get(vertices(el)[0]),
+                                                                                accessor.get(vertices(el)[5]),
+                                                                                accessor.get(vertices(el)[7]),
+                                                                                accessor.get(vertices(el)[4])),
                                                closest_points_point_tetrahedron(p,
-                                                                                accessor(vertices(el)[0]),
-                                                                                accessor(vertices(el)[6]),
-                                                                                accessor(vertices(el)[4]),
-                                                                                accessor(vertices(el)[7]))
+                                                                                accessor.get(vertices(el)[0]),
+                                                                                accessor.get(vertices(el)[6]),
+                                                                                accessor.get(vertices(el)[4]),
+                                                                                accessor.get(vertices(el)[7]))
                                               );
     }
 
@@ -601,11 +601,11 @@ namespace viennagrid
     template <typename PointAccessorT, bool element1_is_const, bool element2_is_const>
     std::pair<typename viennagrid::result_of::point<PointAccessorT, base_element<element1_is_const> >::type,
               typename viennagrid::result_of::point<PointAccessorT, base_element<element2_is_const> >::type>
-    closest_points_impl(PointAccessorT const accessor,
+    closest_points_impl(PointAccessorT const & accessor,
                         base_element<element1_is_const> const & v, vertex_tag,
                         base_element<element2_is_const> const & el, hexahedron_tag)
     {
-      return closest_points_impl( accessor(v), el);
+      return closest_points_impl( accessor.get(v), el);
     }
 
 
@@ -615,7 +615,7 @@ namespace viennagrid
     template <typename PointAccessorT, bool element_is_const>
     std::pair<point_t,
               typename viennagrid::result_of::point<PointAccessorT, base_element<element_is_const> >::type>
-    closest_points_impl(PointAccessorT const accessor,
+    closest_points_impl(PointAccessorT const & accessor,
                         point_t const & p,
                         base_element<element_is_const> const & el2)
     {
@@ -640,7 +640,7 @@ namespace viennagrid
     template <typename PointAccessorT, bool element_is_const>
     std::pair<point_t,
               typename viennagrid::result_of::point<PointAccessorT, base_element<element_is_const> >::type>
-    closest_points_impl(PointAccessorT const accessor,
+    closest_points_impl(PointAccessorT const & accessor,
                         base_element<element_is_const> const & el1,
                         point_t const & p)
     {
@@ -652,7 +652,7 @@ namespace viennagrid
     template <typename PointAccessorT, bool element1_is_const, bool element2_is_const>
     std::pair<typename viennagrid::result_of::point<PointAccessorT, base_element<element1_is_const> >::type,
               typename viennagrid::result_of::point<PointAccessorT, base_element<element2_is_const> >::type>
-    closest_points_impl(PointAccessorT const accessor,
+    closest_points_impl(PointAccessorT const & accessor,
                         base_element<element1_is_const> const & el1,
                         base_element<element2_is_const> const & el2)
     {
@@ -718,7 +718,7 @@ namespace viennagrid
 
     template <typename PointAccessorT, bool element_is_const>
     std::pair<point_t, typename viennagrid::result_of::point< base_element<element_is_const> >::type>
-    closest_points_on_boundary_impl(PointAccessorT const accessor,
+    closest_points_on_boundary_impl(PointAccessorT const & accessor,
                                     point_t const & p1,
                                     base_element<element_is_const> const & v2)
     {
@@ -727,7 +727,7 @@ namespace viennagrid
 
     template <typename PointAccessorT, bool element_is_const>
     std::pair<typename viennagrid::result_of::point< base_element<element_is_const> >::type, point_t >
-    closest_points_on_boundary_impl(PointAccessorT const accessor,
+    closest_points_on_boundary_impl(PointAccessorT const & accessor,
                                     point_t const & p2,
                                     base_element<element_is_const> const & v1)
     {
@@ -737,7 +737,7 @@ namespace viennagrid
     // Closest points between vertices:
     template <typename PointAccessorT, bool element1_is_const, bool element2_is_const>
     std::pair<typename viennagrid::result_of::point< base_element<element1_is_const> >::type, typename viennagrid::result_of::point< base_element<element2_is_const> >::type>
-    closest_points_on_boundary_impl(PointAccessorT const accessor,
+    closest_points_on_boundary_impl(PointAccessorT const & accessor,
                                     base_element<element1_is_const> const & v1,
                                     base_element<element2_is_const> const & v2)
     {
@@ -749,7 +749,7 @@ namespace viennagrid
     /** @tparam ContainerType   Any topological object (ncell, segment, mesh) */
     template<typename PointAccessorT, typename SomethingT>
     std::pair<point_t, typename viennagrid::result_of::point<PointAccessorT, SomethingT>::type >
-    closest_points_on_boundary_point_to_any(PointAccessorT const accessor,
+    closest_points_on_boundary_point_to_any(PointAccessorT const & accessor,
                                             viennagrid_int topologic_dimension,
                                             point_t const & p,
                                             SomethingT const & cont)
@@ -816,7 +816,7 @@ namespace viennagrid
 
     template <typename PointAccessorT, bool element1_is_const, bool element2_is_const>
     std::pair<typename PointAccessorT::value_type, typename PointAccessorT::value_type>
-    closest_points_on_boundary_impl(PointAccessorT const accessor,
+    closest_points_on_boundary_impl(PointAccessorT const & accessor,
                                     base_element<element1_is_const> const & v, vertex_tag,
                                     base_element<element2_is_const> const & el)
     {
@@ -837,7 +837,7 @@ namespace viennagrid
     template <typename PointAccessorT, typename SomethingT1, typename SomethingT2>
     std::pair< typename viennagrid::result_of::point<PointAccessorT, SomethingT1 >::type,
                typename viennagrid::result_of::point<PointAccessorT, SomethingT2 >::type>
-    closest_points_on_boundary_generic(PointAccessorT const accessor,
+    closest_points_on_boundary_generic(PointAccessorT const & accessor,
                                        SomethingT1 const & el1,
                                        SomethingT2 const & el2)
     {
@@ -897,7 +897,7 @@ namespace viennagrid
               bool element2_is_const>
     std::pair< typename viennagrid::result_of::point<PointAccessorT, base_element<element1_is_const> >::type,
                typename viennagrid::result_of::point<PointAccessorT, base_element<element2_is_const> >::type >
-    closest_points_on_boundary_impl(PointAccessorT const accessor,
+    closest_points_on_boundary_impl(PointAccessorT const & accessor,
                                     base_element<element1_is_const> const & el1,
                                     base_element<element2_is_const> const & el2)
     {
@@ -909,7 +909,7 @@ namespace viennagrid
               bool mesh_is_const>
     std::pair< typename viennagrid::result_of::point<PointAccessorT, base_element<element_is_const> >::type,
                typename viennagrid::result_of::point<PointAccessorT, base_mesh<mesh_is_const> >::type >
-    closest_points_on_boundary_impl(PointAccessorT const accessor,
+    closest_points_on_boundary_impl(PointAccessorT const & accessor,
                                     base_element<element_is_const> const & el1,
                                     base_mesh<mesh_is_const> const & mesh_obj)
     {
@@ -921,7 +921,7 @@ namespace viennagrid
               bool mesh_region_is_const>
     std::pair< typename viennagrid::result_of::point<PointAccessorT, base_element<element_is_const> >::type,
                typename viennagrid::result_of::point<PointAccessorT, base_mesh_region<mesh_region_is_const> >::type >
-    closest_points_on_boundary_impl(PointAccessorT const accessor,
+    closest_points_on_boundary_impl(PointAccessorT const & accessor,
                                     base_element<element_is_const> const & el1,
                                     base_mesh_region<mesh_region_is_const> const & region)
     {
@@ -934,7 +934,7 @@ namespace viennagrid
               bool mesh_region2_is_const>
     std::pair< typename viennagrid::result_of::point<PointAccessorT, base_mesh_region<mesh_region1_is_const> >::type,
                typename viennagrid::result_of::point<PointAccessorT, base_mesh_region<mesh_region2_is_const> >::type >
-    closest_points_on_boundary_impl(PointAccessorT const accessor,
+    closest_points_on_boundary_impl(PointAccessorT const & accessor,
                                     base_mesh_region<mesh_region1_is_const> const & region1,
                                     base_mesh_region<mesh_region2_is_const> const & region2)
     {
@@ -950,7 +950,7 @@ namespace viennagrid
   template <typename PointAccessorT, typename SomethingT1, typename SomethingT2>
   std::pair< typename viennagrid::result_of::point<PointAccessorT, SomethingT1>::type,
              typename viennagrid::result_of::point<PointAccessorT, SomethingT2>::type >
-  closest_points(PointAccessorT const accessor,
+  closest_points(PointAccessorT const & accessor,
                  SomethingT1 const & el1,
                  SomethingT2 const & el2)
   {
@@ -971,7 +971,7 @@ namespace viennagrid
   template <typename PointAccessorT, typename SomethingT1, typename SomethingT2>
   std::pair< typename viennagrid::result_of::point<PointAccessorT, SomethingT1>::type,
              typename viennagrid::result_of::point<PointAccessorT, SomethingT2>::type >
-  closest_points_on_boundary(PointAccessorT const accessor,
+  closest_points_on_boundary(PointAccessorT const & accessor,
                  SomethingT1 const & el1,
                  SomethingT2 const & el2)
   {

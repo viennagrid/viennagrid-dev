@@ -87,34 +87,26 @@ namespace viennagrid
       typedef typename result_of::point<mesh_type>::type   PointType;
       typedef typename result_of::coord<PointType>::type  CoordType;
 
-//       typedef typename result_of::cell_tag<mesh_type>::type                   CellTag;
-      typedef typename result_of::element<mesh_type>::type           CellType;
-      typedef typename result_of::const_element<mesh_type>::type           ConstCellType;
-      typedef typename result_of::id<CellType>::type                         CellIDType;
+      typedef typename result_of::element<mesh_type>::type           ElementType;
+      typedef typename result_of::id<ElementType>::type                         CellIDType;
 
-//       typedef typename result_of::element<mesh_type>::type                  ElementType;
-//       typedef typename result_of::const_element<mesh_type>::type            ConstElementType;
-//       typedef typename result_of::id<ConstElementType>::type                CellIDType;
-
-      typedef typename result_of::element<mesh_type>::type            VertexType;
-      typedef typename result_of::const_element<mesh_type>::type            ConstVertexType;
-      typedef typename result_of::id<VertexType>::type                           VertexIDType;
+      typedef typename result_of::id<ElementType>::type                           VertexIDType;
 
       typedef typename mesh_type::const_region_type RegionType;
 
 
       typedef std::vector<double> vector_data_type;
 
-      typedef base_dynamic_field<const double, ConstVertexType> VertexScalarBaseAccesor;
+      typedef base_dynamic_accessor<double, ElementType> VertexScalarBaseAccesor;
       typedef std::map< std::string, VertexScalarBaseAccesor * > VertexScalarOutputAccessorContainer;
 
-      typedef base_dynamic_field<const vector_data_type, ConstVertexType> VertexVectorBaseAccesor;
+      typedef base_dynamic_accessor<vector_data_type, ElementType> VertexVectorBaseAccesor;
       typedef std::map< std::string, VertexVectorBaseAccesor * > VertexVectorOutputAccessorContainer;
 
-      typedef base_dynamic_field<const double, ConstCellType> CellScalarBaseAccesor;
+      typedef base_dynamic_accessor<double, ElementType> CellScalarBaseAccesor;
       typedef std::map< std::string, CellScalarBaseAccesor * > CellScalarOutputAccessorContainer;
 
-      typedef base_dynamic_field<const vector_data_type, ConstCellType> CellVectorBaseAccesor;
+      typedef base_dynamic_accessor<vector_data_type, ElementType> CellVectorBaseAccesor;
       typedef std::map< std::string, CellVectorBaseAccesor * > CellVectorOutputAccessorContainer;
 
     protected:
@@ -179,11 +171,11 @@ namespace viennagrid
         typedef typename viennagrid::result_of::const_element_range<MeshRegionT>::type    CellRangeType;
         typedef typename viennagrid::result_of::iterator<CellRangeType>::type             CellRangeIterator;
 
-        typedef typename viennagrid::result_of::const_element_range<CellType>::type       VertexOnCellRange;
+        typedef typename viennagrid::result_of::const_element_range<ElementType>::type    VertexOnCellRange;
         typedef typename viennagrid::result_of::iterator<VertexOnCellRange>::type         VertexOnCellIterator;
 
-        std::map< VertexIDType, ConstVertexType > & current_used_vertex_map = used_vertex_map[region_id];
-        std::map< ConstVertexType, VertexIDType > & current_vertex_to_index_map = vertex_to_index_map[region_id];
+        std::map< VertexIDType, ElementType > & current_used_vertex_map = used_vertex_map[region_id];
+        std::map< ElementType, VertexIDType > & current_vertex_to_index_map = vertex_to_index_map[region_id];
 
 
         CellRangeType cells(region, viennagrid::topologic_dimension(region));
@@ -192,7 +184,7 @@ namespace viennagrid
           VertexOnCellRange vertices_on_cell(*it, 0);
           for (VertexOnCellIterator jt = vertices_on_cell.begin(); jt != vertices_on_cell.end(); ++jt)
           {
-              typename std::map< VertexIDType, ConstVertexType >::iterator kt = current_used_vertex_map.find( (*jt).id() );
+              typename std::map< VertexIDType, ElementType >::iterator kt = current_used_vertex_map.find( (*jt).id() );
               if (kt == current_used_vertex_map.end())
                 current_used_vertex_map.insert( std::make_pair((*jt).id(), *jt) );
 
@@ -210,7 +202,7 @@ namespace viennagrid
         }
 
         VertexIDType index = 0;
-        for (typename std::map< VertexIDType, ConstVertexType >::iterator it = current_used_vertex_map.begin(); it != current_used_vertex_map.end(); ++it)
+        for (typename std::map< VertexIDType, ElementType >::iterator it = current_used_vertex_map.begin(); it != current_used_vertex_map.end(); ++it)
           current_vertex_to_index_map.insert( std::make_pair( it->second, index++ ) );
 
         return current_vertex_to_index_map.size();
@@ -222,7 +214,7 @@ namespace viennagrid
         typedef typename viennagrid::result_of::const_element_range<MeshRegionT>::type     CellRange;
         typedef typename viennagrid::result_of::iterator<CellRange>::type                                         CellIterator;
 
-        std::set< ConstCellType > & current_used_cells_map = used_cell_map[region_id];
+        std::set< ElementType > & current_used_cells_map = used_cell_map[region_id];
 
         CellRange cells(domseg, topologic_dimension(domseg));
         for (CellIterator cit  = cells.begin();
@@ -239,12 +231,12 @@ namespace viennagrid
       template <typename RegionT>
       void writePoints(RegionT const & domseg, std::ofstream & writer, region_id_type region_id)
       {
-        std::map< VertexIDType, ConstVertexType > & current_used_vertex_map = used_vertex_map[region_id];
+        std::map< VertexIDType, ElementType > & current_used_vertex_map = used_vertex_map[region_id];
 
         writer << "   <Points>" << std::endl;
         writer << "    <DataArray type=\"Float32\" NumberOfComponents=\"3\" format=\"ascii\">" << std::endl;
 
-        for (typename std::map< VertexIDType, ConstVertexType >::iterator it = current_used_vertex_map.begin(); it != current_used_vertex_map.end(); ++it)
+        for (typename std::map< VertexIDType, ElementType >::iterator it = current_used_vertex_map.begin(); it != current_used_vertex_map.end(); ++it)
         {
           const int dim = viennagrid::geometric_dimension(domseg);
           PointWriter::write(writer, viennagrid::get_point(domseg, it->second) );
@@ -264,21 +256,21 @@ namespace viennagrid
       template <typename MeshRegionT>
       void writeCells(MeshRegionT const &, std::ofstream & writer, region_id_type region_id)
       {
-        typedef typename viennagrid::result_of::const_element_range<CellType>::type      VertexOnCellRange;
+        typedef typename viennagrid::result_of::const_element_range<ElementType>::type    VertexOnCellRange;
         typedef typename viennagrid::result_of::iterator<VertexOnCellRange>::type         VertexOnCellIterator;
 
-        std::map< ConstVertexType, VertexIDType > & current_vertex_to_index_map = vertex_to_index_map[region_id];
+        std::map< ElementType, VertexIDType > & current_vertex_to_index_map = vertex_to_index_map[region_id];
 
         writer << "   <Cells> " << std::endl;
         writer << "    <DataArray type=\"Int32\" Name=\"connectivity\" format=\"ascii\">" << std::endl;
 
-        std::set< ConstCellType > & current_used_cells_map = used_cell_map[region_id];
-        for (typename std::set< ConstCellType >::iterator it = current_used_cells_map.begin(); it != current_used_cells_map.end(); ++it)
+        std::set< ElementType > & current_used_cells_map = used_cell_map[region_id];
+        for (typename std::set< ElementType >::iterator it = current_used_cells_map.begin(); it != current_used_cells_map.end(); ++it)
 
         {
           //step 1: Write vertex indices in ViennaGrid orientation to array:
-//           CellType const & cell = it->second; //viennagrid::dereference_handle(domseg, it->second);
-//             CellType const & cell = *cit;
+//           ElementType const & cell = it->second; //viennagrid::dereference_handle(domseg, it->second);
+//             ElementType const & cell = *cit;
 
 
           VertexOnCellRange vertices_on_cell(*it, 0);
@@ -306,7 +298,7 @@ namespace viennagrid
         writer << "    <DataArray type=\"Int32\" Name=\"offsets\" format=\"ascii\">" << std::endl;
 
         std::size_t offset = 0;
-        for (typename std::set< ConstCellType >::iterator it = current_used_cells_map.begin(); it != current_used_cells_map.end(); ++it)
+        for (typename std::set< ElementType >::iterator it = current_used_cells_map.begin(); it != current_used_cells_map.end(); ++it)
         {
           offset += viennagrid::vertices(*it).size();
           writer << offset << " ";
@@ -327,7 +319,7 @@ namespace viennagrid
         writer << "    </DataArray>" << std::endl;
 
         writer << "    <DataArray type=\"UInt8\" Name=\"types\" format=\"ascii\">" << std::endl;
-        for (typename std::set< ConstCellType >::iterator it = current_used_cells_map.begin(); it != current_used_cells_map.end(); ++it)
+        for (typename std::set< ElementType >::iterator it = current_used_cells_map.begin(); it != current_used_cells_map.end(); ++it)
         {
           offset += viennagrid::vertices(*it).size();
           writer << vtk_element_tag( (*it).tag() ) << " ";
@@ -365,10 +357,10 @@ namespace viennagrid
         writer << "    <DataArray type=\"" << ValueTypeInformation<ValueType>::type_name() << "\" Name=\"" << name <<
           "\" NumberOfComponents=\"" << ValueTypeInformation<ValueType>::num_components() << "\" format=\"ascii\">" << std::endl;
 
-        std::map< VertexIDType, ConstVertexType > & current_used_vertex_map = used_vertex_map[region_id];
-        for (typename std::map< VertexIDType, ConstVertexType >::iterator it = current_used_vertex_map.begin(); it != current_used_vertex_map.end(); ++it)
+        std::map< VertexIDType, ElementType > & current_used_vertex_map = used_vertex_map[region_id];
+        for (typename std::map< VertexIDType, ElementType >::iterator it = current_used_vertex_map.begin(); it != current_used_vertex_map.end(); ++it)
         {
-          ValueTypeInformation<ValueType>::write(writer, accessor(it->second));
+          ValueTypeInformation<ValueType>::write(writer, accessor.get(it->second));
           writer << " ";
         }
         writer << std::endl;
@@ -387,15 +379,15 @@ namespace viennagrid
           "\" NumberOfComponents=\"" << ValueTypeInformation<ValueType>::num_components() << "\" format=\"ascii\">" << std::endl;
 
 
-        std::set<  ConstCellType > & current_used_cells_map = used_cell_map[region_id];
-        for (typename std::set< ConstCellType >::iterator it = current_used_cells_map.begin(); it != current_used_cells_map.end(); ++it)
+        std::set< ElementType > & current_used_cells_map = used_cell_map[region_id];
+        for (typename std::set< ElementType >::iterator it = current_used_cells_map.begin(); it != current_used_cells_map.end(); ++it)
 
         {
           //step 1: Write vertex indices in ViennaGrid orientation to array:
-//           CellType const & cell = viennagrid::dereference_handle(region, it->second);
-//             CellType const & cell = *cit;
+//           ElementType const & cell = viennagrid::dereference_handle(region, it->second);
+//             ElementType const & cell = *cit;
 
-          ValueTypeInformation<ValueType>::write(writer, accessor(*it));
+          ValueTypeInformation<ValueType>::write(writer, accessor.get(*it));
           writer << " ";
         }
         writer << std::endl;
@@ -621,104 +613,104 @@ namespace viennagrid
     private:
 
 
-      template<typename MapType, typename AccessorOrFieldType, typename AccessType>
-      void add_to_container(MapType & map, AccessorOrFieldType const accessor_or_field, std::string const & quantity_name)
+      template<typename ValueT, typename MapT, typename AccessorT>
+      void add_to_container(MapT & map, AccessorT const & accessor, std::string const & quantity_name)
       {
-        typename MapType::iterator it = map.find(quantity_name);
+        typename MapT::iterator it = map.find(quantity_name);
         if (it != map.end())
         {
           delete it->second;
-          it->second = new dynamic_field_wrapper<const AccessorOrFieldType, AccessType>( accessor_or_field );
+          it->second = new dynamic_accessor_wrapper<ValueT, ElementType, AccessorT>( accessor );
         }
         else
-          map[quantity_name] = new dynamic_field_wrapper<const AccessorOrFieldType, AccessType>( accessor_or_field );
+          map[quantity_name] = new dynamic_accessor_wrapper<ValueT, ElementType, AccessorT>( accessor );
       }
 
-      template<typename MapType, typename AccessorOrFieldType>
-      void add_to_vertex_container(MapType & map, AccessorOrFieldType const accessor_or_field, std::string const & quantity_name)
+      template<typename ValueT, typename MapT, typename AccessorT>
+      void add_to_vertex_container(MapT & map, AccessorT const & accessor, std::string const & quantity_name)
       {
-        add_to_container<MapType, AccessorOrFieldType, ConstVertexType>(map, accessor_or_field, quantity_name);
+        add_to_container<ValueT>(map, accessor, quantity_name);
       }
 
-      template<typename MapType, typename AccessorOrFieldType>
-      void add_to_cell_container(MapType & map, AccessorOrFieldType const accessor_or_field, std::string const & quantity_name)
+      template<typename ValueT, typename MapT, typename AccessorT>
+      void add_to_cell_container(MapT & map, AccessorT const & accessor, std::string const & quantity_name)
       {
-        add_to_container<MapType, AccessorOrFieldType, ConstCellType>(map, accessor_or_field, quantity_name);
+        add_to_container<ValueT>(map, accessor, quantity_name);
       }
 
     public:
 
 
       /** @brief Register an accessor/field for scalar data on vertices with a given quantity name */
-      template <typename AccessorOrFieldType>
-      void add_scalar_data_on_vertices(AccessorOrFieldType const accessor_or_field, std::string const & quantity_name)
-      { add_to_vertex_container(vertex_scalar_data, accessor_or_field, quantity_name); }
+      template <typename AccessorT>
+      void add_scalar_data_on_vertices(AccessorT const & accessor, std::string const & quantity_name)
+      { add_to_vertex_container<viennagrid_numeric>(vertex_scalar_data, accessor, quantity_name); }
 
       /** @brief Register an accessor/field for scalar data on vertices for a given region ID with a given quantity name */
-      template <typename AccessorOrFieldType>
-      void add_scalar_data_on_vertices(region_id_type region_id, AccessorOrFieldType const accessor_or_field, std::string const & quantity_name)
-      { add_to_vertex_container(region_vertex_scalar_data[region_id], accessor_or_field, quantity_name); }
+      template <typename AccessorT>
+      void add_scalar_data_on_vertices(region_id_type region_id, AccessorT const & accessor, std::string const & quantity_name)
+      { add_to_vertex_container<viennagrid_numeric>(region_vertex_scalar_data[region_id], accessor, quantity_name); }
 
       /** @brief Register an accessor/field for scalar data on vertices for a given region with a given quantity name */
-      template <typename AccessorOrFieldType>
-      void add_scalar_data_on_vertices(RegionType const & region, AccessorOrFieldType const accessor_or_field, std::string const & quantity_name)
-      { add_scalar_data_on_vertices(region.id(), accessor_or_field, quantity_name); }
+      template <typename AccessorT>
+      void add_scalar_data_on_vertices(RegionType const & region, AccessorT const & accessor, std::string const & quantity_name)
+      { add_scalar_data_on_vertices(region.id(), accessor, quantity_name); }
 
 
       /** @brief Register an accessor/field for vector data on vertices with a given quantity name */
-      template <typename AccessorOrFieldType>
-      void add_vector_data_on_vertices(AccessorOrFieldType const accessor_or_field, std::string const & quantity_name)
-      { add_to_vertex_container(vertex_vector_data, accessor_or_field, quantity_name); }
+      template <typename AccessorType>
+      void add_vector_data_on_vertices(AccessorType const & accessor, std::string const & quantity_name)
+      { add_to_vertex_container<vector_data_type>(vertex_vector_data, accessor, quantity_name); }
 
       /** @brief Register an accessor/field for vector data on vertices for a given region ID with a given quantity name */
-      template <typename AccessorOrFieldType>
-      void add_vector_data_on_vertices(region_id_type region_id, AccessorOrFieldType const accessor_or_field, std::string const & quantity_name)
-      { add_to_vertex_container(region_vertex_vector_data[region_id], accessor_or_field, quantity_name); }
+      template <typename AccessorType>
+      void add_vector_data_on_vertices(region_id_type region_id, AccessorType const & accessor, std::string const & quantity_name)
+      { add_to_vertex_container<vector_data_type>(region_vertex_vector_data[region_id], accessor, quantity_name); }
 
       /** @brief Register an accessor/field for vector data on vertices for a given region with a given quantity name */
-      template <typename AccessorOrFieldType>
-      void add_vector_data_on_vertices(RegionType const & region, AccessorOrFieldType const accessor_or_field, std::string const & quantity_name)
-      { add_vector_data_on_vertices(region.id(), accessor_or_field, quantity_name); }
+      template <typename AccessorType>
+      void add_vector_data_on_vertices(RegionType const & region, AccessorType const & accessor, std::string const & quantity_name)
+      { add_vector_data_on_vertices(region.id(), accessor, quantity_name); }
 
 
 
       /** @brief Register an accessor/field for scalar data on cells with a given quantity name */
-      template <typename AccessorOrFieldType>
-      void add_scalar_data_on_cells(AccessorOrFieldType const accessor_or_field, std::string const & quantity_name)
-      { add_to_cell_container(cell_scalar_data, accessor_or_field, quantity_name); }
+      template <typename AccessorType>
+      void add_scalar_data_on_cells(AccessorType const accessor, std::string const & quantity_name)
+      { add_to_cell_container<viennagrid_numeric>(cell_scalar_data, accessor, quantity_name); }
 
       /** @brief Register an accessor/field for scalar data on cells for a given region ID with a given quantity name */
-      template <typename AccessorOrFieldType>
-      void add_scalar_data_on_cells(region_id_type region_id, AccessorOrFieldType const accessor_or_field, std::string const & quantity_name)
-      { add_to_cell_container(region_cell_scalar_data[region_id], accessor_or_field, quantity_name); }
+      template <typename AccessorType>
+      void add_scalar_data_on_cells(region_id_type region_id, AccessorType const & accessor, std::string const & quantity_name)
+      { add_to_cell_container<viennagrid_numeric>(region_cell_scalar_data[region_id], accessor, quantity_name); }
 
       /** @brief Register an accessor/field for scalar data on cells for a given region with a given quantity name */
-      template <typename AccessorOrFieldType>
-      void add_scalar_data_on_cells(RegionType const & region, AccessorOrFieldType const accessor_or_field, std::string const & quantity_name)
-      { add_scalar_data_on_cells(region.id(), accessor_or_field, quantity_name); }
+      template <typename AccessorType>
+      void add_scalar_data_on_cells(RegionType const & region, AccessorType const & accessor, std::string const & quantity_name)
+      { add_scalar_data_on_cells(region.id(), accessor, quantity_name); }
 
 
       /** @brief Register an accessor/field for vector data on cells with a given quantity name */
-      template <typename AccessorOrFieldType>
-      void add_vector_data_on_cells(AccessorOrFieldType const accessor_or_field, std::string const & quantity_name)
-      { add_to_cell_container(cell_vector_data, accessor_or_field, quantity_name); }
+      template <typename AccessorType>
+      void add_vector_data_on_cells(AccessorType const & accessor, std::string const & quantity_name)
+      { add_to_cell_container<vector_data_type>(cell_vector_data, accessor, quantity_name); }
 
       /** @brief Register an accessor/field for vector data on cells for a given region ID with a given quantity name */
-      template <typename AccessorOrFieldType>
-      void add_vector_data_on_cells(region_id_type region_id, AccessorOrFieldType const accessor_or_field, std::string const & quantity_name)
-      { add_to_cell_container(region_cell_vector_data[region_id], accessor_or_field, quantity_name); }
+      template <typename AccessorType>
+      void add_vector_data_on_cells(region_id_type region_id, AccessorType const & accessor, std::string const & quantity_name)
+      { add_to_cell_container<vector_data_type>(region_cell_vector_data[region_id], accessor, quantity_name); }
 
       /** @brief Register an accessor/field for vector data on cells for a given region with a given quantity name */
-      template <typename AccessorOrFieldType>
-      void add_vector_data_on_cells(RegionType const & region, AccessorOrFieldType const accessor_or_field, std::string const & quantity_name)
-      { add_vector_data_on_cells(region.id(), accessor_or_field, quantity_name); }
+      template <typename AccessorType>
+      void add_vector_data_on_cells(RegionType const & region, AccessorType const & accessor, std::string const & quantity_name)
+      { add_vector_data_on_cells(region.id(), accessor, quantity_name); }
 
 
     private:
 
-      std::map< region_id_type, std::map< ConstVertexType, VertexIDType> >             vertex_to_index_map;
-      std::map< region_id_type, std::map< VertexIDType, ConstVertexType> >             used_vertex_map;
-      std::map< region_id_type, std::set< ConstCellType> >                             used_cell_map;
+      std::map< region_id_type, std::map< ElementType, VertexIDType> >             vertex_to_index_map;
+      std::map< region_id_type, std::map< VertexIDType, ElementType> >             used_vertex_map;
+      std::map< region_id_type, std::set< ElementType> >                           used_cell_map;
 
 
       VertexScalarOutputAccessorContainer          vertex_scalar_data;
@@ -754,53 +746,53 @@ namespace viennagrid
     /** @brief Registers scalar-valued data on vertices at the VTK writer. At most one data set is allowed.
       *
       * @tparam MeshT             The mesh type to be written
-      * @tparam AccessorOrFieldT    An accessor/field type holding scalar data
+      * @tparam AccessorT    An accessor/field type holding scalar data
       * @param  writer              The VTK writer object for which the data should be registered
-      * @param  accessor_or_field   The accessor/field object holding scalar data on vertices
+      * @param  accessor   The accessor/field object holding scalar data on vertices
       * @param  quantity_name       The quantity name within the VTK file
       */
-    template <typename MeshT, typename AccessorOrFieldT>
+    template <typename MeshT, typename AccessorT>
     vtk_writer<MeshT> & add_scalar_data_on_vertices(vtk_writer<MeshT> & writer,
-                                                    AccessorOrFieldT const accessor_or_field,
+                                                    AccessorT const accessor,
                                                     std::string const & quantity_name)
     {
-      writer.add_scalar_data_on_vertices(accessor_or_field, quantity_name);
+      writer.add_scalar_data_on_vertices(accessor, quantity_name);
       return writer;
     }
 
     /** @brief Registers vector-valued data on vertices at the VTK writer. At most one data set is allowed.
       *
       * @tparam MeshT             The mesh type to be written
-      * @tparam AccessorOrFieldT    An accessor/field type holding vector data
+      * @tparam AccessorT    An accessor/field type holding vector data
       * @param  writer              The VTK writer object for which the data should be registered
-      * @param  accessor_or_field   The accessor/field object holding vector data on vertices
+      * @param  accessor   The accessor/field object holding vector data on vertices
       * @param  quantity_name       The quantity name within the VTK file
       */
-    template <typename MeshT, typename AccessorOrFieldT>
+    template <typename MeshT, typename AccessorT>
     vtk_writer<MeshT> & add_vector_data_on_vertices(vtk_writer<MeshT> & writer,
-                                                    AccessorOrFieldT const accessor_or_field,
+                                                    AccessorT const accessor,
                                                     std::string const & quantity_name)
     {
-      writer.add_vector_data_on_vertices(accessor_or_field, quantity_name);
+      writer.add_vector_data_on_vertices(accessor, quantity_name);
       return writer;
     }
 
     /** @brief Registers scalar-valued data on vertices for a given region at the VTK writer. At most one data set is allowed.
       *
       * @tparam MeshT             The mesh type to be written
-      * @tparam AccessorOrFieldT    An accessor/field type holding scalar data
+      * @tparam AccessorT    An accessor/field type holding scalar data
       * @param  writer              The VTK writer object for which the data should be registered
       * @param  region             The region for which the data is defined
-      * @param  accessor_or_field   The accessor/field object holding scalar data on vertices
+      * @param  accessor   The accessor/field object holding scalar data on vertices
       * @param  quantity_name       The quantity name within the VTK file
       */
-    template <typename MeshT, typename AccessorOrFieldT>
+    template <typename MeshT, typename AccessorT>
     vtk_writer<MeshT> & add_scalar_data_on_vertices(vtk_writer<MeshT> & writer,
                                                     typename MeshT::region_type const & region,
-                                                    AccessorOrFieldT const accessor_or_field,
+                                                    AccessorT const accessor,
                                                     std::string const & quantity_name)
     {
-      writer.add_scalar_data_on_vertices(region, accessor_or_field, quantity_name);
+      writer.add_scalar_data_on_vertices(region, accessor, quantity_name);
       return writer;
     }
 
@@ -808,19 +800,19 @@ namespace viennagrid
       *
       * @tparam MeshT             The mesh type to be written
       * @tparam SegmentationT       The regionation type to be written
-      * @tparam AccessorOrFieldT    An accessor/field type holding vector data
+      * @tparam AccessorT    An accessor/field type holding vector data
       * @param  writer              The VTK writer object for which the data should be registered
       * @param  region             The region for which the data is defined
-      * @param  accessor_or_field   The accessor/field object holding vector data on vertices
+      * @param  accessor   The accessor/field object holding vector data on vertices
       * @param  quantity_name       The quantity name within the VTK file
       */
-    template <typename MeshT, typename AccessorOrFieldT>
+    template <typename MeshT, typename AccessorT>
     vtk_writer<MeshT> & add_vector_data_on_vertices(vtk_writer<MeshT> & writer,
                                                     typename MeshT::region_type const & region,
-                                                    AccessorOrFieldT const accessor_or_field,
+                                                    AccessorT const accessor,
                                                     std::string const & quantity_name)
     {
-      writer.add_vector_data_on_vertices(region, accessor_or_field, quantity_name);
+      writer.add_vector_data_on_vertices(region, accessor, quantity_name);
       return writer;
     }
 
@@ -831,72 +823,72 @@ namespace viennagrid
     /** @brief Registers scalar-valued data on cells at the VTK writer. At most one data set is allowed.
       *
       * @tparam MeshT             The mesh type to be written
-      * @tparam AccessorOrFieldT    An accessor/field type holding scalar data
+      * @tparam AccessorT    An accessor/field type holding scalar data
       * @param  writer              The VTK writer object for which the data should be registered
-      * @param  accessor_or_field   The accessor/field object holding scalar data on cells
+      * @param  accessor   The accessor/field object holding scalar data on cells
       * @param  quantity_name       The quantity name within the VTK file
       */
-    template <typename MeshT, typename AccessorOrFieldT>
+    template <typename MeshT, typename AccessorT>
     vtk_writer<MeshT> & add_scalar_data_on_cells(vtk_writer<MeshT> & writer,
-                                                 AccessorOrFieldT const accessor_or_field,
+                                                 AccessorT const accessor,
                                                  std::string const & quantity_name)
     {
-      writer.add_scalar_data_on_cells(accessor_or_field, quantity_name);
+      writer.add_scalar_data_on_cells(accessor, quantity_name);
       return writer;
     }
 
     /** @brief Registers vector-valued data on cells at the VTK writer. At most one data set is allowed.
       *
       * @tparam MeshT             The mesh type to be written
-      * @tparam AccessorOrFieldT    An accessor/field type holding vector data
+      * @tparam AccessorT    An accessor/field type holding vector data
       * @param  writer              The VTK writer object for which the data should be registered
-      * @param  accessor_or_field   The accessor/field object holding vector data on cells
+      * @param  accessor   The accessor/field object holding vector data on cells
       * @param  quantity_name       The quantity name within the VTK file
       */
-    template <typename MeshT, typename AccessorOrFieldT>
+    template <typename MeshT, typename AccessorT>
     vtk_writer<MeshT> & add_vector_data_on_cells(vtk_writer<MeshT> & writer,
-                                                 AccessorOrFieldT const accessor_or_field,
+                                                 AccessorT const accessor,
                                                  std::string const & quantity_name)
     {
-      writer.add_vector_data_on_cells(accessor_or_field, quantity_name);
+      writer.add_vector_data_on_cells(accessor, quantity_name);
       return writer;
     }
 
     /** @brief Registers scalar-valued data on cells for a given region at the VTK writer. At most one data set is allowed.
       *
       * @tparam MeshT             The mesh type to be written
-      * @tparam AccessorOrFieldT    An accessor/field type holding scalar data
+      * @tparam AccessorT    An accessor/field type holding scalar data
       * @param  writer              The VTK writer object for which the data should be registered
       * @param  region             The region for which the data is defined
-      * @param  accessor_or_field   The accessor/field object holding scalar data on cells
+      * @param  accessor   The accessor/field object holding scalar data on cells
       * @param  quantity_name       The quantity name within the VTK file
       */
-    template <typename MeshT, typename AccessorOrFieldT>
+    template <typename MeshT, typename AccessorT>
     vtk_writer<MeshT> & add_scalar_data_on_cells(vtk_writer<MeshT> & writer,
                                                  typename MeshT::region_type const & region,
-                                                 AccessorOrFieldT const accessor_or_field,
+                                                 AccessorT const accessor,
                                                  std::string const & quantity_name)
     {
-      writer.add_scalar_data_on_cells(region, accessor_or_field, quantity_name);
+      writer.add_scalar_data_on_cells(region, accessor, quantity_name);
       return writer;
     }
 
     /** @brief Registers vector-valued data on cells for a given region at the VTK writer. At most one data set is allowed.
       *
       * @tparam MeshT             The mesh type to be written
-      * @tparam AccessorOrFieldT    An accessor/field type holding vector data
+      * @tparam AccessorT    An accessor/field type holding vector data
       * @param  writer              The VTK writer object for which the data should be registered
       * @param  region             The region for which the data is defined
-      * @param  accessor_or_field   The accessor/field object holding vector data on cells
+      * @param  accessor   The accessor/field object holding vector data on cells
       * @param  quantity_name       The quantity name within the VTK file
       */
-    template <typename MeshT, typename AccessorOrFieldT>
+    template <typename MeshT, typename AccessorT>
     vtk_writer<MeshT> & add_vector_data_on_cells(vtk_writer<MeshT> & writer,
                                                  typename MeshT::region_type const & region,
-                                                 AccessorOrFieldT const accessor_or_field,
+                                                 AccessorT const accessor,
                                                  std::string const & quantity_name)
     {
-      writer.add_vector_data_on_cells(region, accessor_or_field, quantity_name);
+      writer.add_vector_data_on_cells(region, accessor, quantity_name);
       return writer;
     }
 

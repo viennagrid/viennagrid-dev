@@ -54,8 +54,8 @@ namespace viennagrid
     {
       typedef typename viennagrid::result_of::point<PointAccessorT, ElementT>::type    PointType;
 
-      PointType const & p0 = point_accessor( viennagrid::vertices(element)[0] );
-      PointType const & p1 = point_accessor( viennagrid::vertices(element)[1] );
+      PointType p0 = point_accessor.get( viennagrid::vertices(element)[0] );
+      PointType p1 = point_accessor.get( viennagrid::vertices(element)[1] );
 
       PointType line = p1-p0;
       std::swap(line[0], line[1]);
@@ -74,9 +74,9 @@ namespace viennagrid
     {
       typedef typename viennagrid::result_of::point<PointAccessorT, ElementT>::type    PointType;
 
-      PointType const & p0 = point_accessor( viennagrid::vertices(element)[0] );
-      PointType const & p1 = point_accessor( viennagrid::vertices(element)[1] );
-      PointType const & p2 = point_accessor( viennagrid::vertices(element)[2] );
+      PointType p0 = point_accessor.get( viennagrid::vertices(element)[0] );
+      PointType p1 = point_accessor.get( viennagrid::vertices(element)[1] );
+      PointType p2 = point_accessor.get( viennagrid::vertices(element)[2] );
 
       return viennagrid::cross_prod( p1-p0, p2-p0 );
     }

@@ -63,7 +63,7 @@ namespace viennagrid
       NeigborTriangleRangeType neighbor_triangles( region, triangle );
       for (NeigborTriangleIteratorType ntit = neighbor_triangles.begin(); ntit != neighbor_triangles.end(); ++ntit )
       {
-        if (contact_index_accessor(*ntit) != -1)
+        if (contact_index_accessor.get(*ntit) != -1)
           continue;
 
         if (!viennagrid::is_boundary(region, *ntit))
@@ -78,7 +78,7 @@ namespace viennagrid
 
         if ( std::abs(dot) > (1.0-1e-6) * viennagrid::norm_2(normal) * viennagrid::norm_2(neighbor_normal) )
         {
-          contact_index_accessor(*ntit) = contact_index;
+          contact_index_accessor.set(*ntit, contact_index);
           mark_planar_neighbors( region, contact_index_accessor, *ntit, contact_index, region_range );
         }
       }
@@ -96,7 +96,7 @@ namespace viennagrid
 
       ConstTriangleRangeType triangles(mesh);
       for (ConstTriangleIteratorType tit = triangles.begin(); tit != triangles.end(); ++tit)
-        contact_index_accessor(*tit) = -1;
+        contact_index_accessor.set(*tit, -1);
 
 
       typedef typename viennagrid::result_of::region_range<MeshT>::type RegionRangeType;
@@ -112,9 +112,9 @@ namespace viennagrid
         ConstTriangleOnSegmentRangeType triangles_on_segment(*rit);
         for (ConstTriangleOnSegmentIteratorType tsit = triangles_on_segment.begin(); tsit != triangles_on_segment.end(); ++tsit)
         {
-          if ( viennagrid::is_boundary(*rit, *tsit) && (contact_index_accessor(*tsit) == -1) )
+          if ( viennagrid::is_boundary(*rit, *tsit) && (contact_index_accessor.get(*tsit) == -1) )
           {
-            contact_index_accessor(*tsit) = current_contact_index;
+            contact_index_accessor.set(*tsit, current_contact_index);
 
             typedef typename viennagrid::result_of::element<MeshT>::type TriangleType;
             typedef typename viennagrid::result_of::const_region_range<MeshT, TriangleType>::type TriangleRegionRangeType;
@@ -307,11 +307,11 @@ namespace viennagrid
 
 
         std::vector<int> contact_index_array;
-        typename viennagrid::result_of::field< std::vector<int>, TriangleType>::type contact_index_field(contact_index_array);
+        typename viennagrid::result_of::accessor< std::vector<int>, TriangleType>::type contact_index_accessor(contact_index_array);
 
         // automatic calculating all contacts, a contact is a set of coplanar boundary/interface triangles
         // a contact can be selected by COMSOL for e.g. boundary value specification
-        mark_segment_hull_contacts( mesh, contact_index_field );
+        mark_segment_hull_contacts( mesh, contact_index_accessor );
 
 
         // writing the triangles to the file
@@ -340,7 +340,7 @@ namespace viennagrid
         // writing the contact ID for each triangle
         writer << used_triangles.size() << " # number of triangles\n";
         for (typename std::map<TriangleIDType, TriInfoType>::const_iterator utit = used_triangles.begin(); utit != used_triangles.end(); ++utit)
-          writer << contact_index_field( utit->second.triangle ) << "\n";
+          writer << contact_index_accessor.get( utit->second.triangle ) << "\n";
 
         // writing the orientation for each triangle, the first value is the segment on the positive side of the triangle, the second value the segment on the negative side;
         // segments start with 1, 0 is reserved for no segment

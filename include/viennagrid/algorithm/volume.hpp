@@ -54,28 +54,29 @@ namespace viennagrid
       ConstVertexRangeType vertices(element);
 
       if (element.tag().is_line())
-        return norm( accessor(vertices[0]) - accessor(vertices[1]) );
+        return norm( accessor.get(vertices[0]) - accessor.get(vertices[1]) );
 
       if (element.tag().is_triangle())
-        return spanned_volume( accessor(vertices[0]), accessor(vertices[1]), accessor(vertices[2]) );
+        return spanned_volume(accessor.get(vertices[0]), accessor.get(vertices[1]), accessor.get(vertices[2]));
 
       if (element.tag().is_quadrilateral())
-        return spanned_volume(accessor(vertices[0]), accessor(vertices[1]), accessor(vertices[3])) +
-               spanned_volume(accessor(vertices[1]), accessor(vertices[2]), accessor(vertices[3])); //sum up the two triangular parts
+        return spanned_volume(accessor.get(vertices[0]), accessor.get(vertices[1]), accessor.get(vertices[3])) +
+               spanned_volume(accessor.get(vertices[1]), accessor.get(vertices[2]), accessor.get(vertices[3])); //sum up the two triangular parts
 
       if (element.tag().is_tetrahedron())
-        return spanned_volume( accessor(vertices[0]), accessor(vertices[1]), accessor(vertices[2]), accessor(vertices[3]) );
+        return spanned_volume( accessor.get(vertices[0]), accessor.get(vertices[1]),
+                               accessor.get(vertices[2]), accessor.get(vertices[3]) );
 
       if (element.tag().is_hexahedron())
       {
-        PointType const & p0 = accessor( vertices[0] );
-        PointType const & p1 = accessor( vertices[1] );
-        PointType const & p2 = accessor( vertices[2] );
-        PointType const & p3 = accessor( vertices[3] );
-        PointType const & p4 = accessor( vertices[4] );
-        PointType const & p5 = accessor( vertices[5] );
-        PointType const & p6 = accessor( vertices[6] );
-        PointType const & p7 = accessor( vertices[7] );
+        PointType const & p0 = accessor.get( vertices[0] );
+        PointType const & p1 = accessor.get( vertices[1] );
+        PointType const & p2 = accessor.get( vertices[2] );
+        PointType const & p3 = accessor.get( vertices[3] );
+        PointType const & p4 = accessor.get( vertices[4] );
+        PointType const & p5 = accessor.get( vertices[5] );
+        PointType const & p6 = accessor.get( vertices[6] );
+        PointType const & p7 = accessor.get( vertices[7] );
 
         return spanned_volume(p0, p1, p3, p4)
               + spanned_volume(p4, p1, p3, p7)
@@ -97,16 +98,16 @@ namespace viennagrid
         VertexOnCellIterator it1 = range.begin();
         VertexOnCellIterator it2 = it1; ++it2;
 
-        PointType origin = accessor(*it1);
+        PointType origin = accessor.get(*it1);
 
         NumericType volume = 0;
 
         for (; it2 != range.end(); ++it1, ++it2)
-            volume += signed_spanned_volume(origin, accessor(*it1), accessor(*it2));
+            volume += signed_spanned_volume(origin, accessor.get(*it1), accessor.get(*it2));
 
 
         it1 = range.end(); --it1;
-        volume += signed_spanned_volume( origin, accessor(*it1), accessor(*range.begin()) );
+        volume += signed_spanned_volume( origin, accessor.get(*it1), accessor.get(*range.begin()) );
 
         return std::abs(volume);
       }

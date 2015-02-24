@@ -56,7 +56,7 @@ namespace viennagrid
     typename viennagrid::result_of::point< PointAccessorT, ElementT >::type
     circumcenter(PointAccessorT const accessor, ElementT const & cell, viennagrid::vertex_tag, DimensionTagT)
     {
-      return circumcenter_points(viennagrid::vertex_tag(), DimensionTagT(), accessor(cell));
+      return circumcenter_points(viennagrid::vertex_tag(), DimensionTagT(), accessor.get(cell));
     }
 
 
@@ -87,8 +87,8 @@ namespace viennagrid
     {
       return circumcenter_points(viennagrid::line_tag(),
                                  DimensionTag(),
-                                 accessor( vertices(cell)[0] ),
-                                 accessor( vertices(cell)[1] ));
+                                 accessor.get( vertices(cell)[0] ),
+                                 accessor.get( vertices(cell)[1] ));
     }
 
 
@@ -135,9 +135,9 @@ namespace viennagrid
     {
       return circumcenter_points(viennagrid::triangle_tag(),
                                  viennagrid::dimension_tag<2>(),
-                                 accessor( vertices(cell)[0] ),
-                                 accessor( vertices(cell)[1] ),
-                                 accessor( vertices(cell)[2] ));
+                                 accessor.get( vertices(cell)[0] ),
+                                 accessor.get( vertices(cell)[1] ),
+                                 accessor.get( vertices(cell)[2] ));
     }
 
 
@@ -163,10 +163,10 @@ namespace viennagrid
     {
       return circumcenter_points(viennagrid::quadrilateral_tag(),
                                  viennagrid::dimension_tag<2>(),
-                                 accessor( vertices(cell)[0] ),
-                                 accessor( vertices(cell)[1] ),
-                                 accessor( vertices(cell)[2] ),
-                                 accessor( vertices(cell)[3] ));
+                                 accessor.get( vertices(cell)[0] ),
+                                 accessor.get( vertices(cell)[1] ),
+                                 accessor.get( vertices(cell)[2] ),
+                                 accessor.get( vertices(cell)[3] ));
     }
 
 
@@ -195,9 +195,9 @@ namespace viennagrid
     {
       return circumcenter_points(viennagrid::triangle_tag(),
                                  viennagrid::dimension_tag<3>(),
-                                 accessor( vertices(cell)[0] ),
-                                 accessor( vertices(cell)[1] ),
-                                 accessor( vertices(cell)[2] ));
+                                 accessor.get( vertices(cell)[0] ),
+                                 accessor.get( vertices(cell)[1] ),
+                                 accessor.get( vertices(cell)[2] ));
     }
 
 
@@ -211,10 +211,10 @@ namespace viennagrid
     {
       return circumcenter_points(viennagrid::quadrilateral_tag(),
                                  viennagrid::dimension_tag<2>(),
-                                 accessor( vertices(cell)[0] ),
-                                 accessor( vertices(cell)[1] ),
-                                 accessor( vertices(cell)[2] ),
-                                 accessor( vertices(cell)[3] ));
+                                 accessor.get( vertices(cell)[0] ),
+                                 accessor.get( vertices(cell)[1] ),
+                                 accessor.get( vertices(cell)[2] ),
+                                 accessor.get( vertices(cell)[3] ));
     }
 
 
@@ -257,10 +257,10 @@ namespace viennagrid
     {
       return circumcenter_points(viennagrid::tetrahedron_tag(),
                                  viennagrid::dimension_tag<3>(),
-                                 accessor( vertices(cell)[0] ),
-                                 accessor( vertices(cell)[1] ),
-                                 accessor( vertices(cell)[2] ),
-                                 accessor( vertices(cell)[3] ));
+                                 accessor.get( vertices(cell)[0] ),
+                                 accessor.get( vertices(cell)[1] ),
+                                 accessor.get( vertices(cell)[2] ),
+                                 accessor.get( vertices(cell)[3] ));
     }
 
     //
@@ -290,14 +290,14 @@ namespace viennagrid
     {
       return circumcenter_points(viennagrid::hexahedron_tag(),
                                  viennagrid::dimension_tag<3>(),
-                                 accessor( vertices(cell)[0] ),
-                                 accessor( vertices(cell)[1] ),
-                                 accessor( vertices(cell)[2] ),
-                                 accessor( vertices(cell)[3] ),
-                                 accessor( vertices(cell)[4] ),
-                                 accessor( vertices(cell)[5] ),
-                                 accessor( vertices(cell)[6] ),
-                                 accessor( vertices(cell)[7] ) );
+                                 accessor.get( vertices(cell)[0] ),
+                                 accessor.get( vertices(cell)[1] ),
+                                 accessor.get( vertices(cell)[2] ),
+                                 accessor.get( vertices(cell)[3] ),
+                                 accessor.get( vertices(cell)[4] ),
+                                 accessor.get( vertices(cell)[5] ),
+                                 accessor.get( vertices(cell)[6] ),
+                                 accessor.get( vertices(cell)[7] ) );
     }
 
 

@@ -194,53 +194,53 @@ namespace viennagrid
         EdgeType e4 = *eocit; ++eocit;
         EdgeType e5 = *eocit;
 
-        if (edge_refinement_flag_accessor(e0) == true)
+        if (edge_refinement_flag_accessor.get(e0) == true)
         {
           ordered_vertices[0] = vertices[0];
           ordered_vertices[1] = vertices[1];
           ordered_vertices[2] = vertices[2];
           ordered_vertices[3] = vertices[3];
-          ordered_vertices[4] = edge_to_vertex_handle_accessor(e0);
+          ordered_vertices[4] = edge_to_vertex_handle_accessor.get(e0);
         }
-        else if (edge_refinement_flag_accessor(e1) == true)
+        else if (edge_refinement_flag_accessor.get(e1) == true)
         {
           ordered_vertices[0] = vertices[2];
           ordered_vertices[1] = vertices[0];
           ordered_vertices[2] = vertices[1];
           ordered_vertices[3] = vertices[3];
-          ordered_vertices[4] = edge_to_vertex_handle_accessor(e1);
+          ordered_vertices[4] = edge_to_vertex_handle_accessor.get(e1);
         }
-        else if (edge_refinement_flag_accessor(e2) == true)
+        else if (edge_refinement_flag_accessor.get(e2) == true)
         {
           ordered_vertices[0] = vertices[0];
           ordered_vertices[1] = vertices[3];
           ordered_vertices[2] = vertices[1];
           ordered_vertices[3] = vertices[2];
-          ordered_vertices[4] = edge_to_vertex_handle_accessor(e2);
+          ordered_vertices[4] = edge_to_vertex_handle_accessor.get(e2);
         }
-        else if (edge_refinement_flag_accessor(e3) == true)
+        else if (edge_refinement_flag_accessor.get(e3) == true)
         {
           ordered_vertices[0] = vertices[1];
           ordered_vertices[1] = vertices[2];
           ordered_vertices[2] = vertices[0];
           ordered_vertices[3] = vertices[3];
-          ordered_vertices[4] = edge_to_vertex_handle_accessor(e3);
+          ordered_vertices[4] = edge_to_vertex_handle_accessor.get(e3);
         }
-        else if (edge_refinement_flag_accessor(e4) == true)
+        else if (edge_refinement_flag_accessor.get(e4) == true)
         {
           ordered_vertices[0] = vertices[3];
           ordered_vertices[1] = vertices[1];
           ordered_vertices[2] = vertices[0];
           ordered_vertices[3] = vertices[2];
-          ordered_vertices[4] = edge_to_vertex_handle_accessor(e4);
+          ordered_vertices[4] = edge_to_vertex_handle_accessor.get(e4);
         }
-        else if (edge_refinement_flag_accessor(e5) == true)
+        else if (edge_refinement_flag_accessor.get(e5) == true)
         {
           ordered_vertices[0] = vertices[3];
           ordered_vertices[1] = vertices[2];
           ordered_vertices[2] = vertices[1];
           ordered_vertices[3] = vertices[0];
-          ordered_vertices[4] = edge_to_vertex_handle_accessor(e5);
+          ordered_vertices[4] = edge_to_vertex_handle_accessor.get(e5);
         }
         else
         {
@@ -371,60 +371,60 @@ namespace viennagrid
         EdgeType e5 = *eocit;
 
         //with e0
-        if (edge_refinement_flag_accessor(e0) == true)
+        if (edge_refinement_flag_accessor.get(e0) == true)
         {
-          if (edge_refinement_flag_accessor(e1) == true)
+          if (edge_refinement_flag_accessor.get(e1) == true)
           {
             ordered_vertices[0] = vertices[2];
             ordered_vertices[1] = vertices[0];
             ordered_vertices[2] = vertices[1];
             ordered_vertices[3] = vertices[3];
-            ordered_vertices[4] = edge_to_vertex_handle_accessor(e1);
-            ordered_vertices[5] = edge_to_vertex_handle_accessor(e0);
+            ordered_vertices[4] = edge_to_vertex_handle_accessor.get(e1);
+            ordered_vertices[5] = edge_to_vertex_handle_accessor.get(e0);
 
             apply2_1(mesh, element_vertices, ordered_vertices);
           }
-          else if (edge_refinement_flag_accessor(e2) == true)
+          else if (edge_refinement_flag_accessor.get(e2) == true)
           {
             ordered_vertices[0] = vertices[1];
             ordered_vertices[1] = vertices[0];
             ordered_vertices[2] = vertices[3];
             ordered_vertices[3] = vertices[2];
-            ordered_vertices[4] = edge_to_vertex_handle_accessor(e0);
-            ordered_vertices[5] = edge_to_vertex_handle_accessor(e2);
+            ordered_vertices[4] = edge_to_vertex_handle_accessor.get(e0);
+            ordered_vertices[5] = edge_to_vertex_handle_accessor.get(e2);
 
             apply2_1(mesh, element_vertices, ordered_vertices);
           }
-          else if (edge_refinement_flag_accessor(e3) == true)
+          else if (edge_refinement_flag_accessor.get(e3) == true)
           {
             ordered_vertices[0] = vertices[0];
             ordered_vertices[1] = vertices[1];
             ordered_vertices[2] = vertices[2];
             ordered_vertices[3] = vertices[3];
-            ordered_vertices[4] = edge_to_vertex_handle_accessor(e0);
-            ordered_vertices[5] = edge_to_vertex_handle_accessor(e3);
+            ordered_vertices[4] = edge_to_vertex_handle_accessor.get(e0);
+            ordered_vertices[5] = edge_to_vertex_handle_accessor.get(e3);
 
             apply2_1(mesh, element_vertices, ordered_vertices);
           }
-          else if (edge_refinement_flag_accessor(e4) == true)
+          else if (edge_refinement_flag_accessor.get(e4) == true)
           {
             ordered_vertices[0] = vertices[3];
             ordered_vertices[1] = vertices[1];
             ordered_vertices[2] = vertices[0];
             ordered_vertices[3] = vertices[2];
-            ordered_vertices[4] = edge_to_vertex_handle_accessor(e4);
-            ordered_vertices[5] = edge_to_vertex_handle_accessor(e0);
+            ordered_vertices[4] = edge_to_vertex_handle_accessor.get(e4);
+            ordered_vertices[5] = edge_to_vertex_handle_accessor.get(e0);
 
             apply2_1(mesh, element_vertices, ordered_vertices);
           }
-          else if (edge_refinement_flag_accessor(e5) == true)
+          else if (edge_refinement_flag_accessor.get(e5) == true)
           {
             ordered_vertices[0] = vertices[0];
             ordered_vertices[1] = vertices[1];
             ordered_vertices[2] = vertices[2];
             ordered_vertices[3] = vertices[3];
-            ordered_vertices[4] = edge_to_vertex_handle_accessor(e0);
-            ordered_vertices[5] = edge_to_vertex_handle_accessor(e5);
+            ordered_vertices[4] = edge_to_vertex_handle_accessor.get(e0);
+            ordered_vertices[5] = edge_to_vertex_handle_accessor.get(e5);
 
             apply2_2(mesh, element_vertices, ordered_vertices);
           }
@@ -433,50 +433,50 @@ namespace viennagrid
             assert(false && "Logic error: No edge for refinement found!");
           }
         }
-        else if (edge_refinement_flag_accessor(e1) == true)
+        else if (edge_refinement_flag_accessor.get(e1) == true)
         {
-          if (edge_refinement_flag_accessor(e2) == true)
+          if (edge_refinement_flag_accessor.get(e2) == true)
           {
             ordered_vertices[0] = vertices[3];
             ordered_vertices[1] = vertices[0];
             ordered_vertices[2] = vertices[2];
             ordered_vertices[3] = vertices[1];
-            ordered_vertices[4] = edge_to_vertex_handle_accessor(e2);
-            ordered_vertices[5] = edge_to_vertex_handle_accessor(e1);
+            ordered_vertices[4] = edge_to_vertex_handle_accessor.get(e2);
+            ordered_vertices[5] = edge_to_vertex_handle_accessor.get(e1);
 
             apply2_1(mesh, element_vertices, ordered_vertices);
           }
-          else if (edge_refinement_flag_accessor(e3) == true)
+          else if (edge_refinement_flag_accessor.get(e3) == true)
           {
             ordered_vertices[0] = vertices[1];
             ordered_vertices[1] = vertices[2];
             ordered_vertices[2] = vertices[0];
             ordered_vertices[3] = vertices[3];
-            ordered_vertices[4] = edge_to_vertex_handle_accessor(e3);
-            ordered_vertices[5] = edge_to_vertex_handle_accessor(e1);
+            ordered_vertices[4] = edge_to_vertex_handle_accessor.get(e3);
+            ordered_vertices[5] = edge_to_vertex_handle_accessor.get(e1);
 
 
             apply2_1(mesh, element_vertices, ordered_vertices);
           }
-          else if (edge_refinement_flag_accessor(e4) == true)
+          else if (edge_refinement_flag_accessor.get(e4) == true)
           {
             ordered_vertices[0] = vertices[2];
             ordered_vertices[1] = vertices[0];
             ordered_vertices[2] = vertices[1];
             ordered_vertices[3] = vertices[3];
-            ordered_vertices[4] = edge_to_vertex_handle_accessor(e1);
-            ordered_vertices[5] = edge_to_vertex_handle_accessor(e4);
+            ordered_vertices[4] = edge_to_vertex_handle_accessor.get(e1);
+            ordered_vertices[5] = edge_to_vertex_handle_accessor.get(e4);
 
             apply2_2(mesh, element_vertices, ordered_vertices);
           }
-          else if (edge_refinement_flag_accessor(e5) == true)
+          else if (edge_refinement_flag_accessor.get(e5) == true)
           {
             ordered_vertices[0] = vertices[0];
             ordered_vertices[1] = vertices[2];
             ordered_vertices[2] = vertices[3];
             ordered_vertices[3] = vertices[1];
-            ordered_vertices[4] = edge_to_vertex_handle_accessor(e1);
-            ordered_vertices[5] = edge_to_vertex_handle_accessor(e5);
+            ordered_vertices[4] = edge_to_vertex_handle_accessor.get(e1);
+            ordered_vertices[5] = edge_to_vertex_handle_accessor.get(e5);
 
             apply2_1(mesh, element_vertices, ordered_vertices);
           }
@@ -485,38 +485,38 @@ namespace viennagrid
             assert(false && "Logic error: No edge for refinement found!");
           }
         }
-        else if (edge_refinement_flag_accessor(e2) == true)
+        else if (edge_refinement_flag_accessor.get(e2) == true)
         {
-          if (edge_refinement_flag_accessor(e3) == true)
+          if (edge_refinement_flag_accessor.get(e3) == true)
           {
             ordered_vertices[0] = vertices[3];
             ordered_vertices[1] = vertices[0];
             ordered_vertices[2] = vertices[2];
             ordered_vertices[3] = vertices[1];
-            ordered_vertices[4] = edge_to_vertex_handle_accessor(e2);
-            ordered_vertices[5] = edge_to_vertex_handle_accessor(e3);
+            ordered_vertices[4] = edge_to_vertex_handle_accessor.get(e2);
+            ordered_vertices[5] = edge_to_vertex_handle_accessor.get(e3);
 
             apply2_2(mesh, element_vertices, ordered_vertices);
           }
-          else if (edge_refinement_flag_accessor(e4) == true)
+          else if (edge_refinement_flag_accessor.get(e4) == true)
           {
             ordered_vertices[0] = vertices[0];
             ordered_vertices[1] = vertices[3];
             ordered_vertices[2] = vertices[1];
             ordered_vertices[3] = vertices[2];
-            ordered_vertices[4] = edge_to_vertex_handle_accessor(e2);
-            ordered_vertices[5] = edge_to_vertex_handle_accessor(e4);
+            ordered_vertices[4] = edge_to_vertex_handle_accessor.get(e2);
+            ordered_vertices[5] = edge_to_vertex_handle_accessor.get(e4);
 
             apply2_1(mesh, element_vertices, ordered_vertices);
           }
-          else if (edge_refinement_flag_accessor(e5) == true)
+          else if (edge_refinement_flag_accessor.get(e5) == true)
           {
             ordered_vertices[0] = vertices[2];
             ordered_vertices[1] = vertices[3];
             ordered_vertices[2] = vertices[0];
             ordered_vertices[3] = vertices[1];
-            ordered_vertices[4] = edge_to_vertex_handle_accessor(e5);
-            ordered_vertices[5] = edge_to_vertex_handle_accessor(e2);
+            ordered_vertices[4] = edge_to_vertex_handle_accessor.get(e5);
+            ordered_vertices[5] = edge_to_vertex_handle_accessor.get(e2);
 
             apply2_1(mesh, element_vertices, ordered_vertices);
           }
@@ -525,27 +525,27 @@ namespace viennagrid
             assert(false && "Logic error: No edge for refinement found!");
           }
         }
-        else if (edge_refinement_flag_accessor(e3) == true)
+        else if (edge_refinement_flag_accessor.get(e3) == true)
         {
-          if (edge_refinement_flag_accessor(e4) == true)
+          if (edge_refinement_flag_accessor.get(e4) == true)
           {
             ordered_vertices[0] = vertices[2];
             ordered_vertices[1] = vertices[1];
             ordered_vertices[2] = vertices[3];
             ordered_vertices[3] = vertices[0];
-            ordered_vertices[4] = edge_to_vertex_handle_accessor(e3);
-            ordered_vertices[5] = edge_to_vertex_handle_accessor(e4);
+            ordered_vertices[4] = edge_to_vertex_handle_accessor.get(e3);
+            ordered_vertices[5] = edge_to_vertex_handle_accessor.get(e4);
 
             apply2_1(mesh, element_vertices, ordered_vertices);
           }
-          else if (edge_refinement_flag_accessor(e5) == true)
+          else if (edge_refinement_flag_accessor.get(e5) == true)
           {
             ordered_vertices[0] = vertices[3];
             ordered_vertices[1] = vertices[2];
             ordered_vertices[2] = vertices[1];
             ordered_vertices[3] = vertices[0];
-            ordered_vertices[4] = edge_to_vertex_handle_accessor(e5);
-            ordered_vertices[5] = edge_to_vertex_handle_accessor(e3);
+            ordered_vertices[4] = edge_to_vertex_handle_accessor.get(e5);
+            ordered_vertices[5] = edge_to_vertex_handle_accessor.get(e3);
 
             apply2_1(mesh, element_vertices, ordered_vertices);
           }
@@ -554,16 +554,16 @@ namespace viennagrid
             assert(false && "Logic error: No edge for refinement found!");
           }
         }
-        else if (edge_refinement_flag_accessor(e4) == true)
+        else if (edge_refinement_flag_accessor.get(e4) == true)
         {
-          if (edge_refinement_flag_accessor(e5) == true)
+          if (edge_refinement_flag_accessor.get(e5) == true)
           {
             ordered_vertices[0] = vertices[1];
             ordered_vertices[1] = vertices[3];
             ordered_vertices[2] = vertices[2];
             ordered_vertices[3] = vertices[0];
-            ordered_vertices[4] = edge_to_vertex_handle_accessor(e4);
-            ordered_vertices[5] = edge_to_vertex_handle_accessor(e5);
+            ordered_vertices[4] = edge_to_vertex_handle_accessor.get(e4);
+            ordered_vertices[5] = edge_to_vertex_handle_accessor.get(e5);
 
             apply2_1(mesh, element_vertices, ordered_vertices);
           }
@@ -870,35 +870,35 @@ namespace viennagrid
         EdgeType e5 = *eocit;
 
         //with e0
-        if (edge_refinement_flag_accessor(e0) == true)
+        if (edge_refinement_flag_accessor.get(e0) == true)
         {
-          if (edge_refinement_flag_accessor(e1) == true)
+          if (edge_refinement_flag_accessor.get(e1) == true)
           {
             ordered_vertices[0] = vertices[2];
             ordered_vertices[1] = vertices[0];
             ordered_vertices[2] = vertices[1];
             ordered_vertices[3] = vertices[3];
-            ordered_vertices[4] = edge_to_vertex_handle_accessor(e1);
-            ordered_vertices[5] = edge_to_vertex_handle_accessor(e0);
+            ordered_vertices[4] = edge_to_vertex_handle_accessor.get(e1);
+            ordered_vertices[5] = edge_to_vertex_handle_accessor.get(e0);
 
-            if (edge_refinement_flag_accessor(e2) == true)
+            if (edge_refinement_flag_accessor.get(e2) == true)
             {
-              ordered_vertices[6] = edge_to_vertex_handle_accessor(e2);
+              ordered_vertices[6] = edge_to_vertex_handle_accessor.get(e2);
               apply3_1(mesh, element_vertices, ordered_vertices);
             }
-            else if (edge_refinement_flag_accessor(e3) == true)
+            else if (edge_refinement_flag_accessor.get(e3) == true)
             {
-              ordered_vertices[6] = edge_to_vertex_handle_accessor(e3);
+              ordered_vertices[6] = edge_to_vertex_handle_accessor.get(e3);
               apply3_2(mesh, element_vertices, ordered_vertices);
             }
-            else if (edge_refinement_flag_accessor(e4) == true)
+            else if (edge_refinement_flag_accessor.get(e4) == true)
             {
-              ordered_vertices[6] = edge_to_vertex_handle_accessor(e4);
+              ordered_vertices[6] = edge_to_vertex_handle_accessor.get(e4);
               apply3_4(mesh, element_vertices, ordered_vertices);
             }
-            else if (edge_refinement_flag_accessor(e5) == true)
+            else if (edge_refinement_flag_accessor.get(e5) == true)
             {
-              ordered_vertices[6] = edge_to_vertex_handle_accessor(e5);
+              ordered_vertices[6] = edge_to_vertex_handle_accessor.get(e5);
               apply3_3(mesh, element_vertices, ordered_vertices);
             }
             else
@@ -906,28 +906,28 @@ namespace viennagrid
               assert(false && "Logic error: No edge for refinement found!");
             }
           }
-          else if (edge_refinement_flag_accessor(e2) == true)
+          else if (edge_refinement_flag_accessor.get(e2) == true)
           {
             ordered_vertices[0] = vertices[1];
             ordered_vertices[1] = vertices[0];
             ordered_vertices[2] = vertices[3];
             ordered_vertices[3] = vertices[2];
-            ordered_vertices[4] = edge_to_vertex_handle_accessor(e0);
-            ordered_vertices[5] = edge_to_vertex_handle_accessor(e2);
+            ordered_vertices[4] = edge_to_vertex_handle_accessor.get(e0);
+            ordered_vertices[5] = edge_to_vertex_handle_accessor.get(e2);
 
-            if (edge_refinement_flag_accessor(e3) == true)
+            if (edge_refinement_flag_accessor.get(e3) == true)
             {
-              ordered_vertices[6] = edge_to_vertex_handle_accessor(e3);
+              ordered_vertices[6] = edge_to_vertex_handle_accessor.get(e3);
               apply3_3(mesh, element_vertices, ordered_vertices);
             }
-            else if (edge_refinement_flag_accessor(e4) == true)
+            else if (edge_refinement_flag_accessor.get(e4) == true)
             {
-              ordered_vertices[6] = edge_to_vertex_handle_accessor(e4);
+              ordered_vertices[6] = edge_to_vertex_handle_accessor.get(e4);
               apply3_2(mesh, element_vertices, ordered_vertices);
             }
-            else if (edge_refinement_flag_accessor(e5) == true)
+            else if (edge_refinement_flag_accessor.get(e5) == true)
             {
-              ordered_vertices[6] = edge_to_vertex_handle_accessor(e5);
+              ordered_vertices[6] = edge_to_vertex_handle_accessor.get(e5);
               apply3_4(mesh, element_vertices, ordered_vertices);
             }
             else
@@ -935,23 +935,23 @@ namespace viennagrid
               assert(false && "Logic error: No edge for refinement found!");
             }
           }
-          else if (edge_refinement_flag_accessor(e3) == true)
+          else if (edge_refinement_flag_accessor.get(e3) == true)
           {
             ordered_vertices[0] = vertices[0];
             ordered_vertices[1] = vertices[1];
             ordered_vertices[2] = vertices[2];
             ordered_vertices[3] = vertices[3];
-            ordered_vertices[4] = edge_to_vertex_handle_accessor(e0);
-            ordered_vertices[5] = edge_to_vertex_handle_accessor(e3);
+            ordered_vertices[4] = edge_to_vertex_handle_accessor.get(e0);
+            ordered_vertices[5] = edge_to_vertex_handle_accessor.get(e3);
 
-            if (edge_refinement_flag_accessor(e4) == true)
+            if (edge_refinement_flag_accessor.get(e4) == true)
             {
-              ordered_vertices[6] = edge_to_vertex_handle_accessor(e4);
+              ordered_vertices[6] = edge_to_vertex_handle_accessor.get(e4);
               apply3_1(mesh, element_vertices, ordered_vertices);
             }
-            else if (edge_refinement_flag_accessor(e5) == true)
+            else if (edge_refinement_flag_accessor.get(e5) == true)
             {
-              ordered_vertices[6] = edge_to_vertex_handle_accessor(e5);
+              ordered_vertices[6] = edge_to_vertex_handle_accessor.get(e5);
               apply3_4(mesh, element_vertices, ordered_vertices);
             }
             else
@@ -959,18 +959,18 @@ namespace viennagrid
               assert(false && "Logic error: No edge for refinement found!");
             }
           }
-          else if (edge_refinement_flag_accessor(e4) == true)
+          else if (edge_refinement_flag_accessor.get(e4) == true)
           {
             ordered_vertices[0] = vertices[3];
             ordered_vertices[1] = vertices[1];
             ordered_vertices[2] = vertices[0];
             ordered_vertices[3] = vertices[2];
-            ordered_vertices[4] = edge_to_vertex_handle_accessor(e4);
-            ordered_vertices[5] = edge_to_vertex_handle_accessor(e0);
+            ordered_vertices[4] = edge_to_vertex_handle_accessor.get(e4);
+            ordered_vertices[5] = edge_to_vertex_handle_accessor.get(e0);
 
-            if (edge_refinement_flag_accessor(e5) == true)
+            if (edge_refinement_flag_accessor.get(e5) == true)
             {
-              ordered_vertices[6] = edge_to_vertex_handle_accessor(e5);
+              ordered_vertices[6] = edge_to_vertex_handle_accessor.get(e5);
               apply3_3(mesh, element_vertices, ordered_vertices);
             }
             else
@@ -983,30 +983,30 @@ namespace viennagrid
             assert(false && "Logic error: No edge for refinement found!");
           }
         }
-        else if (edge_refinement_flag_accessor(e1) == true)
+        else if (edge_refinement_flag_accessor.get(e1) == true)
         {
-          if (edge_refinement_flag_accessor(e2) == true)
+          if (edge_refinement_flag_accessor.get(e2) == true)
           {
             ordered_vertices[0] = vertices[3];
             ordered_vertices[1] = vertices[0];
             ordered_vertices[2] = vertices[2];
             ordered_vertices[3] = vertices[1];
-            ordered_vertices[4] = edge_to_vertex_handle_accessor(e2);
-            ordered_vertices[5] = edge_to_vertex_handle_accessor(e1);
+            ordered_vertices[4] = edge_to_vertex_handle_accessor.get(e2);
+            ordered_vertices[5] = edge_to_vertex_handle_accessor.get(e1);
 
-            if (edge_refinement_flag_accessor(e3) == true)
+            if (edge_refinement_flag_accessor.get(e3) == true)
             {
-              ordered_vertices[6] = edge_to_vertex_handle_accessor(e3);
+              ordered_vertices[6] = edge_to_vertex_handle_accessor.get(e3);
               apply3_4(mesh, element_vertices, ordered_vertices);
             }
-            else if (edge_refinement_flag_accessor(e4) == true)
+            else if (edge_refinement_flag_accessor.get(e4) == true)
             {
-              ordered_vertices[6] = edge_to_vertex_handle_accessor(e4);
+              ordered_vertices[6] = edge_to_vertex_handle_accessor.get(e4);
               apply3_3(mesh, element_vertices, ordered_vertices);
             }
-            else if (edge_refinement_flag_accessor(e5) == true)
+            else if (edge_refinement_flag_accessor.get(e5) == true)
             {
-              ordered_vertices[6] = edge_to_vertex_handle_accessor(e5);
+              ordered_vertices[6] = edge_to_vertex_handle_accessor.get(e5);
               apply3_2(mesh, element_vertices, ordered_vertices);
             }
             else
@@ -1014,23 +1014,23 @@ namespace viennagrid
               assert(false && "Logic error: No edge for refinement found!");
             }
           }
-          else if (edge_refinement_flag_accessor(e3) == true)
+          else if (edge_refinement_flag_accessor.get(e3) == true)
           {
             ordered_vertices[0] = vertices[1];
             ordered_vertices[1] = vertices[2];
             ordered_vertices[2] = vertices[0];
             ordered_vertices[3] = vertices[3];
-            ordered_vertices[4] = edge_to_vertex_handle_accessor(e3);
-            ordered_vertices[5] = edge_to_vertex_handle_accessor(e1);
+            ordered_vertices[4] = edge_to_vertex_handle_accessor.get(e3);
+            ordered_vertices[5] = edge_to_vertex_handle_accessor.get(e1);
 
-            if (edge_refinement_flag_accessor(e4) == true)
+            if (edge_refinement_flag_accessor.get(e4) == true)
             {
-              ordered_vertices[6] = edge_to_vertex_handle_accessor(e4);
+              ordered_vertices[6] = edge_to_vertex_handle_accessor.get(e4);
               apply3_3(mesh, element_vertices, ordered_vertices);
             }
-            else if (edge_refinement_flag_accessor(e5) == true)
+            else if (edge_refinement_flag_accessor.get(e5) == true)
             {
-              ordered_vertices[6] = edge_to_vertex_handle_accessor(e5);
+              ordered_vertices[6] = edge_to_vertex_handle_accessor.get(e5);
               apply3_1(mesh, element_vertices, ordered_vertices);
             }
             else
@@ -1038,18 +1038,18 @@ namespace viennagrid
               assert(false && "Logic error: No edge for refinement found!");
             }
           }
-          else if (edge_refinement_flag_accessor(e4) == true)
+          else if (edge_refinement_flag_accessor.get(e4) == true)
           {
-            if (edge_refinement_flag_accessor(e5) == true)
+            if (edge_refinement_flag_accessor.get(e5) == true)
             {
               //make edges 4 and 5 the references
               ordered_vertices[0] = vertices[1];
               ordered_vertices[1] = vertices[3];
               ordered_vertices[2] = vertices[2];
               ordered_vertices[3] = vertices[0];
-              ordered_vertices[4] = edge_to_vertex_handle_accessor(e4);
-              ordered_vertices[5] = edge_to_vertex_handle_accessor(e5);
-              ordered_vertices[6] = edge_to_vertex_handle_accessor(e1);
+              ordered_vertices[4] = edge_to_vertex_handle_accessor.get(e4);
+              ordered_vertices[5] = edge_to_vertex_handle_accessor.get(e5);
+              ordered_vertices[6] = edge_to_vertex_handle_accessor.get(e1);
 
               apply3_4(mesh, element_vertices, ordered_vertices);
             }
@@ -1063,35 +1063,35 @@ namespace viennagrid
             assert(false && "Logic error: No edge for refinement found!");
           }
         }
-        else if (edge_refinement_flag_accessor(e2) == true)
+        else if (edge_refinement_flag_accessor.get(e2) == true)
         {
-          if (edge_refinement_flag_accessor(e3) == true)
+          if (edge_refinement_flag_accessor.get(e3) == true)
           {
             //NOTE: edges 2 and 3 don't have a common vertex, therefore 'base facet' is chosen depending on the third edge
 
-            if (edge_refinement_flag_accessor(e4) == true)
+            if (edge_refinement_flag_accessor.get(e4) == true)
             {
               // take edges 2 and 4 as reference
               ordered_vertices[0] = vertices[0];
               ordered_vertices[1] = vertices[3];
               ordered_vertices[2] = vertices[1];
               ordered_vertices[3] = vertices[2];
-              ordered_vertices[4] = edge_to_vertex_handle_accessor(e2);
-              ordered_vertices[5] = edge_to_vertex_handle_accessor(e4);
-              ordered_vertices[6] = edge_to_vertex_handle_accessor(e3);
+              ordered_vertices[4] = edge_to_vertex_handle_accessor.get(e2);
+              ordered_vertices[5] = edge_to_vertex_handle_accessor.get(e4);
+              ordered_vertices[6] = edge_to_vertex_handle_accessor.get(e3);
 
               apply3_4(mesh, element_vertices, ordered_vertices);
             }
-            else if (edge_refinement_flag_accessor(e5) == true)
+            else if (edge_refinement_flag_accessor.get(e5) == true)
             {
               // take edges 5 and 3 as reference
               ordered_vertices[0] = vertices[3];
               ordered_vertices[1] = vertices[2];
               ordered_vertices[2] = vertices[1];
               ordered_vertices[3] = vertices[0];
-              ordered_vertices[4] = edge_to_vertex_handle_accessor(e5);
-              ordered_vertices[5] = edge_to_vertex_handle_accessor(e3);
-              ordered_vertices[6] = edge_to_vertex_handle_accessor(e2);
+              ordered_vertices[4] = edge_to_vertex_handle_accessor.get(e5);
+              ordered_vertices[5] = edge_to_vertex_handle_accessor.get(e3);
+              ordered_vertices[6] = edge_to_vertex_handle_accessor.get(e2);
 
               apply3_3(mesh, element_vertices, ordered_vertices);
             }
@@ -1100,18 +1100,18 @@ namespace viennagrid
               assert(false && "Logic error: No edge for refinement found!");
             }
           }
-          else if (edge_refinement_flag_accessor(e4) == true)
+          else if (edge_refinement_flag_accessor.get(e4) == true)
           {
             ordered_vertices[0] = vertices[0];
             ordered_vertices[1] = vertices[3];
             ordered_vertices[2] = vertices[1];
             ordered_vertices[3] = vertices[2];
-            ordered_vertices[4] = edge_to_vertex_handle_accessor(e2);
-            ordered_vertices[5] = edge_to_vertex_handle_accessor(e4);
+            ordered_vertices[4] = edge_to_vertex_handle_accessor.get(e2);
+            ordered_vertices[5] = edge_to_vertex_handle_accessor.get(e4);
 
-            if (edge_refinement_flag_accessor(e5) == true)
+            if (edge_refinement_flag_accessor.get(e5) == true)
             {
-              ordered_vertices[6] = edge_to_vertex_handle_accessor(e5);
+              ordered_vertices[6] = edge_to_vertex_handle_accessor.get(e5);
               apply3_1(mesh, element_vertices, ordered_vertices);
             }
             else
@@ -1124,20 +1124,20 @@ namespace viennagrid
             assert(false && "Logic error: No edge for refinement found!");
           }
         }
-        else if (edge_refinement_flag_accessor(e3) == true)
+        else if (edge_refinement_flag_accessor.get(e3) == true)
         {
-          if (edge_refinement_flag_accessor(e4) == true)
+          if (edge_refinement_flag_accessor.get(e4) == true)
           {
             ordered_vertices[0] = vertices[2];
             ordered_vertices[1] = vertices[1];
             ordered_vertices[2] = vertices[3];
             ordered_vertices[3] = vertices[0];
-            ordered_vertices[4] = edge_to_vertex_handle_accessor(e3);
-            ordered_vertices[5] = edge_to_vertex_handle_accessor(e4);
+            ordered_vertices[4] = edge_to_vertex_handle_accessor.get(e3);
+            ordered_vertices[5] = edge_to_vertex_handle_accessor.get(e4);
 
-            if (edge_refinement_flag_accessor(e5) == true)
+            if (edge_refinement_flag_accessor.get(e5) == true)
             {
-              ordered_vertices[6] = edge_to_vertex_handle_accessor(e5);
+              ordered_vertices[6] = edge_to_vertex_handle_accessor.get(e5);
               apply3_2(mesh, element_vertices, ordered_vertices);
             }
             else
@@ -1505,70 +1505,70 @@ namespace viennagrid
         EdgeType e5 = *eocit;
 
         //with e0
-        if (edge_refinement_flag_accessor(e0) == false)
+        if (edge_refinement_flag_accessor.get(e0) == false)
         {
-          if (edge_refinement_flag_accessor(e1) == false)
+          if (edge_refinement_flag_accessor.get(e1) == false)
           {
             ordered_vertices[0] = vertices[2];
             ordered_vertices[1] = vertices[0];
             ordered_vertices[2] = vertices[1];
             ordered_vertices[3] = vertices[3];
-            ordered_vertices[4] = edge_to_vertex_handle_accessor(e3);
-            ordered_vertices[5] = edge_to_vertex_handle_accessor(e2);
-            ordered_vertices[6] = edge_to_vertex_handle_accessor(e4);
-            ordered_vertices[7] = edge_to_vertex_handle_accessor(e5);
+            ordered_vertices[4] = edge_to_vertex_handle_accessor.get(e3);
+            ordered_vertices[5] = edge_to_vertex_handle_accessor.get(e2);
+            ordered_vertices[6] = edge_to_vertex_handle_accessor.get(e4);
+            ordered_vertices[7] = edge_to_vertex_handle_accessor.get(e5);
 
             apply4_1(mesh, element_vertices, ordered_vertices);
           }
-          else if (edge_refinement_flag_accessor(e2) == false)
+          else if (edge_refinement_flag_accessor.get(e2) == false)
           {
             ordered_vertices[0] = vertices[1];
             ordered_vertices[1] = vertices[0];
             ordered_vertices[2] = vertices[3];
             ordered_vertices[3] = vertices[2];
-            ordered_vertices[4] = edge_to_vertex_handle_accessor(e4);
-            ordered_vertices[5] = edge_to_vertex_handle_accessor(e1);
-            ordered_vertices[6] = edge_to_vertex_handle_accessor(e5);
-            ordered_vertices[7] = edge_to_vertex_handle_accessor(e3);
+            ordered_vertices[4] = edge_to_vertex_handle_accessor.get(e4);
+            ordered_vertices[5] = edge_to_vertex_handle_accessor.get(e1);
+            ordered_vertices[6] = edge_to_vertex_handle_accessor.get(e5);
+            ordered_vertices[7] = edge_to_vertex_handle_accessor.get(e3);
 
             apply4_1(mesh, element_vertices, ordered_vertices);
           }
-          else if (edge_refinement_flag_accessor(e3) == false)
+          else if (edge_refinement_flag_accessor.get(e3) == false)
           {
             ordered_vertices[0] = vertices[0];
             ordered_vertices[1] = vertices[1];
             ordered_vertices[2] = vertices[2];
             ordered_vertices[3] = vertices[3];
-            ordered_vertices[4] = edge_to_vertex_handle_accessor(e1);
-            ordered_vertices[5] = edge_to_vertex_handle_accessor(e4);
-            ordered_vertices[6] = edge_to_vertex_handle_accessor(e5);
-            ordered_vertices[7] = edge_to_vertex_handle_accessor(e2);
+            ordered_vertices[4] = edge_to_vertex_handle_accessor.get(e1);
+            ordered_vertices[5] = edge_to_vertex_handle_accessor.get(e4);
+            ordered_vertices[6] = edge_to_vertex_handle_accessor.get(e5);
+            ordered_vertices[7] = edge_to_vertex_handle_accessor.get(e2);
 
             apply4_1(mesh, element_vertices, ordered_vertices);
           }
-          else if (edge_refinement_flag_accessor(e4) == false)
+          else if (edge_refinement_flag_accessor.get(e4) == false)
           {
             ordered_vertices[0] = vertices[3];
             ordered_vertices[1] = vertices[1];
             ordered_vertices[2] = vertices[0];
             ordered_vertices[3] = vertices[2];
-            ordered_vertices[4] = edge_to_vertex_handle_accessor(e2);
-            ordered_vertices[5] = edge_to_vertex_handle_accessor(e3);
-            ordered_vertices[6] = edge_to_vertex_handle_accessor(e1);
-            ordered_vertices[7] = edge_to_vertex_handle_accessor(e5);
+            ordered_vertices[4] = edge_to_vertex_handle_accessor.get(e2);
+            ordered_vertices[5] = edge_to_vertex_handle_accessor.get(e3);
+            ordered_vertices[6] = edge_to_vertex_handle_accessor.get(e1);
+            ordered_vertices[7] = edge_to_vertex_handle_accessor.get(e5);
 
             apply4_1(mesh, element_vertices, ordered_vertices);
           }
-          else if (edge_refinement_flag_accessor(e5) == false)
+          else if (edge_refinement_flag_accessor.get(e5) == false)
           {
             ordered_vertices[0] = vertices[0];
             ordered_vertices[1] = vertices[1];
             ordered_vertices[2] = vertices[2];
             ordered_vertices[3] = vertices[3];
-            ordered_vertices[4] = edge_to_vertex_handle_accessor(e3);
-            ordered_vertices[5] = edge_to_vertex_handle_accessor(e1);
-            ordered_vertices[6] = edge_to_vertex_handle_accessor(e2);
-            ordered_vertices[7] = edge_to_vertex_handle_accessor(e4);
+            ordered_vertices[4] = edge_to_vertex_handle_accessor.get(e3);
+            ordered_vertices[5] = edge_to_vertex_handle_accessor.get(e1);
+            ordered_vertices[6] = edge_to_vertex_handle_accessor.get(e2);
+            ordered_vertices[7] = edge_to_vertex_handle_accessor.get(e4);
 
             apply4_2(mesh, element_vertices, ordered_vertices);
           }
@@ -1577,57 +1577,57 @@ namespace viennagrid
             assert(false && "Logic error: No edge for refinement found!");
           }
         }
-        else if (edge_refinement_flag_accessor(e1) == false)
+        else if (edge_refinement_flag_accessor.get(e1) == false)
         {
-          if (edge_refinement_flag_accessor(e2) == false)
+          if (edge_refinement_flag_accessor.get(e2) == false)
           {
             ordered_vertices[0] = vertices[3];
             ordered_vertices[1] = vertices[0];
             ordered_vertices[2] = vertices[2];
             ordered_vertices[3] = vertices[1];
-            ordered_vertices[4] = edge_to_vertex_handle_accessor(e5);
-            ordered_vertices[5] = edge_to_vertex_handle_accessor(e0);
-            ordered_vertices[6] = edge_to_vertex_handle_accessor(e3);
-            ordered_vertices[7] = edge_to_vertex_handle_accessor(e4);
+            ordered_vertices[4] = edge_to_vertex_handle_accessor.get(e5);
+            ordered_vertices[5] = edge_to_vertex_handle_accessor.get(e0);
+            ordered_vertices[6] = edge_to_vertex_handle_accessor.get(e3);
+            ordered_vertices[7] = edge_to_vertex_handle_accessor.get(e4);
 
             apply4_1(mesh, element_vertices, ordered_vertices);
           }
-          else if (edge_refinement_flag_accessor(e3) == false)
+          else if (edge_refinement_flag_accessor.get(e3) == false)
           {
             ordered_vertices[0] = vertices[1];
             ordered_vertices[1] = vertices[2];
             ordered_vertices[2] = vertices[0];
             ordered_vertices[3] = vertices[3];
-            ordered_vertices[4] = edge_to_vertex_handle_accessor(e0);
-            ordered_vertices[5] = edge_to_vertex_handle_accessor(e5);
-            ordered_vertices[6] = edge_to_vertex_handle_accessor(e2);
-            ordered_vertices[7] = edge_to_vertex_handle_accessor(e4);
+            ordered_vertices[4] = edge_to_vertex_handle_accessor.get(e0);
+            ordered_vertices[5] = edge_to_vertex_handle_accessor.get(e5);
+            ordered_vertices[6] = edge_to_vertex_handle_accessor.get(e2);
+            ordered_vertices[7] = edge_to_vertex_handle_accessor.get(e4);
 
             apply4_1(mesh, element_vertices, ordered_vertices);
           }
-          else if (edge_refinement_flag_accessor(e4) == false)
+          else if (edge_refinement_flag_accessor.get(e4) == false)
           {
             ordered_vertices[0] = vertices[2];
             ordered_vertices[1] = vertices[0];
             ordered_vertices[2] = vertices[1];
             ordered_vertices[3] = vertices[3];
-            ordered_vertices[4] = edge_to_vertex_handle_accessor(e0);
-            ordered_vertices[5] = edge_to_vertex_handle_accessor(e3);
-            ordered_vertices[6] = edge_to_vertex_handle_accessor(e5);
-            ordered_vertices[7] = edge_to_vertex_handle_accessor(e2);
+            ordered_vertices[4] = edge_to_vertex_handle_accessor.get(e0);
+            ordered_vertices[5] = edge_to_vertex_handle_accessor.get(e3);
+            ordered_vertices[6] = edge_to_vertex_handle_accessor.get(e5);
+            ordered_vertices[7] = edge_to_vertex_handle_accessor.get(e2);
 
             apply4_2(mesh, element_vertices, ordered_vertices);
           }
-          else if (edge_refinement_flag_accessor(e5) == false)
+          else if (edge_refinement_flag_accessor.get(e5) == false)
           {
             ordered_vertices[0] = vertices[0];
             ordered_vertices[1] = vertices[2];
             ordered_vertices[2] = vertices[3];
             ordered_vertices[3] = vertices[1];
-            ordered_vertices[4] = edge_to_vertex_handle_accessor(e2);
-            ordered_vertices[5] = edge_to_vertex_handle_accessor(e3);
-            ordered_vertices[6] = edge_to_vertex_handle_accessor(e4);
-            ordered_vertices[7] = edge_to_vertex_handle_accessor(e0);
+            ordered_vertices[4] = edge_to_vertex_handle_accessor.get(e2);
+            ordered_vertices[5] = edge_to_vertex_handle_accessor.get(e3);
+            ordered_vertices[6] = edge_to_vertex_handle_accessor.get(e4);
+            ordered_vertices[7] = edge_to_vertex_handle_accessor.get(e0);
 
             apply4_1(mesh, element_vertices, ordered_vertices);
           }
@@ -1636,44 +1636,44 @@ namespace viennagrid
             assert(false && "Logic error: No edge for refinement found!");
           }
         }
-        else if (edge_refinement_flag_accessor(e2) == false)
+        else if (edge_refinement_flag_accessor.get(e2) == false)
         {
-          if (edge_refinement_flag_accessor(e3) == false)
+          if (edge_refinement_flag_accessor.get(e3) == false)
           {
             ordered_vertices[0] = vertices[3];
             ordered_vertices[1] = vertices[0];
             ordered_vertices[2] = vertices[2];
             ordered_vertices[3] = vertices[1];
-            ordered_vertices[4] = edge_to_vertex_handle_accessor(e1);
-            ordered_vertices[5] = edge_to_vertex_handle_accessor(e5);
-            ordered_vertices[6] = edge_to_vertex_handle_accessor(e4);
-            ordered_vertices[7] = edge_to_vertex_handle_accessor(e0);
+            ordered_vertices[4] = edge_to_vertex_handle_accessor.get(e1);
+            ordered_vertices[5] = edge_to_vertex_handle_accessor.get(e5);
+            ordered_vertices[6] = edge_to_vertex_handle_accessor.get(e4);
+            ordered_vertices[7] = edge_to_vertex_handle_accessor.get(e0);
 
             apply4_2(mesh, element_vertices, ordered_vertices);
           }
-          else if (edge_refinement_flag_accessor(e4) == false)
+          else if (edge_refinement_flag_accessor.get(e4) == false)
           {
             ordered_vertices[0] = vertices[0];
             ordered_vertices[1] = vertices[3];
             ordered_vertices[2] = vertices[1];
             ordered_vertices[3] = vertices[2];
-            ordered_vertices[4] = edge_to_vertex_handle_accessor(e0);
-            ordered_vertices[5] = edge_to_vertex_handle_accessor(e5);
-            ordered_vertices[6] = edge_to_vertex_handle_accessor(e3);
-            ordered_vertices[7] = edge_to_vertex_handle_accessor(e1);
+            ordered_vertices[4] = edge_to_vertex_handle_accessor.get(e0);
+            ordered_vertices[5] = edge_to_vertex_handle_accessor.get(e5);
+            ordered_vertices[6] = edge_to_vertex_handle_accessor.get(e3);
+            ordered_vertices[7] = edge_to_vertex_handle_accessor.get(e1);
 
             apply4_1(mesh, element_vertices, ordered_vertices);
           }
-          else if (edge_refinement_flag_accessor(e5) == false)
+          else if (edge_refinement_flag_accessor.get(e5) == false)
           {
             ordered_vertices[0] = vertices[2];
             ordered_vertices[1] = vertices[3];
             ordered_vertices[2] = vertices[0];
             ordered_vertices[3] = vertices[1];
-            ordered_vertices[4] = edge_to_vertex_handle_accessor(e1);
-            ordered_vertices[5] = edge_to_vertex_handle_accessor(e4);
-            ordered_vertices[6] = edge_to_vertex_handle_accessor(e0);
-            ordered_vertices[7] = edge_to_vertex_handle_accessor(e3);
+            ordered_vertices[4] = edge_to_vertex_handle_accessor.get(e1);
+            ordered_vertices[5] = edge_to_vertex_handle_accessor.get(e4);
+            ordered_vertices[6] = edge_to_vertex_handle_accessor.get(e0);
+            ordered_vertices[7] = edge_to_vertex_handle_accessor.get(e3);
 
             apply4_1(mesh, element_vertices, ordered_vertices);
           }
@@ -1682,31 +1682,31 @@ namespace viennagrid
             assert(false && "Logic error: No edge for refinement found!");
           }
         }
-        else if (edge_refinement_flag_accessor(e3) == false)
+        else if (edge_refinement_flag_accessor.get(e3) == false)
         {
-          if (edge_refinement_flag_accessor(e4) == false)
+          if (edge_refinement_flag_accessor.get(e4) == false)
           {
             ordered_vertices[0] = vertices[2];
             ordered_vertices[1] = vertices[1];
             ordered_vertices[2] = vertices[3];
             ordered_vertices[3] = vertices[0];
-            ordered_vertices[4] = edge_to_vertex_handle_accessor(e5);
-            ordered_vertices[5] = edge_to_vertex_handle_accessor(e0);
-            ordered_vertices[6] = edge_to_vertex_handle_accessor(e2);
-            ordered_vertices[7] = edge_to_vertex_handle_accessor(e1);
+            ordered_vertices[4] = edge_to_vertex_handle_accessor.get(e5);
+            ordered_vertices[5] = edge_to_vertex_handle_accessor.get(e0);
+            ordered_vertices[6] = edge_to_vertex_handle_accessor.get(e2);
+            ordered_vertices[7] = edge_to_vertex_handle_accessor.get(e1);
 
             apply4_1(mesh, element_vertices, ordered_vertices);
           }
-          else if (edge_refinement_flag_accessor(e5) == false)
+          else if (edge_refinement_flag_accessor.get(e5) == false)
           {
             ordered_vertices[0] = vertices[3];
             ordered_vertices[1] = vertices[2];
             ordered_vertices[2] = vertices[1];
             ordered_vertices[3] = vertices[0];
-            ordered_vertices[4] = edge_to_vertex_handle_accessor(e4);
-            ordered_vertices[5] = edge_to_vertex_handle_accessor(e1);
-            ordered_vertices[6] = edge_to_vertex_handle_accessor(e0);
-            ordered_vertices[7] = edge_to_vertex_handle_accessor(e2);
+            ordered_vertices[4] = edge_to_vertex_handle_accessor.get(e4);
+            ordered_vertices[5] = edge_to_vertex_handle_accessor.get(e1);
+            ordered_vertices[6] = edge_to_vertex_handle_accessor.get(e0);
+            ordered_vertices[7] = edge_to_vertex_handle_accessor.get(e2);
 
             apply4_1(mesh, element_vertices, ordered_vertices);
           }
@@ -1715,18 +1715,18 @@ namespace viennagrid
             assert(false && "Logic error: No edge for refinement found!");
           }
         }
-        else if (edge_refinement_flag_accessor(e4) == false)
+        else if (edge_refinement_flag_accessor.get(e4) == false)
         {
-          if (edge_refinement_flag_accessor(e5) == false)
+          if (edge_refinement_flag_accessor.get(e5) == false)
           {
             ordered_vertices[0] = vertices[1];
             ordered_vertices[1] = vertices[3];
             ordered_vertices[2] = vertices[2];
             ordered_vertices[3] = vertices[0];
-            ordered_vertices[4] = edge_to_vertex_handle_accessor(e3);
-            ordered_vertices[5] = edge_to_vertex_handle_accessor(e2);
-            ordered_vertices[6] = edge_to_vertex_handle_accessor(e1);
-            ordered_vertices[7] = edge_to_vertex_handle_accessor(e0);
+            ordered_vertices[4] = edge_to_vertex_handle_accessor.get(e3);
+            ordered_vertices[5] = edge_to_vertex_handle_accessor.get(e2);
+            ordered_vertices[6] = edge_to_vertex_handle_accessor.get(e1);
+            ordered_vertices[7] = edge_to_vertex_handle_accessor.get(e0);
 
             apply4_1(mesh, element_vertices, ordered_vertices);
           }
@@ -1854,87 +1854,87 @@ namespace viennagrid
         EdgeType e4 = *eocit; ++eocit;
         EdgeType e5 = *eocit;
 
-        if (edge_refinement_flag_accessor(e0) == false)
+        if (edge_refinement_flag_accessor.get(e0) == false)
         {
           ordered_vertices[0] = vertices[0];
           ordered_vertices[1] = vertices[1];
           ordered_vertices[2] = vertices[2];
           ordered_vertices[3] = vertices[3];
-          ordered_vertices[4] = edge_to_vertex_handle_accessor(e3);
-          ordered_vertices[5] = edge_to_vertex_handle_accessor(e1);
-          ordered_vertices[6] = edge_to_vertex_handle_accessor(e2);
-          ordered_vertices[7] = edge_to_vertex_handle_accessor(e4);
-          ordered_vertices[8] = edge_to_vertex_handle_accessor(e5);
+          ordered_vertices[4] = edge_to_vertex_handle_accessor.get(e3);
+          ordered_vertices[5] = edge_to_vertex_handle_accessor.get(e1);
+          ordered_vertices[6] = edge_to_vertex_handle_accessor.get(e2);
+          ordered_vertices[7] = edge_to_vertex_handle_accessor.get(e4);
+          ordered_vertices[8] = edge_to_vertex_handle_accessor.get(e5);
 
           apply5_1(mesh, element_vertices, ordered_vertices);
         }
-        else if (edge_refinement_flag_accessor(e1) == false)
+        else if (edge_refinement_flag_accessor.get(e1) == false)
         {
           ordered_vertices[0] = vertices[2];
           ordered_vertices[1] = vertices[0];
           ordered_vertices[2] = vertices[1];
           ordered_vertices[3] = vertices[3];
-          ordered_vertices[4] = edge_to_vertex_handle_accessor(e0);
-          ordered_vertices[5] = edge_to_vertex_handle_accessor(e3);
-          ordered_vertices[6] = edge_to_vertex_handle_accessor(e5);
-          ordered_vertices[7] = edge_to_vertex_handle_accessor(e2);
-          ordered_vertices[8] = edge_to_vertex_handle_accessor(e4);
+          ordered_vertices[4] = edge_to_vertex_handle_accessor.get(e0);
+          ordered_vertices[5] = edge_to_vertex_handle_accessor.get(e3);
+          ordered_vertices[6] = edge_to_vertex_handle_accessor.get(e5);
+          ordered_vertices[7] = edge_to_vertex_handle_accessor.get(e2);
+          ordered_vertices[8] = edge_to_vertex_handle_accessor.get(e4);
 
           apply5_1(mesh, element_vertices, ordered_vertices);
         }
-        else if (edge_refinement_flag_accessor(e2) == false)
+        else if (edge_refinement_flag_accessor.get(e2) == false)
         {
           ordered_vertices[0] = vertices[0];
           ordered_vertices[1] = vertices[3];
           ordered_vertices[2] = vertices[1];
           ordered_vertices[3] = vertices[2];
-          ordered_vertices[4] = edge_to_vertex_handle_accessor(e4);
-          ordered_vertices[5] = edge_to_vertex_handle_accessor(e0);
-          ordered_vertices[6] = edge_to_vertex_handle_accessor(e1);
-          ordered_vertices[7] = edge_to_vertex_handle_accessor(e5);
-          ordered_vertices[8] = edge_to_vertex_handle_accessor(e3);
+          ordered_vertices[4] = edge_to_vertex_handle_accessor.get(e4);
+          ordered_vertices[5] = edge_to_vertex_handle_accessor.get(e0);
+          ordered_vertices[6] = edge_to_vertex_handle_accessor.get(e1);
+          ordered_vertices[7] = edge_to_vertex_handle_accessor.get(e5);
+          ordered_vertices[8] = edge_to_vertex_handle_accessor.get(e3);
 
           apply5_1(mesh, element_vertices, ordered_vertices);
         }
-        else if (edge_refinement_flag_accessor(e3) == false)
+        else if (edge_refinement_flag_accessor.get(e3) == false)
         {
           ordered_vertices[0] = vertices[1];
           ordered_vertices[1] = vertices[2];
           ordered_vertices[2] = vertices[0];
           ordered_vertices[3] = vertices[3];
-          ordered_vertices[4] = edge_to_vertex_handle_accessor(e1);
-          ordered_vertices[5] = edge_to_vertex_handle_accessor(e0);
-          ordered_vertices[6] = edge_to_vertex_handle_accessor(e4);
-          ordered_vertices[7] = edge_to_vertex_handle_accessor(e5);
-          ordered_vertices[8] = edge_to_vertex_handle_accessor(e2);
+          ordered_vertices[4] = edge_to_vertex_handle_accessor.get(e1);
+          ordered_vertices[5] = edge_to_vertex_handle_accessor.get(e0);
+          ordered_vertices[6] = edge_to_vertex_handle_accessor.get(e4);
+          ordered_vertices[7] = edge_to_vertex_handle_accessor.get(e5);
+          ordered_vertices[8] = edge_to_vertex_handle_accessor.get(e2);
 
           apply5_1(mesh, element_vertices, ordered_vertices);
         }
-        else if (edge_refinement_flag_accessor(e4) == false)
+        else if (edge_refinement_flag_accessor.get(e4) == false)
         {
           ordered_vertices[0] = vertices[1];
           ordered_vertices[1] = vertices[3];
           ordered_vertices[2] = vertices[2];
           ordered_vertices[3] = vertices[0];
-          ordered_vertices[4] = edge_to_vertex_handle_accessor(e5);
-          ordered_vertices[5] = edge_to_vertex_handle_accessor(e3);
-          ordered_vertices[6] = edge_to_vertex_handle_accessor(e0);
-          ordered_vertices[7] = edge_to_vertex_handle_accessor(e2);
-          ordered_vertices[8] = edge_to_vertex_handle_accessor(e1);
+          ordered_vertices[4] = edge_to_vertex_handle_accessor.get(e5);
+          ordered_vertices[5] = edge_to_vertex_handle_accessor.get(e3);
+          ordered_vertices[6] = edge_to_vertex_handle_accessor.get(e0);
+          ordered_vertices[7] = edge_to_vertex_handle_accessor.get(e2);
+          ordered_vertices[8] = edge_to_vertex_handle_accessor.get(e1);
 
           apply5_1(mesh, element_vertices, ordered_vertices);
         }
-        else if (edge_refinement_flag_accessor(e5) == false)
+        else if (edge_refinement_flag_accessor.get(e5) == false)
         {
           ordered_vertices[0] = vertices[3];
           ordered_vertices[1] = vertices[2];
           ordered_vertices[2] = vertices[1];
           ordered_vertices[3] = vertices[0];
-          ordered_vertices[4] = edge_to_vertex_handle_accessor(e3);
-          ordered_vertices[5] = edge_to_vertex_handle_accessor(e4);
-          ordered_vertices[6] = edge_to_vertex_handle_accessor(e2);
-          ordered_vertices[7] = edge_to_vertex_handle_accessor(e1);
-          ordered_vertices[8] = edge_to_vertex_handle_accessor(e0);
+          ordered_vertices[4] = edge_to_vertex_handle_accessor.get(e3);
+          ordered_vertices[5] = edge_to_vertex_handle_accessor.get(e4);
+          ordered_vertices[6] = edge_to_vertex_handle_accessor.get(e2);
+          ordered_vertices[7] = edge_to_vertex_handle_accessor.get(e1);
+          ordered_vertices[8] = edge_to_vertex_handle_accessor.get(e0);
 
           apply5_1(mesh, element_vertices, ordered_vertices);
         }
@@ -1992,12 +1992,12 @@ namespace viennagrid
 
 
 
-        vertices[4] = edge_to_vertex_handle_accessor(*eocit); ++eocit;
-        vertices[5] = edge_to_vertex_handle_accessor(*eocit); ++eocit;
-        vertices[6] = edge_to_vertex_handle_accessor(*eocit); ++eocit;
-        vertices[7] = edge_to_vertex_handle_accessor(*eocit); ++eocit;
-        vertices[8] = edge_to_vertex_handle_accessor(*eocit); ++eocit;
-        vertices[9] = edge_to_vertex_handle_accessor(*eocit);
+        vertices[4] = edge_to_vertex_handle_accessor.get(*eocit); ++eocit;
+        vertices[5] = edge_to_vertex_handle_accessor.get(*eocit); ++eocit;
+        vertices[6] = edge_to_vertex_handle_accessor.get(*eocit); ++eocit;
+        vertices[7] = edge_to_vertex_handle_accessor.get(*eocit); ++eocit;
+        vertices[8] = edge_to_vertex_handle_accessor.get(*eocit); ++eocit;
+        vertices[9] = edge_to_vertex_handle_accessor.get(*eocit);
 
         //
         // Step 2: Add new cells to new mesh:
@@ -2094,7 +2094,7 @@ namespace viennagrid
                                 eocit != edges_on_cell.end();
                               ++eocit)
         {
-          if (edge_refinement_flag_accessor(*eocit) == true)
+          if (edge_refinement_flag_accessor.get(*eocit) == true)
             ++edges_to_refine;
         }
 

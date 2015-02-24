@@ -105,12 +105,8 @@ namespace viennagrid
 
         typedef typename viennagrid::result_of::point<MeshType>::type PointType;
         typedef typename viennagrid::result_of::coord<PointType>::type CoordType;
-//         static const int geometric_dim = viennagrid::result_of::static_size<PointType>::value;
 
-//         typedef typename viennagrid::result_of::cell_tag<MeshType>::type CellTag;
-
-        typedef typename result_of::element<MeshType, viennagrid::vertex_tag>::type                           VertexType;
-        typedef typename result_of::element<MeshType>::type     CellType;
+        typedef typename result_of::element<MeshType>::type     ElementType;
 
         typedef typename viennagrid::result_of::const_vertex_range<MeshType>::type   VertexRange;
         typedef typename viennagrid::result_of::iterator<VertexRange>::type              VertexIterator;
@@ -118,13 +114,13 @@ namespace viennagrid
         typedef typename viennagrid::result_of::const_cell_range<MeshType>::type     CellRange;
         typedef typename viennagrid::result_of::iterator<CellRange>::type                                        CellIterator;
 
-        typedef typename viennagrid::result_of::const_vertex_range<CellType>::type      VertexOnCellRange;
+        typedef typename viennagrid::result_of::const_vertex_range<ElementType>::type     VertexOnCellRange;
         typedef typename viennagrid::result_of::iterator<VertexOnCellRange>::type         VertexOnCellIterator;
 
-        typedef base_dynamic_field<const double, VertexType> VertexScalarBaseAccessor;
+        typedef base_dynamic_accessor<double, ElementType> VertexScalarBaseAccessor;
         typedef std::map< std::string, VertexScalarBaseAccessor * > VertexScalarOutputAccessorContainer;
 
-        typedef base_dynamic_field<const double, CellType> CellScalarBaseAccessor;
+        typedef base_dynamic_accessor<double, ElementType> CellScalarBaseAccessor;
         typedef std::map< std::string, CellScalarBaseAccessor * > CellScalarOutputAccessorContainer;
 
 
@@ -178,7 +174,7 @@ namespace viennagrid
                 vocit != vertices_for_cell.end();
                 ++vocit)
             {
-              VertexType const & vertex = *vocit;
+              ElementType const & vertex = *vocit;
               writer << vertex.id() << " ";
             }
             writer << std::endl;
@@ -202,7 +198,7 @@ namespace viennagrid
                 vit != vertices.end();
                 ++vit)
             {
-              writer << DXfixer( vertex_scalar_data.begin()->second->at(*vit) );
+              writer << DXfixer( vertex_scalar_data.begin()->second->get(*vit) );
               writer << std::endl;
             }
 
@@ -217,7 +213,7 @@ namespace viennagrid
                 cit != cells.end();
                 ++cit)
             {
-              writer << DXfixer( cell_scalar_data.begin()->second->at(*cit) );
+              writer << DXfixer( cell_scalar_data.begin()->second->get(*cit) );
               writer << std::endl;
             }
             writer << "attribute \"dep\" string \"connections\"" << std::endl;
@@ -235,16 +231,16 @@ namespace viennagrid
 
 
       template<typename MapType, typename AccessorOrFieldType>
-      void add_to_container(MapType & map, AccessorOrFieldType const accessor_or_field, std::string const & name)
+      void add_to_container(MapType & map, AccessorOrFieldType const & accessor_or_field, std::string const & name)
       {
           typename MapType::iterator it = map.find(name);
           if (it != map.end())
           {
             delete it->second;
-            it->second = new dynamic_field_wrapper<const AccessorOrFieldType>( accessor_or_field );
+            it->second = new dynamic_accessor_wrapper<double, ElementType, AccessorOrFieldType>( accessor_or_field );
           }
           else
-            map[name] = new dynamic_field_wrapper<const AccessorOrFieldType>( accessor_or_field );
+            map[name] = new dynamic_accessor_wrapper<double, ElementType, AccessorOrFieldType>( accessor_or_field );
       }
 
 
@@ -253,7 +249,7 @@ namespace viennagrid
 
         /** @brief Adds scalar data on vertices for writing to the OpenDX file. Only one quantity at a time is supported! */
         template <typename T>
-        void add_scalar_data_on_vertices(T const accessor, std::string name)
+        void add_scalar_data_on_vertices(T const & accessor, std::string name)
         {
           if (vertex_scalar_data.size() > 0)
             std::cout << "* ViennaGrid: Warning: OpenDX vertex data " << name
@@ -264,7 +260,7 @@ namespace viennagrid
 
         /** @brief Adds scalar data on cells for writing to the OpenDX file. Note that vertex data has precedence. Only one quantity at a time is supported! */
         template <typename T>
-        void add_scalar_data_on_cells(T const accessor, std::string name)
+        void add_scalar_data_on_cells(T const & accessor, std::string name)
         {
           if (cell_scalar_data.size() > 0)
             std::cout << "* ViennaGrid: Warning: OpenDX cell data " << name
@@ -296,7 +292,7 @@ namespace viennagrid
       */
     template <typename MeshT, typename AccessorT>
     opendx_writer<MeshT> & add_scalar_data_on_vertices(opendx_writer<MeshT> & writer,
-                                                         AccessorT const accessor,
+                                                         AccessorT const & accessor,
                                                          std::string const & quantity_name)
     {
       writer.add_scalar_data_on_vertices(accessor, quantity_name);
@@ -315,7 +311,7 @@ namespace viennagrid
       */
     template <typename MeshT, typename AccessorT>
     opendx_writer<MeshT> & add_scalar_data_on_cells(opendx_writer<MeshT> & writer,
-                                                      AccessorT const accessor,
+                                                      AccessorT const & accessor,
                                                       std::string const & quantity_name)
     {
       writer.add_scalar_data_on_cells(accessor, quantity_name);

@@ -51,7 +51,7 @@ namespace viennagrid
       for (VertexOnCellIterator vocit = vertices.begin();
            vocit != vertices.end();
            ++vocit)
-        p0 += accessor(*vocit);
+        p0 += accessor.get(*vocit);
 
       p0 /= static_cast<CoordType>(vertices.size());
 

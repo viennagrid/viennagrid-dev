@@ -122,8 +122,8 @@ namespace viennagrid
         BoundaryElementRangeType lines(*cit);
         for (BoundaryElementRangeIterator lit = lines.begin(); lit != lines.end(); ++lit)
         {
-          if (edge_refinement_flag_accessor(*lit))
-            intersects.push_back( std::make_pair( edge_to_vertex_handle_accessor(*lit), *lit ) );
+          if (edge_refinement_flag_accessor.get(*lit))
+            intersects.push_back( std::make_pair( edge_to_vertex_handle_accessor.get(*lit), *lit ) );
         }
 
 
@@ -247,9 +247,14 @@ namespace viennagrid
                         eit != edges.end();
                       ++eit)
       {
-        if ( edge_refinement_flag_accessor(*eit) )
+        if ( edge_refinement_flag_accessor.get(*eit) )
         {
-          edge_to_vertex_handle_accessor( *eit ) = viennagrid::make_vertex( mesh_out.mesh_hierarchy(), viennagrid::centroid(point_accessor_in, *eit) );
+          edge_to_vertex_handle_accessor.set( *eit,
+                                              viennagrid::make_vertex(
+                                                mesh_out.mesh_hierarchy(),
+                                                viennagrid::centroid(point_accessor_in, *eit)
+                                              )
+                                            );
         }
       }
 
@@ -425,7 +430,7 @@ namespace viennagrid
                           eit != elements.end();
                         ++eit)
       {
-        if ( cell_refinement_flag(*eit) )
+        if ( cell_refinement_flag.get(*eit) )
         {
           ++cells_for_refinement;
 
@@ -434,7 +439,7 @@ namespace viennagrid
                                   eocit != edges_on_element.end();
                                 ++eocit)
           {
-            edge_refinement_flag_accessor(*eocit) = true;
+            edge_refinement_flag_accessor.set(*eocit, true);
           }
         }
       }
@@ -454,7 +459,7 @@ namespace viennagrid
 
     LineRange lines(mesh_in);
     for (LineIterator it = lines.begin(); it != lines.end(); ++it)
-      edge_refinement_flag_accessor(*it) = true;
+      edge_refinement_flag_accessor.set(*it, true);
   }
 
 
@@ -483,7 +488,7 @@ namespace viennagrid
 
       if (distance0 < -tolerance && distance1 > tolerance)
       {
-        line_refinement_tag_accessor(*lit) = true;
+        line_refinement_tag_accessor.set(*lit, true);
 
         PointT pt0 = viennagrid::get_point( viennagrid::vertices(*lit)[0] );
         PointT pt1 = viennagrid::get_point( viennagrid::vertices(*lit)[1] );
@@ -495,7 +500,7 @@ namespace viennagrid
         line_refinement_vertex_handle_accessor(*lit) = viennagrid::make_vertex( dst_mesh, new_pt );
       }
       else
-        line_refinement_tag_accessor(*lit) = false;
+        line_refinement_tag_accessor.set(*lit, false);
     }
   }
 

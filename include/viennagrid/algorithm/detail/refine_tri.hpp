@@ -132,19 +132,19 @@ namespace viennagrid
         EdgeType const & e1 = *eocit; ++eocit;
         EdgeType const & e2 = *eocit;
 
-        if ( edge_refinement_flag_accessor(e0) )
+        if ( edge_refinement_flag_accessor.get(e0) )
         {
-          vertices[3] = edge_to_vertex_handle_accessor(e0);
+          vertices[3] = edge_to_vertex_handle_accessor.get(e0);
           offset = 0;
         }
-        else if ( edge_refinement_flag_accessor(e1) )
+        else if ( edge_refinement_flag_accessor.get(e1) )
         {
-          vertices[3] = edge_to_vertex_handle_accessor(e1);
+          vertices[3] = edge_to_vertex_handle_accessor.get(e1);
           offset = 2;
         }
-        else if ( edge_refinement_flag_accessor(e2) )
+        else if ( edge_refinement_flag_accessor.get(e2) )
         {
-          vertices[3] = edge_to_vertex_handle_accessor(e2);
+          vertices[3] = edge_to_vertex_handle_accessor.get(e2);
           offset = 1;
         }
         else
@@ -214,22 +214,22 @@ namespace viennagrid
         EdgeType const & e1 = *eocit; ++eocit;
         EdgeType const & e2 = *eocit;
 
-        if ( edge_refinement_flag_accessor(e0) && edge_refinement_flag_accessor(e1) )
+        if ( edge_refinement_flag_accessor.get(e0) && edge_refinement_flag_accessor.get(e1) )
         {
-          vertices[3] = edge_to_vertex_handle_accessor(e1);
-          vertices[4] = edge_to_vertex_handle_accessor(e0);
+          vertices[3] = edge_to_vertex_handle_accessor.get(e1);
+          vertices[4] = edge_to_vertex_handle_accessor.get(e0);
           offset = 2;
         }
-        else if ( edge_refinement_flag_accessor(e0) && edge_refinement_flag_accessor(e2) )
+        else if ( edge_refinement_flag_accessor.get(e0) && edge_refinement_flag_accessor.get(e2) )
         {
-          vertices[3] = edge_to_vertex_handle_accessor(e0);
-          vertices[4] = edge_to_vertex_handle_accessor(e2);
+          vertices[3] = edge_to_vertex_handle_accessor.get(e0);
+          vertices[4] = edge_to_vertex_handle_accessor.get(e2);
           offset = 0;
         }
-        else if ( edge_refinement_flag_accessor(e1) && edge_refinement_flag_accessor(e2) )
+        else if ( edge_refinement_flag_accessor.get(e1) && edge_refinement_flag_accessor.get(e2) )
         {
-          vertices[3] = edge_to_vertex_handle_accessor(e2);
-          vertices[4] = edge_to_vertex_handle_accessor(e1);
+          vertices[3] = edge_to_vertex_handle_accessor.get(e2);
+          vertices[4] = edge_to_vertex_handle_accessor.get(e1);
           offset = 1;
         }
         else
@@ -309,9 +309,9 @@ namespace viennagrid
         //add vertices from edge
         EdgeOnCellRange edges_on_cell(element_in);
         EdgeOnCellIterator eocit = edges_on_cell.begin();
-        vertices[3] = edge_to_vertex_handle_accessor(*eocit); ++eocit;
-        vertices[4] = edge_to_vertex_handle_accessor(*eocit); ++eocit;
-        vertices[5] = edge_to_vertex_handle_accessor(*eocit);
+        vertices[3] = edge_to_vertex_handle_accessor.get(*eocit); ++eocit;
+        vertices[4] = edge_to_vertex_handle_accessor.get(*eocit); ++eocit;
+        vertices[5] = edge_to_vertex_handle_accessor.get(*eocit);
 
         //
         // Step 2: Add new cells to new mesh:
@@ -359,7 +359,7 @@ namespace viennagrid
                                 eocit != edges_on_cell.end();
                               ++eocit)
         {
-          if ( edge_refinement_flag_accessor(*eocit) )
+          if ( edge_refinement_flag_accessor.get(*eocit) )
             ++edges_to_refine;
         }
 

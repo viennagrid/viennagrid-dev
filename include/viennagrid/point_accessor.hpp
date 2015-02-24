@@ -15,13 +15,13 @@ namespace viennagrid
     typedef typename viennagrid::result_of::element<MeshT>::type element_type;
 
     typedef typename viennagrid::result_of::point<MeshT>::type point_type;
-    typedef typename viennagrid::result_of::element<MeshT>::type vertex_type;
+//     typedef typename viennagrid::result_of::const_element<MeshT>::type vertex_type;
     typedef typename viennagrid::result_of::const_element<MeshT>::type const_vertex_type;
 
     point_accessor_t(MeshT mesh_in) : mesh_(mesh_in) {}
 
-    point_type operator()(const_vertex_type const & element) const { return viennagrid::get_point(mesh_, element); }
-    void operator()(vertex_type element, point_type const & value) { viennagrid::set_point(mesh_, element, value); }
+    point_type get(const_vertex_type const & element) const { return viennagrid::get_point(mesh_, element); }
+    void set(const_vertex_type const & element, point_type const & value) { viennagrid::set_point(mesh_, element, value); }
 
   private:
     MeshT mesh_;
@@ -31,10 +31,10 @@ namespace viennagrid
   {
   public:
     template<typename ElementT>
-    typename viennagrid::result_of::point<ElementT>::type operator()( ElementT const & element ) const { return viennagrid::get_point(element); }
+    typename viennagrid::result_of::point<ElementT>::type get( ElementT const & element ) const { return viennagrid::get_point(element); }
 
     template<typename ElementT, typename PointT>
-    void operator()( ElementT element, PointT const & value ) { viennagrid::set_point(element, value); }
+    void set( ElementT element, PointT const & value ) { viennagrid::set_point(element, value); }
   };
 
   namespace result_of
