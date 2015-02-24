@@ -81,22 +81,22 @@ int main()
   typedef viennagrid::result_of::accessor_container< ElementType, bool, viennagrid::std_map_tag >::type LineRefinementContainerType;
   LineRefinementContainerType line_refinement_flag;
 
-  viennagrid::result_of::field< LineRefinementContainerType, ElementType >::type line_refinement_field(line_refinement_flag);
+  viennagrid::result_of::accessor< LineRefinementContainerType, ElementType >::type line_refinement_accessor(line_refinement_flag);
 
   {
     typedef viennagrid::result_of::const_element_range<MeshType,2>::type ElementRangeType;
     typedef viennagrid::result_of::iterator<ElementRangeType>::type ElementRangeIterator;
     ElementRangeType lines(mesh);
     for (ElementRangeIterator lit = lines.begin(); lit != lines.end(); ++lit)
-      line_refinement_field(*lit) = false;
+      line_refinement_accessor.set(*lit, false);
 
-    line_refinement_field(line0) = true;
-    line_refinement_field(line1) = true;
+    line_refinement_accessor.set(line0, true);
+    line_refinement_accessor.set(line1, true);
   }
 
 
 
-  viennagrid::refine(mesh, refined_mesh, 2, line_refinement_field);
+  viennagrid::refine(mesh, refined_mesh, 2, line_refinement_accessor);
 
 
 

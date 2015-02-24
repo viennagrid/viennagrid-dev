@@ -98,18 +98,18 @@ void test()
 
   std::cout << "Scaling domain by a factor of two from origin... " << std::endl;
   viennagrid::scale(mesh, 2.0);
-  fuzzy_check( point_acc(viennagrid::vertices(mesh)[0]), viennagrid::make_point(0,0) );
-  fuzzy_check( point_acc(viennagrid::vertices(mesh)[1]), viennagrid::make_point(2,0) );
-  fuzzy_check( point_acc(viennagrid::vertices(mesh)[2]), viennagrid::make_point(2,2) );
-  fuzzy_check( point_acc(viennagrid::vertices(mesh)[3]), viennagrid::make_point(0,2) );
+  fuzzy_check( point_acc.get(viennagrid::vertices(mesh)[0]), viennagrid::make_point(0,0) );
+  fuzzy_check( point_acc.get(viennagrid::vertices(mesh)[1]), viennagrid::make_point(2,0) );
+  fuzzy_check( point_acc.get(viennagrid::vertices(mesh)[2]), viennagrid::make_point(2,2) );
+  fuzzy_check( point_acc.get(viennagrid::vertices(mesh)[3]), viennagrid::make_point(0,2) );
 
 
   std::cout << "Scaling domain by a factor of three with respect to (1,1)... " << std::endl;
   viennagrid::scale(mesh, 3.0, viennagrid::make_point(1,1));
-  fuzzy_check( point_acc(viennagrid::vertices(mesh)[0]), viennagrid::make_point(-2,-2) );
-  fuzzy_check( point_acc(viennagrid::vertices(mesh)[1]), viennagrid::make_point(4,-2) );
-  fuzzy_check( point_acc(viennagrid::vertices(mesh)[2]), viennagrid::make_point(4,4) );
-  fuzzy_check( point_acc(viennagrid::vertices(mesh)[3]), viennagrid::make_point(-2,4) );
+  fuzzy_check( point_acc.get(viennagrid::vertices(mesh)[0]), viennagrid::make_point(-2,-2) );
+  fuzzy_check( point_acc.get(viennagrid::vertices(mesh)[1]), viennagrid::make_point(4,-2) );
+  fuzzy_check( point_acc.get(viennagrid::vertices(mesh)[2]), viennagrid::make_point(4,4) );
+  fuzzy_check( point_acc.get(viennagrid::vertices(mesh)[3]), viennagrid::make_point(-2,4) );
 }
 
 

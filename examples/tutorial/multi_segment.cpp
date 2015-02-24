@@ -171,15 +171,15 @@ int main()
   std::deque< double > first_regionment_data;
   std::deque< double > second_regionment_data;
 
-  viennagrid::result_of::field< std::deque< double >, ConstVertexType >::type first_regionment_field(first_regionment_data);
-  viennagrid::result_of::field< std::deque< double >, ConstVertexType >::type second_regionment_field(second_regionment_data);
+  viennagrid::result_of::accessor< std::deque< double >, ConstVertexType >::type first_regionment_accessor(first_regionment_data);
+  viennagrid::result_of::accessor< std::deque< double >, ConstVertexType >::type second_regionment_accessor(second_regionment_data);
 
   VertexOnSegmentRange vertices_region1(region1);
   for (VertexOnSegmentIterator vosit = vertices_region1.begin();
                              vosit != vertices_region1.end();
                            ++vosit)
   {
-    first_regionment_field(*vosit) = 1.0;
+    first_regionment_accessor.set(*vosit, 1.0);
   }
 
   VertexOnSegmentRange vertices_region2(region2);
@@ -187,12 +187,12 @@ int main()
                              vosit != vertices_region2.end();
                            ++vosit)
   {
-    second_regionment_field(*vosit) = 2.0;
+    second_regionment_accessor.set(*vosit, 2.0);
   }
 
   viennagrid::io::vtk_writer<MeshType> my_vtk_writer;
-  my_vtk_writer.add_scalar_data_on_vertices(region1, first_regionment_field, "regionment_data" );
-  my_vtk_writer.add_scalar_data_on_vertices(region2, second_regionment_field, "regionment_data" );
+  my_vtk_writer.add_scalar_data_on_vertices(region1, first_regionment_accessor, "regionment_data" );
+  my_vtk_writer.add_scalar_data_on_vertices(region2, second_regionment_accessor, "regionment_data" );
   my_vtk_writer(mesh, "multi_regionment");
 
 

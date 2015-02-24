@@ -229,7 +229,7 @@ int main()
   for (std::map<PointType, ElementType, viennagrid::point_less>::iterator it = vertex_reorder.begin(); it != vertex_reorder.end(); ++it)
   {
     index_to_vertex_map[num_unknowns] = it->second;
-    index(it->second) = num_unknowns++;
+    index.set(it->second, num_unknowns++);
   }
 
 
@@ -253,8 +253,8 @@ int main()
     for (int i0 = 0; i0 < 3; ++i0)
       for (int i1 = 0; i1 < 3; ++i1)
       {
-        int matrix_i0 = index( viennagrid::vertices(*cit0)[i0] );
-        int matrix_i1 = index( viennagrid::vertices(*cit0)[i1] );
+        int matrix_i0 = index.get( viennagrid::vertices(*cit0)[i0] );
+        int matrix_i1 = index.get( viennagrid::vertices(*cit0)[i1] );
 
         if (matrix_i0 < 0 || matrix_i1 < 0)
           continue;
@@ -270,15 +270,15 @@ int main()
 
     int i;
 
-    i = index(viennagrid::vertices(*cit0)[0]);
+    i = index.get(viennagrid::vertices(*cit0)[0]);
     if (i >= 0)
       rhs(i) += triangle_rhs_contribution(tp[0], tp[1], tp[2]);
 
-    i = index(viennagrid::vertices(*cit0)[1]);
+    i = index.get(viennagrid::vertices(*cit0)[1]);
     if (i >= 0)
       rhs(i) = triangle_rhs_contribution(tp[1], tp[0], tp[2]);
 
-    i = index(viennagrid::vertices(*cit0)[2]);
+    i = index.get(viennagrid::vertices(*cit0)[2]);
     if (i >= 0)
       rhs(i) += triangle_rhs_contribution(tp[2], tp[0], tp[1]);
   }
@@ -296,7 +296,7 @@ int main()
   viennagrid::result_of::accessor< std::vector<double>, ElementType >::type results(result_data);
 
   for (std::map<int, ElementType>::iterator it = index_to_vertex_map.begin(); it != index_to_vertex_map.end(); ++it)
-    results(it->second) = result(it->first);
+    results.set(it->second, result(it->first));
 
 
 

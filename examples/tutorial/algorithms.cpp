@@ -181,15 +181,15 @@ int main()
   typedef viennagrid::result_of::accessor_container< CellType, bool, viennagrid::std_map_tag >::type CellRefinementContainerType;
   CellRefinementContainerType cell_refinement_flag;
 
-  // define an field on this container for easy access with elements
-  viennagrid::result_of::field< CellRefinementContainerType, CellType >::type cell_refinement_field(cell_refinement_flag);
+  // define an accessor on this container for easy access with elements
+  viennagrid::result_of::accessor< CellRefinementContainerType, CellType >::type cell_refinement_accessor(cell_refinement_flag);
 
-  cell_refinement_field( viennagrid::cells(mesh)[0] ) = true;
-  cell_refinement_field( viennagrid::cells(mesh)[3] ) = true;
-  cell_refinement_field( viennagrid::cells(mesh)[8] ) = true;
+  cell_refinement_accessor.set( viennagrid::cells(mesh)[0], true);
+  cell_refinement_accessor.set( viennagrid::cells(mesh)[3], true);
+  cell_refinement_accessor.set( viennagrid::cells(mesh)[8], true);
 
-  // refining the mesh using the field representing the marked cells
-  viennagrid::cell_refine(mesh, adaptively_refined_mesh, cell_refinement_field);
+  // refining the mesh using the accessor representing the marked cells
+  viennagrid::cell_refine(mesh, adaptively_refined_mesh, cell_refinement_accessor);
 
   {
     viennagrid::io::vtk_writer<MeshType> writer;

@@ -69,53 +69,53 @@ int main()
   viennagrid::result_of::accessor< std::vector<double>, CellType >::type some_cell_data_accessor(some_cell_data_container);
 
   // simply using the accessor with operator()
-  some_cell_data_accessor( viennagrid::cells(mesh)[0] ) = 42.0;
-  some_cell_data_accessor( viennagrid::cells(mesh)[1] ) = 3.14;
-  double some_value = some_cell_data_accessor( viennagrid::cells(mesh)[1] );
+  some_cell_data_accessor.set( viennagrid::cells(mesh)[0], 42.0 );
+  some_cell_data_accessor.set( viennagrid::cells(mesh)[1], 3.14 );
+  double some_value = some_cell_data_accessor.get( viennagrid::cells(mesh)[1] );
   std::cout << "Value for first cell (should be 3.14) = " << some_value << std::endl;
 
   // A helper function for creating an accessor is also provided
-  viennagrid::make_accessor<CellType>(some_cell_data_container)( viennagrid::cells(mesh)[3] ) = 5.0;
+  viennagrid::make_accessor<CellType>(some_cell_data_container).set( viennagrid::cells(mesh)[3], 5.0 );
 
 
 
-  // Accessor and field differ in their behaviour at access
-  // While accessor will fail when accessing the data of an element using a const accessor, a field will return a default value
-  std::vector<double> another_cell_data_container;
-  // default value will is -1
-  viennagrid::result_of::field< std::vector<double>, CellType >::type some_cell_data_field(another_cell_data_container, -1.0);
-
-  some_cell_data_field( viennagrid::cells(mesh)[0] ) = 12.0;
-  some_cell_data_field( viennagrid::cells(mesh)[1] ) = 13.0;
-
-  // A helper function for creating a field
-  viennagrid::make_field<CellType>(some_cell_data_container)( viennagrid::cells(mesh)[3] ) = 5.0;
+//   // Accessor and field differ in their behaviour at access
+//   // While accessor will fail when accessing the data of an element using a const accessor, a field will return a default value
+//   std::vector<double> another_cell_data_container;
+//   // default value will is -1
+//   viennagrid::result_of::field< std::vector<double>, CellType >::type some_cell_data_field(another_cell_data_container, -1.0);
+//
+//   some_cell_data_field( viennagrid::cells(mesh)[0] ) = 12.0;
+//   some_cell_data_field( viennagrid::cells(mesh)[1] ) = 13.0;
+//
+//   // A helper function for creating a field
+//   viennagrid::make_field<CellType>(some_cell_data_container)( viennagrid::cells(mesh)[3] ) = 5.0;
 
 
   // Similar to above, a container can be defined using the accessor_container meta function
   // the default container type is std::vector
   typedef viennagrid::result_of::accessor_container<CellType, double>::type CellDataContainerType;
   CellDataContainerType one_more_cell_data_container;
-  viennagrid::result_of::field< CellDataContainerType, CellType >::type one_more_cell_data_accessor(one_more_cell_data_container);
+  viennagrid::result_of::accessor< CellDataContainerType, CellType >::type one_more_cell_data_accessor(one_more_cell_data_container);
 
-  one_more_cell_data_accessor( viennagrid::cells(mesh)[0] ) = 1.0;
-  one_more_cell_data_accessor( viennagrid::cells(mesh)[1] ) = -1.0;
+  one_more_cell_data_accessor.set( viennagrid::cells(mesh)[0], 1.0 );
+  one_more_cell_data_accessor.set( viennagrid::cells(mesh)[1], -1.0 );
 
 
   // Using an std::map as the underlying container type
   typedef viennagrid::result_of::accessor_container<CellType, double, viennagrid::std_map_tag>::type CellDataMapContainerType;
   CellDataMapContainerType cell_data_map;
-  viennagrid::result_of::field< CellDataMapContainerType, CellType >::type cell_data_map_accessor(cell_data_map);
+  viennagrid::result_of::accessor< CellDataMapContainerType, CellType >::type cell_data_map_accessor(cell_data_map);
 
-  cell_data_map_accessor( viennagrid::cells(mesh)[0] ) = 2.5;
-  cell_data_map_accessor( viennagrid::cells(mesh)[1] ) = -2.5;
+  cell_data_map_accessor.set( viennagrid::cells(mesh)[0], 2.5);
+  cell_data_map_accessor.set( viennagrid::cells(mesh)[1], -2.5);
 
 
   //
   // Accessing points are also possible using accessor
   //
   viennagrid::result_of::point_accessor<MeshType>::type mesh_point_accessor = viennagrid::point_accessor(mesh);
-  std::cout << mesh_point_accessor( viennagrid::vertices(mesh)[0] ) << std::endl;
+  std::cout << mesh_point_accessor.get( viennagrid::vertices(mesh)[0] ) << std::endl;
 
 
 
@@ -139,8 +139,7 @@ int main()
   VertexRangeType vertices(mesh);// = viennagrid::elements(mesh);
   for (VertexRangeIterator vit = vertices.begin(); vit != vertices.end(); ++vit)
   {
-    point_accessor(*vit).resize(3);
-    point_accessor(*vit) = mesh_point_accessor(*vit) + viennagrid::make_point(10, 10, 10); // shit point
+    point_accessor.set(*vit, mesh_point_accessor.get(*vit) + viennagrid::make_point(10, 10, 10)); // shit point
   }
 
   // Centroid of the mesh using the defaul accessor
