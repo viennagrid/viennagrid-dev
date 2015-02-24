@@ -213,6 +213,67 @@ VIENNAGRID_DYNAMIC_EXPORT viennagrid_error viennagrid_plc_get_hole_points(vienna
 
 
 
+
+
+// quantities
+struct viennagrid_quantity_field_t
+{
+  char * name;
+  char * unit;
+  viennagrid_dimension topologic_dimension;
+
+  viennagrid_int value_count;
+  viennagrid_dimension values_dimension;
+  viennagrid_numeric * values;
+
+  viennagrid_int change_counter;
+};
+
+
+typedef struct viennagrid_quantity_field_t * viennagrid_quantity_field;
+
+
+VIENNAGRID_DYNAMIC_EXPORT viennagrid_error viennagrid_quantity_field_make(viennagrid_quantity_field * quantity_field);
+VIENNAGRID_DYNAMIC_EXPORT viennagrid_error viennagrid_quantity_field_retain(viennagrid_quantity_field * quantity_field);
+VIENNAGRID_DYNAMIC_EXPORT viennagrid_error viennagrid_quantity_field_release(viennagrid_quantity_field quantity_field);
+
+VIENNAGRID_DYNAMIC_EXPORT viennagrid_error viennagrid_quantities_set_name(viennagrid_quantity_field quantity_field,
+                                                                          const char * name);
+VIENNAGRID_DYNAMIC_EXPORT viennagrid_error viennagrid_quantities_get_name(viennagrid_quantity_field quantity_field,
+                                                                          const char ** name);
+
+VIENNAGRID_DYNAMIC_EXPORT viennagrid_error viennagrid_quantities_set_unit(viennagrid_quantity_field quantity_field,
+                                                                          const char * unit);
+VIENNAGRID_DYNAMIC_EXPORT viennagrid_error viennagrid_quantities_get_unit(viennagrid_quantity_field quantity_field,
+                                                                          const char ** unit);
+
+// deletes all values data, sets topologic values dimension to -1 and size to 0
+VIENNAGRID_DYNAMIC_EXPORT viennagrid_error viennagrid_quantities_set_topologic_dimension(viennagrid_quantity_field quantity_field,
+                                                                                         viennagrid_dimension topologic_dimension);
+VIENNAGRID_DYNAMIC_EXPORT viennagrid_error viennagrid_quantities_get_topologic_dimension(viennagrid_quantity_field quantity_field,
+                                                                                         viennagrid_dimension * topologic_dimension);
+
+// deletes all data, sets size to 0
+VIENNAGRID_DYNAMIC_EXPORT viennagrid_error viennagrid_quantities_set_values_dimension(viennagrid_quantity_field quantity_field,
+                                                                                      viennagrid_dimension values_dimension);
+VIENNAGRID_DYNAMIC_EXPORT viennagrid_error viennagrid_quantities_get_values_dimension(viennagrid_quantity_field quantity_field,
+                                                                                      viennagrid_dimension * values_dimension);
+
+VIENNAGRID_DYNAMIC_EXPORT viennagrid_error viennagrid_quantities_resize(viennagrid_quantity_field quantity_field,
+                                                                        viennagrid_int value_count);
+
+VIENNAGRID_DYNAMIC_EXPORT viennagrid_error viennagrid_quantities_size(viennagrid_quantity_field quantity_field,
+                                                                      viennagrid_int * value_count);
+
+VIENNAGRID_DYNAMIC_EXPORT viennagrid_error viennagrid_quantities_set_value(viennagrid_quantity_field quantity_field,
+                                                                           viennagrid_index pos,
+                                                                           viennagrid_numeric * values);
+VIENNAGRID_DYNAMIC_EXPORT viennagrid_error viennagrid_quantities_get_value(viennagrid_quantity_field quantity_field,
+                                                                           viennagrid_index pos,
+                                                                           viennagrid_numeric * values);
+
+
+
 // serialization/de-serialization
 
 struct viennagrid_serialized_mesh_hierarchy_

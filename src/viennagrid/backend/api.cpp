@@ -1,3 +1,5 @@
+#include <cstring>
+
 #include "viennagrid/backend/api.h"
 #include "viennagrid/backend/backend.hpp"
 
@@ -460,6 +462,221 @@ viennagrid_error viennagrid_plc_get_hole_points(viennagrid_mesh_hierarchy mesh_h
 
 
 
+viennagrid_error viennagrid_quantity_field_make(viennagrid_quantity_field * quantity_field)
+{
+  *quantity_field = new viennagrid_quantity_field_t;
+
+  (*quantity_field)->name = NULL;
+  (*quantity_field)->unit = NULL;
+  (*quantity_field)->topologic_dimension = -1;
+
+  (*quantity_field)->value_count = 0;
+  (*quantity_field)->values_dimension = -1;
+  (*quantity_field)->values = NULL;
+
+  (*quantity_field)->change_counter = 1;
+
+  return VIENNAGRID_SUCCESS;
+}
+
+viennagrid_error viennagrid_quantity_field_retain(viennagrid_quantity_field * quantity_field)
+{
+  ++(*quantity_field)->change_counter;
+
+  return VIENNAGRID_SUCCESS;
+}
+
+viennagrid_error viennagrid_quantity_field_release(viennagrid_quantity_field quantity_field)
+{
+  if ( --(quantity_field->change_counter) <= 0 )
+  {
+    if (!quantity_field)
+      return VIENNAGRID_SUCCESS;
+
+    if (quantity_field->name)
+      delete[] quantity_field->name;
+    if (quantity_field->unit)
+      delete[] quantity_field->unit;
+
+    if (quantity_field->values)
+      delete[] quantity_field->values;
+
+    delete quantity_field;
+  }
+
+  return VIENNAGRID_SUCCESS;
+}
+
+
+viennagrid_error viennagrid_quantities_set_name(viennagrid_quantity_field quantity_field,
+                                   const char * name)
+{
+  size_t string_length = strlen(name);
+
+  if (quantity_field->name)
+    delete[] quantity_field->name;
+  quantity_field->name = new char[string_length+1];
+
+  memcpy( quantity_field->name, name, (string_length+1)*sizeof(char) );
+
+  return VIENNAGRID_SUCCESS;
+}
+
+viennagrid_error viennagrid_quantities_get_name(viennagrid_quantity_field quantity_field,
+                                   const char ** name)
+{
+  *name = quantity_field->name;
+  return VIENNAGRID_SUCCESS;
+}
+
+
+viennagrid_error viennagrid_quantities_set_unit(viennagrid_quantity_field quantity_field,
+                                   const char * unit)
+{
+  size_t string_length = strlen(unit);
+
+  if (quantity_field->unit)
+    delete[] quantity_field->unit;
+  quantity_field->unit = new char[string_length+1];
+
+  memcpy( quantity_field->unit, unit, (string_length+1)*sizeof(char) );
+
+  return VIENNAGRID_SUCCESS;
+}
+
+viennagrid_error viennagrid_quantities_get_unit(viennagrid_quantity_field quantity_field,
+                                   const char ** unit)
+{
+  *unit = quantity_field->unit;
+  return VIENNAGRID_SUCCESS;
+}
+
+
+viennagrid_error viennagrid_quantities_set_topologic_dimension(viennagrid_quantity_field quantity_field,
+                                                  viennagrid_dimension topologic_dimension)
+{
+  quantity_field->topologic_dimension = topologic_dimension;
+
+  if (quantity_field->values)
+  {
+    delete[] quantity_field->values;
+    quantity_field->values = NULL;
+  }
+
+  quantity_field->value_count = 0;
+  quantity_field->values_dimension = -1;
+
+  return VIENNAGRID_SUCCESS;
+}
+
+viennagrid_error viennagrid_quantities_get_topologic_dimension(viennagrid_quantity_field quantity_field,
+                                                  viennagrid_dimension * topologic_dimension)
+{
+  *topologic_dimension = quantity_field->topologic_dimension;
+  return VIENNAGRID_SUCCESS;
+}
+
+
+viennagrid_error viennagrid_quantities_set_values_dimension(viennagrid_quantity_field quantity_field,
+                                                  viennagrid_dimension values_dimension)
+{
+  quantity_field->values_dimension = values_dimension;
+
+  if (quantity_field->values)
+  {
+    delete[] quantity_field->values;
+    quantity_field->values = NULL;
+  }
+
+  quantity_field->value_count = 0;
+
+  return VIENNAGRID_SUCCESS;
+}
+
+viennagrid_error viennagrid_quantities_get_values_dimension(viennagrid_quantity_field quantity_field,
+                                                  viennagrid_dimension * values_dimension)
+{
+  *values_dimension = quantity_field->values_dimension;
+  return VIENNAGRID_SUCCESS;
+}
+
+
+viennagrid_error viennagrid_quantities_resize(viennagrid_quantity_field quantity_field,
+                                 viennagrid_int value_count)
+{
+  if (quantity_field->value_count == value_count)
+    return VIENNAGRID_SUCCESS;
+
+  int min_size = std::min( quantity_field->value_count * quantity_field->values_dimension,
+                           value_count * quantity_field->values_dimension );
+
+  quantity_field->value_count = value_count;
+  viennagrid_numeric * tmp = new viennagrid_numeric[ quantity_field->values_dimension * quantity_field->value_count ];
+  if (quantity_field->values)
+  {
+    memcpy(tmp, quantity_field->values, min_size * sizeof(char));
+    delete[] quantity_field->values;
+    quantity_field->values = tmp;
+  }
+
+  return VIENNAGRID_SUCCESS;
+}
+
+viennagrid_error viennagrid_quantities_size(viennagrid_quantity_field quantity_field,
+                               viennagrid_int * value_count)
+{
+  *value_count = quantity_field->value_count;
+  return VIENNAGRID_SUCCESS;
+}
+
+
+viennagrid_error viennagrid_quantities_set_value(viennagrid_quantity_field quantity_field,
+                                    viennagrid_index pos,
+                                    viennagrid_numeric * values)
+{
+  assert( pos < quantity_field->value_count );
+
+  memcpy(quantity_field->values + pos*quantity_field->values_dimension,
+         values,
+         quantity_field->values_dimension*sizeof(char));
+
+  return VIENNAGRID_SUCCESS;
+}
+
+viennagrid_error viennagrid_quantities_get_value(viennagrid_quantity_field quantity_field,
+                                    viennagrid_index pos,
+                                    viennagrid_numeric * values)
+{
+  assert( pos < quantity_field->value_count );
+
+  memcpy(values,
+         quantity_field->values + pos*quantity_field->values_dimension,
+         quantity_field->values_dimension*sizeof(char));
+
+  return VIENNAGRID_SUCCESS;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 viennagrid_error viennagrid_serialized_mesh_hierarchy_make(
                 viennagrid_serialized_mesh_hierarchy * serialized_mesh_hierarchy)
 {
@@ -468,6 +685,7 @@ viennagrid_error viennagrid_serialized_mesh_hierarchy_make(
   (*serialized_mesh_hierarchy)->geometric_dimension = 0;
   (*serialized_mesh_hierarchy)->vertex_count = 0;
   (*serialized_mesh_hierarchy)->points = NULL;
+  (*serialized_mesh_hierarchy)->hole_point_element_count = 0;
   (*serialized_mesh_hierarchy)->hole_points_offsets = NULL;
   (*serialized_mesh_hierarchy)->hole_points = NULL;
 
