@@ -315,7 +315,7 @@ typedef struct viennagrid_serialized_mesh_hierarchy_ * viennagrid_serialized_mes
 
 VIENNAGRID_DYNAMIC_EXPORT viennagrid_error viennagrid_new(viennagrid_int size,
                                                           void ** ptr);
-VIENNAGRID_DYNAMIC_EXPORT viennagrid_error viennagrid_delete(void * ptr);
+VIENNAGRID_DYNAMIC_EXPORT viennagrid_error viennagrid_delete(void ** ptr);
 
 VIENNAGRID_DYNAMIC_EXPORT viennagrid_error viennagrid_serialized_mesh_hierarchy_make(
                 viennagrid_serialized_mesh_hierarchy * serialized_mesh_hierarchy);
