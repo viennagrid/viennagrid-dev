@@ -37,10 +37,10 @@ namespace viennagrid
     if (!viennagrid::is_boundary(mesh, element))
       return;
 
-    if (hull_id_accessor(element) != -1)
+    if (hull_id_accessor.get(element) != -1)
       return;
 
-    hull_id_accessor(element) = hull_id;
+    hull_id_accessor.set(element, hull_id);
 
     typedef typename viennagrid::result_of::const_neighbor_range<MeshT>::type NeighbourRangeType;
     typedef typename viennagrid::result_of::iterator<NeighbourRangeType>::type NeighbourRangeIterator;
@@ -81,7 +81,7 @@ namespace viennagrid
     int num_hulls = 0;
     for (ConstBoundaryIteratorType beit = boundary_elements.begin(); beit != boundary_elements.end(); ++beit)
     {
-      if (hull_id_accessor(*beit) != -1)
+      if (hull_id_accessor.get(*beit) != -1)
         continue;
 
       if (!viennagrid::is_boundary(mesh, *beit))
@@ -100,7 +100,7 @@ namespace viennagrid
       ConstBoundaryIteratorType beit = boundary_elements.begin();
       for (; beit != boundary_elements.end(); ++beit)
       {
-        if (hull_id_accessor(*beit) == i)
+        if (hull_id_accessor.get(*beit) == i)
           break;
       }
 
@@ -117,7 +117,7 @@ namespace viennagrid
         int intersect_count = 0;
         for (ConstBoundaryIteratorType beit2 = boundary_elements.begin(); beit2 != boundary_elements.end(); ++beit2)
         {
-          if (hull_id_accessor(*beit2) == j)
+          if (hull_id_accessor.get(*beit2) == j)
           {
             if (element_line_intersect(*beit2, centroid, centroid+normal, 1e-8))
               ++intersect_count;
@@ -157,7 +157,7 @@ namespace viennagrid
         bool found_hole_point = false;
         for (ConstBoundaryIteratorType beit = boundary_elements.begin(); beit != boundary_elements.end(); ++beit)
         {
-          if (hull_id_accessor(*beit) == hull)
+          if (hull_id_accessor.get(*beit) == hull)
           {
 
             for (ConstBoundaryIteratorType beit2 = boundary_elements.begin(); beit2 != boundary_elements.end(); ++beit2)
@@ -168,11 +168,11 @@ namespace viennagrid
               std::size_t j = 0;
               for (; j < direct_hull_children[hull].size(); ++j)
               {
-                if (hull_id_accessor(*beit2) == direct_hull_children[hull][j])
+                if (hull_id_accessor.get(*beit2) == direct_hull_children[hull][j])
                   break;
               }
 
-              if (j == direct_hull_children[hull].size() && hull_id_accessor(*beit2) != hull)
+              if (j == direct_hull_children[hull].size() && hull_id_accessor.get(*beit2) != hull)
                 continue;
 
               PointType centroid0 = viennagrid::centroid(*beit);

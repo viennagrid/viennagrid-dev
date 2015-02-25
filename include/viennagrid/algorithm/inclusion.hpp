@@ -37,9 +37,9 @@ namespace viennagrid
     {
       typedef typename viennagrid::result_of::coord<PointT>::type NumericType;
 
-      PointT const & a = accessor( viennagrid::vertices(element)[0] );
-      PointT const & b = accessor( viennagrid::vertices(element)[1] );
-      PointT const & c = accessor( viennagrid::vertices(element)[2] );
+      PointT a = accessor.get( viennagrid::vertices(element)[0] );
+      PointT b = accessor.get( viennagrid::vertices(element)[1] );
+      PointT c = accessor.get( viennagrid::vertices(element)[2] );
 
       PointT v0 = c-a;
       PointT v1 = b-a;
@@ -69,10 +69,10 @@ namespace viennagrid
     {
       typedef typename viennagrid::result_of::coord<PointT>::type NumericType;
 
-      PointT const & a = accessor( viennagrid::vertices(element)[0] );
-      PointT const & b = accessor( viennagrid::vertices(element)[1] );
-      PointT const & c = accessor( viennagrid::vertices(element)[2] );
-      PointT const & d = accessor( viennagrid::vertices(element)[3] );
+      PointT a = accessor.get( viennagrid::vertices(element)[0] );
+      PointT b = accessor.get( viennagrid::vertices(element)[1] );
+      PointT c = accessor.get( viennagrid::vertices(element)[2] );
+      PointT d = accessor.get( viennagrid::vertices(element)[3] );
 
 
       NumericType denom = static_cast<NumericType>(1) / spanned_volume(a,b,c,d);

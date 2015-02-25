@@ -497,7 +497,7 @@ namespace viennagrid
         double pd = viennagrid::inner_prod( hyperplane_normal, pt1-hyperplane_point );
 
         PointT new_pt = pt1 - (pd / (pd-qd)) * (pt1 - pt0);
-        line_refinement_vertex_handle_accessor(*lit) = viennagrid::make_vertex( dst_mesh, new_pt );
+        line_refinement_vertex_handle_accessor.set(*lit, viennagrid::make_vertex( dst_mesh, new_pt ));
       }
       else
         line_refinement_tag_accessor.set(*lit, false);

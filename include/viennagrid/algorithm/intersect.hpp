@@ -47,8 +47,8 @@ namespace viennagrid
       typedef typename viennagrid::result_of::coord< PointT >::type CoordType;
       typedef typename detail::result_of::numeric_type<NumericConfigT, CoordType>::type inner_numeric_type;
 
-      PointT const & v0 = point_accessor(viennagrid::vertices(element)[0]);
-      PointT const & v1 = point_accessor(viennagrid::vertices(element)[1]);
+      PointT v0 = point_accessor.get(viennagrid::vertices(element)[0]);
+      PointT v1 = point_accessor.get(viennagrid::vertices(element)[1]);
 
       PointT const & w0 = line_start;
       PointT const & w1 = line_end;
@@ -148,9 +148,9 @@ namespace viennagrid
     {
       typedef typename viennagrid::result_of::coord<PointT>::type NumericType;
 
-      PointT const & A = point_accessor(viennagrid::vertices(element)[0]);
-      PointT const & B = point_accessor(viennagrid::vertices(element)[1]);
-      PointT const & C = point_accessor(viennagrid::vertices(element)[2]);
+      PointT A = point_accessor.get(viennagrid::vertices(element)[0]);
+      PointT B = point_accessor.get(viennagrid::vertices(element)[1]);
+      PointT C = point_accessor.get(viennagrid::vertices(element)[2]);
 
       PointT r = line_start;
       PointT d = line_end - line_start;
