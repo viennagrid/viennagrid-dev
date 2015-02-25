@@ -94,7 +94,7 @@ namespace viennagrid
       std::map<int, std::deque<std::size_t> >              local_cell_offsets;
       std::map<int, std::deque<element_tag_t> >            local_cell_types;
       std::map<int, std::size_t>                           local_cell_num;
-      std::map<int, std::deque<ElementType> >              local_cell_handle;
+      std::map<int, std::deque<ElementType> >              local_cells;
 
       //data containers:
       std::map<int, std::deque<std::pair<std::string, std::deque<double> > > >  local_scalar_vertex_data;
@@ -164,7 +164,7 @@ namespace viennagrid
         local_cell_offsets.clear();
         local_cell_types.clear();
         local_cell_num.clear();
-        local_cell_handle.clear();
+        local_cells.clear();
 
         local_scalar_vertex_data.clear();
         local_vector_vertex_data.clear();
@@ -491,7 +491,7 @@ namespace viennagrid
 //           std::cout << cell << std::endl;
 
           viennagrid::add( mesh_obj.get_make_region(region_id), cell );
-          local_cell_handle[region_id].push_back( cell );
+          local_cells[region_id].push_back( cell );
         }
       }
 
@@ -613,7 +613,7 @@ namespace viennagrid
           {
             for (std::size_t i=0; i<container.second.size(); ++i)
             {
-              ElementType const & cell = local_cell_handle[region_id][i];
+              ElementType const & cell = local_cells[region_id][i];
 
               (*registered_cell_scalar_data[name]).set(cell, (container.second)[i]);
             }
@@ -622,7 +622,7 @@ namespace viennagrid
           {
             for (std::size_t i=0; i<container.second.size(); ++i)
             {
-              ElementType const & cell = local_cell_handle[region_id][i];
+              ElementType const & cell = local_cells[region_id][i];
 
               (*current_registered_region_cell_scalar_data[name]).set(cell, (container.second)[i]);
             }
@@ -635,7 +635,7 @@ namespace viennagrid
             #endif
             for (std::size_t i=0; i<container.second.size(); ++i)
             {
-              ElementType const & cell = local_cell_handle[region_id][i];
+              ElementType const & cell = local_cells[region_id][i];
 
               if ( static_cast<typename result_of::id<ElementType>::type>(cell_scalar_data[container.first][region_id].size()) <= cell.id())
                 cell_scalar_data[container.first][region_id].resize(static_cast<std::size_t>(cell.id()+1));
@@ -650,7 +650,7 @@ namespace viennagrid
           {
             for (std::size_t i=0; i<container.second.size()/3; ++i)
             {
-              ElementType const & cell = local_cell_handle[region_id][i];
+              ElementType const & cell = local_cells[region_id][i];
 
               std::vector<viennagrid_numeric> tmp(3);
               for (std::size_t j = 0; j != 3; ++j)
@@ -663,7 +663,7 @@ namespace viennagrid
           {
             for (std::size_t i=0; i<container.second.size(); ++i)
             {
-              ElementType const & cell = local_cell_handle[region_id][i];
+              ElementType const & cell = local_cells[region_id][i];
 
               std::vector<viennagrid_numeric> tmp(3);
               for (std::size_t j = 0; j != 3; ++j)
@@ -681,7 +681,7 @@ namespace viennagrid
             assert( 3 * viennagrid::cells(region).size() == container.second.size());
             for (std::size_t i=0; i<container.second.size() / 3; ++i)
             {
-              ElementType const & cell = local_cell_handle[region_id][i];
+              ElementType const & cell = local_cells[region_id][i];
 
               if ( static_cast<typename result_of::id<ElementType>::type>(cell_vector_data[container.first][region_id].size()) <= cell.id())
                 cell_vector_data[container.first][region_id].resize(static_cast<std::size_t>(cell.id()+1));
@@ -907,7 +907,7 @@ namespace viennagrid
 
     public:
 
-      explicit vtk_reader(bool use_local_points_in = false) : use_local_points_(use_local_points_in) {}
+      vtk_reader() : use_local_points_(false) {}
       ~vtk_reader() { pre_clear(); post_clear(); }
 
       bool use_local_points() const { return use_local_points_; }
@@ -1031,31 +1031,31 @@ namespace viennagrid
         return ret;
       }
 
-        // Extract data read from file:
+      // Extract data read from file:
 
-        /** @brief Returns the names of all scalar-valued data read for vertices */
-        std::vector<std::pair<std::size_t, std::string> > const & get_scalar_data_on_vertices() const
-        {
-          return vertex_data_scalar_read;
-        }
+      /** @brief Returns the names of all scalar-valued data read for vertices */
+      std::vector<std::pair<std::size_t, std::string> > const & get_scalar_data_on_vertices() const
+      {
+        return vertex_data_scalar_read;
+      }
 
-        /** @brief Returns the names of all vector-valued data read for vertices */
-        std::vector<std::pair<std::size_t, std::string> > const & get_vector_data_on_vertices() const
-        {
-          return vertex_data_vector_read;
-        }
+      /** @brief Returns the names of all vector-valued data read for vertices */
+      std::vector<std::pair<std::size_t, std::string> > const & get_vector_data_on_vertices() const
+      {
+        return vertex_data_vector_read;
+      }
 
-        /** @brief Returns the names of all scalar-valued data read for cells */
-        std::vector<std::pair<std::size_t, std::string> > const & get_scalar_data_on_cells() const
-        {
-          return cell_data_scalar_read;
-        }
+      /** @brief Returns the names of all scalar-valued data read for cells */
+      std::vector<std::pair<std::size_t, std::string> > const & get_scalar_data_on_cells() const
+      {
+        return cell_data_scalar_read;
+      }
 
-        /** @brief Returns the names of all vector-valued data read for cells */
-        std::vector<std::pair<std::size_t, std::string> > const & get_vector_data_on_cells() const
-        {
-          return cell_data_vector_read;
-        }
+      /** @brief Returns the names of all vector-valued data read for cells */
+      std::vector<std::pair<std::size_t, std::string> > const & get_vector_data_on_cells() const
+      {
+        return cell_data_vector_read;
+      }
 
 
 
@@ -1064,16 +1064,16 @@ namespace viennagrid
       template<typename ValueT, typename MapT, typename AccessorT>
       void register_to_map(MapT & map, AccessorT & accessor, std::string const & name)
       {
-          typename MapT::iterator it = map.find(name);
-          if (it != map.end())
-          {
-            delete it->second;
-            it->second = new dynamic_accessor_wrapper<base_dynamic_accessor<ValueT, ElementType>,
-                                                      AccessorT>( accessor );
-          }
-          else
-            map[name] = new dynamic_accessor_wrapper<base_dynamic_accessor<ValueT, ElementType>,
-                                                     AccessorT>( accessor );
+        typename MapT::iterator it = map.find(name);
+        if (it != map.end())
+        {
+          delete it->second;
+          it->second = new dynamic_accessor_wrapper<base_dynamic_accessor<ValueT, ElementType>,
+                                                    AccessorT>( accessor );
+        }
+        else
+          map[name] = new dynamic_accessor_wrapper<base_dynamic_accessor<ValueT, ElementType>,
+                                                    AccessorT>( accessor );
       }
 
 
@@ -1153,10 +1153,12 @@ namespace viennagrid
       typename viennagrid::result_of::accessor< std::deque<double>, ElementType >::type vertex_scalar_accessor( std::string const & quantity_name, region_id_type region_id )
       {
         typename std::map< std::string, std::map<region_id_type, std::deque<double> > >::iterator it = vertex_scalar_data.find(quantity_name);
-        if (it == vertex_scalar_data.end()) return typename viennagrid::result_of::accessor<std::deque<double>, ElementType >::type();
+        if (it == vertex_scalar_data.end())
+          return typename viennagrid::result_of::accessor<std::deque<double>, ElementType >::type();
 
         typename std::map<region_id_type, std::deque<double> >::iterator jt = it->second.find( region_id );
-        if (jt == it->second.end()) return typename viennagrid::result_of::accessor<std::deque<double>, ElementType >::type();
+        if (jt == it->second.end())
+          return typename viennagrid::result_of::accessor<std::deque<double>, ElementType >::type();
 
         return viennagrid::make_accessor<ElementType>( jt->second );
       }
@@ -1170,10 +1172,12 @@ namespace viennagrid
       typename viennagrid::result_of::accessor< std::deque<vector_data_type>, ElementType >::type vertex_vector_accessor( std::string const & quantity_name, region_id_type region_id )
       {
         typename std::map< std::string, std::map<region_id_type, std::deque<vector_data_type> > >::iterator it = vertex_vector_data.find(quantity_name);
-        if (it == vertex_vector_data.end()) return typename viennagrid::result_of::accessor<std::deque<vector_data_type>, ElementType >::type();
+        if (it == vertex_vector_data.end())
+          return typename viennagrid::result_of::accessor<std::deque<vector_data_type>, ElementType >::type();
 
         typename std::map<region_id_type, std::deque<vector_data_type> >::iterator jt = it->second.find( region_id );
-        if (jt == it->second.end()) return typename viennagrid::result_of::accessor<std::deque<vector_data_type>, ElementType >::type();
+        if (jt == it->second.end())
+          return typename viennagrid::result_of::accessor<std::deque<vector_data_type>, ElementType >::type();
 
         return viennagrid::make_accessor<ElementType>( jt->second );
       }
@@ -1188,10 +1192,12 @@ namespace viennagrid
       typename viennagrid::result_of::accessor< std::deque<double>, ElementType >::type cell_scalar_accessor( std::string const & quantity_name, region_id_type region_id )
       {
         typename std::map< std::string, std::map<region_id_type, std::deque<double> > >::iterator it = cell_scalar_data.find(quantity_name);
-        if (it == cell_scalar_data.end()) return typename viennagrid::result_of::accessor<std::deque<double>, ElementType >::type();
+        if (it == cell_scalar_data.end())
+          return typename viennagrid::result_of::accessor<std::deque<double>, ElementType >::type();
 
         typename std::map<region_id_type, std::deque<double> >::iterator jt = it->second.find( region_id );
-        if (jt == it->second.end()) return typename viennagrid::result_of::accessor<std::deque<double>, ElementType >::type();
+        if (jt == it->second.end())
+          return typename viennagrid::result_of::accessor<std::deque<double>, ElementType >::type();
 
         return viennagrid::make_accessor<ElementType>( jt->second );
       }
@@ -1205,10 +1211,12 @@ namespace viennagrid
       typename viennagrid::result_of::accessor< std::deque<vector_data_type>, ElementType >::type cell_vector_accessor( std::string const & quantity_name, region_id_type region_id )
       {
         typename std::map< std::string, std::map<region_id_type, std::deque<vector_data_type> > >::iterator it = cell_vector_data.find(quantity_name);
-        if (it == cell_vector_data.end()) return typename viennagrid::result_of::accessor<std::deque<vector_data_type>, ElementType >::type();
+        if (it == cell_vector_data.end())
+          return typename viennagrid::result_of::accessor<std::deque<vector_data_type>, ElementType >::type();
 
         typename std::map<region_id_type, std::deque<vector_data_type> >::iterator jt = it->second.find( region_id );
-        if (jt == it->second.end()) return typename viennagrid::result_of::accessor<std::deque<vector_data_type>, ElementType >::type();
+        if (jt == it->second.end())
+          return typename viennagrid::result_of::accessor<std::deque<vector_data_type>, ElementType >::type();
 
         return viennagrid::make_accessor<ElementType>( jt->second );
       }
@@ -1223,9 +1231,100 @@ namespace viennagrid
 
 
 
+    private:
 
+      template<typename DataT>
+      viennagrid::quantity_field make_cell_quantities_impl(
+                  std::map<std::string, std::map<region_id_type, DataT> > const & data,
+                  std::string const & name) const
+      {
+        viennagrid::quantity_field result;
 
+        typename std::map<std::string, std::map<region_id_type, DataT> >::const_iterator it = data.find(name);
+        if (it != data.end())
+        {
+          for (typename std::map<region_id_type, DataT>::const_iterator jt = it->second.begin();
+                                                                        jt != it->second.end();
+                                                                      ++jt)
+          {
+            DataT const & region_values = jt->second;
 
+            region_id_type region_id = jt->first;
+            std::deque<ElementType> const & cells = local_cells[region_id];
+
+            for (typename std::deque<ElementType>::iterator cit = cells.begin(); cit != cells.end(); ++cit)
+            {
+              ElementType const & cell = *cit;
+
+              assert( cell.id() < region_values.size() );
+              result.set( cell, region_values[cell.id()] );
+            }
+          }
+
+          return result;
+        }
+
+        result.set_to_null();
+        return result;
+      }
+
+      template<typename DataT>
+      viennagrid::quantity_field make_vertex_quantities_impl(
+                  std::map<std::string, std::map<region_id_type, DataT> > const & data,
+                  std::string const & name) const
+      {
+        viennagrid::quantity_field result;
+
+        typename std::map<std::string, std::map<region_id_type, DataT> >::const_iterator it = data.find(name);
+        if (it != data.end())
+        {
+          for (typename std::map<region_id_type, DataT>::const_iterator jt = it->second.begin();
+                                                                        jt != it->second.end();
+                                                                      ++jt)
+          {
+            DataT const & region_values = jt->second;
+
+            region_id_type region_id = jt->first;
+
+            std::map<int, std::deque<std::size_t> >::const_iterator lgmit = local_to_global_map.find(region_id);
+            assert(lgmit != local_to_global_map.end());
+            std::deque<std::size_t> const & vertex_indices = lgmit->second;
+
+            for (std::deque<std::size_t>::const_iterator vit = vertex_indices.begin(); vit != vertex_indices.end(); ++vit)
+            {
+              std::size_t vertex_index = *vit;
+
+              assert( vertex_index < region_values.size() );
+              result.set( vertex_index, region_values[vertex_index] );
+            }
+          }
+
+          return result;
+        }
+
+        result.set_to_null();
+        return result;
+      }
+
+    public:
+
+      viennagrid::quantity_field cell_quantities(std::string const & name) const
+      {
+        viennagrid::quantity_field result = make_cell_quantities_impl(cell_scalar_data, name);
+        if (result.is_valid())
+          return result;
+
+        return make_cell_quantities_impl(cell_vector_data, name);
+      }
+
+      viennagrid::quantity_field vertex_quantities(std::string const & name) const
+      {
+        viennagrid::quantity_field result = make_vertex_quantities_impl(vertex_scalar_data, name);
+        if (result.is_valid())
+          return result;
+
+        return make_vertex_quantities_impl(vertex_vector_data, name);
+      }
 
     private:
 
