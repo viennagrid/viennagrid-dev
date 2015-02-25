@@ -23,12 +23,12 @@
 
 struct UserData
 {
-  std::vector<double>                  vertex_scalar_array;
-  std::vector<double>                  cell_scalar_array;
-  std::vector<std::vector<double> >    vertex_vector_array;
-  std::vector<std::vector<double> >    cell_vector_array;
-  std::vector<std::vector<double> >    vertex_normal_array;
-  std::vector<std::vector<double> >    cell_normal_array;
+  viennagrid::quantity_field          vertex_scalar;
+  viennagrid::quantity_field          cell_scalar;
+  viennagrid::quantity_field          vertex_vector;
+  viennagrid::quantity_field          cell_vector;
+  viennagrid::quantity_field          vertex_normal;
+  viennagrid::quantity_field          cell_normal;
 };
 
 //
@@ -64,7 +64,7 @@ void write_opendx(MeshType const & mesh, UserData & data)
   // Add scalar vertex data: Note that only the first data is used.
 //   viennagrid::io::add_scalar_data_on_vertices<std::string, double>(my_dx_writer, "vtk_data", "data_double");
 
-  my_dx_writer.add_scalar_data_on_vertices( viennagrid::make_accessor<vertex_type>(data.vertex_scalar_array), "data_double" );
+  my_dx_writer.add_scalar_data_on_vertices( data.vertex_scalar, "data_double" );
 
   // Add scalar cell data: Note that only the first data is used and that no other vertex data must be present!
   //viennagrid::io::add_scalar_data_on_cells<std::string, double>(my_dx_writer, "vtk_data", "cell_data_double");
@@ -96,7 +96,7 @@ void read_vtk(MeshType & mesh, UserData & data)
   //
 
   // Write scalar vertex data that matches the name 'data_double' to ViennaData as data of type double, using a key of type std::string and value "vtk_data":
-  reader.register_vertex_scalar( viennagrid::make_accessor<vertex_type>(data.vertex_scalar_array), "data_double" );
+  reader.register_vertex_scalar( data.vertex_scalar, "data_double" );
 
   // Write vector-valued vertex data that matches the name 'data_point' to ViennaData as data of type std::vector<double>, using a key of type std::string and value "vtk_data":
 //   reader.register_vertex_vector_accessor( viennagrid::make_accessor<vertex_type>(data.vertex_vector_array), "data_point" );
@@ -112,7 +112,7 @@ void read_vtk(MeshType & mesh, UserData & data)
   //
 
   // Write scalar cell data that matches the name 'data_double' to ViennaData as data of type double, using a key of type std::string and value "vtk_data":
-  reader.register_cell_scalar( viennagrid::make_accessor<cell_type>(data.cell_scalar_array), "data_double" );
+  reader.register_cell_scalar( data.cell_scalar, "data_double" );
 
   // Write vector-valued cell data that matches the name 'data_point' to ViennaData as data of type std::vector<double>, using a key of type std::string and value "vtk_data":
 //   reader.register_cell_vector_accessor( viennagrid::make_accessor<cell_type>(data.cell_vector_array), "data_point" );
@@ -129,35 +129,37 @@ void read_vtk(MeshType & mesh, UserData & data)
   reader(mesh, "../data/tets_with_data_main.pvd");
 
 
+
+
   //
   // Step 5: Get and print all names read from vtk file(s):
   //
 
-  std::cout << "--- Data read from VTK file: ---" << std::endl;
-  std::cout << "* Scalar data on vertices: " << std::endl;
-  for (size_t i=0; i<data.vertex_scalar_array.size(); ++i)
-    std::cout << (data.vertex_scalar_array)[i] << std::endl;
-
-  std::cout << "* Vector data on vertices: " << std::endl;
-  for (size_t i=0; i<data.vertex_vector_array.size(); ++i)
-  {
-    for (size_t j=0; j<data.vertex_vector_array[i].size(); ++j)
-      std::cout << (data.vertex_vector_array)[i][j] << " ";
-    std::cout << std::endl;
-  }
-
-  std::cout << "* Scalar data on cells: " << std::endl;
-  for (size_t i=0; i<data.cell_scalar_array.size(); ++i)
-    std::cout << (data.cell_scalar_array)[i] << std::endl;
-
-  std::cout << "* Vector data on cells: " << std::endl;
-  for (size_t i=0; i<data.cell_vector_array.size(); ++i)
-  {
-    for (size_t j=0; j<data.cell_vector_array[i].size(); ++j)
-      std::cout << (data.cell_vector_array)[i][j] << " ";
-    std::cout << std::endl;
-  }
-  std::cout << "--- End of data ---" << std::endl;
+//   std::cout << "--- Data read from VTK file: ---" << std::endl;
+//   std::cout << "* Scalar data on vertices: " << std::endl;
+//   for (size_t i=0; i<data.vertex_scalar_array.size(); ++i)
+//     std::cout << (data.vertex_scalar_array)[i] << std::endl;
+//
+//   std::cout << "* Vector data on vertices: " << std::endl;
+//   for (size_t i=0; i<data.vertex_vector_array.size(); ++i)
+//   {
+//     for (size_t j=0; j<data.vertex_vector_array[i].size(); ++j)
+//       std::cout << (data.vertex_vector_array)[i][j] << " ";
+//     std::cout << std::endl;
+//   }
+//
+//   std::cout << "* Scalar data on cells: " << std::endl;
+//   for (size_t i=0; i<data.cell_scalar_array.size(); ++i)
+//     std::cout << (data.cell_scalar_array)[i] << std::endl;
+//
+//   std::cout << "* Vector data on cells: " << std::endl;
+//   for (size_t i=0; i<data.cell_vector_array.size(); ++i)
+//   {
+//     for (size_t j=0; j<data.cell_vector_array[i].size(); ++j)
+//       std::cout << (data.cell_vector_array)[i][j] << " ";
+//     std::cout << std::endl;
+//   }
+//   std::cout << "--- End of data ---" << std::endl;
 }
 
 
@@ -186,7 +188,7 @@ void write_vtk(MeshType & mesh, UserData & data)
 
   // Write data of type data that is stored with ViennaData for keys of type std::string with value "vtk_data" and call it "data_double" in the VTK file:
   //viennagrid::io::add_scalar_data_on_vertices<std::string, double>(my_vtk_writer, "vtk_data", "data_double");
-  writer.add_scalar_data_on_vertices( viennagrid::make_accessor<vertex_type>(data.vertex_scalar_array), "data_double" );
+  writer.add_scalar_data_on_vertices( data.vertex_scalar, "data_double" );
 
   // Same as above, but with data of type long, which is then called "data_long" in the VTK file:
   //viennagrid::io::add_scalar_data_on_vertices<std::string, long>(my_vtk_writer, "vtk_data", "data_long");
@@ -206,7 +208,7 @@ void write_vtk(MeshType & mesh, UserData & data)
 
   // Write data of type double, using the std::string key "vtk_data". Name in VTK file is "data_double" (there is no name collision with vertex data here).
   //viennagrid::io::add_scalar_data_on_cells<std::string, double>(my_vtk_writer, "vtk_data", "data_double");
-  writer.add_scalar_data_on_cells( viennagrid::make_accessor<cell_type>(data.cell_scalar_array), "data_double" );
+  writer.add_scalar_data_on_cells( data.cell_scalar, "data_double" );
 
   // Vector valued data on cells. Similar to vertex case
   //viennagrid::io::add_vector_data_on_cells<std::string, std::vector<double> >(my_vtk_writer, "vtk_data", "data_vector");
