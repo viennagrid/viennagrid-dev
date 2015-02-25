@@ -278,66 +278,37 @@ VIENNAGRID_DYNAMIC_EXPORT viennagrid_error viennagrid_quantities_get_value(vienn
 
 struct viennagrid_serialized_mesh_hierarchy_
 {
-//  // geometric information and vertices
-//  viennagrid_dimension geometric_dimension;
-//  viennagrid_int vertex_count;
-//  viennagrid_numeric * points;                  // may be shared with mesh hierarchy
-//  viennagrid_int hole_point_element_count;
-//  viennagrid_index * hole_points_offsets;
-//  viennagrid_numeric * hole_points;
-
-//  // cell information
-//  viennagrid_int cell_count;
-//  viennagrid_dimension cell_dimension;
-//  viennagrid_element_tag * cell_element_tags;   // may be shared with mesh hierarchy
-//  viennagrid_index * cell_vertex_offsets;       // may be shared with mesh hierarchy
-//  viennagrid_index * cell_vertices;             // may be shared with mesh hierarchy
-//  viennagrid_index * cell_parents;              // may be shared with mesh hierarchy
-//  viennagrid_index * cell_region_offsets;       // may be shared with mesh hierarchy
-//  viennagrid_index * cell_regions;
-
-//  // mesh information
-//  viennagrid_int mesh_count;
-//  viennagrid_index * mesh_parents;
-//  viennagrid_int * mesh_cell_count;
-//  viennagrid_index ** mesh_cells;               // array pointers may be shared with mesh hierarchy
-
-//  // region information
-//  viennagrid_int region_count;
-//  viennagrid_index * region_ids;
-//  const char ** region_names;                         // strings may be shared with mesh hierarchy
-
-//  // for internal use
-//  viennagrid_bool data_owned;
-
-// ------------------------------------------
-// [JW] ordered per type, simplifies MPI communication
-
+  // geometric information and vertices
   viennagrid_dimension geometric_dimension;
   viennagrid_int vertex_count;
+  viennagrid_numeric * points;                  // may be shared with mesh hierarchy
   viennagrid_int hole_point_element_count;
   viennagrid_index * hole_points_offsets;
+  viennagrid_numeric * hole_points;
+
+  // cell information
   viennagrid_int cell_count;
   viennagrid_dimension cell_dimension;
+  viennagrid_element_tag * cell_element_tags;   // may be shared with mesh hierarchy
   viennagrid_index * cell_vertex_offsets;       // may be shared with mesh hierarchy
   viennagrid_index * cell_vertices;             // may be shared with mesh hierarchy
   viennagrid_index * cell_parents;              // may be shared with mesh hierarchy
   viennagrid_index * cell_region_offsets;       // may be shared with mesh hierarchy
   viennagrid_index * cell_regions;
+
+  // mesh information
   viennagrid_int mesh_count;
   viennagrid_index * mesh_parents;
   viennagrid_int * mesh_cell_count;
   viennagrid_index ** mesh_cells;               // array pointers may be shared with mesh hierarchy
+
+  // region information
   viennagrid_int region_count;
   viennagrid_index * region_ids;
-  viennagrid_bool data_owned;
-
-  viennagrid_numeric * points;                  // may be shared with mesh hierarchy
-  viennagrid_numeric * hole_points;
-
-  viennagrid_element_tag * cell_element_tags;   // may be shared with mesh hierarchy
-
   const char ** region_names;                         // strings may be shared with mesh hierarchy
+
+  // for internal use
+  viennagrid_bool data_owned;
 };
 
 typedef struct viennagrid_serialized_mesh_hierarchy_ * viennagrid_serialized_mesh_hierarchy;
