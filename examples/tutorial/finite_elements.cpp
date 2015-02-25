@@ -292,11 +292,12 @@ int main()
 
   ublas::vector<double> result = viennacl::linalg::solve(A, rhs, viennacl::linalg::cg_tag());
 
-  std::vector<double> result_data(vertices.size(), 0);
-  viennagrid::result_of::accessor< std::vector<double>, ElementType >::type results(result_data);
+  viennagrid::quantity_field results;
 
-  for (std::map<int, ElementType>::iterator it = index_to_vertex_map.begin(); it != index_to_vertex_map.end(); ++it)
-    results.set(it->second, result(it->first));
+  for (std::map<int, ElementType>::iterator it = index_to_vertex_map.begin();
+                                            it != index_to_vertex_map.end();
+                                          ++it)
+    results.set( it->second, result(it->first) );
 
 
 
