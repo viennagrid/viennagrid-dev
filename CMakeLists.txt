@@ -19,8 +19,8 @@ list(APPEND CMAKE_MODULE_PATH "${PROJECT_SOURCE_DIR}/cmake")
 # Common options
 ################
 
-find_package(Boost)
-find_package(ViennaCL)
+find_package(Boost QUIET)
+find_package(ViennaCL QUIET)
 
 include(ViennaGridCommon)
 
