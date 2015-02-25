@@ -336,20 +336,18 @@ namespace viennagrid
     *
     * This can be used for storing different accessors to the same element type for data with the same value type in a common container.
     */
-  template<typename ValueType, typename AccessType, typename AccessorType>
-  class dynamic_accessor_wrapper : public base_dynamic_accessor<ValueType, AccessType>
+  template<typename BaseAccessorT, typename AccessorType>
+  class dynamic_accessor_wrapper : public BaseAccessorT
   {
   public:
-    typedef base_dynamic_accessor<ValueType, AccessType> BaseAccessorType;
+    typedef typename BaseAccessorT::value_type value_type;
+    typedef typename BaseAccessorT::access_type access_type;
 
-    typedef typename BaseAccessorType::value_type value_type;
-    typedef typename BaseAccessorType::access_type access_type;
+    typedef typename BaseAccessorT::reference reference;
+    typedef typename BaseAccessorT::const_reference const_reference;
 
-    typedef typename BaseAccessorType::reference reference;
-    typedef typename BaseAccessorType::const_reference const_reference;
-
-    typedef typename BaseAccessorType::pointer pointer;
-    typedef typename BaseAccessorType::const_pointer const_pointer;
+    typedef typename BaseAccessorT::pointer pointer;
+    typedef typename BaseAccessorT::const_pointer const_pointer;
 
 
     dynamic_accessor_wrapper(AccessorType accessor_) : accessor(accessor_) {}
@@ -365,16 +363,175 @@ namespace viennagrid
 
 
 
-//   class QuantitiesAccessor
-//   {
-//   public:
-//
-//     QuantitiesAccessor() {}
-//
-//   private:
-//
-//     viennagrid_quantity_field quantity_field;
-//   };
+
+
+
+
+  class quantity_field;
+
+  class quantity_value
+  {
+    friend class quantity_field;
+
+    quantity_value(viennagrid_numeric * values_, viennagrid_dimension dimension_) :
+        values(values_), dimension(dimension_) {}
+
+  public:
+
+    operator viennagrid_numeric()
+    {
+      assert(dimension == 1);
+      return *values;
+    }
+
+    operator std::vector<viennagrid_numeric>()
+    {
+      std::vector<viennagrid_numeric> tmp(dimension);
+      std::copy( values, values + dimension, &tmp[0] );
+      return tmp;
+    }
+
+  private:
+    viennagrid_numeric * values;
+    viennagrid_dimension dimension;
+  };
+
+
+  class quantity_field
+  {
+  public:
+
+    quantity_field()
+    {
+      viennagrid_quantity_field_make(&internal_quantity_field);
+    }
+
+    void set_to_null()
+    {
+      release();
+      internal_quantity_field = NULL;
+    }
+
+    quantity_field(viennagrid_quantity_field internal_quantity_field_) :
+        internal_quantity_field(internal_quantity_field_) { retain(); }
+    quantity_field(quantity_field const & rhs) : internal_quantity_field(rhs.internal()) { retain(); }
+
+    ~quantity_field() { release(); }
+
+    quantity_field & operator=(quantity_field const & rhs)
+    {
+      release();
+      internal_quantity_field = rhs.internal();
+      retain();
+      return *this;
+    }
+
+
+
+    bool is_valid() const { return internal() != NULL; }
+
+
+    typedef std::vector<viennagrid_numeric> value_type;
+
+    template<typename ElementT>
+    quantity_value get(ElementT const & element) const
+    {
+      assert( viennagrid::topologic_dimension(element) == internal()->topologic_dimension );
+
+      viennagrid_numeric * tmp;
+      viennagrid_quantities_get_value(internal(), element.id(), &tmp);
+
+      return quantity_value(tmp, values_dimension());
+    }
+
+    template<typename ElementT>
+    void set(ElementT const & element, value_type const & value)
+    {
+      assert( topologic_dimension() == viennagrid::topologic_dimension(element) );
+
+      if (values_dimension() < 0)
+        set_values_dimension( value.size() );
+
+      assert( values_dimension() == static_cast<viennagrid_int>(value.size()) );
+
+      set_with_id(element.id(), value);
+    }
+
+    template<typename ElementT>
+    void set(ElementT const & element, viennagrid_numeric value)
+    {
+      assert( topologic_dimension() == viennagrid::topologic_dimension(element) );
+
+      if (values_dimension() < 0)
+        set_values_dimension(1);
+      assert( values_dimension() == 1 );
+
+      set_with_id(element.id(), value);
+    }
+
+    void set(viennagrid_index id, value_type const & value)
+    {
+      viennagrid_quantities_set_value(internal(), id, const_cast<viennagrid_numeric*>(&value[0]));
+    }
+
+    void set(viennagrid_index id, viennagrid_numeric value)
+    {
+      viennagrid_quantities_set_value(internal(), id, &value);
+    }
+
+    viennagrid_int size() const
+    {
+      viennagrid_int size_;
+      viennagrid_quantities_size(internal(), &size_);
+      return size_;
+    }
+
+    void resize(viennagrid_int size)
+    {
+      viennagrid_quantities_resize(internal(), size);
+    }
+
+    void set_topologic_dimension(viennagrid_dimension topologic_dimension_)
+    {
+      viennagrid_quantities_set_topologic_dimension(internal(), topologic_dimension_);
+    }
+
+    viennagrid_dimension topologic_dimension() const
+    {
+      viennagrid_dimension topologic_dimension_;
+      viennagrid_quantities_get_topologic_dimension(internal(), &topologic_dimension_);
+      return topologic_dimension_;
+    }
+
+    viennagrid_dimension values_dimension() const
+    {
+      viennagrid_dimension values_dimension_;
+      viennagrid_quantities_get_values_dimension(internal(), &values_dimension_);
+      return values_dimension_;
+    }
+
+    void set_values_dimension(std::size_t values_dimension_)
+    {
+      viennagrid_quantities_set_values_dimension(internal(), values_dimension_);
+    }
+
+
+    viennagrid_quantity_field internal() const { return internal_quantity_field; }
+
+  private:
+
+    void retain()
+    {
+      viennagrid_quantity_field_retain(internal());
+    }
+
+    void release()
+    {
+      viennagrid_quantity_field_release(internal());
+    }
+
+    viennagrid_quantity_field internal_quantity_field;
+  };
 
 
 
