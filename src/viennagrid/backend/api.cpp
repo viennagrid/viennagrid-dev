@@ -479,15 +479,18 @@ viennagrid_error viennagrid_quantity_field_make(viennagrid_quantity_field * quan
   return VIENNAGRID_SUCCESS;
 }
 
-viennagrid_error viennagrid_quantity_field_retain(viennagrid_quantity_field * quantity_field)
+viennagrid_error viennagrid_quantity_field_retain(viennagrid_quantity_field quantity_field)
 {
-  ++(*quantity_field)->change_counter;
+  ++quantity_field->change_counter;
 
   return VIENNAGRID_SUCCESS;
 }
 
 viennagrid_error viennagrid_quantity_field_release(viennagrid_quantity_field quantity_field)
 {
+  if (!quantity_field)
+    return VIENNAGRID_SUCCESS;
+
   if ( --(quantity_field->change_counter) <= 0 )
   {
     if (!quantity_field)
@@ -635,7 +638,6 @@ viennagrid_error viennagrid_quantities_set_value(viennagrid_quantity_field quant
                                     viennagrid_numeric * values)
 {
   assert( pos < quantity_field->value_count );
-
   memcpy(quantity_field->values + pos*quantity_field->values_dimension,
          values,
          quantity_field->values_dimension*sizeof(char));
@@ -645,13 +647,10 @@ viennagrid_error viennagrid_quantities_set_value(viennagrid_quantity_field quant
 
 viennagrid_error viennagrid_quantities_get_value(viennagrid_quantity_field quantity_field,
                                     viennagrid_index pos,
-                                    viennagrid_numeric * values)
+                                    viennagrid_numeric ** values)
 {
   assert( pos < quantity_field->value_count );
-
-  memcpy(values,
-         quantity_field->values + pos*quantity_field->values_dimension,
-         quantity_field->values_dimension*sizeof(char));
+  *values = quantity_field->values + pos*quantity_field->values_dimension;
 
   return VIENNAGRID_SUCCESS;
 }

@@ -218,15 +218,15 @@ VIENNAGRID_DYNAMIC_EXPORT viennagrid_error viennagrid_plc_get_hole_points(vienna
 // quantities
 struct viennagrid_quantity_field_t
 {
-  char * name;
-  char * unit;
-  viennagrid_dimension topologic_dimension;
+  char * name;                                  // initialized with NULL
+  char * unit;                                  // initialized with NULL
+  viennagrid_dimension topologic_dimension;     // initialized with -1
 
-  viennagrid_int value_count;
-  viennagrid_dimension values_dimension;
-  viennagrid_numeric * values;
+  viennagrid_int value_count;                   // initialized with 0
+  viennagrid_dimension values_dimension;        // initialized with -1
+  viennagrid_numeric * values;                  // initialized with NULL
 
-  viennagrid_int change_counter;
+  viennagrid_int change_counter;                // initialized with 1
 };
 
 
@@ -234,7 +234,7 @@ typedef struct viennagrid_quantity_field_t * viennagrid_quantity_field;
 
 
 VIENNAGRID_DYNAMIC_EXPORT viennagrid_error viennagrid_quantity_field_make(viennagrid_quantity_field * quantity_field);
-VIENNAGRID_DYNAMIC_EXPORT viennagrid_error viennagrid_quantity_field_retain(viennagrid_quantity_field * quantity_field);
+VIENNAGRID_DYNAMIC_EXPORT viennagrid_error viennagrid_quantity_field_retain(viennagrid_quantity_field quantity_field);
 VIENNAGRID_DYNAMIC_EXPORT viennagrid_error viennagrid_quantity_field_release(viennagrid_quantity_field quantity_field);
 
 VIENNAGRID_DYNAMIC_EXPORT viennagrid_error viennagrid_quantities_set_name(viennagrid_quantity_field quantity_field,
@@ -270,7 +270,7 @@ VIENNAGRID_DYNAMIC_EXPORT viennagrid_error viennagrid_quantities_set_value(vienn
                                                                            viennagrid_numeric * values);
 VIENNAGRID_DYNAMIC_EXPORT viennagrid_error viennagrid_quantities_get_value(viennagrid_quantity_field quantity_field,
                                                                            viennagrid_index pos,
-                                                                           viennagrid_numeric * values);
+                                                                           viennagrid_numeric ** values);
 
 
 
