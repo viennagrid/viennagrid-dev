@@ -1019,6 +1019,7 @@ namespace viennagrid
 
         std::vector<std::string> result( ret.size() );
         std::copy( ret.begin(), ret.end(), result.begin() );
+        return result;
       }
 
       std::vector<std::string> vector_vertex_data_names() const
@@ -1037,6 +1038,7 @@ namespace viennagrid
 
         std::vector<std::string> result( ret.size() );
         std::copy( ret.begin(), ret.end(), result.begin() );
+        return result;
       }
 
 
@@ -1089,6 +1091,7 @@ namespace viennagrid
 
         std::vector<std::string> result( ret.size() );
         std::copy( ret.begin(), ret.end(), result.begin() );
+        return result;
       }
 
       std::vector<std::string> vector_cell_data_names() const
@@ -1107,6 +1110,7 @@ namespace viennagrid
 
         std::vector<std::string> result( ret.size() );
         std::copy( ret.begin(), ret.end(), result.begin() );
+        return result;
       }
 
 
