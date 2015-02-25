@@ -684,6 +684,7 @@ viennagrid_error viennagrid_new(viennagrid_int size,
 viennagrid_error viennagrid_delete(void * ptr)
 {
   free(ptr);
+  ptr = NULL;
   return VIENNAGRID_SUCCESS;
 }
 
@@ -1024,6 +1025,3 @@ viennagrid_error viennagrid_deserialize_mesh_hierarchy(
 
   return VIENNAGRID_SUCCESS;
 }
-
-
-
