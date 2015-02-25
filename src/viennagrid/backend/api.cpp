@@ -474,14 +474,14 @@ viennagrid_error viennagrid_quantity_field_make(viennagrid_quantity_field * quan
   (*quantity_field)->values_dimension = -1;
   (*quantity_field)->values = NULL;
 
-  (*quantity_field)->change_counter = 1;
+  (*quantity_field)->use_count = 1;
 
   return VIENNAGRID_SUCCESS;
 }
 
 viennagrid_error viennagrid_quantity_field_retain(viennagrid_quantity_field quantity_field)
 {
-  ++quantity_field->change_counter;
+  ++quantity_field->use_count;
 
   return VIENNAGRID_SUCCESS;
 }
@@ -491,7 +491,7 @@ viennagrid_error viennagrid_quantity_field_release(viennagrid_quantity_field qua
   if (!quantity_field)
     return VIENNAGRID_SUCCESS;
 
-  if ( --(quantity_field->change_counter) <= 0 )
+  if ( --(quantity_field->use_count) <= 0 )
   {
     if (!quantity_field)
       return VIENNAGRID_SUCCESS;
@@ -619,8 +619,9 @@ viennagrid_error viennagrid_quantities_resize(viennagrid_quantity_field quantity
   {
     memcpy(tmp, quantity_field->values, min_size * sizeof(char));
     delete[] quantity_field->values;
-    quantity_field->values = tmp;
   }
+
+  quantity_field->values = tmp;
 
   return VIENNAGRID_SUCCESS;
 }

@@ -226,7 +226,7 @@ struct viennagrid_quantity_field_t
   viennagrid_dimension values_dimension;        // initialized with -1
   viennagrid_numeric * values;                  // initialized with NULL
 
-  viennagrid_int change_counter;                // initialized with 1
+  viennagrid_int use_count;                     // initialized with 1
 };
 
 
