@@ -406,12 +406,6 @@ namespace viennagrid
       viennagrid_quantity_field_make(&internal_quantity_field);
     }
 
-    void set_to_null()
-    {
-      release();
-      internal_quantity_field = NULL;
-    }
-
     quantity_field(viennagrid_quantity_field internal_quantity_field_) :
         internal_quantity_field(internal_quantity_field_) { retain(); }
     quantity_field(quantity_field const & rhs) : internal_quantity_field(rhs.internal()) { retain(); }
@@ -427,6 +421,11 @@ namespace viennagrid
     }
 
 
+    void set_to_null()
+    {
+      release();
+      internal_quantity_field = NULL;
+    }
 
     bool is_valid() const { return internal() != NULL; }
 
@@ -444,9 +443,11 @@ namespace viennagrid
       return quantity_value(tmp, values_dimension());
     }
 
-    template<typename ElementT>
-    void set(ElementT const & element, value_type const & value)
+    template<bool element_is_const>
+    void set(base_element<element_is_const> const & element, value_type const & value)
     {
+      if ( topologic_dimension() < 0 )
+        set_topologic_dimension( viennagrid::topologic_dimension(element) );
       assert( topologic_dimension() == viennagrid::topologic_dimension(element) );
 
       if (values_dimension() < 0)
@@ -454,28 +455,34 @@ namespace viennagrid
 
       assert( values_dimension() == static_cast<viennagrid_int>(value.size()) );
 
-      set_with_id(element.id(), value);
+      set(element.id(), value);
     }
 
-    template<typename ElementT>
-    void set(ElementT const & element, viennagrid_numeric value)
+    template<bool element_is_const>
+    void set(base_element<element_is_const> const & element, viennagrid_numeric value)
     {
+      if ( topologic_dimension() < 0 )
+        set_topologic_dimension( viennagrid::topologic_dimension(element) );
       assert( topologic_dimension() == viennagrid::topologic_dimension(element) );
 
       if (values_dimension() < 0)
         set_values_dimension(1);
       assert( values_dimension() == 1 );
 
-      set_with_id(element.id(), value);
+      set(element.id(), value);
     }
 
     void set(viennagrid_index id, value_type const & value)
     {
+      if (size() <= id)
+        resize(id+1);
       viennagrid_quantities_set_value(internal(), id, const_cast<viennagrid_numeric*>(&value[0]));
     }
 
     void set(viennagrid_index id, viennagrid_numeric value)
     {
+      if (size() <= id)
+        resize(id+1);
       viennagrid_quantities_set_value(internal(), id, &value);
     }
 
@@ -514,7 +521,6 @@ namespace viennagrid
     {
       viennagrid_quantities_set_values_dimension(internal(), values_dimension_);
     }
-
 
     viennagrid_quantity_field internal() const { return internal_quantity_field; }
 
