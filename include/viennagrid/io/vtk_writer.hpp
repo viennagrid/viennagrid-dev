@@ -95,19 +95,22 @@ namespace viennagrid
       typedef typename mesh_type::const_region_type RegionType;
 
 
-      typedef std::vector<double> vector_data_type;
+      typedef std::vector<viennagrid_numeric> vector_data_type;
 
-      typedef base_dynamic_accessor<double, ElementType> VertexScalarBaseAccesor;
-      typedef std::map< std::string, VertexScalarBaseAccesor * > VertexScalarOutputAccessorContainer;
+      typedef base_dynamic_accessor<viennagrid_numeric, ElementType> BaseScalarAccessorType;
+      typedef base_dynamic_accessor<vector_data_type, ElementType> BaseVectorAccessorType;
 
-      typedef base_dynamic_accessor<vector_data_type, ElementType> VertexVectorBaseAccesor;
-      typedef std::map< std::string, VertexVectorBaseAccesor * > VertexVectorOutputAccessorContainer;
+//       typedef base_dynamic_accessor<double, ElementType> VertexScalarBaseAccesor;
+      typedef std::map< std::string, BaseScalarAccessorType * > VertexScalarOutputAccessorContainer;
 
-      typedef base_dynamic_accessor<double, ElementType> CellScalarBaseAccesor;
-      typedef std::map< std::string, CellScalarBaseAccesor * > CellScalarOutputAccessorContainer;
+//       typedef base_dynamic_accessor<vector_data_type, ElementType> VertexVectorBaseAccesor;
+      typedef std::map< std::string, BaseVectorAccessorType * > VertexVectorOutputAccessorContainer;
 
-      typedef base_dynamic_accessor<vector_data_type, ElementType> CellVectorBaseAccesor;
-      typedef std::map< std::string, CellVectorBaseAccesor * > CellVectorOutputAccessorContainer;
+//       typedef base_dynamic_accessor<double, ElementType> CellScalarBaseAccesor;
+      typedef std::map< std::string, BaseScalarAccessorType * > CellScalarOutputAccessorContainer;
+
+//       typedef base_dynamic_accessor<vector_data_type, ElementType> CellVectorBaseAccesor;
+      typedef std::map< std::string, BaseVectorAccessorType * > CellVectorOutputAccessorContainer;
 
     protected:
 
@@ -620,10 +623,12 @@ namespace viennagrid
         if (it != map.end())
         {
           delete it->second;
-          it->second = new dynamic_accessor_wrapper<ValueT, ElementType, AccessorT>( accessor );
+          it->second = new dynamic_accessor_wrapper<base_dynamic_accessor<ValueT, ElementType>,
+                                                    AccessorT>( accessor );
         }
         else
-          map[quantity_name] = new dynamic_accessor_wrapper<ValueT, ElementType, AccessorT>( accessor );
+          map[quantity_name] = new dynamic_accessor_wrapper<base_dynamic_accessor<ValueT, ElementType>,
+                                                            AccessorT>( accessor );
       }
 
       template<typename ValueT, typename MapT, typename AccessorT>

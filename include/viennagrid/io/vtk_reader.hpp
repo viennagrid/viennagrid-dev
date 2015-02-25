@@ -73,6 +73,10 @@ namespace viennagrid
       typedef std::map< std::string, base_dynamic_accessor<vector_data_type, ElementType> * >     CellVectorOutputFieldContainer;
 
 
+//       typedef std::map< std::string, base_dynamic_accessor<vector_data_type, ElementType> * >     OutputFieldContainer;
+
+
+
 
 
 
@@ -90,7 +94,7 @@ namespace viennagrid
       std::map<int, std::deque<std::size_t> >              local_cell_offsets;
       std::map<int, std::deque<element_tag_t> >            local_cell_types;
       std::map<int, std::size_t>                           local_cell_num;
-      std::map<int, std::deque<ElementType> >                 local_cell_handle;
+      std::map<int, std::deque<ElementType> >              local_cell_handle;
 
       //data containers:
       std::map<int, std::deque<std::pair<std::string, std::deque<double> > > >  local_scalar_vertex_data;
@@ -1064,10 +1068,12 @@ namespace viennagrid
           if (it != map.end())
           {
             delete it->second;
-            it->second = new dynamic_accessor_wrapper<ValueT, ElementType, AccessorT>( accessor );
+            it->second = new dynamic_accessor_wrapper<base_dynamic_accessor<ValueT, ElementType>,
+                                                      AccessorT>( accessor );
           }
           else
-            map[name] = new dynamic_accessor_wrapper<ValueT, ElementType, AccessorT>( accessor );
+            map[name] = new dynamic_accessor_wrapper<base_dynamic_accessor<ValueT, ElementType>,
+                                                     AccessorT>( accessor );
       }
 
 
@@ -1212,6 +1218,15 @@ namespace viennagrid
       { return cell_vector_accessor(quantity_name, region.id()); }
 
 
+
+
+
+
+
+
+
+
+
     private:
 
       // Quantities read:
@@ -1229,11 +1244,12 @@ namespace viennagrid
       std::map< std::string, std::map<region_id_type, std::deque<vector_data_type> > > cell_vector_data;
 
 
+
       VertexScalarOutputFieldContainer          registered_vertex_scalar_data;
       VertexVectorOutputFieldContainer          registered_vertex_vector_data;
 
-      CellScalarOutputFieldContainer          registered_cell_scalar_data;
-      CellVectorOutputFieldContainer          registered_cell_vector_data;
+      CellScalarOutputFieldContainer            registered_cell_scalar_data;
+      CellVectorOutputFieldContainer            registered_cell_vector_data;
 
       std::map< region_id_type, VertexScalarOutputFieldContainer > registered_region_vertex_scalar_data;
       std::map< region_id_type, VertexVectorOutputFieldContainer > registered_region_vertex_vector_data;
