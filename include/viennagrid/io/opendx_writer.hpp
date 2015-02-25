@@ -237,10 +237,12 @@ namespace viennagrid
           if (it != map.end())
           {
             delete it->second;
-            it->second = new dynamic_accessor_wrapper<double, ElementType, AccessorOrFieldType>( accessor_or_field );
+            it->second = new dynamic_accessor_wrapper<base_dynamic_accessor<double, ElementType>,
+                                                      AccessorOrFieldType>( accessor_or_field );
           }
           else
-            map[name] = new dynamic_accessor_wrapper<double, ElementType, AccessorOrFieldType>( accessor_or_field );
+            map[name] = new dynamic_accessor_wrapper<base_dynamic_accessor<double, ElementType>,
+                                                     AccessorOrFieldType>( accessor_or_field );
       }
 
 
