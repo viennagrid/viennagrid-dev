@@ -811,13 +811,13 @@ viennagrid_error viennagrid_serialize_mesh_hierarchy(
                                           serialized_mesh_hierarchy->geometric_dimension*serialized_mesh_hierarchy->vertex_count,
                                           copy_data);
 
-  serialized_mesh_hierarchy->hole_point_element_count = mesh_hierarchy->hole_point_element_count();
-  serialized_mesh_hierarchy->hole_points_offsets = set(mesh_hierarchy->hole_points_offsets(),
-                                                       serialized_mesh_hierarchy->hole_point_element_count,
-                                                       copy_data);
-  serialized_mesh_hierarchy->hole_points = set(mesh_hierarchy->hole_points_pointer(),
-                                               serialized_mesh_hierarchy->hole_points_offsets[serialized_mesh_hierarchy->hole_point_element_count+1],
-                                               copy_data);
+//   serialized_mesh_hierarchy->hole_point_element_count = mesh_hierarchy->hole_point_element_count();
+//   serialized_mesh_hierarchy->hole_points_offsets = set(mesh_hierarchy->hole_points_offsets(),
+//                                                        serialized_mesh_hierarchy->hole_point_element_count,
+//                                                        copy_data);
+//   serialized_mesh_hierarchy->hole_points = set(mesh_hierarchy->hole_points_pointer(),
+//                                                serialized_mesh_hierarchy->hole_points_offsets[serialized_mesh_hierarchy->hole_point_element_count+1],
+//                                                copy_data);
 
   // cell information
   viennagrid_dimension cell_dimension = mesh_hierarchy->cell_dimension();
