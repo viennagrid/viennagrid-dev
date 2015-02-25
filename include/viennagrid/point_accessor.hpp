@@ -12,16 +12,18 @@ namespace viennagrid
   class point_accessor_t
   {
   public:
+    typedef typename viennagrid::result_of::point<MeshT>::type point_type;
     typedef typename viennagrid::result_of::element<MeshT>::type element_type;
 
-    typedef typename viennagrid::result_of::point<MeshT>::type point_type;
-//     typedef typename viennagrid::result_of::const_element<MeshT>::type vertex_type;
-    typedef typename viennagrid::result_of::const_element<MeshT>::type const_vertex_type;
+    typedef point_type value_type;
 
     point_accessor_t(MeshT mesh_in) : mesh_(mesh_in) {}
 
-    point_type get(const_vertex_type const & element) const { return viennagrid::get_point(mesh_, element); }
-    void set(const_vertex_type const & element, point_type const & value) { viennagrid::set_point(mesh_, element, value); }
+    template<typename ElementT>
+    point_type get(ElementT const & element) const { return viennagrid::get_point(mesh_, element); }
+
+    template<typename ElementT>
+    void set(ElementT const & element, point_type const & value) { viennagrid::set_point(mesh_, element, value); }
 
   private:
     MeshT mesh_;
