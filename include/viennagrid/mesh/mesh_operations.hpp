@@ -48,8 +48,8 @@ namespace viennagrid
       *
       * @param  dst_mesh_                The destination mesh
       */
-    element_copy_map( DstMeshType const & dst_mesh_, bool copy_region_information_in = true ) : copy_region_information_(copy_region_information_in), dst_mesh(dst_mesh_), nc_(-1.0) {}
-    element_copy_map( DstMeshType const & dst_mesh_, NumericConfigT nc_in, bool copy_region_information_in = true ) : copy_region_information_(copy_region_information_in), dst_mesh(dst_mesh_), nc_(nc_in) {}
+    element_copy_map( DstMeshType const & dst_mesh_in, bool copy_region_information_in = true ) : copy_region_information_(copy_region_information_in), dst_mesh_(dst_mesh_in), nc_(-1.0) {}
+    element_copy_map( DstMeshType const & dst_mesh_in, NumericConfigT nc_in, bool copy_region_information_in = true ) : copy_region_information_(copy_region_information_in), dst_mesh_(dst_mesh_in), nc_(nc_in) {}
 
     /** @brief Copies one vertex to the destination mesh. If the vertex is already present in the destination mesh, the vertex handle of this vertex is return, otherwise a new vertex is created in the destination mesh.
       *
@@ -58,9 +58,9 @@ namespace viennagrid
     template<bool element_is_const>
     DstElementType operator()( base_element<element_is_const> const & src )
     {
-      if (src.mesh_hierarchy() == dst_mesh.mesh_hierarchy())
+      if (src.mesh_hierarchy() == dst_mesh().mesh_hierarchy())
       {
-        viennagrid::add( dst_mesh, src );
+        viennagrid::add( dst_mesh(), src );
         return src;
       }
 
@@ -82,7 +82,7 @@ namespace viennagrid
         return vit->second;
       else
       {
-        DstElementType vtx = viennagrid::make_unique_vertex(dst_mesh, viennagrid::get_point(src), nc_);
+        DstElementType vtx = viennagrid::make_unique_vertex(dst_mesh(), viennagrid::get_point(src), nc_);
         vertex_map[src.id()] = vtx;
         if (copy_region_information_)
           copy_region_information(src, vtx);
@@ -108,11 +108,13 @@ namespace viennagrid
       for (ConstVerticesOnElementIteratorType vit = vertices.begin(); vit != vertices.end(); ++vit)
         dst_vertices.push_back( (*this)(*vit) );
 
-      DstElementType dst = viennagrid::make_element( dst_mesh, src.tag(), dst_vertices.begin(), dst_vertices.end() );
+      DstElementType dst = viennagrid::make_element( dst_mesh(), src.tag(), dst_vertices.begin(), dst_vertices.end() );
       if (copy_region_information_)
         copy_region_information(src, dst);
       return dst;
     }
+
+    DstMeshType const & dst_mesh() const { return dst_mesh_; }
 
   private:
 
@@ -124,12 +126,12 @@ namespace viennagrid
 
       ElementRegionType regions(src);
       for (ElementRegionIterator rit = regions.begin(); rit != regions.end(); ++rit)
-        viennagrid::add( dst_mesh.get_make_region((*rit).id()), dst );
+        viennagrid::add( dst_mesh().get_make_region((*rit).id()), dst );
     }
 
 
     bool copy_region_information_;
-    DstMeshType const & dst_mesh;
+    DstMeshType const & dst_mesh_;
     std::map<SrcElementIDType, DstElementType> vertex_map;
 
     NumericConfigT nc_;
