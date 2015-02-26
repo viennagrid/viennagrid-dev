@@ -1439,6 +1439,62 @@ namespace viennagrid
         return vector_cell_quantity_field(name);
       }
 
+      std::vector<viennagrid::quantity_field> quantity_fields() const
+      {
+        std::vector<viennagrid::quantity_field> result;
+
+        {
+          std::vector<std::string> quantity_names = scalar_vertex_data_names();
+          for (std::vector<std::string>::iterator it = quantity_names.begin();
+                                                  it != quantity_names.end();
+                                                ++it)
+          {
+            viennagrid::quantity_field field = scalar_vertex_quantity_field(*it);
+            if (field.is_valid())
+              result.push_back(field);
+          }
+        }
+
+        {
+          std::vector<std::string> quantity_names = vector_vertex_data_names();
+          for (std::vector<std::string>::iterator it = quantity_names.begin();
+                                                  it != quantity_names.end();
+                                                ++it)
+          {
+            viennagrid::quantity_field field = vector_vertex_quantity_field(*it);
+            if (field.is_valid())
+              result.push_back(field);
+          }
+        }
+
+
+        {
+          std::vector<std::string> quantity_names = scalar_cell_data_names();
+          for (std::vector<std::string>::iterator it = quantity_names.begin();
+                                                  it != quantity_names.end();
+                                                ++it)
+          {
+            viennagrid::quantity_field field = scalar_cell_quantity_field(*it);
+            if (field.is_valid())
+              result.push_back(field);
+          }
+        }
+
+        {
+          std::vector<std::string> quantity_names = vector_cell_data_names();
+          for (std::vector<std::string>::iterator it = quantity_names.begin();
+                                                  it != quantity_names.end();
+                                                ++it)
+          {
+            viennagrid::quantity_field field = vector_cell_quantity_field(*it);
+            if (field.is_valid())
+              result.push_back(field);
+          }
+        }
+
+        return result;
+      }
+
 
 
     private:
