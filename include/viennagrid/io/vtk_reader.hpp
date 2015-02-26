@@ -32,12 +32,12 @@
 #include "viennagrid/io/helper.hpp"
 #include "viennagrid/io/xml_tag.hpp"
 #include "viennagrid/accessor.hpp"
+#include "viennagrid/quantity_field.hpp"
 
 namespace viennagrid
 {
   namespace io
   {
-
     /** @brief A VTK reader class that allows to read meshes from XML-based VTK files as defined in http://www.vtk.org/pdf/file-formats.pdf
      *
      * @tparam MeshType         The type of the mesh to be read. Must not be a region type!
@@ -84,6 +84,7 @@ namespace viennagrid
       std::ifstream                                        reader;
 
       std::size_t                                          geometric_dim;
+      viennagrid_dimension                                 cell_dimension;
 
       typedef point_t                                      PointType;
       std::map<PointType, std::size_t, point_less>         global_points;
@@ -171,6 +172,8 @@ namespace viennagrid
         local_vector_vertex_data.clear();
         local_scalar_cell_data.clear();
         local_vector_cell_data.clear();
+
+        cell_dimension = -1;
       }
 
 
@@ -316,6 +319,7 @@ namespace viennagrid
 
             type = atoi(token.c_str());
             local_cell_types[region_id].push_back( from_vtk_element_tag(type) );
+            cell_dimension = std::max( cell_dimension, from_vtk_element_tag(type).topologic_dimension() );
 
             //std::cout << "Vertex#: " << offset << std::endl;
             reader >> token;
@@ -1314,12 +1318,21 @@ namespace viennagrid
 
     private:
 
+      static viennagrid_dimension values_dimension(std::deque< std::vector<viennagrid_numeric> > const &) { return 3; }
+      static viennagrid_dimension values_dimension(std::deque<viennagrid_numeric> const &) { return 1; }
+
+
+
+
       template<typename DataT>
       viennagrid::quantity_field make_vertex_quantities_impl(
                   std::map<std::string, std::map<region_id_type, DataT> > const & data,
                   std::string const & name) const
       {
         viennagrid::quantity_field result;
+        result.set_name(name);
+        result.set_topologic_dimension(0);
+        result.set_values_dimension( values_dimension(DataT()) );
 
         typename std::map<std::string, std::map<region_id_type, DataT> >::const_iterator it = data.find(name);
         if (it != data.end())
@@ -1358,6 +1371,9 @@ namespace viennagrid
                   std::string const & name) const
       {
         viennagrid::quantity_field result;
+        result.set_name(name);
+        result.set_topologic_dimension(cell_dimension);
+        result.set_values_dimension( values_dimension(DataT()) );
 
         typename std::map<std::string, std::map<region_id_type, DataT> >::const_iterator it = data.find(name);
         if (it != data.end())
@@ -1369,9 +1385,12 @@ namespace viennagrid
             DataT const & region_values = jt->second;
 
             region_id_type region_id = jt->first;
-            std::deque<ElementType> const & cells = local_cells[region_id];
 
-            for (typename std::deque<ElementType>::iterator cit = cells.begin(); cit != cells.end(); ++cit)
+            typename std::map<int, std::deque<ElementType> >::const_iterator lcit = local_cells.find(region_id);
+            assert(lcit != local_cells.end());
+            std::deque<ElementType> const & cells = lcit->second;
+
+            for (typename std::deque<ElementType>::const_iterator cit = cells.begin(); cit != cells.end(); ++cit)
             {
               ElementType const & cell = *cit;
 
@@ -1406,10 +1425,10 @@ namespace viennagrid
 
 
       viennagrid::quantity_field scalar_cell_quantity_field(std::string const & name) const
-      { return make_vertex_quantities_impl(cell_scalar_data, name); }
+      { return make_cell_quantities_impl(cell_scalar_data, name); }
 
       viennagrid::quantity_field vector_cell_quantity_field(std::string const & name) const
-      { return make_vertex_quantities_impl(cell_vector_data, name); }
+      { return make_cell_quantities_impl(cell_vector_data, name); }
 
       viennagrid::quantity_field cell_quantity_field(std::string const & name) const
       {
