@@ -476,6 +476,8 @@ viennagrid_error viennagrid_quantity_field_make(viennagrid_quantity_field * quan
 
   (*quantity_field)->use_count = 1;
 
+//   std::cout << "New Quantity Field at " << *quantity_field << std::endl;
+
   return VIENNAGRID_SUCCESS;
 }
 
@@ -493,6 +495,8 @@ viennagrid_error viennagrid_quantity_field_release(viennagrid_quantity_field qua
 
   if ( --(quantity_field->use_count) <= 0 )
   {
+//     std::cout << "Delete Quantity Field " << quantity_field << std::endl;
+
     if (!quantity_field)
       return VIENNAGRID_SUCCESS;
 
@@ -512,12 +516,18 @@ viennagrid_error viennagrid_quantity_field_release(viennagrid_quantity_field qua
 
 
 viennagrid_error viennagrid_quantities_set_name(viennagrid_quantity_field quantity_field,
-                                   const char * name)
+                                                const char * name)
 {
-  size_t string_length = strlen(name);
-
   if (quantity_field->name)
     delete[] quantity_field->name;
+
+  if (!name)
+  {
+    quantity_field->name = NULL;
+    return VIENNAGRID_SUCCESS;
+  }
+
+  size_t string_length = strlen(name);
   quantity_field->name = new char[string_length+1];
 
   memcpy( quantity_field->name, name, (string_length+1)*sizeof(char) );
@@ -526,7 +536,7 @@ viennagrid_error viennagrid_quantities_set_name(viennagrid_quantity_field quanti
 }
 
 viennagrid_error viennagrid_quantities_get_name(viennagrid_quantity_field quantity_field,
-                                   const char ** name)
+                                                const char ** name)
 {
   *name = quantity_field->name;
   return VIENNAGRID_SUCCESS;
@@ -534,12 +544,19 @@ viennagrid_error viennagrid_quantities_get_name(viennagrid_quantity_field quanti
 
 
 viennagrid_error viennagrid_quantities_set_unit(viennagrid_quantity_field quantity_field,
-                                   const char * unit)
+                                                const char * unit)
 {
-  size_t string_length = strlen(unit);
-
   if (quantity_field->unit)
     delete[] quantity_field->unit;
+
+  if (!unit)
+  {
+    quantity_field->unit = NULL;
+    return VIENNAGRID_SUCCESS;
+  }
+
+
+  size_t string_length = strlen(unit);
   quantity_field->unit = new char[string_length+1];
 
   memcpy( quantity_field->unit, unit, (string_length+1)*sizeof(char) );
@@ -548,7 +565,7 @@ viennagrid_error viennagrid_quantities_set_unit(viennagrid_quantity_field quanti
 }
 
 viennagrid_error viennagrid_quantities_get_unit(viennagrid_quantity_field quantity_field,
-                                   const char ** unit)
+                                                const char ** unit)
 {
   *unit = quantity_field->unit;
   return VIENNAGRID_SUCCESS;
@@ -556,7 +573,7 @@ viennagrid_error viennagrid_quantities_get_unit(viennagrid_quantity_field quanti
 
 
 viennagrid_error viennagrid_quantities_set_topologic_dimension(viennagrid_quantity_field quantity_field,
-                                                  viennagrid_dimension topologic_dimension)
+                                                               viennagrid_dimension topologic_dimension)
 {
   quantity_field->topologic_dimension = topologic_dimension;
 
@@ -573,7 +590,7 @@ viennagrid_error viennagrid_quantities_set_topologic_dimension(viennagrid_quanti
 }
 
 viennagrid_error viennagrid_quantities_get_topologic_dimension(viennagrid_quantity_field quantity_field,
-                                                  viennagrid_dimension * topologic_dimension)
+                                                               viennagrid_dimension * topologic_dimension)
 {
   *topologic_dimension = quantity_field->topologic_dimension;
   return VIENNAGRID_SUCCESS;
@@ -581,7 +598,7 @@ viennagrid_error viennagrid_quantities_get_topologic_dimension(viennagrid_quanti
 
 
 viennagrid_error viennagrid_quantities_set_values_dimension(viennagrid_quantity_field quantity_field,
-                                                  viennagrid_dimension values_dimension)
+                                                            viennagrid_dimension values_dimension)
 {
   quantity_field->values_dimension = values_dimension;
 
@@ -597,7 +614,7 @@ viennagrid_error viennagrid_quantities_set_values_dimension(viennagrid_quantity_
 }
 
 viennagrid_error viennagrid_quantities_get_values_dimension(viennagrid_quantity_field quantity_field,
-                                                  viennagrid_dimension * values_dimension)
+                                                            viennagrid_dimension * values_dimension)
 {
   *values_dimension = quantity_field->values_dimension;
   return VIENNAGRID_SUCCESS;
@@ -605,7 +622,7 @@ viennagrid_error viennagrid_quantities_get_values_dimension(viennagrid_quantity_
 
 
 viennagrid_error viennagrid_quantities_resize(viennagrid_quantity_field quantity_field,
-                                 viennagrid_int value_count)
+                                              viennagrid_int value_count)
 {
   if (quantity_field->value_count == value_count)
     return VIENNAGRID_SUCCESS;
@@ -614,10 +631,13 @@ viennagrid_error viennagrid_quantities_resize(viennagrid_quantity_field quantity
                            value_count * quantity_field->values_dimension );
 
   quantity_field->value_count = value_count;
-  viennagrid_numeric * tmp = new viennagrid_numeric[ quantity_field->values_dimension * quantity_field->value_count ];
+
+  viennagrid_numeric * tmp = new viennagrid_numeric[ quantity_field->values_dimension *
+                                                     quantity_field->value_count ];
+  std::fill(tmp, tmp+quantity_field->values_dimension * quantity_field->value_count, 0);
   if (quantity_field->values)
   {
-    memcpy(tmp, quantity_field->values, min_size * sizeof(char));
+    memcpy(tmp, quantity_field->values, min_size * sizeof(viennagrid_numeric));
     delete[] quantity_field->values;
   }
 
@@ -627,7 +647,7 @@ viennagrid_error viennagrid_quantities_resize(viennagrid_quantity_field quantity
 }
 
 viennagrid_error viennagrid_quantities_size(viennagrid_quantity_field quantity_field,
-                               viennagrid_int * value_count)
+                                            viennagrid_int * value_count)
 {
   *value_count = quantity_field->value_count;
   return VIENNAGRID_SUCCESS;
@@ -635,20 +655,21 @@ viennagrid_error viennagrid_quantities_size(viennagrid_quantity_field quantity_f
 
 
 viennagrid_error viennagrid_quantities_set_value(viennagrid_quantity_field quantity_field,
-                                    viennagrid_index pos,
-                                    viennagrid_numeric * values)
+                                                 viennagrid_index pos,
+                                                 viennagrid_numeric * values)
 {
+  assert( 0 <= pos );
   assert( pos < quantity_field->value_count );
   memcpy(quantity_field->values + pos*quantity_field->values_dimension,
          values,
-         quantity_field->values_dimension*sizeof(char));
+         quantity_field->values_dimension*sizeof(viennagrid_numeric));
 
   return VIENNAGRID_SUCCESS;
 }
 
 viennagrid_error viennagrid_quantities_get_value(viennagrid_quantity_field quantity_field,
-                                    viennagrid_index pos,
-                                    viennagrid_numeric ** values)
+                                                 viennagrid_index pos,
+                                                 viennagrid_numeric ** values)
 {
   assert( pos < quantity_field->value_count );
   *values = quantity_field->values + pos*quantity_field->values_dimension;
