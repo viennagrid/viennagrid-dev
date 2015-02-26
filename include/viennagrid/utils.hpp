@@ -19,23 +19,6 @@ namespace viennagrid
   }
 
 
-
-
-
-  /** @brief A trivial functor which always returns true */
-  struct true_functor
-  {
-    typedef bool result_type;
-
-    template<typename ValueT>
-    bool operator()(ValueT) const
-    { return true; }
-  };
-
-
-
-
-
   template<typename T1, typename T2, typename T3>
   struct triple
   {

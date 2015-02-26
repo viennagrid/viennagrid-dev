@@ -6,7 +6,15 @@
 
 namespace viennagrid
 {
-  struct true_functor;
+  /** @brief A trivial functor which always returns true */
+  struct true_functor
+  {
+    typedef bool result_type;
+
+    template<typename ValueT>
+    bool operator()(ValueT) const
+    { return true; }
+  };
 
 
 
@@ -176,7 +184,7 @@ namespace viennagrid
     bool operator>(element_tag_t rhs) const { return rhs < *this;}
     bool operator>=(element_tag_t rhs) const { return !(*this < rhs);}
 
-    viennagrid_int topologic_dimension() const
+    viennagrid_dimension topologic_dimension() const
     { return viennagrid_topological_dimension(internal()); }
 
 
