@@ -303,7 +303,7 @@ public:
     std::map<viennagrid_index, viennagrid_index>::const_iterator it = region_id_map.find(region_id);
     if (it != region_id_map.end())
       return regions[it->second];
-    return 0;
+    return NULL;
   }
 
   viennagrid_region get_make_region(viennagrid_index region_id)
