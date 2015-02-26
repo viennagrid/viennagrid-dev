@@ -176,6 +176,8 @@ namespace viennagrid
     bool is_tetrahedron() const { return *this == tetrahedron(); }
     bool is_hexahedron() const { return *this == hexahedron(); }
 
+    bool is_simplex() const { return viennagrid_is_simplex(internal()) == VIENNAGRID_TRUE; }
+
     bool operator==(element_tag_t rhs) const { return internal() == rhs.internal();}
     bool operator!=(element_tag_t rhs) const { return !(*this == rhs);}
 
