@@ -15,6 +15,7 @@
 
 #include <limits>
 #include "viennagrid/point.hpp"
+#include "viennagrid/point_accessor.hpp"
 #include "viennagrid/mesh/mesh.hpp"
 #include "viennagrid/algorithm/spanned_volume.hpp"
 #include "viennagrid/algorithm/detail/numeric.hpp"
