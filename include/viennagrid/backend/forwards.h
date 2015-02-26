@@ -94,6 +94,13 @@ inline viennagrid_int viennagrid_topological_dimension(viennagrid_element_tag et
   }
 }
 
+inline viennagrid_bool viennagrid_is_simplex(viennagrid_element_tag et)
+{
+  return ((et == VIENNAGRID_ELEMENT_TAG_VERTEX) || (et == VIENNAGRID_ELEMENT_TAG_LINE) ||
+          (et == VIENNAGRID_ELEMENT_TAG_TRIANGLE) || (et == VIENNAGRID_ELEMENT_TAG_TETRAHEDRON)) ?
+          VIENNAGRID_TRUE : VIENNAGRID_FALSE;
+}
+
 
 inline viennagrid_element_tag viennagrid_topological_max(viennagrid_element_tag lhs, viennagrid_element_tag rhs)
 {
