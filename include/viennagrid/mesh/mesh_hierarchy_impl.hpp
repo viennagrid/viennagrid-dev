@@ -47,7 +47,13 @@ namespace viennagrid
     return const_region_type(region);
   }
 
-
+  template<bool is_const>
+  bool base_mesh_hierarchy<is_const>::region_exists(region_id_type region_id) const
+  {
+    viennagrid_region region;
+    viennagrid_region_get( internal(), region_id, &region );
+    return region != NULL;
+  }
 
 
 
@@ -113,6 +119,23 @@ namespace viennagrid
 
     assert(false);
     return const_region_type();
+  }
+
+  template<bool is_const>
+  bool base_mesh_hierarchy<is_const>::region_exists(std::string const & name) const
+  {
+    typedef base_mesh_hierarchy<is_const> MeshHierarchyType;
+    typedef typename viennagrid::result_of::region_range<MeshHierarchyType>::type RegionRangeType;
+    typedef typename viennagrid::result_of::iterator<RegionRangeType>::type RegionRangeIterator;
+
+    RegionRangeType regions(*this);
+    for (RegionRangeIterator rit = regions.begin(); rit != regions.end(); ++rit)
+    {
+      if ( (*rit).name() == name )
+        return true;
+    }
+
+    return false;
   }
 
 }

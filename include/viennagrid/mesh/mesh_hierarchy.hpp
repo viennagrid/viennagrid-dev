@@ -76,9 +76,11 @@ namespace viennagrid
     region_type get_make_region(region_id_type region_id);
     region_type make_region();
     const_region_type get_region(region_id_type region_id) const;
+    bool region_exists(region_id_type region_id) const;
 
     region_type get_make_region(std::string const & name);
     const_region_type get_region(std::string const & name) const;
+    bool region_exists(std::string const & name) const;
 
 
     void serialize(viennagrid_serialized_mesh_hierarchy serialized_mesh_hierarchy, bool copy_data = true)
