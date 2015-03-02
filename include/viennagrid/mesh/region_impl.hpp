@@ -27,9 +27,9 @@ namespace viennagrid
     if (region1.size() != region2.size())
       return false;
 
-    for (typename RegionRangeT1::iterator r1it = region1.begin(); r1it != region1.end(); ++r1it)
+    for (typename RegionRangeT1::const_iterator r1it = region1.begin(); r1it != region1.end(); ++r1it)
     {
-      typename RegionRangeT2::iterator r2it = region2.begin();
+      typename RegionRangeT2::const_iterator r2it = region2.begin();
       for (; r2it != region2.end(); ++r2it)
       {
         if ( (*r1it).id() == (*r2it).id() )
