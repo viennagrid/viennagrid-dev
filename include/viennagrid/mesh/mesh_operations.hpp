@@ -118,18 +118,6 @@ namespace viennagrid
 
   private:
 
-    template<typename SrcElementT, typename DstElementT>
-    void copy_region_information(SrcElementT const & src, DstElementT const & dst)
-    {
-      typedef typename viennagrid::result_of::region_range<SrcMeshHierarchyType, SrcElementT>::type ElementRegionType;
-      typedef typename viennagrid::result_of::iterator<ElementRegionType>::type ElementRegionIterator;
-
-      ElementRegionType regions(src);
-      for (ElementRegionIterator rit = regions.begin(); rit != regions.end(); ++rit)
-        viennagrid::add( dst_mesh().get_make_region((*rit).id()), dst );
-    }
-
-
     bool copy_region_information_;
     DstMeshType const & dst_mesh_;
     std::map<SrcElementIDType, DstElementType> vertex_map;
