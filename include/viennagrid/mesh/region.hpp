@@ -416,6 +416,23 @@ namespace viennagrid
 
   template<bool element_is_const, bool region_is_const>
   bool is_boundary( base_mesh_region<region_is_const> const & region, base_element<element_is_const> const & element );
+
+
+
+  template<bool element_is_const>
+  void copy_region_information(base_element<element_is_const> const & src_element, element_t const & dst_element)
+  {
+    typedef base_element<element_is_const> SrcElementType;
+    typedef typename viennagrid::result_of::mesh_hierarchy<SrcElementType>::type SrcMeshHierarchyType;
+
+    typedef typename viennagrid::result_of::region_range<SrcMeshHierarchyType, SrcElementType>::type ElementRegionType;
+    typedef typename viennagrid::result_of::iterator<ElementRegionType>::type ElementRegionIterator;
+
+    ElementRegionType regions(src_element);
+    for (ElementRegionIterator rit = regions.begin(); rit != regions.end(); ++rit)
+      viennagrid::add( dst_element.mesh_hierarchy().get_make_region((*rit).id()), dst_element );
+  }
+
 }
 
 #endif
