@@ -2,6 +2,7 @@
 #define VIENNAGRID_BACKEND_MESH_HIERARCHY_HPP
 
 #include <algorithm>
+#include <sstream>
 
 #include "viennagrid/backend/forwards.h"
 #include "viennagrid/backend/buffer.hpp"
@@ -315,6 +316,11 @@ public:
     regions.push_back( new viennagrid_region_(region_id, this) );
     region_id_map[region_id] = regions.size()-1;
     highest_region_id = region_id+1;
+
+    std::stringstream ss;
+    ss << region_id;
+    regions.back()->set_name(ss.str());
+
 
     return regions.back();
   }
