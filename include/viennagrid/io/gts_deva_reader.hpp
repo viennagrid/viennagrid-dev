@@ -253,13 +253,13 @@ namespace viennagrid
 
           if (load_geometry == region_is_geometry)
           {
-            std::cout << "Using Region " << name << std::endl;
+//             std::cout << "Using Region " << name << std::endl;
 
             std::size_t pos = (*sik)->text.find("Ref(Facelist,");
             pos = (*sik)->text.find('"', pos);
             std::string facelist_name = (*sik)->text.substr( pos, (*sik)->text.find('"', pos+1)-pos+1 );
 
-            std::cout << "Using facelist with name " << facelist_name << std::endl;
+//             std::cout << "Using facelist with name " << facelist_name << std::endl;
 
 
             typename std::map<std::string, std::vector< std::vector<ElementType> > >::iterator flit = line_map.find( facelist_name );
@@ -271,7 +271,7 @@ namespace viennagrid
               pos = current_facelist->text.find('"', pos);
               std::string pointlist_name = current_facelist->text.substr( pos, current_facelist->text.find('"', pos+1)-pos+1 );
 
-              std::cout << "Using pointlist with name " << pointlist_name << std::endl;
+//               std::cout << "Using pointlist with name " << pointlist_name << std::endl;
 
 
 
