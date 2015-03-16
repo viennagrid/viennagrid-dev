@@ -963,7 +963,7 @@ namespace viennagrid
   closest_points(SomethingT1 const & el1,
                  SomethingT2 const & el2)
   {
-    return closest_points_impl(default_point_accessor(el1), el1, el2);
+    return detail::closest_points_impl(root_mesh_point_accessor(), el1, el2);
   }
 
 
@@ -985,7 +985,7 @@ namespace viennagrid
   closest_points_on_boundary(SomethingT1 const & el1,
                              SomethingT2 const & el2)
   {
-    return detail::closest_points_on_boundary_impl(default_point_accessor(el1), el1, el2);
+    return detail::closest_points_on_boundary_impl(root_mesh_point_accessor(), el1, el2);
   }
 
 
