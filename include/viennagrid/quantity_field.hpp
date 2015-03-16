@@ -29,33 +29,23 @@
 
 namespace viennagrid
 {
-  class quantity_field;
-
-  class quantity_value
+  class quantity_value : public point_t
   {
-    friend class quantity_field;
-
-    quantity_value(viennagrid_numeric * values_, viennagrid_dimension dimension_) :
-        values(values_), dimension(dimension_) {}
-
   public:
 
-    operator viennagrid_numeric()
+    quantity_value(viennagrid_numeric * values_, viennagrid_dimension dimension_)
     {
-      assert(dimension == 1);
-      return *values;
+      resize(dimension_);
+      std::copy( values_, values_+dimension_, begin() );
     }
 
-    operator std::vector<viennagrid_numeric>()
+    operator value_type() const
     {
-      std::vector<viennagrid_numeric> tmp(dimension);
-      std::copy( values, values + dimension, &tmp[0] );
-      return tmp;
+      assert(size() == 1);
+      return (*this)[0];
     }
 
   private:
-    viennagrid_numeric * values;
-    viennagrid_dimension dimension;
   };
 
 
