@@ -143,13 +143,13 @@ namespace viennagrid
 
   /** @brief Copies the cells of a mesh if a boolean functor is true.
     *
-    * @param  vertex_map              A vertex copy map used for copying
+    * @param  copy_map                A vertex copy map used for copying
     * @param  src_mesh                The source mesh
     * @param  dst_mesh                The destination mesh
     * @param  functor                 Boolean functor, if functor(cell) returns true, the cell is copied.
     */
   template<typename SrcMeshType, typename NumericConfigT, typename ToCopyFunctorT>
-  void copy(element_copy_map<NumericConfigT> & vertex_map,
+  void copy(element_copy_map<NumericConfigT> & copy_map,
             SrcMeshType const & src_mesh, viennagrid::mesh_t const & dst_mesh,
             ToCopyFunctorT functor)
   {
@@ -162,7 +162,7 @@ namespace viennagrid
     for (ConstCellRangeIterator cit = cells.begin(); cit != cells.end(); ++cit)
     {
       if ( functor(*cit) )
-        vertex_map(*cit );
+        copy_map(*cit );
     }
   }
 
@@ -176,8 +176,8 @@ namespace viennagrid
   void copy(SrcMeshType const & src_mesh, viennagrid::mesh_t const & dst_mesh, ToCopyFunctorT functor)
   {
     typedef viennagrid::result_of::coord<viennagrid::const_mesh_t>::type NumericType;
-    viennagrid::result_of::element_copy_map<NumericType>::type vertex_map(dst_mesh);
-    copy(vertex_map, src_mesh, dst_mesh, functor);
+    viennagrid::result_of::element_copy_map<NumericType>::type copy_map(dst_mesh);
+    copy(copy_map, src_mesh, dst_mesh, functor);
   }
 
   /** @brief Copies the cells of a mesh
@@ -188,7 +188,23 @@ namespace viennagrid
   template<typename SrcMeshType>
   void copy(SrcMeshType const & src_mesh, viennagrid::mesh_t const & dst_mesh)
   {
-    copy(src_mesh, dst_mesh, viennagrid::true_functor());
+    clear(dst_mesh);
+    typedef viennagrid::result_of::coord<viennagrid::const_mesh_t>::type NumericType;
+    viennagrid::result_of::element_copy_map<NumericType>::type copy_map(dst_mesh);
+
+    typedef typename viennagrid::result_of::const_vertex_range<SrcMeshType>::type ConstVertexRangeType;
+    typedef typename viennagrid::result_of::iterator<ConstVertexRangeType>::type ConstVertexRangeIterator;
+
+    ConstVertexRangeType vertices(src_mesh);
+    for (ConstVertexRangeIterator vit = vertices.begin(); vit != vertices.end(); ++vit)
+      copy_map(*vit);
+
+    typedef typename viennagrid::result_of::const_cell_range<SrcMeshType>::type ConstCellRangeType;
+    typedef typename viennagrid::result_of::iterator<ConstCellRangeType>::type ConstCellRangeIterator;
+
+    ConstCellRangeType cells(src_mesh);
+    for (ConstCellRangeIterator cit = cells.begin(); cit != cells.end(); ++cit)
+        copy_map(*cit );
   }
 
 
