@@ -25,6 +25,7 @@ namespace viennagrid
   };
 
   class point_t;
+  typedef std::pair<point_t, int> seed_point_t;
 
 
   template<bool is_const = false>
