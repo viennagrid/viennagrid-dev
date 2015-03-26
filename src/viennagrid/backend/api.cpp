@@ -575,6 +575,9 @@ viennagrid_error viennagrid_quantities_get_unit(viennagrid_quantity_field quanti
 viennagrid_error viennagrid_quantities_set_topologic_dimension(viennagrid_quantity_field quantity_field,
                                                                viennagrid_dimension topologic_dimension)
 {
+  if (quantity_field->topologic_dimension == topologic_dimension)
+    return VIENNAGRID_SUCCESS;
+
   quantity_field->topologic_dimension = topologic_dimension;
 
   if (quantity_field->values)
@@ -600,6 +603,9 @@ viennagrid_error viennagrid_quantities_get_topologic_dimension(viennagrid_quanti
 viennagrid_error viennagrid_quantities_set_values_dimension(viennagrid_quantity_field quantity_field,
                                                             viennagrid_dimension values_dimension)
 {
+  if (quantity_field->values_dimension == values_dimension)
+    return VIENNAGRID_SUCCESS;
+
   quantity_field->values_dimension = values_dimension;
 
   if (quantity_field->values)

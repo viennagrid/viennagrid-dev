@@ -247,13 +247,13 @@ VIENNAGRID_DYNAMIC_EXPORT viennagrid_error viennagrid_quantities_set_unit(vienna
 VIENNAGRID_DYNAMIC_EXPORT viennagrid_error viennagrid_quantities_get_unit(viennagrid_quantity_field quantity_field,
                                                                           const char ** unit);
 
-// deletes all values data, sets topologic values dimension to -1 and size to 0
+// deletes all values data, sets topologic values dimension to -1 and size to 0 (if topologic_dimension changed)
 VIENNAGRID_DYNAMIC_EXPORT viennagrid_error viennagrid_quantities_set_topologic_dimension(viennagrid_quantity_field quantity_field,
                                                                                          viennagrid_dimension topologic_dimension);
 VIENNAGRID_DYNAMIC_EXPORT viennagrid_error viennagrid_quantities_get_topologic_dimension(viennagrid_quantity_field quantity_field,
                                                                                          viennagrid_dimension * topologic_dimension);
 
-// deletes all data, sets size to 0
+// deletes all data, sets size to 0 (if values_dimension changed)
 VIENNAGRID_DYNAMIC_EXPORT viennagrid_error viennagrid_quantities_set_values_dimension(viennagrid_quantity_field quantity_field,
                                                                                       viennagrid_dimension values_dimension);
 VIENNAGRID_DYNAMIC_EXPORT viennagrid_error viennagrid_quantities_get_values_dimension(viennagrid_quantity_field quantity_field,
