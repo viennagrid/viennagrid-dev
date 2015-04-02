@@ -1,13 +1,10 @@
-# Project setup
-###############
-
 cmake_minimum_required(VERSION 2.6 FATAL_ERROR)
-if(COMMAND cmake_policy)
-  cmake_policy(SET CMP0003 NEW)
-endif(COMMAND cmake_policy)
+include ($ENV{VIENNAUTILSPATH}/cmake/vienna_build_common.cmake NO_POLICY_SCOPE)
 
+vienna_build_setup_project(viennagrid viennautils)
 
-project(ViennaGrid)
+#message("CMAKE_CURRENT_LIST_FILE: ${CMAKE_CURRENT_LIST_FILE} PROJECT_BINARY_DIR: ${PROJECT_BINARY_DIR} PROJECT_SOURCE_DIR: ${PROJECT_SOURCE_DIR}")
+#message("INCLUDE DIRECTORES: ${VIENNA_BUILD_GLOBAL_INCLUDES} BEFORE INCLUDES: ${VIENNA_BUILD_GLOBAL_BEFORE_INCLUDES}")
 
 set(VERSION_MAJOR 3)
 set(VERSION_MINOR 0)
@@ -22,17 +19,32 @@ list(APPEND CMAKE_MODULE_PATH "${PROJECT_SOURCE_DIR}/cmake")
 find_package(Boost QUIET)
 find_package(ViennaCL QUIET)
 
-include(ViennaGridCommon)
+# Compile options
+#################
 
-# Set release build:
-IF(DEFINED CMAKE_BUILD_TYPE)
- SET (CMAKE_BUILD_TYPE ${CMAKE_BUILD_TYPE})
-ELSE()
- SET (CMAKE_BUILD_TYPE Release)
-ENDIF()
+if (VIENNA_BUILD_IS_MAIN_PROJECT)
+  set(BUILD_SHARED_LIBS 1)
+  include(ViennaGridCommon)
+endif ()
+
+vienna_build_add_subprojects()
+
+include_directories(include)
+add_subdirectory(src)
+
+include_directories(BEFORE ${PROJECT_SOURCE_DIR})
+
+# Add visibility of headers
+# Necessary for Qt-Creator usage.
+################
+file( GLOB_RECURSE MAKE_HEADERS_VISIBLE_SRC
+    *.hpp *.h)
+add_custom_target( MAKE_HEADERS_VISIBLE SOURCES ${MAKE_HEADERS_VISIBLE_SRC} )
 
 # User options
 ##############
+
+if (${VIENNA_BUILD_IS_MAIN_PROJECT})
 
 option(BUILD_TESTING "Build the tests" ON)
 
@@ -53,14 +65,6 @@ endif()
 if(BUILD_MANUAL)
    find_package(LATEX REQUIRED)
 endif()
-
-# Compile options
-#################
-
-include_directories(include)
-add_subdirectory(src)
-
-include_directories(BEFORE ${PROJECT_SOURCE_DIR})
 
 
 # Subdirectories
@@ -84,14 +88,6 @@ message(STATUS "Install dir: ${INSTALL_INCLUDE_DIR}")
 install(DIRECTORY viennagrid ${CMAKE_CURRENT_SOURCE_DIR}/include/viennagrid
    DESTINATION ${INSTALL_INCLUDE_DIR} COMPONENT dev
    FILES_MATCHING PATTERN "*.h" PATTERN "*.hpp")
-
-
-# Add visibility of headers
-# Necessary for Qt-Creator usage.
-################
-file( GLOB_RECURSE MAKE_HEADERS_VISIBLE_SRC
-    *.hpp *.h)
-add_custom_target( MAKE_HEADERS_VISIBLE SOURCES ${MAKE_HEADERS_VISIBLE_SRC} )
 
 
 # Dist target
@@ -166,3 +162,5 @@ if(ENABLE_DIST)
    add_dependencies(dist apidoc manual)
 
 endif()
+
+endif (${VIENNA_BUILD_IS_MAIN_PROJECT})
