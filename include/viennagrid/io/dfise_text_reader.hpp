@@ -63,6 +63,9 @@ viennagrid_element_tag dfise_text_reader::to_viennagrid_element_tag(viennautils:
     case viennautils::dfise::grid_reader::element_tag::triangle:      return VIENNAGRID_ELEMENT_TAG_TRIANGLE;
     case viennautils::dfise::grid_reader::element_tag::quadrilateral: return VIENNAGRID_ELEMENT_TAG_QUADRILATERAL;
   }
+  
+  assert(false);
+  return viennautils::dfise::grid_reader::element_tag::line;
 }
 
 template<typename PointT>
