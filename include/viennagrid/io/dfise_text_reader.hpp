@@ -38,7 +38,7 @@ public:
 private:
   viennautils::dfise::grid_reader grid_reader_;
 
-  static viennagrid_element_tag to_viennagrid_element_tag(viennautils::dfise::element_tag::type dfise_tag);
+  static viennagrid_element_tag to_viennagrid_element_tag(viennautils::dfise::grid_reader::element_tag::type dfise_tag);
 
   template<typename PointT>
   static PointT normal_vector(PointT const & p0, PointT const & p1);
@@ -55,14 +55,13 @@ inline dfise_text_reader::dfise_text_reader(std::string const & filename) : grid
 {
 }
 
-viennagrid_element_tag dfise_text_reader::to_viennagrid_element_tag(viennautils::dfise::element_tag::type dfise_tag)
+viennagrid_element_tag dfise_text_reader::to_viennagrid_element_tag(viennautils::dfise::grid_reader::element_tag::type dfise_tag)
 {
-  using viennautils::dfise::element_tag;
   switch(dfise_tag)
   {
-    case element_tag::line:          return VIENNAGRID_ELEMENT_TAG_LINE;
-    case element_tag::triangle:      return VIENNAGRID_ELEMENT_TAG_TRIANGLE;
-    case element_tag::quadrilateral: return VIENNAGRID_ELEMENT_TAG_QUADRILATERAL;
+    case viennautils::dfise::grid_reader::element_tag::line:          return VIENNAGRID_ELEMENT_TAG_LINE;
+    case viennautils::dfise::grid_reader::element_tag::triangle:      return VIENNAGRID_ELEMENT_TAG_TRIANGLE;
+    case viennautils::dfise::grid_reader::element_tag::quadrilateral: return VIENNAGRID_ELEMENT_TAG_QUADRILATERAL;
   }
 }
 
@@ -137,13 +136,13 @@ bool dfise_text_reader::to_viennagrid(MeshT const & mesh, std::vector<viennagrid
   {
     std::string region_name = region_it->first;
     //dfise regions can come in a quoted form i.e. "region_name" and those extra quotes are useless or even harmful in other formats, thus we strip them
-    if (region_name.front() == '"')
+    if (region_name[0] == '"')
     {
       region_name = region_name.erase(0,1);
     }
-    if (region_name.back() == '"')
+    if (region_name[region_name.size()-1] == '"')
     {
-      region_name.pop_back();
+      region_name.erase(region_name.size()-1,1);
     }
 
     std::vector<grid_reader::ElementIndex> const & element_indices = region_it->second.element_indices_;
@@ -152,7 +151,7 @@ bool dfise_text_reader::to_viennagrid(MeshT const & mesh, std::vector<viennagrid
       grid_reader::element const & e = dfise_elements[*element_it];
 
       //TODO manual TRIANGULATION should be kicked out asap
-      if(e.tag_ == viennautils::dfise::element_tag::quadrilateral)
+      if(e.tag_ == viennautils::dfise::grid_reader::element_tag::quadrilateral)
       {
         //TRIANGULATION
         std::vector<VertexType> cell_vertices(3);
