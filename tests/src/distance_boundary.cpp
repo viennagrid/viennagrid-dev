@@ -16,8 +16,8 @@
 
 #include <cmath>
 
-#include "viennagrid/core.hpp"
-#include "viennagrid/algorithm/distance.hpp"
+#include "viennagridpp/core.hpp"
+#include "viennagridpp/algorithm/distance.hpp"
 
 inline void fuzzy_check(double a, double b)
 {

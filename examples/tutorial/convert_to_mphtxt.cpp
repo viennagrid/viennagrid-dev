@@ -14,9 +14,9 @@
   #pragma warning( disable : 4503 )     //truncated name decoration
 #endif
 
-#include "viennagrid/core.hpp"
-#include "viennagrid/io/vtk_reader.hpp"
-#include "viennagrid/io/mphtxt_writer.hpp"
+#include "viennagridpp/core.hpp"
+#include "viennagridpp/io/vtk_reader.hpp"
+#include "viennagridpp/io/mphtxt_writer.hpp"
 
 
 int main()

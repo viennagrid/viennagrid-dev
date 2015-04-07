@@ -1,9 +1,9 @@
 #include <iostream>
 
-#include "viennagrid/core.hpp"
+#include "viennagridpp/core.hpp"
 
-#include "viennagrid/io/vtk_reader.hpp"
-#include "viennagrid/io/vtk_writer.hpp"
+#include "viennagridpp/io/vtk_reader.hpp"
+#include "viennagridpp/io/vtk_writer.hpp"
 
 
 

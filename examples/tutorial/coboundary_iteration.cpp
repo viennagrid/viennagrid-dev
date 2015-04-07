@@ -24,7 +24,7 @@ using std::cout;
 using std::endl;
 
 
-#include "viennagrid/core.hpp"
+#include "viennagridpp/core.hpp"
 
 int main()
 {

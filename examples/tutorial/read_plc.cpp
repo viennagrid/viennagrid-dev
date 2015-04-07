@@ -24,8 +24,8 @@ using std::endl;
 #endif
 
 
-#include "viennagrid/core.hpp"
-#include "viennagrid/io/tetgen_poly_reader.hpp"
+#include "viennagridpp/core.hpp"
+#include "viennagridpp/io/tetgen_poly_reader.hpp"
 
 
 

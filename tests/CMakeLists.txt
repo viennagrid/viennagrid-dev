@@ -17,7 +17,7 @@ foreach(PROG
 #           io simplex
             )
   add_executable(${PROG}-test src/${PROG}.cpp)
-  target_link_libraries(${PROG}-test    viennagrid)
+  target_link_libraries(${PROG}-test    viennagridpp)
   add_test(${PROG} ${PROG}-test)
 endforeach(PROG)
 

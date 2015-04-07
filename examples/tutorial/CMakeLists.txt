@@ -4,16 +4,16 @@
 # target_link_libraries(viennagrid3_playground    viennagrid)
 
 add_executable(accessor             accessor.cpp)
-target_link_libraries(accessor      viennagrid)
+target_link_libraries(accessor      viennagridpp)
 
 ADD_EXECUTABLE(algorithms           algorithms.cpp)
-target_link_libraries(algorithms    viennagrid)
+target_link_libraries(algorithms    viennagridpp)
 
 add_executable(coboundary_iteration coboundary_iteration.cpp)
-target_link_libraries(coboundary_iteration    viennagrid)
+target_link_libraries(coboundary_iteration    viennagridpp)
 
 ADD_EXECUTABLE(mesh_setup           mesh_setup.cpp)
-target_link_libraries(mesh_setup    viennagrid)
+target_link_libraries(mesh_setup    viennagridpp)
 
 # add_executable(element_erase        element_erase.cpp)
 # target_link_libraries(element_erase    viennagrid)
@@ -25,59 +25,59 @@ if (Boost_FOUND AND ViennaCL_FOUND)
   include_directories(${Boost_INCLUDE_DIRS})
   include_directories(${ViennaCL_INCLUDE_DIRS})
   ADD_EXECUTABLE(finite_elements       finite_elements.cpp)
-  target_link_libraries(finite_elements    viennagrid)
+  target_link_libraries(finite_elements    viennagridpp)
 endif()
 
 ADD_EXECUTABLE(io                   io.cpp)
-target_link_libraries(io     viennagrid)
+target_link_libraries(io     viennagridpp)
 
 ADD_EXECUTABLE(iterators            iterators.cpp)
-target_link_libraries(iterators     viennagrid)
+target_link_libraries(iterators     viennagridpp)
 
 ADD_EXECUTABLE(multi_segment        multi_segment.cpp)
-target_link_libraries(multi_segment viennagrid)
+target_link_libraries(multi_segment viennagridpp)
 
 add_executable(neighbor_iteration   neighbor_iteration.cpp)
-target_link_libraries(neighbor_iteration viennagrid)
+target_link_libraries(neighbor_iteration viennagridpp)
 
 add_executable(named_segments       named_segments.cpp)
-target_link_libraries(named_segments viennagrid)
+target_link_libraries(named_segments viennagridpp)
 
 add_executable(polygon              polygon.cpp)
-target_link_libraries(polygon viennagrid)
+target_link_libraries(polygon viennagridpp)
 
 add_executable(segments             segments.cpp)
-target_link_libraries(segments viennagrid)
+target_link_libraries(segments viennagridpp)
 
 add_executable(interface            interface.cpp)
-target_link_libraries(interface viennagrid)
+target_link_libraries(interface viennagridpp)
 
 add_executable(read_plc             read_plc.cpp)
-target_link_libraries(read_plc viennagrid)
+target_link_libraries(read_plc viennagridpp)
 
 add_executable(dump_info            dump_info.cpp)
-target_link_libraries(dump_info viennagrid)
+target_link_libraries(dump_info viennagridpp)
 
 add_executable(vmesh_creator        vmesh_creator.cpp)
-target_link_libraries(vmesh_creator viennagrid)
+target_link_libraries(vmesh_creator viennagridpp)
 
 add_executable(copy_elements        copy_elements.cpp)
-target_link_libraries(copy_elements viennagrid)
+target_link_libraries(copy_elements viennagridpp)
 
 add_executable(convert_to_mphtxt    convert_to_mphtxt.cpp)
-target_link_libraries(convert_to_mphtxt viennagrid)
+target_link_libraries(convert_to_mphtxt viennagridpp)
 
 add_executable(hybrid    hybrid.cpp)
-target_link_libraries(hybrid viennagrid)
+target_link_libraries(hybrid viennagridpp)
 
 add_executable(hierarchy    hierarchy.cpp)
-target_link_libraries(hierarchy viennagrid)
+target_link_libraries(hierarchy viennagridpp)
 
 add_executable(plc_test    plc_test.cpp)
-target_link_libraries(plc_test viennagrid)
+target_link_libraries(plc_test viennagridpp)
 
 add_executable(serialize    serialize.cpp)
-target_link_libraries(serialize viennagrid)
+target_link_libraries(serialize viennagridpp)
 
 
 

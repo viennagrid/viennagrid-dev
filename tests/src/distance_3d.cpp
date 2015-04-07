@@ -18,11 +18,11 @@
 #include <iostream>
 #include <iomanip>
 
-#include "viennagrid/core.hpp"
-#include "viennagrid/algorithm/distance.hpp"
-#include "viennagrid/algorithm/volume.hpp"
-#include "viennagrid/algorithm/cross_prod.hpp"
-#include "viennagrid/algorithm/norm.hpp"
+#include "viennagridpp/core.hpp"
+#include "viennagridpp/algorithm/distance.hpp"
+#include "viennagridpp/algorithm/volume.hpp"
+#include "viennagridpp/algorithm/cross_prod.hpp"
+#include "viennagridpp/algorithm/norm.hpp"
 
 inline void fuzzy_check(double a, double b)
 {

@@ -17,12 +17,12 @@
 #include <iostream>
 #include <ostream>
 
-#include "viennagrid/core.hpp"
-#include "viennagrid/algorithm/volume.hpp"
-#include "viennagrid/algorithm/circumcenter.hpp"
-#include "viennagrid/io/vtk_writer.hpp"
-#include "viennagrid/io/vtk_reader.hpp"
-#include "viennagrid/io/netgen_reader.hpp"
+#include "viennagridpp/core.hpp"
+#include "viennagridpp/algorithm/volume.hpp"
+#include "viennagridpp/algorithm/circumcenter.hpp"
+#include "viennagridpp/io/vtk_writer.hpp"
+#include "viennagridpp/io/vtk_reader.hpp"
+#include "viennagridpp/io/netgen_reader.hpp"
 
 
 

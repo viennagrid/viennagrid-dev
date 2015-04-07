@@ -15,10 +15,10 @@
    License:      MIT (X11), see file LICENSE in the base directory
 ======================================================================= */
 
-#include "viennagrid/config/default_configs.hpp"
-#include "viennagrid/io/netgen_reader.hpp"
-#include "viennagrid/io/vtk_writer.hpp"
-#include "viennagrid/io/serialization.hpp"
+#include "viennagridpp/config/default_configs.hpp"
+#include "viennagridpp/io/netgen_reader.hpp"
+#include "viennagridpp/io/vtk_writer.hpp"
+#include "viennagridpp/io/serialization.hpp"
 
 int main()
 {

@@ -14,7 +14,7 @@
   #pragma warning( disable : 4503 )     //truncated name decoration
 #endif
 
-#include "viennagrid/core.hpp"
+#include "viennagridpp/core.hpp"
 
 
 int main()

@@ -18,11 +18,11 @@
 #include <vector>
 
 
-#include "viennagrid/io/netgen_reader.hpp"
-#include "viennagrid/io/vtk_writer.hpp"
-#include "viennagrid/config/default_configs.hpp"
-#include "viennagrid/algorithm/voronoi.hpp"
-#include "viennagrid/algorithm/circumcenter.hpp"
+#include "viennagridpp/io/netgen_reader.hpp"
+#include "viennagridpp/io/vtk_writer.hpp"
+#include "viennagridpp/config/default_configs.hpp"
+#include "viennagridpp/algorithm/voronoi.hpp"
+#include "viennagridpp/algorithm/circumcenter.hpp"
 
 #include "voronoi_common.hpp"
 #include "refinement-common.hpp"

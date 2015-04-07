@@ -15,14 +15,14 @@
 #endif
 
 // #include "viennagrid/algorithm/boundary.hpp"
-#include "viennagrid/algorithm/centroid.hpp"
+#include "viennagridpp/algorithm/centroid.hpp"
 // #include "viennagrid/config/default_configs.hpp"
-#include "viennagrid/io/vtk_reader.hpp"
-#include "viennagrid/io/vtk_writer.hpp"
+#include "viennagridpp/io/vtk_reader.hpp"
+#include "viennagridpp/io/vtk_writer.hpp"
 // #include "viennagrid/io/opendx_writer.hpp"
-#include "viennagrid/io/netgen_reader.hpp"
-#include "viennagrid/algorithm/volume.hpp"
-#include "viennagrid/algorithm/surface.hpp"
+#include "viennagridpp/io/netgen_reader.hpp"
+#include "viennagridpp/algorithm/volume.hpp"
+#include "viennagridpp/algorithm/surface.hpp"
 
 
 template <typename ReaderType>

@@ -22,7 +22,7 @@
 #include <time.h>       /* time */
 #include <string>
 
-#include "viennagrid/core.hpp"
+#include "viennagridpp/core.hpp"
 
 
 inline std::string random_name()

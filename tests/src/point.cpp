@@ -21,10 +21,10 @@
 // Define the input-file format
 //***********************************************
 
-#include "viennagrid/core.hpp"
-#include "viennagrid/algorithm/spanned_volume.hpp"
-#include "viennagrid/algorithm/inner_prod.hpp"
-#include "viennagrid/algorithm/cross_prod.hpp"
+#include "viennagridpp/core.hpp"
+#include "viennagridpp/algorithm/spanned_volume.hpp"
+#include "viennagridpp/algorithm/inner_prod.hpp"
+#include "viennagridpp/algorithm/cross_prod.hpp"
 
 //compare a and b, taking round-off into account
 inline bool fuzzy_equal(double a, double b)

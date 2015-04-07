@@ -14,26 +14,26 @@
   #pragma warning( disable : 4503 )     //truncated name decoration
 #endif
 
-#include "viennagrid/core.hpp"
-#include "viennagrid/io/netgen_reader.hpp"
-#include "viennagrid/io/vtk_writer.hpp"
+#include "viennagridpp/core.hpp"
+#include "viennagridpp/io/netgen_reader.hpp"
+#include "viennagridpp/io/vtk_writer.hpp"
 
 //Point-based algorithms:
-#include "viennagrid/algorithm/cross_prod.hpp"
-#include "viennagrid/algorithm/inner_prod.hpp"
-#include "viennagrid/algorithm/norm.hpp"
-#include "viennagrid/algorithm/spanned_volume.hpp"
+#include "viennagridpp/algorithm/cross_prod.hpp"
+#include "viennagridpp/algorithm/inner_prod.hpp"
+#include "viennagridpp/algorithm/norm.hpp"
+#include "viennagridpp/algorithm/spanned_volume.hpp"
 
 //Cell-based algorithms:
-#include "viennagrid/algorithm/centroid.hpp"
-#include "viennagrid/algorithm/circumcenter.hpp"
-#include "viennagrid/algorithm/surface.hpp"
-#include "viennagrid/algorithm/volume.hpp"
-#include "viennagrid/algorithm/closest_points.hpp"
-#include "viennagrid/algorithm/distance.hpp"
+#include "viennagridpp/algorithm/centroid.hpp"
+#include "viennagridpp/algorithm/circumcenter.hpp"
+#include "viennagridpp/algorithm/surface.hpp"
+#include "viennagridpp/algorithm/volume.hpp"
+#include "viennagridpp/algorithm/closest_points.hpp"
+#include "viennagridpp/algorithm/distance.hpp"
 
 //Mesh-based algorithms:
-#include "viennagrid/algorithm/refine.hpp"
+#include "viennagridpp/algorithm/refine.hpp"
 
 
 

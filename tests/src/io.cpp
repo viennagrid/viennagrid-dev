@@ -14,12 +14,12 @@
   #pragma warning( disable : 4503 )     //truncated name decoration
 #endif
 
-#include "viennagrid/core.hpp"
-#include "viennagrid/algorithm/centroid.hpp"
-#include "viennagrid/io/vtk_reader.hpp"
-#include "viennagrid/io/vtk_writer.hpp"
-#include "viennagrid/io/opendx_writer.hpp"
-#include "viennagrid/io/netgen_reader.hpp"
+#include "viennagridpp/core.hpp"
+#include "viennagridpp/algorithm/centroid.hpp"
+#include "viennagridpp/io/vtk_reader.hpp"
+#include "viennagridpp/io/vtk_writer.hpp"
+#include "viennagridpp/io/opendx_writer.hpp"
+#include "viennagridpp/io/netgen_reader.hpp"
 
 inline void print(std::vector<std::string> const & vec)
 {

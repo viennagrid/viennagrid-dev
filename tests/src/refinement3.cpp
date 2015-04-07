@@ -15,8 +15,8 @@
 #endif
 
 #include "refinement-common.hpp"
-#include "viennagrid/io/netgen_reader.hpp"
-#include "viennagrid/io/vtk_writer.hpp"
+#include "viennagridpp/io/netgen_reader.hpp"
+#include "viennagridpp/io/vtk_writer.hpp"
 
 template <typename MeshT>
 void test(std::string & infile, std::string & outfile)
