@@ -19,8 +19,8 @@ namespace viennagrid
                                                         PointT const & point,
                                                         AccessorT const & accessor)
     {
-      typedef typename AccessorT::value_type ValueType;
-      typedef viennagrid_numeric NumericType;
+//       typedef typename AccessorT::value_type ValueType;
+//       typedef viennagrid_numeric NumericType;
       typedef typename viennagrid::result_of::point<ElementT>::type PointType;
 
       ElementT v0 = viennagrid::vertices(element)[0];
@@ -43,8 +43,8 @@ namespace viennagrid
                                                            PointT const & point,
                                                            AccessorT const & accessor)
     {
-      typedef typename AccessorT::value_type ValueType;
-      typedef viennagrid_numeric NumericType;
+//       typedef typename AccessorT::value_type ValueType;
+//       typedef viennagrid_numeric NumericType;
       typedef typename viennagrid::result_of::point<ElementT>::type PointType;
 
       ElementT v0 = viennagrid::vertices(element)[0];
