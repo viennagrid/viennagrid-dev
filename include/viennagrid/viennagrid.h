@@ -1,8 +1,7 @@
-#ifndef VIENNAGRID_BACKEND_API_H
-#define VIENNAGRID_BACKEND_API_H
+#ifndef VIENNAGRID_H
+#define VIENNAGRID_H
 
 #include "viennagrid/forwards.h"
-
 
 
 // creates a mesh_hierarchy with a mesh root
@@ -210,67 +209,6 @@ VIENNAGRID_DYNAMIC_EXPORT viennagrid_error viennagrid_plc_get_hole_points(vienna
                                                                           viennagrid_index plc_id,
                                                                           viennagrid_numeric const ** hole_points_begin,
                                                                           viennagrid_numeric const ** hole_points_end);
-
-
-
-
-
-// quantities
-struct viennagrid_quantity_field_t
-{
-  char * name;                                  // initialized with NULL
-  char * unit;                                  // initialized with NULL
-  viennagrid_dimension topologic_dimension;     // initialized with -1
-
-  viennagrid_int value_count;                   // initialized with 0
-  viennagrid_dimension values_dimension;        // initialized with -1
-  viennagrid_numeric * values;                  // initialized with NULL
-
-  viennagrid_int use_count;                     // initialized with 1
-};
-
-
-typedef struct viennagrid_quantity_field_t * viennagrid_quantity_field;
-
-
-VIENNAGRID_DYNAMIC_EXPORT viennagrid_error viennagrid_quantity_field_make(viennagrid_quantity_field * quantity_field);
-VIENNAGRID_DYNAMIC_EXPORT viennagrid_error viennagrid_quantity_field_retain(viennagrid_quantity_field quantity_field);
-VIENNAGRID_DYNAMIC_EXPORT viennagrid_error viennagrid_quantity_field_release(viennagrid_quantity_field quantity_field);
-
-VIENNAGRID_DYNAMIC_EXPORT viennagrid_error viennagrid_quantities_set_name(viennagrid_quantity_field quantity_field,
-                                                                          const char * name);
-VIENNAGRID_DYNAMIC_EXPORT viennagrid_error viennagrid_quantities_get_name(viennagrid_quantity_field quantity_field,
-                                                                          const char ** name);
-
-VIENNAGRID_DYNAMIC_EXPORT viennagrid_error viennagrid_quantities_set_unit(viennagrid_quantity_field quantity_field,
-                                                                          const char * unit);
-VIENNAGRID_DYNAMIC_EXPORT viennagrid_error viennagrid_quantities_get_unit(viennagrid_quantity_field quantity_field,
-                                                                          const char ** unit);
-
-// deletes all values data, sets topologic values dimension to -1 and size to 0 (if topologic_dimension changed)
-VIENNAGRID_DYNAMIC_EXPORT viennagrid_error viennagrid_quantities_set_topologic_dimension(viennagrid_quantity_field quantity_field,
-                                                                                         viennagrid_dimension topologic_dimension);
-VIENNAGRID_DYNAMIC_EXPORT viennagrid_error viennagrid_quantities_get_topologic_dimension(viennagrid_quantity_field quantity_field,
-                                                                                         viennagrid_dimension * topologic_dimension);
-
-// deletes all data, sets size to 0 (if values_dimension changed)
-VIENNAGRID_DYNAMIC_EXPORT viennagrid_error viennagrid_quantities_set_values_dimension(viennagrid_quantity_field quantity_field,
-                                                                                      viennagrid_dimension values_dimension);
-VIENNAGRID_DYNAMIC_EXPORT viennagrid_error viennagrid_quantities_get_values_dimension(viennagrid_quantity_field quantity_field,
-                                                                                      viennagrid_dimension * values_dimension);
-
-VIENNAGRID_DYNAMIC_EXPORT viennagrid_error viennagrid_quantities_resize(viennagrid_quantity_field quantity_field,
-                                                                        viennagrid_int value_count);
-
-VIENNAGRID_DYNAMIC_EXPORT viennagrid_error viennagrid_quantities_size(viennagrid_quantity_field quantity_field,
-                                                                      viennagrid_int * value_count);
-
-VIENNAGRID_DYNAMIC_EXPORT viennagrid_error viennagrid_quantities_set_value(viennagrid_quantity_field quantity_field,
-                                                                           viennagrid_index pos,
-                                                                           viennagrid_numeric * values);
-VIENNAGRID_DYNAMIC_EXPORT viennagrid_error viennagrid_quantities_get_value(viennagrid_quantity_field quantity_field,
-                                                                           viennagrid_index pos,
-                                                                           viennagrid_numeric ** values);
 
 
 

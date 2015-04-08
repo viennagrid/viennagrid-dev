@@ -19,8 +19,9 @@
 #include <vector>
 #include <deque>
 
-#include "viennagridpp/forwards.hpp"
+// #include "viennagridpp/forwards.hpp"
 #include "viennagridpp/element/element.hpp"
+#include "viennagrid/quantity_field.h"
 
 /** @file viennagrid/accessor.hpp
     @brief Defines various accessors for storing data for the different element types.
@@ -29,23 +30,43 @@
 
 namespace viennagrid
 {
-  class quantity_value : public point_t
+  class quantity_value
   {
   public:
 
-    quantity_value(viennagrid_numeric * values_, viennagrid_dimension dimension_)
+    quantity_value(viennagrid_numeric * values_in, viennagrid_dimension dimension_in) :
+      values_(values_in), dimension_(dimension_in) {}
+
+    typedef viennagrid_numeric value_type;
+
+    value_type size() const { return dimension_; }
+
+    viennagrid_numeric operator[](std::size_t index) const
     {
-      resize(dimension_);
-      std::copy( values_, values_+dimension_, begin() );
+      assert(static_cast<viennagrid_dimension>(index) < dimension_);
+      return values_[index];
+    }
+
+    operator point_t() const
+    {
+      assert(valid());
+      point_t tmp(dimension_);
+      std::copy( values_, values_+dimension_, tmp.begin() );
+      return tmp;
     }
 
     operator value_type() const
     {
+      assert(valid());
       assert(size() == 1);
       return (*this)[0];
     }
 
+    bool valid() const { return values_ != NULL; }
+
   private:
+    viennagrid_numeric * values_;
+    viennagrid_dimension dimension_;
   };
 
 
@@ -53,9 +74,17 @@ namespace viennagrid
   {
   public:
 
+    typedef quantity_value value_type;
+
     quantity_field()
     {
-      viennagrid_quantity_field_make(&internal_quantity_field);
+      viennagrid_quantity_field_make( &internal_quantity_field );
+    }
+
+    quantity_field(viennagrid_dimension topologic_dimension, viennagrid_int storage_type, viennagrid_dimension values_dimension)
+    {
+      viennagrid_quantity_field_make( &internal_quantity_field );
+      init(topologic_dimension, storage_type, values_dimension);
     }
 
     quantity_field(viennagrid_quantity_field internal_quantity_field_) :
@@ -79,39 +108,66 @@ namespace viennagrid
       internal_quantity_field = NULL;
     }
 
-    bool is_valid() const { return internal() != NULL; }
+    bool valid() const
+    {
+      return internal() != NULL;
+    }
+
+    bool is_initialized() const
+    {
+      return valid() && (topologic_dimension() >= 0) && (values_dimension() >= 1);
+    }
 
 
-    typedef std::vector<viennagrid_numeric> value_type;
 
-
-
-    quantity_value get(viennagrid_index id) const
+    value_type get(viennagrid_index id) const
     {
       viennagrid_numeric * tmp;
-      viennagrid_quantities_get_value(internal(), id, &tmp);
+      viennagrid_quantity_field_get_value(internal(), id, &tmp);
 
-      return quantity_value(tmp, values_dimension());
+      return value_type(tmp, values_dimension());
     }
 
     template<bool element_is_const>
-    quantity_value get(base_element<element_is_const> const & element) const
+    value_type get(base_element<element_is_const> const & element) const
     {
-      assert( viennagrid::topologic_dimension(element) == internal()->topologic_dimension );
+      assert( viennagrid::topologic_dimension(element) == topologic_dimension() );
       return get(element.id());
     }
 
+    bool valid(viennagrid_index id) const
+    {
+      return get(id).valid();
+    }
 
     template<bool element_is_const>
-    void set(base_element<element_is_const> const & element, value_type const & value)
+    bool valid(base_element<element_is_const> const & element) const
     {
-      if ( topologic_dimension() < 0 )
-        set_topologic_dimension( viennagrid::topologic_dimension(element) );
+      return valid(element.id()).valid();
+    }
+
+
+
+
+    void set(viennagrid_index id, std::vector<viennagrid_numeric> const & value)
+    {
+      viennagrid_quantity_field_set_value(internal(), id, const_cast<viennagrid_numeric*>(&value[0]));
+    }
+
+    void set(viennagrid_index id, viennagrid_numeric value)
+    {
+      viennagrid_quantity_field_set_value(internal(), id, &value);
+    }
+
+    template<bool element_is_const>
+    void set(base_element<element_is_const> const & element, std::vector<viennagrid_numeric> const & value)
+    {
+      if (!is_initialized())
+      {
+        init( viennagrid::topologic_dimension(element), QUANTITY_FIELD_STORAGE_DENSE, static_cast<viennagrid_int>(value.size()) );
+      }
+
       assert( topologic_dimension() == viennagrid::topologic_dimension(element) );
-
-      if (values_dimension() < 0)
-        set_values_dimension( value.size() );
-
       assert( values_dimension() == static_cast<viennagrid_int>(value.size()) );
 
       set(element.id(), value);
@@ -120,72 +176,49 @@ namespace viennagrid
     template<bool element_is_const>
     void set(base_element<element_is_const> const & element, viennagrid_numeric value)
     {
-      if ( topologic_dimension() < 0 )
-        set_topologic_dimension( viennagrid::topologic_dimension(element) );
-      assert( topologic_dimension() == viennagrid::topologic_dimension(element) );
+      if (!is_initialized())
+      {
+        init( viennagrid::topologic_dimension(element), QUANTITY_FIELD_STORAGE_DENSE, 1 );
+      }
 
-      if (values_dimension() < 0)
-        set_values_dimension(1);
+      assert( topologic_dimension() == viennagrid::topologic_dimension(element) );
       assert( values_dimension() == 1 );
 
       set(element.id(), value);
     }
 
-    void set(viennagrid_index id, value_type const & value)
-    {
-      if (size() <= id)
-        resize(id+1);
-      viennagrid_quantities_set_value(internal(), id, const_cast<viennagrid_numeric*>(&value[0]));
-    }
-
-    void set(viennagrid_index id, viennagrid_numeric value)
-    {
-      if (size() <= id)
-        resize(id+1);
-      viennagrid_quantities_set_value(internal(), id, &value);
-    }
-
     viennagrid_int size() const
     {
       viennagrid_int size_;
-      viennagrid_quantities_size(internal(), &size_);
+      viennagrid_quantity_field_size(internal(), &size_);
       return size_;
     }
 
     void resize(viennagrid_int size)
     {
-      viennagrid_quantities_resize(internal(), size);
-    }
-
-    void set_topologic_dimension(viennagrid_dimension topologic_dimension_)
-    {
-      viennagrid_quantities_set_topologic_dimension(internal(), topologic_dimension_);
+      viennagrid_quantity_field_resize(internal(), size);
     }
 
     viennagrid_dimension topologic_dimension() const
     {
       viennagrid_dimension topologic_dimension_;
-      viennagrid_quantities_get_topologic_dimension(internal(), &topologic_dimension_);
+      viennagrid_quantity_field_get_topologic_dimension(internal(), &topologic_dimension_);
       return topologic_dimension_;
     }
 
     viennagrid_dimension values_dimension() const
     {
       viennagrid_dimension values_dimension_;
-      viennagrid_quantities_get_values_dimension(internal(), &values_dimension_);
+      viennagrid_quantity_field_get_values_dimension(internal(), &values_dimension_);
       return values_dimension_;
     }
 
-    void set_values_dimension(std::size_t values_dimension_)
-    {
-      viennagrid_quantities_set_values_dimension(internal(), values_dimension_);
-    }
-
-
     std::string name() const
     {
+      assert(valid());
+
       const char * tmp;
-      viennagrid_quantities_get_name(internal(), &tmp);
+      viennagrid_quantity_field_get_name(internal(), &tmp);
       if (tmp)
         return tmp;
       else
@@ -194,17 +227,21 @@ namespace viennagrid
 
     void set_name(std::string const & name_)
     {
-      if (name_.empty())
-        viennagrid_quantities_set_name(internal(), NULL);
+      assert(valid());
 
-      viennagrid_quantities_set_name(internal(), name_.c_str());
+      if (name_.empty())
+        viennagrid_quantity_field_set_name(internal(), NULL);
+
+      viennagrid_quantity_field_set_name(internal(), name_.c_str());
     }
 
 
     std::string unit() const
     {
+      assert(valid());
+
       const char * tmp;
-      viennagrid_quantities_get_unit(internal(), &tmp);
+      viennagrid_quantity_field_get_unit(internal(), &tmp);
       if (tmp)
         return tmp;
       else
@@ -213,25 +250,41 @@ namespace viennagrid
 
     void set_unit(std::string const & unit_)
     {
+      assert(valid());
+
       if (unit_.empty())
-        viennagrid_quantities_set_unit(internal(), NULL);
+        viennagrid_quantity_field_set_unit(internal(), NULL);
 
-      viennagrid_quantities_set_unit(internal(), unit_.c_str());
+      viennagrid_quantity_field_set_unit(internal(), unit_.c_str());
     }
-
 
     viennagrid_quantity_field internal() const { return internal_quantity_field; }
 
   private:
 
+//     void make(viennagrid_int storage_type, viennagrid_dimension topologic_dimension, viennagrid_dimension values_dimension)
+//     {
+//       release();
+//       viennagrid_quantity_field_make(storage_type, topologic_dimension, values_dimension, &internal_quantity_field);
+//     }
+
+    void init(viennagrid_dimension topologic_dimension,
+              viennagrid_int storage_type,
+              viennagrid_dimension values_dimension)
+    {
+      viennagrid_quantity_field_init(internal(), topologic_dimension, storage_type, values_dimension);
+    }
+
     void retain()
     {
-      viennagrid_quantity_field_retain(internal());
+      if (internal())
+        viennagrid_quantity_field_retain(internal());
     }
 
     void release()
     {
-      viennagrid_quantity_field_release(internal());
+      if (internal())
+        viennagrid_quantity_field_release(internal());
     }
 
     viennagrid_quantity_field internal_quantity_field;

@@ -1329,10 +1329,10 @@ namespace viennagrid
                   std::map<std::string, std::map<region_id_type, DataT> > const & data,
                   std::string const & name) const
       {
-        viennagrid::quantity_field result;
+        viennagrid::quantity_field result( QUANTITY_FIELD_STORAGE_DENSE, 0, values_dimension(DataT()) );
         result.set_name(name);
-        result.set_topologic_dimension(0);
-        result.set_values_dimension( values_dimension(DataT()) );
+//         result.set_topologic_dimension(0);
+//         result.set_values_dimension( values_dimension(DataT()) );
 
         typename std::map<std::string, std::map<region_id_type, DataT> >::const_iterator it = data.find(name);
         if (it != data.end())
@@ -1370,10 +1370,10 @@ namespace viennagrid
                   std::map<std::string, std::map<region_id_type, DataT> > const & data,
                   std::string const & name) const
       {
-        viennagrid::quantity_field result;
+        viennagrid::quantity_field result( QUANTITY_FIELD_STORAGE_DENSE, cell_dimension, values_dimension(DataT()) );
         result.set_name(name);
-        result.set_topologic_dimension(cell_dimension);
-        result.set_values_dimension( values_dimension(DataT()) );
+//         result.set_topologic_dimension(cell_dimension);
+//         result.set_values_dimension( values_dimension(DataT()) );
 
         typename std::map<std::string, std::map<region_id_type, DataT> >::const_iterator it = data.find(name);
         if (it != data.end())
@@ -1417,7 +1417,7 @@ namespace viennagrid
       viennagrid::quantity_field vertex_quantity_field(std::string const & name) const
       {
         viennagrid::quantity_field result = scalar_vertex_quantity_field(name);
-        if (result.is_valid())
+        if (result.valid())
           return result;
 
         return vector_vertex_quantity_field(name);
@@ -1433,7 +1433,7 @@ namespace viennagrid
       viennagrid::quantity_field cell_quantity_field(std::string const & name) const
       {
         viennagrid::quantity_field result = scalar_cell_quantity_field(name);
-        if (result.is_valid())
+        if (result.valid())
           return result;
 
         return vector_cell_quantity_field(name);
@@ -1450,7 +1450,7 @@ namespace viennagrid
                                                 ++it)
           {
             viennagrid::quantity_field field = scalar_vertex_quantity_field(*it);
-            if (field.is_valid())
+            if (field.valid())
               result.push_back(field);
           }
         }
@@ -1462,7 +1462,7 @@ namespace viennagrid
                                                 ++it)
           {
             viennagrid::quantity_field field = vector_vertex_quantity_field(*it);
-            if (field.is_valid())
+            if (field.valid())
               result.push_back(field);
           }
         }
@@ -1475,7 +1475,7 @@ namespace viennagrid
                                                 ++it)
           {
             viennagrid::quantity_field field = scalar_cell_quantity_field(*it);
-            if (field.is_valid())
+            if (field.valid())
               result.push_back(field);
           }
         }
@@ -1487,7 +1487,7 @@ namespace viennagrid
                                                 ++it)
           {
             viennagrid::quantity_field field = vector_cell_quantity_field(*it);
-            if (field.is_valid())
+            if (field.valid())
               result.push_back(field);
           }
         }
