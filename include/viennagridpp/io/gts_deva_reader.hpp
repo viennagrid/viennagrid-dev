@@ -15,6 +15,7 @@
    License:         MIT (X11), see file LICENSE in the base directory
 =============================================================================== */
 
+#include "boost/algorithm/string.hpp"
 
 namespace viennagrid
 {
@@ -101,7 +102,10 @@ namespace viennagrid
             return "";
 
           std::string attrib_string = name.substr( pos+1, name.rfind(')')-pos );
-          std::list<std::string> attribs = stringtools::split_string( attrib_string, "," );
+
+          std::list<std::string> attribs;
+          boost::algorithm::split( attribs, attrib_string, boost::is_any_of(",") );
+//           = stringtools::split_string( attrib_string, "," );
 
           if (position > attribs.size())
             return "";
@@ -291,7 +295,8 @@ namespace viennagrid
 
                 gts_deva::token * intern = current_pointlist->find("Intern");
 
-                std::list<std::string> values = stringtools::split_string( intern->text, "," );
+                std::list<std::string> values;
+                boost::algorithm::split( values, intern->text, boost::is_any_of(",") );
 
                 if (static_cast<int>(values.size()) != num_points*dimension)
                 {
@@ -318,7 +323,8 @@ namespace viennagrid
               faces.resize(num_faces);
 
               gts_deva::token * intern = current_facelist->find("Intern");
-              std::list<std::string> values = stringtools::split_string( intern->text, "," );
+              std::list<std::string> values;
+              boost::algorithm::split( values, intern->text, boost::is_any_of(",") );
               std::list<std::string>::iterator vit = values.begin();
 
               for (int i = 0; i < num_faces; ++i)
@@ -370,7 +376,9 @@ namespace viennagrid
 //             int num_elements = atoi( mesh_element_list->attribute(0).c_str() );
 
             gts_deva::token * intern = mesh_element_list->find("Intern");
-            std::list<std::string> values = stringtools::split_string( intern->text, "," );
+            std::list<std::string> values;
+            boost::algorithm::split( values, intern->text, boost::is_any_of(",") );
+//             = stringtools::split_string( intern->text, "," );
 
             typedef typename viennagrid::result_of::region<MeshT>::type RegionType;
             RegionType current_region = mesh.make_region();

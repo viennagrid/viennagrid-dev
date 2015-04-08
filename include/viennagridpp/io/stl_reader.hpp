@@ -88,7 +88,7 @@ namespace viennagrid
     {
       typedef unsigned long type;
     };
-  };
+  }
 
 
   namespace io
@@ -157,7 +157,7 @@ namespace viennagrid
 //         static const std::size_t point_dim = viennagrid::result_of::static_size<PointType>::value;
 
         typedef typename result_of::element<MeshT>::type         VertexType;
-        typedef typename VertexType::id_type VertexIDType;
+//         typedef typename VertexType::id_type VertexIDType;
 
 //         typedef typename result_of::element<MeshT>::type            LineType;
 

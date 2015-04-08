@@ -38,7 +38,7 @@ typedef struct viennagrid_region_ * viennagrid_region;
 #define VIENNAGRID_FALSE 0
 
 
-// VIENNAGRID ERROR CODES
+/* VIENNAGRID ERROR CODES */
 #define VIENNAGRID_SUCCESS 0
 #define VIENNAGRID_UNSPECIFIED_ERROR 1
 #define VIENNAGRID_OUT_OF_MEMORY 2
@@ -46,7 +46,7 @@ typedef struct viennagrid_region_ * viennagrid_region;
 
 
 
-// VIENNAGRID ELEMENT TYPES
+/* VIENNAGRID ELEMENT TYPES */
 #define VIENNAGRID_ELEMENT_TAG_NO_ELEMENT 255 // -1
 #define VIENNAGRID_ELEMENT_TAG_START 0
 #define VIENNAGRID_ELEMENT_TAG_VERTEX 0

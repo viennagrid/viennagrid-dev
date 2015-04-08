@@ -72,8 +72,6 @@ namespace viennagrid
   private:
   };
 
-
-
   inline point_t make_point( point_t::value_type x )
   {
     point_t p(1);
@@ -170,15 +168,10 @@ namespace viennagrid
 
 
 
-  inline std::ostream& operator << (std::ostream & os, point_t const & p)
-  {
-    typedef point_t::size_type      size_type;
-    os << "(";
-    for (size_type i=0; i< p.size(); ++i)
-      os << p[i] << (i == p.size()-1 ? "" :" ");
-    os << ")";
-    return os;
-  }
+  std::ostream& operator<< (std::ostream & os, point_t const & p);
+  std::istream& operator>> (std::istream & is, point_t & pt);
+
+
 
   struct point_less
   {
