@@ -18,10 +18,10 @@
 #include <iostream>
 #include <assert.h>
 
-#include "viennagrid/forwards.hpp"
-#include "viennagrid/io/helper.hpp"
+#include "viennagridpp/forwards.hpp"
+#include "viennagridpp/io/helper.hpp"
 
-#include "viennagrid/mesh/mesh.hpp"
+#include "viennagridpp/mesh/mesh.hpp"
 
 /** @file viennagrid/io/tetgen_poly_reader.hpp
     @brief Provides a reader for STL files. See http://en.wikipedia.org/wiki/STL_(file_format)
@@ -138,7 +138,7 @@ namespace viennagrid
 
 
       template <typename MeshT>
-      void read_ascii(MeshT const & mesh, std::string const & filename) const
+      void read_ascii(MeshT const & /*mesh*/, std::string const & /*filename*/) const
       {
         // TODO implement!!
       }

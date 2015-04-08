@@ -17,10 +17,10 @@
 
 #include "viennautils/dfise/grid_reader.hpp"
 
-#include "viennagrid/mesh/element_creation.hpp"
-#include "viennagrid/algorithm/inclusion.hpp"
-#include "viennagrid/algorithm/distance.hpp"
-#include "viennagrid/quantity_field.hpp"
+#include "viennagridpp/mesh/element_creation.hpp"
+#include "viennagridpp/algorithm/inclusion.hpp"
+#include "viennagridpp/algorithm/distance.hpp"
+#include "viennagridpp/quantity_field.hpp"
 
 namespace viennagrid
 {
@@ -63,7 +63,7 @@ viennagrid_element_tag dfise_text_reader::to_viennagrid_element_tag(viennautils:
     case viennautils::dfise::grid_reader::element_tag::triangle:      return VIENNAGRID_ELEMENT_TAG_TRIANGLE;
     case viennautils::dfise::grid_reader::element_tag::quadrilateral: return VIENNAGRID_ELEMENT_TAG_QUADRILATERAL;
   }
-  
+
   assert(false);
   return viennautils::dfise::grid_reader::element_tag::line;
 }
@@ -87,27 +87,27 @@ template<typename MeshT>
 bool dfise_text_reader::to_viennagrid(MeshT const & mesh, std::vector<viennagrid::quantity_field>& quantity_fields, bool extrude_contacts)
 {
   using viennautils::dfise::grid_reader;
-  
+
   typedef typename viennagrid::result_of::point<MeshT>::type PointType;
   typedef typename viennagrid::result_of::element<MeshT>::type VertexType;
-  
+
   struct RegionContact
   {
     std::string region_name_;
     std::vector<grid_reader::ElementIndex> element_indices_;
   };
   typedef std::map<std::string, RegionContact> RegionContactMap;
-  
+
   std::vector<VertexType> vertices;
-  
+
   {
     //create vertices from the vector returned by the grid_reader_.get_vertices() method which
     // actually stores the coordinates of the vertices in sequential order:
     // e.g. in 2d: grid_reader_.get_vertices() = (x_0, y_0, x_1, y_1, ...)
     //      in 3d: grid_reader_.get_vertices() = (x_0, y_0, z_0, x_1, ...)
-    
+
     //TODO get_translate() and get_transform() is still ignored here
-    
+
     unsigned int dimension = grid_reader_.get_dimension();
     vertices.resize(grid_reader_.get_vertices().size() / dimension);
     for (typename std::vector<VertexType>::size_type i = 0; i < vertices.size(); ++i)
@@ -117,11 +117,11 @@ bool dfise_text_reader::to_viennagrid(MeshT const & mesh, std::vector<viennagrid
       {
         point[j] = grid_reader_.get_vertices()[dimension*i+j];
       }
-      
+
       vertices[i] = viennagrid::make_vertex(mesh, point);
     }
   }
-  
+
   grid_reader::ElementVector const & dfise_elements = grid_reader_.get_elements();
 
   //establish maximum cell dimension
@@ -132,7 +132,7 @@ bool dfise_text_reader::to_viennagrid(MeshT const & mesh, std::vector<viennagrid
   }
 
   RegionContactMap region_contacts;
-  
+
   grid_reader::RegionMap const & regions = grid_reader_.get_regions();
 
   for (grid_reader::RegionMap::const_iterator region_it = regions.begin(); region_it != regions.end(); ++region_it)
@@ -161,15 +161,15 @@ bool dfise_text_reader::to_viennagrid(MeshT const & mesh, std::vector<viennagrid
         cell_vertices[0] = vertices[e.vertex_indices_[0]];
         cell_vertices[1] = vertices[e.vertex_indices_[1]];
         cell_vertices[2] = vertices[e.vertex_indices_[2]];
-        
+
         viennagrid::make_element( mesh.get_make_region(region_name),
                                 viennagrid::element_tag_t::from_internal(VIENNAGRID_ELEMENT_TAG_TRIANGLE),
                                 cell_vertices.begin(), cell_vertices.end() );
-        
+
         cell_vertices[0] = vertices[e.vertex_indices_[2]];
         cell_vertices[1] = vertices[e.vertex_indices_[3]];
         cell_vertices[2] = vertices[e.vertex_indices_[0]];
-        
+
         viennagrid::make_element( mesh.get_make_region(region_name),
                                 viennagrid::element_tag_t::from_internal(VIENNAGRID_ELEMENT_TAG_TRIANGLE),
                                 cell_vertices.begin(), cell_vertices.end() );
@@ -196,7 +196,7 @@ bool dfise_text_reader::to_viennagrid(MeshT const & mesh, std::vector<viennagrid
       }
     }
   }
-  
+
   std::vector<std::pair<VertexType, grid_reader::VertexIndex> > new_vertices;
 
   if (extrude_contacts)
@@ -265,7 +265,7 @@ bool dfise_text_reader::to_viennagrid(MeshT const & mesh, std::vector<viennagrid
         }
     }
   }
-  
+
   /*
   for (VertexDataMap::const_iterator vd_it = vertex_data_.begin(); vd_it != vertex_data_.end(); ++vd_it)
   {
@@ -274,17 +274,17 @@ bool dfise_text_reader::to_viennagrid(MeshT const & mesh, std::vector<viennagrid
     qf.set_topologic_dimension( 0 );
     qf.set_values_dimension( 1 );
     qf.resize(vertices.size() + new_vertices.size());
-    
+
     for (size_t i = 0; i < vertices.size(); ++i)
     {
       qf.set(vertices[i], vd_it->second[i]);
     }
-    
+
     for (size_t i = 0; i < new_vertices.size(); ++i)
     {
       qf.set(new_vertices[i].first, vd_it->second[new_vertices[i].second]);
     }
-    
+
     quantity_fields.push_back(qf);
   }
   */

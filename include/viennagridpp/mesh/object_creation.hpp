@@ -1,8 +1,8 @@
 #ifndef VIENNAGRID_OBJECT_CREATION_HPP
 #define VIENNAGRID_OBJECT_CREATION_HPP
 
-#include "viennagrid/mesh/mesh.hpp"
-#include "viennagrid/algorithm/refine.hpp"
+#include "viennagridpp/mesh/mesh.hpp"
+#include "viennagridpp/algorithm/refine.hpp"
 
 namespace viennagrid
 {

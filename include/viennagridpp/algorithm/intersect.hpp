@@ -22,14 +22,15 @@ namespace viennagrid
 
 
     template<typename PointAccessorT, typename ElementT, typename ElementTagT, typename DimensionTagT, typename PointT, typename NumericConfigT>
-    bool element_line_intersect_impl(PointAccessorT const point_accessor,
-                            ElementT const & element,
+    bool element_line_intersect_impl(PointAccessorT const /*point_accessor*/,
+                            ElementT const & /*element*/,
                             ElementTagT,
                             DimensionTagT,
-                            PointT const & line_start,
-                            PointT const & line_end,
-                            NumericConfigT nc)
+                            PointT const & /*line_start*/,
+                            PointT const & /*line_end*/,
+                            NumericConfigT /*nc*/)
     {
+      assert(false);
       // TODO throw
       return false;
     }

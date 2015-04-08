@@ -13,7 +13,7 @@
    License:      MIT (X11), see file LICENSE in the base directory
 ======================================================================= */
 
-#include "viennagrid/algorithm/centroid.hpp"
+#include "viennagridpp/algorithm/centroid.hpp"
 
 /** @file viennagrid/algorithm/extract_seed_points.hpp
     @brief Extraction of seed points per segment of a mesh.

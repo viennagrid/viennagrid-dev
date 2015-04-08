@@ -13,8 +13,8 @@
    License:      MIT (X11), see file LICENSE in the base directory
 ======================================================================= */
 
-#include "viennagrid/mesh/element_creation.hpp"
-#include "viennagrid/mesh/mesh_operations.hpp"
+#include "viennagridpp/mesh/element_creation.hpp"
+#include "viennagridpp/mesh/mesh_operations.hpp"
 
 /** @file viennagrid/algorithm/extract_boundary.hpp
     @brief Extraction of a hull/boundary of a mesh.

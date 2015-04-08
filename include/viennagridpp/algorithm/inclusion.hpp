@@ -14,11 +14,11 @@
 ======================================================================= */
 
 #include <limits>
-#include "viennagrid/point.hpp"
-#include "viennagrid/point_accessor.hpp"
-#include "viennagrid/mesh/mesh.hpp"
-#include "viennagrid/algorithm/spanned_volume.hpp"
-#include "viennagrid/algorithm/detail/numeric.hpp"
+#include "viennagridpp/point.hpp"
+#include "viennagridpp/point_accessor.hpp"
+#include "viennagridpp/mesh/mesh.hpp"
+#include "viennagridpp/algorithm/spanned_volume.hpp"
+#include "viennagridpp/algorithm/detail/numeric.hpp"
 
 /** @file viennagrid/algorithm/inclusion.hpp
     @brief Tests for inclusion of a point inside an element, segment, or mesh.

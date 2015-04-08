@@ -15,11 +15,11 @@
    License:         MIT (X11), see file LICENSE in the base directory
 =============================================================================== */
 
-#include "viennagrid/static_array.hpp"
-#include "viennagrid/mesh/mesh.hpp"
-#include "viennagrid/algorithm/inner_prod.hpp"
-#include "viennagrid/algorithm/geometry.hpp"
-#include "viennagrid/algorithm/detail/numeric.hpp"
+#include "viennagridpp/static_array.hpp"
+#include "viennagridpp/mesh/mesh.hpp"
+#include "viennagridpp/algorithm/inner_prod.hpp"
+#include "viennagridpp/algorithm/geometry.hpp"
+#include "viennagridpp/algorithm/detail/numeric.hpp"
 
 namespace viennagrid
 {

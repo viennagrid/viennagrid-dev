@@ -68,8 +68,8 @@ viennagrid_error viennagrid_quantity_field_release(viennagrid_quantity_field qua
 
 viennagrid_error viennagrid_quantity_field_init(viennagrid_quantity_field quantity_field,
                                                 viennagrid_dimension topologic_dimension,
-                                                viennagrid_int storage_layout,
-                                                viennagrid_dimension values_dimension)
+                                                viennagrid_dimension values_dimension,
+                                                viennagrid_int storage_layout)
 {
   if ( (topologic_dimension == quantity_field->topologic_dimension) &&
        (storage_layout == quantity_field->storage_layout) &&
