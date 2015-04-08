@@ -123,20 +123,6 @@ viennagrid_error viennagrid_quantity_field_get_values_dimension(viennagrid_quant
 viennagrid_error viennagrid_quantity_field_set_name(viennagrid_quantity_field quantity_field,
                                                 const char * name)
 {
-//   if (quantity_field->name)
-//     delete[] quantity_field->name;
-//
-//   if (!name)
-//   {
-//     quantity_field->name = NULL;
-//     return VIENNAGRID_SUCCESS;
-//   }
-//
-//   size_t string_length = strlen(name);
-//   quantity_field->name = new char[string_length+1];
-//
-//   memcpy( quantity_field->name, name, (string_length+1)*sizeof(char) );
-
   if (!name)
     quantity_field->name.clear();
   else
@@ -157,21 +143,6 @@ viennagrid_error viennagrid_quantity_field_get_name(viennagrid_quantity_field qu
 viennagrid_error viennagrid_quantity_field_set_unit(viennagrid_quantity_field quantity_field,
                                                 const char * unit)
 {
-//   if (quantity_field->unit)
-//     delete[] quantity_field->unit;
-//
-//   if (!unit)
-//   {
-//     quantity_field->unit = NULL;
-//     return VIENNAGRID_SUCCESS;
-//   }
-//
-//
-//   size_t string_length = strlen(unit);
-//   quantity_field->unit = new char[string_length+1];
-//
-//   memcpy( quantity_field->unit, unit, (string_length+1)*sizeof(char) );
-
   if (!unit)
     quantity_field->unit.clear();
   else

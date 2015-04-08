@@ -18,13 +18,7 @@ VIENNAGRID_DYNAMIC_EXPORT viennagrid_error viennagrid_quantity_field_init(vienna
                                                                           viennagrid_dimension topologic_dimension,
                                                                           viennagrid_dimension values_dimension,
                                                                           viennagrid_int storage_layout);
-// VIENNAGRID_DYNAMIC_EXPORT viennagrid_error viennagrid_quantity_field_get_storage_layout(viennagrid_quantity_field quantity_field,
-//                                                                                         viennagrid_int * storage_layout,
-//                                                                                         viennagrid_dimension * values_dimension);
 
-
-// VIENNAGRID_DYNAMIC_EXPORT viennagrid_error viennagrid_quantity_field_set_topologic_dimension(viennagrid_quantity_field quantity_field,
-//                                                                                              viennagrid_dimension topologic_dimension);
 
 VIENNAGRID_DYNAMIC_EXPORT viennagrid_error viennagrid_quantity_field_get_topologic_dimension(viennagrid_quantity_field quantity_field,
                                                                                              viennagrid_dimension * topologic_dimension);
