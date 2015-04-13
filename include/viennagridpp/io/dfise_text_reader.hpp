@@ -14,13 +14,24 @@
 ======================================================================= */
 
 #include <string>
+#include <vector>
+#include <utility>
+#include <set>
+#include <map>
 
+#include <boost/lexical_cast.hpp>
+
+#include "viennautils/exception.hpp"
+#include "viennautils/dfise/parsing_error.hpp"
 #include "viennautils/dfise/grid_reader.hpp"
+#include "viennautils/dfise/data_reader.hpp"
 
 #include "viennagridpp/mesh/element_creation.hpp"
 #include "viennagridpp/algorithm/inclusion.hpp"
 #include "viennagridpp/algorithm/distance.hpp"
 #include "viennagridpp/quantity_field.hpp"
+
+class P;
 
 namespace viennagrid
 {
@@ -30,15 +41,26 @@ namespace io
 class dfise_text_reader
 {
 public:
+  struct error : virtual viennautils::exception {};
+
   dfise_text_reader(std::string const & filename);
+
+  void read_dataset(std::string const & filename);
 
   template<typename MeshT>
   bool to_viennagrid(MeshT const & mesh, std::vector<viennagrid::quantity_field> & quantity_fields, bool extrude_contacts = true);
 
 private:
   viennautils::dfise::grid_reader grid_reader_;
+  viennautils::dfise::data_reader data_reader_;
+
+  viennautils::dfise::data_reader::PartialDatasetMap partial_datasets_;
+  viennautils::dfise::data_reader::CompleteDatasetMap complete_datasets_;
 
   static viennagrid_element_tag to_viennagrid_element_tag(viennautils::dfise::grid_reader::element_tag::type dfise_tag);
+  //dfise regions/datasets/... can come in a quoted form i.e. "region_name"
+  //those extra quotes are harmful in other formats, thus we strip them
+  static void maybe_strip_quotes(std::string & str);
 
   template<typename PointT>
   static PointT normal_vector(PointT const & p0, PointT const & p1);
@@ -51,42 +73,23 @@ private:
 //              Implementation
 //------------------------------------------------------------------------------------------------
 
-inline dfise_text_reader::dfise_text_reader(std::string const & filename) : grid_reader_(filename)
+inline dfise_text_reader::dfise_text_reader( std::string const & filename
+                                           ) try
+                                           : grid_reader_(filename)
+                                           , data_reader_(grid_reader_)
 {
 }
-
-viennagrid_element_tag dfise_text_reader::to_viennagrid_element_tag(viennautils::dfise::grid_reader::element_tag::type dfise_tag)
+catch(viennautils::dfise::parsing_error const & e)
 {
-  switch(dfise_tag)
-  {
-    case viennautils::dfise::grid_reader::element_tag::line:          return VIENNAGRID_ELEMENT_TAG_LINE;
-    case viennautils::dfise::grid_reader::element_tag::triangle:      return VIENNAGRID_ELEMENT_TAG_TRIANGLE;
-    case viennautils::dfise::grid_reader::element_tag::quadrilateral: return VIENNAGRID_ELEMENT_TAG_QUADRILATERAL;
-  }
-
-  assert(false);
-  return viennautils::dfise::grid_reader::element_tag::line;
+  throw viennautils::make_exception<dfise_text_reader::error>(e.what());
 }
 
-template<typename PointT>
-PointT dfise_text_reader::normal_vector(PointT const & p0, PointT const & p1)
-{
-  PointT line = p1-p0;
-  std::swap(line[0], line[1]);
-  line[0] = -line[0];
-  return line;
-}
-
-template<typename PointT>
-PointT dfise_text_reader::normal_vector(PointT const & p0, PointT const & p1, PointT const & p2)
-{
-  return viennagrid::cross_prod( p1-p0, p2-p0 );
-}
 
 template<typename MeshT>
 bool dfise_text_reader::to_viennagrid(MeshT const & mesh, std::vector<viennagrid::quantity_field>& quantity_fields, bool extrude_contacts)
 {
   using viennautils::dfise::grid_reader;
+  using viennautils::dfise::data_reader;
 
   typedef typename viennagrid::result_of::point<MeshT>::type PointType;
   typedef typename viennagrid::result_of::element<MeshT>::type VertexType;
@@ -138,18 +141,13 @@ bool dfise_text_reader::to_viennagrid(MeshT const & mesh, std::vector<viennagrid
   for (grid_reader::RegionMap::const_iterator region_it = regions.begin(); region_it != regions.end(); ++region_it)
   {
     std::string region_name = region_it->first;
-    //dfise regions can come in a quoted form i.e. "region_name" and those extra quotes are useless or even harmful in other formats, thus we strip them
-    if (region_name[0] == '"')
-    {
-      region_name = region_name.erase(0,1);
-    }
-    if (region_name[region_name.size()-1] == '"')
-    {
-      region_name.erase(region_name.size()-1,1);
-    }
+    maybe_strip_quotes(region_name);
 
     std::vector<grid_reader::ElementIndex> const & element_indices = region_it->second.element_indices_;
-    for (std::vector<grid_reader::ElementIndex>::const_iterator element_it = element_indices.begin(); element_it != element_indices.end(); ++element_it)
+    for ( std::vector<grid_reader::ElementIndex>::const_iterator element_it = element_indices.begin()
+        ; element_it != element_indices.end()
+        ; ++element_it
+        )
     {
       grid_reader::element const & e = dfise_elements[*element_it];
 
@@ -197,8 +195,10 @@ bool dfise_text_reader::to_viennagrid(MeshT const & mesh, std::vector<viennagrid
     }
   }
 
-  std::vector<std::pair<VertexType, grid_reader::VertexIndex> > new_vertices;
+  typedef std::multimap<grid_reader::VertexIndex, VertexType> NewVertexMap;
+  NewVertexMap new_vertices;
 
+  //TODO merge this code with sentaurus tdr_reader! TODO
   if (extrude_contacts)
   {
     for (typename RegionContactMap::const_iterator rc_it = region_contacts.begin(); rc_it != region_contacts.end(); ++rc_it)
@@ -226,8 +226,7 @@ bool dfise_text_reader::to_viennagrid(MeshT const & mesh, std::vector<viennagrid
         }
         else
         {
-          //TODO
-          throw std::string("not supported");
+          throw viennautils::make_exception<dfise_text_reader::error>("currently only line contacts are supported");
         }
 
         normal /= viennagrid::norm_2(normal);
@@ -256,7 +255,7 @@ bool dfise_text_reader::to_viennagrid(MeshT const & mesh, std::vector<viennagrid
           cell_vertices.push_back(vertices[e.vertex_indices_[i]]);
         }
         VertexType new_vertex = viennagrid::make_vertex(mesh, other_vertex);
-        new_vertices.push_back(std::pair<VertexType, grid_reader::VertexIndex>(new_vertex, e.vertex_indices_[0]));
+        new_vertices.insert(std::pair<grid_reader::VertexIndex, VertexType>(e.vertex_indices_[0], new_vertex));
         cell_vertices.push_back( new_vertex );
 
         viennagrid::make_element( mesh.get_make_region(rc_it->second.region_name_),
@@ -265,30 +264,110 @@ bool dfise_text_reader::to_viennagrid(MeshT const & mesh, std::vector<viennagrid
         }
     }
   }
-
-  /*
-  for (VertexDataMap::const_iterator vd_it = vertex_data_.begin(); vd_it != vertex_data_.end(); ++vd_it)
+  
+  for (data_reader::CompleteDatasetMap::const_iterator dataset_it = complete_datasets_.begin(); dataset_it != complete_datasets_.end(); ++dataset_it)
   {
-    viennagrid::quantity_field qf;
-    qf.set_name( vd_it->first.substr(1, vd_it->first.size()-2) );
-    qf.set_topologic_dimension( 0 );
-    qf.set_values_dimension( 1 );
+    size_t value_dimension = dataset_it->second.first;
+    viennagrid::quantity_field qf(0, value_dimension, QUANTITY_FIELD_STORAGE_DENSE);
+    std::string quantity_name = dataset_it->first;
+    maybe_strip_quotes(quantity_name);
+    qf.set_name(quantity_name);
     qf.resize(vertices.size() + new_vertices.size());
+    
+    data_reader::ValueVector const & values = dataset_it->second.second;
 
     for (size_t i = 0; i < vertices.size(); ++i)
     {
-      qf.set(vertices[i], vd_it->second[i]);
+      qf.set(vertices[i], &values[i*value_dimension]);
     }
 
-    for (size_t i = 0; i < new_vertices.size(); ++i)
+    for (typename NewVertexMap::const_iterator it = new_vertices.begin(); it != new_vertices.end(); ++it)
     {
-      qf.set(new_vertices[i].first, vd_it->second[new_vertices[i].second]);
+      qf.set(it->second, &values[it->first*value_dimension]);
     }
 
     quantity_fields.push_back(qf);
   }
-  */
+  
+  for (data_reader::PartialDatasetMap::const_iterator dataset_it = partial_datasets_.begin(); dataset_it != partial_datasets_.end(); ++dataset_it)
+  {
+    size_t value_dimension = dataset_it->second.first;
+    viennagrid::quantity_field qf(0, value_dimension, QUANTITY_FIELD_STORAGE_SPARSE);
+    std::string quantity_name = dataset_it->first;
+    maybe_strip_quotes(quantity_name);
+    qf.set_name(quantity_name);
+    
+    data_reader::VertexIndexVector const & vertex_indices = dataset_it->second.second.first;
+    data_reader::ValueVector const & values = dataset_it->second.second.second;
+    for (size_t i = 0; i < vertex_indices.size(); ++i)
+    {
+      qf.set(vertex_indices[i], &values[i*value_dimension]);
+      
+      //set the same value for all new vertices that were "derived" of the current vertex
+      for ( typename NewVertexMap::const_iterator new_it = new_vertices.find(vertex_indices[i])
+          ; new_it != new_vertices.end() && new_it->first == vertex_indices[i]
+          ; ++new_it
+          )
+      {
+        qf.set(new_it->second, &values[i*value_dimension]);
+      }
+    }
+    quantity_fields.push_back(qf);
+  }
+
   return true;
+}
+
+inline void dfise_text_reader::read_dataset(std::string const & filename)
+{
+  try
+  {
+    data_reader_.read(filename, partial_datasets_, complete_datasets_);
+  }
+  catch(viennautils::dfise::parsing_error const & e)
+  {
+    throw viennautils::make_exception<dfise_text_reader::error>(e.what());
+  }
+}
+
+inline viennagrid_element_tag dfise_text_reader::to_viennagrid_element_tag(viennautils::dfise::grid_reader::element_tag::type dfise_tag)
+{
+  switch(dfise_tag)
+  {
+    case viennautils::dfise::grid_reader::element_tag::line:          return VIENNAGRID_ELEMENT_TAG_LINE;
+    case viennautils::dfise::grid_reader::element_tag::triangle:      return VIENNAGRID_ELEMENT_TAG_TRIANGLE;
+    case viennautils::dfise::grid_reader::element_tag::quadrilateral: return VIENNAGRID_ELEMENT_TAG_QUADRILATERAL;
+  }
+  
+  assert(false);
+  return viennautils::dfise::grid_reader::element_tag::line;
+}
+
+inline void dfise_text_reader::maybe_strip_quotes(std::string & str)
+{
+  if (str[0] == '"')
+  {
+    str = str.erase(0,1);
+  }
+  if (str[str.size()-1] == '"')
+  {
+    str.erase(str.size()-1,1);
+  }
+}
+
+template<typename PointT>
+PointT dfise_text_reader::normal_vector(PointT const & p0, PointT const & p1)
+{
+  PointT line = p1-p0;
+  std::swap(line[0], line[1]);
+  line[0] = -line[0];
+  return line;
+}
+
+template<typename PointT>
+PointT dfise_text_reader::normal_vector(PointT const & p0, PointT const & p1, PointT const & p2)
+{
+  return viennagrid::cross_prod( p1-p0, p2-p0 );
 }
 
 } //end of namespace io
