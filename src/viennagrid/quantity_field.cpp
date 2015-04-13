@@ -76,7 +76,7 @@ viennagrid_error viennagrid_quantity_field_init(viennagrid_quantity_field quanti
        (values_dimension == quantity_field->values_dimension) )
     return VIENNAGRID_SUCCESS;
 
-  if ( (storage_layout != QUANTITY_FIELD_STORAGE_DENSE) && (storage_layout != QUANTITY_FIELD_STORAGE_DENSE) )
+  if ( (storage_layout != QUANTITY_FIELD_STORAGE_DENSE) && (storage_layout != QUANTITY_FIELD_STORAGE_SPARSE) )
     return VIENNAGRID_INVALID_ARGUMENTS;
 
   quantity_field->topologic_dimension = topologic_dimension;
@@ -218,6 +218,7 @@ viennagrid_error viennagrid_quantity_field_set_value(viennagrid_quantity_field q
       break;
 
     case QUANTITY_FIELD_STORAGE_SPARSE:
+      quantity_field->sparse_values[element_id].resize(quantity_field->values_dimension);
       dst = &quantity_field->sparse_values[element_id][0];
       break;
 

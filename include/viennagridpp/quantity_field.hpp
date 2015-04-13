@@ -76,7 +76,7 @@ namespace viennagrid
                    viennagrid_int storage_type = QUANTITY_FIELD_STORAGE_DENSE)
     {
       viennagrid_quantity_field_make( &internal_quantity_field );
-      init(topologic_dimension, storage_type, values_dimension);
+      init(topologic_dimension, values_dimension, storage_type);
     }
 
     quantity_field(viennagrid_quantity_field internal_quantity_field_) :
@@ -98,7 +98,7 @@ namespace viennagrid
               viennagrid_dimension values_dimension,
               viennagrid_int storage_type = QUANTITY_FIELD_STORAGE_DENSE)
     {
-      viennagrid_quantity_field_init(internal(), topologic_dimension, storage_type, values_dimension);
+      viennagrid_quantity_field_init(internal(), topologic_dimension, values_dimension, storage_type);
     }
 
 
@@ -147,7 +147,10 @@ namespace viennagrid
     }
 
 
-
+    void set(viennagrid_index id, viennagrid_numeric const * value)
+    {
+      viennagrid_quantity_field_set_value(internal(), id, const_cast<viennagrid_numeric*>(value));
+    }
 
     void set(viennagrid_index id, std::vector<viennagrid_numeric> const & value)
     {
@@ -162,6 +165,13 @@ namespace viennagrid
     void set(viennagrid_index id, viennagrid_numeric value)
     {
       viennagrid_quantity_field_set_value(internal(), id, &value);
+    }
+    
+    template<bool element_is_const>
+    void set(base_element<element_is_const> const & element, viennagrid_numeric const * value)
+    {
+      check_init(element, values_dimension());
+      set(element.id(), value);
     }
 
     template<bool element_is_const>
