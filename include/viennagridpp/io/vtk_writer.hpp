@@ -356,11 +356,20 @@ namespace viennagrid
       void writePointData(RegionT const &, std::ofstream & writer, std::string const & name, IOAccessorType const & accessor, region_id_type region_id)
       {
         typedef typename IOAccessorType::value_type ValueType;
+        
+        std::map< VertexIDType, ElementType > & current_used_vertex_map = used_vertex_map[region_id];
+        for (typename std::map< VertexIDType, ElementType >::iterator it = current_used_vertex_map.begin(); it != current_used_vertex_map.end(); ++it)
+        {
+          if (!accessor.valid(it->second))
+          {
+            //TODO we need some kind of reporting here
+            return;
+          }
+        }
 
         writer << "    <DataArray type=\"" << ValueTypeInformation<ValueType>::type_name() << "\" Name=\"" << name <<
           "\" NumberOfComponents=\"" << ValueTypeInformation<ValueType>::num_components() << "\" format=\"ascii\">" << std::endl;
 
-        std::map< VertexIDType, ElementType > & current_used_vertex_map = used_vertex_map[region_id];
         for (typename std::map< VertexIDType, ElementType >::iterator it = current_used_vertex_map.begin(); it != current_used_vertex_map.end(); ++it)
         {
           ValueTypeInformation<ValueType>::write(writer, accessor.get(it->second));

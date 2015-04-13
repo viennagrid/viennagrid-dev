@@ -160,6 +160,7 @@ namespace viennagrid
     dense_container_accessor( ContainerType & container_ ) : container(&container_) {}
 
     bool valid() const { return container != NULL; }
+    bool valid(AccessType const &) const {return true;}
 
     value_type get(AccessType const & element) const
     {
@@ -207,7 +208,7 @@ namespace viennagrid
     std_map_accessor( ContainerType & container_ ) : container(&container_) {}
 
     bool valid() const { return container != NULL; }
-
+    bool valid(AccessType const & element) const {return container->find(unpack(element)) != container->end();}
 
     value_type get(AccessType const & element) const
     {
@@ -324,6 +325,7 @@ namespace viennagrid
     virtual ~base_dynamic_accessor() {}
 
     virtual bool valid() const = 0;
+    virtual bool valid(access_type const & element) const = 0;
 
     virtual value_type get(access_type const & element) const = 0;
     virtual void set(access_type const & element, value_type const & value) = 0;
@@ -353,6 +355,7 @@ namespace viennagrid
     dynamic_accessor_wrapper(AccessorType accessor_) : accessor(accessor_) {}
 
     bool valid() const { return accessor.valid(); }
+    bool valid(access_type const & element) const {return accessor.valid(element);}
 
     value_type get(access_type const & element) const { return accessor.get(element); }
     void set(access_type const & element, value_type const & value) { accessor.set(element, value); }

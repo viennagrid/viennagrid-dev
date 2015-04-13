@@ -143,7 +143,7 @@ namespace viennagrid
     template<bool element_is_const>
     bool valid(base_element<element_is_const> const & element) const
     {
-      return valid(element.id()).valid();
+      return valid(element.id());
     }
 
 
