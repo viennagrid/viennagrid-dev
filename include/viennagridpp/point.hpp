@@ -6,6 +6,7 @@
 #include <cassert>
 #include <algorithm>
 #include <vector>
+#include <cmath>
 
 #include "viennagridpp/forwards.hpp"
 
@@ -66,6 +67,15 @@ namespace viennagrid
     point_t & operator/=(value_type scalar)
     {
       return (*this *= (value_type(1)/scalar));
+    }
+
+    point_t & normalize()
+    {
+      viennagrid_numeric tmp = 0.0;
+      for (iterator it = begin(); it != end(); ++it)
+        tmp = *it * *it;
+      tmp = std::sqrt(tmp);
+      return operator/=(tmp);
     }
 
 
