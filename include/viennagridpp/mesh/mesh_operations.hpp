@@ -66,8 +66,6 @@ namespace viennagrid
 
       if (src.tag().is_vertex())
         return copy_vertex(src);
-      if (src.tag().is_plc())
-        return copy_plc(src);
       return copy_element(src);
     }
 
@@ -101,6 +99,9 @@ namespace viennagrid
     template<bool element_is_const>
     DstElementType copy_element( base_element<element_is_const> const & src )
     {
+      if (src.tag().is_plc())
+        return copy_plc(src);
+
       typedef base_element<element_is_const> SrcElementType;
       typedef typename viennagrid::result_of::const_element_range<SrcElementType>::type ConstVerticesOnElementRangeType;
       typedef typename viennagrid::result_of::iterator<ConstVerticesOnElementRangeType>::type ConstVerticesOnElementIteratorType;
@@ -119,6 +120,8 @@ namespace viennagrid
     template<bool element_is_const>
     DstElementType copy_plc( base_element<element_is_const> const & src )
     {
+      assert( src.tag().is_plc() );
+
       typedef base_element<element_is_const> SrcElementType;
       typedef typename viennagrid::result_of::const_element_range<SrcElementType>::type ConstLinesOnElementRangeType;
       typedef typename viennagrid::result_of::iterator<ConstLinesOnElementRangeType>::type ConstLinesOnElementRangeIteratorType;
