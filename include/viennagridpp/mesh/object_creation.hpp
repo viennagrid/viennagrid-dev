@@ -55,14 +55,14 @@ namespace viennagrid
       viennagrid::make_triangle(mesh, vertices[2], vertices[6], vertices[3]);
       viennagrid::make_triangle(mesh, vertices[3], vertices[7], vertices[6]);
     }
-    else if ( element_tag.is_triangle() )
+    else if ( element_tag.is_quadrilateral() )
     {
-      viennagrid::make_quadrilateral(mesh, vertices[0], vertices[2], vertices[3], vertices[1]);
-      viennagrid::make_quadrilateral(mesh, vertices[4], vertices[6], vertices[7], vertices[5]);
-      viennagrid::make_quadrilateral(mesh, vertices[0], vertices[2], vertices[6], vertices[4]);
-      viennagrid::make_quadrilateral(mesh, vertices[1], vertices[5], vertices[7], vertices[3]);
-      viennagrid::make_quadrilateral(mesh, vertices[0], vertices[4], vertices[5], vertices[1]);
-      viennagrid::make_quadrilateral(mesh, vertices[2], vertices[3], vertices[7], vertices[6]);
+      viennagrid::make_quadrilateral(mesh, vertices[0], vertices[1], vertices[2], vertices[3]);
+      viennagrid::make_quadrilateral(mesh, vertices[4], vertices[5], vertices[6], vertices[7]);
+      viennagrid::make_quadrilateral(mesh, vertices[0], vertices[4], vertices[2], vertices[6]);
+      viennagrid::make_quadrilateral(mesh, vertices[1], vertices[3], vertices[5], vertices[7]);
+      viennagrid::make_quadrilateral(mesh, vertices[0], vertices[1], vertices[4], vertices[5]);
+      viennagrid::make_quadrilateral(mesh, vertices[2], vertices[6], vertices[3], vertices[7]);
     }
   }
 
