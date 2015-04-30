@@ -54,10 +54,10 @@ namespace viennagrid
   void simplexify(viennagrid::mesh_t const & src_mesh, viennagrid::mesh_t const & dst_mesh)
   {
     typedef viennagrid::mesh_t MeshType;
-    typedef typename viennagrid::result_of::const_cell_range<MeshType>::type ConstCellRangeType;
-    typedef typename viennagrid::result_of::iterator<ConstCellRangeType>::type ConstCellIterator;
+    typedef viennagrid::result_of::const_cell_range<MeshType>::type ConstCellRangeType;
+    typedef viennagrid::result_of::iterator<ConstCellRangeType>::type ConstCellIterator;
 
-    typedef typename viennagrid::result_of::element_copy_map<>::type CopyMapType;
+    typedef viennagrid::result_of::element_copy_map<>::type CopyMapType;
 
     CopyMapType copy_map(dst_mesh);
     ConstCellRangeType cells(src_mesh);
