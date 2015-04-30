@@ -73,7 +73,7 @@ namespace viennagrid
     {
       viennagrid_numeric tmp = 0.0;
       for (iterator it = begin(); it != end(); ++it)
-        tmp = *it * *it;
+        tmp += *it * *it;
       tmp = std::sqrt(tmp);
       return operator/=(tmp);
     }
