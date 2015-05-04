@@ -81,6 +81,7 @@ namespace viennagrid
       return detail::interpolate_tetrahedron(element, point, accessor);
 
     assert(false);
+    return typename AccessorT::value_type();
   }
 
 
