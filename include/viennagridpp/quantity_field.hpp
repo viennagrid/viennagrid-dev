@@ -36,6 +36,7 @@ namespace viennagrid
   {
   public:
 
+    quantity_value() {}
     quantity_value(viennagrid_numeric * values_in, viennagrid_dimension dimension_in)
     {
       if (values_in)
@@ -166,7 +167,7 @@ namespace viennagrid
     {
       viennagrid_quantity_field_set_value(internal(), id, &value);
     }
-    
+
     template<bool element_is_const>
     void set(base_element<element_is_const> const & element, viennagrid_numeric const * value)
     {
@@ -282,7 +283,7 @@ namespace viennagrid
     {
       if (!is_initialized())
       {
-        init( viennagrid::topologic_dimension(element), QUANTITY_FIELD_STORAGE_DENSE, size );
+        init( viennagrid::topologic_dimension(element), size, QUANTITY_FIELD_STORAGE_DENSE );
       }
 
       assert( topologic_dimension() == viennagrid::topologic_dimension(element) );
