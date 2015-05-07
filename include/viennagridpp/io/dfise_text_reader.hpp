@@ -51,6 +51,12 @@ public:
   bool to_viennagrid(MeshT const & mesh, std::vector<viennagrid::quantity_field> & quantity_fields, bool extrude_contacts = true);
 
 private:
+  struct RegionContact
+  {
+    std::string region_name_;
+    std::vector<viennautils::dfise::grid_reader::ElementIndex> element_indices_;
+  };
+
   viennautils::dfise::grid_reader grid_reader_;
   viennautils::dfise::data_reader data_reader_;
 
@@ -99,11 +105,6 @@ bool dfise_text_reader::to_viennagrid(MeshT const & mesh, std::vector<viennagrid
   typedef typename viennagrid::result_of::point<MeshT>::type PointType;
   typedef typename viennagrid::result_of::element<MeshT>::type VertexType;
 
-  struct RegionContact
-  {
-    std::string region_name_;
-    std::vector<grid_reader::ElementIndex> element_indices_;
-  };
   typedef std::map<std::string, RegionContact> RegionContactMap;
 
   std::vector<VertexType> vertices;
