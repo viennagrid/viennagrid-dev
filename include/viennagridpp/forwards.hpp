@@ -464,6 +464,18 @@ namespace viennagrid
       typedef mesh_region_t type;
     };
 
+    template<>
+    struct region<const_mesh_hierarchy_t>
+    {
+      typedef const_region_t type;
+    };
+
+    template<>
+    struct region<const_mesh_t>
+    {
+      typedef const_mesh_region_t type;
+    };
+
     template<typename SomethingT>
     struct region_id
     {
@@ -696,7 +708,7 @@ namespace viennagrid
     template<typename SomethingT>
     struct const_vertex_range
     {
-      typedef typename element_range<SomethingT, 0>::type type;
+      typedef typename const_element_range<SomethingT, 0>::type type;
     };
 
 
