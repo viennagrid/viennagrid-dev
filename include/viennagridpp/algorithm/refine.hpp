@@ -838,13 +838,13 @@ namespace viennagrid
       std::vector<ElementType> new_lines;
 
       double current_line_size = viennagrid::norm_2(p0-p1);
-      if (current_line_size < line_size)
+      if (current_line_size <= line_size)
       {
         new_lines.push_back( copy_map(*lit) );
       }
       else
       {
-        int number_of_new_lines = static_cast<int>(current_line_size / line_size);
+        int number_of_new_lines = static_cast<int>(current_line_size / line_size + 0.5);
         assert(number_of_new_lines > 1);
         PointType offset = (p1-p0) / number_of_new_lines;
 

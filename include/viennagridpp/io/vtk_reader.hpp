@@ -1329,7 +1329,7 @@ namespace viennagrid
                   std::map<std::string, std::map<region_id_type, DataT> > const & data,
                   std::string const & name) const
       {
-        viennagrid::quantity_field result( QUANTITY_FIELD_STORAGE_DENSE, 0, values_dimension(DataT()) );
+        viennagrid::quantity_field result( 0, values_dimension(DataT()), QUANTITY_FIELD_STORAGE_DENSE );
         result.set_name(name);
 //         result.set_topologic_dimension(0);
 //         result.set_values_dimension( values_dimension(DataT()) );
@@ -1370,7 +1370,7 @@ namespace viennagrid
                   std::map<std::string, std::map<region_id_type, DataT> > const & data,
                   std::string const & name) const
       {
-        viennagrid::quantity_field result( QUANTITY_FIELD_STORAGE_DENSE, cell_dimension, values_dimension(DataT()) );
+        viennagrid::quantity_field result( cell_dimension, values_dimension(DataT()), QUANTITY_FIELD_STORAGE_DENSE );
         result.set_name(name);
 //         result.set_topologic_dimension(cell_dimension);
 //         result.set_values_dimension( values_dimension(DataT()) );
