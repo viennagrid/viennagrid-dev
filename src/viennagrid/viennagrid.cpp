@@ -114,7 +114,10 @@ viennagrid_error viennagrid_vertex_create(viennagrid_mesh_hierarchy hierarchy,
                                         const viennagrid_numeric * coords,
                                         viennagrid_index * vertex_id)
 {
-  *vertex_id = hierarchy->make_vertex(coords);
+  viennagrid_index tmp = hierarchy->make_vertex(coords);
+
+  if (vertex_id)
+    *vertex_id = tmp;
 
   viennagrid_mesh root = hierarchy->root();
   root->add_element(0, *vertex_id);
@@ -138,21 +141,12 @@ viennagrid_error viennagrid_element_create(viennagrid_mesh_hierarchy hierarchy,
                                            viennagrid_dimension * topo_dims,
                                            viennagrid_index * element_id)
 {
-  *element_id = hierarchy->get_make_element(element_tag, indices, topo_dims, index_count);
-
   viennagrid_mesh root = hierarchy->root();
-  viennagrid_dimension element_topo_dim = viennagrid_topological_dimension(element_tag);
 
-  root->add_element(element_topo_dim, *element_id);
+  std::pair<viennagrid_index, bool> tmp = hierarchy->get_make_element(element_tag, indices, topo_dims, index_count, root);
 
-  for (viennagrid_dimension boundary_topo_dim = 0; boundary_topo_dim != element_topo_dim; ++boundary_topo_dim)
-  {
-    viennagrid_index * boundary = hierarchy->boundary_begin(element_topo_dim, *element_id, boundary_topo_dim);
-    viennagrid_index * boundary_end = hierarchy->boundary_end(element_topo_dim, *element_id, boundary_topo_dim);
-
-    for (; boundary != boundary_end; ++boundary)
-      root->add_element(boundary_topo_dim, *boundary);
-  }
+  if (element_id)
+    *element_id = tmp.first;
 
   return VIENNAGRID_SUCCESS;
 }

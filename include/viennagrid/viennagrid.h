@@ -10,6 +10,16 @@ VIENNAGRID_DYNAMIC_EXPORT viennagrid_error viennagrid_mesh_hierarchy_create(vien
 VIENNAGRID_DYNAMIC_EXPORT viennagrid_error viennagrid_mesh_hierarchy_retain(viennagrid_mesh_hierarchy mesh_hierarchy);
 VIENNAGRID_DYNAMIC_EXPORT viennagrid_error viennagrid_mesh_hierarchy_release(viennagrid_mesh_hierarchy mesh_hierarchy);
 
+/* set/get mesh options */
+VIENNAGRID_DYNAMIC_EXPORT viennagrid_error viennagrid_mesh_hierarchy_option_set(viennagrid_mesh_hierarchy mesh_hierarchy,
+                                                                                viennagrid_int flag,
+                                                                                viennagrid_int option);
+VIENNAGRID_DYNAMIC_EXPORT viennagrid_error viennagrid_mesh_hierarchy_option_get(viennagrid_mesh_hierarchy mesh_hierarchy,
+                                                                                viennagrid_int flag,
+                                                                                viennagrid_int * option);
+
+
+
 /* queries the topologic dimension of a mesh_hierarchy */
 VIENNAGRID_DYNAMIC_EXPORT viennagrid_error viennagrid_mesh_hierarchy_get_cell_dimension(viennagrid_mesh_hierarchy mesh_hierarchy,
                                                                               viennagrid_dimension * topologic_dimension);

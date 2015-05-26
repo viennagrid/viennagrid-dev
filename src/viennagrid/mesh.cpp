@@ -102,7 +102,8 @@ viennagrid_index viennagrid_mesh_::make_refined_element(
           refined_element_tag,
           refined_element_base_indices,
           refined_element_base_dimensions,
-          refined_element_base_count );
+          refined_element_base_count,
+          NULL ).first;
 
   mesh_hierarchy()->element_buffer(element_topo_dim).set_parent_id( child_element_id, element_id );
 
@@ -425,50 +426,7 @@ void viennagrid_mesh_::make_boundary_flags()
 
 
 
-viennagrid_index viennagrid_element_buffer::make_element(viennagrid_mesh_hierarchy mesh_hierarchy,
-                                                         viennagrid_element_tag element_tag,
-                                                         viennagrid_index * indices,
-                                                         viennagrid_int index_count)
-{
-  viennagrid_index id = size();
 
-  element_tags.push_back(element_tag);
-  parents.push_back(-1);
-  region_buffer.push_back(0);
-  if (element_tag == VIENNAGRID_ELEMENT_TAG_PLC)
-    mesh_hierarchy->make_plc();
-
-  if (indices)
-  {
-    if (element_tag == VIENNAGRID_ELEMENT_TAG_PLC)
-    {
-      std::set<viennagrid_index> vertices;
-      for (viennagrid_int i = 0; i < index_count; ++i)
-      {
-        viennagrid_index * vtx = mesh_hierarchy->boundary_begin(1, *(indices+i), 0);
-        viennagrid_index * end = mesh_hierarchy->boundary_end(1, *(indices+i), 0);
-
-//         element_buffer(VIENNAGRID_ELEMENT_TAG_LINE).boundary_indices_begin(VIENNAGRID_ELEMENT_TAG_VERTEX, *(indices+i));
-//         viennagrid_index * end = mesh_hierarchy->element_buffer(VIENNAGRID_ELEMENT_TAG_LINE).boundary_indices_end(VIENNAGRID_ELEMENT_TAG_VERTEX, *(indices+i));
-
-        for (; vtx != end; ++vtx)
-          vertices.insert(*vtx);
-      }
-
-      viennagrid_index * ptr = boundary_buffer(VIENNAGRID_ELEMENT_TAG_VERTEX).push_back( vertices.size() );
-      std::copy( vertices.begin(), vertices.end(), ptr );
-    }
-    else
-    {
-      viennagrid_index * ptr = boundary_buffer(VIENNAGRID_ELEMENT_TAG_VERTEX).push_back( index_count );
-      std::copy( indices, indices+index_count, ptr );
-    }
-
-    element_map[ element_key(indices, index_count) ] = id;
-  }
-
-  return id;
-}
 
 
 

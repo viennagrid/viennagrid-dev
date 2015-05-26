@@ -3,6 +3,7 @@
 
 #include <cassert>
 #include <set>
+#include <algorithm>
 
 #include "viennagrid/forwards.h"
 #include "buffer.hpp"
@@ -22,32 +23,47 @@ public:
 
   bool element_present(viennagrid_index element_id) const
   {
-    return index_map.find(element_id) != index_map.end();
+    return find(element_id) != end();
   }
 
   void add_element(viennagrid_index element_id)
   {
-    std::map<viennagrid_index, viennagrid_index>::iterator it = index_map.find(element_id);
-    if (it == index_map.end())
+    iterator it = find(element_id);
+    if (it == end())
     {
-      index_map[element_id] = indices.size();
+      insert( element_id, indices.size() );
       indices.push_back(element_id);
     }
   }
 
+//   void add_new_element(viennagrid_index element_id)
+//   {
+//     iterator it = find(element_id);
+//     if (it == end())
+//     {
+//       insert( element_id, indices.size() );
+//       indices.push_back(element_id);
+//     }
+//
+// //     assert( find(element_id) == end() );
+// //
+// //     insert( element_id, indices.size() );
+// //     indices.push_back(element_id);
+//   }
+
   bool remove_element(viennagrid_index element_id)
   {
-    std::map<viennagrid_index, viennagrid_index>::iterator it = index_map.find(element_id);
-    if (it != index_map.end())
+    iterator it = find(element_id);
+    if (it != end())
     {
-      for (std::map<viennagrid_index, viennagrid_index>::iterator jt = index_map.begin(); jt != index_map.end(); ++jt)
+      for (iterator jt = begin(); jt != end(); ++jt)
       {
         if (jt->second > it->second)
           --jt->second;
       }
 
       indices.erase( indices.begin()+it->second );
-      index_map.erase( it );
+      erase( it );
 
       return true;
     }
@@ -80,7 +96,106 @@ public:
 
 private:
   std::vector<viennagrid_index> indices;
-  std::map<viennagrid_index, viennagrid_index> index_map;
+
+
+  typedef std::vector< std::pair<viennagrid_index, viennagrid_index> > IndexMapType;
+//   typedef std::map<viennagrid_index, viennagrid_index> IndexMapType;
+
+
+  typedef IndexMapType::iterator iterator;
+  typedef IndexMapType::const_iterator const_iterator;
+  IndexMapType index_map;
+
+  iterator begin() { return index_map.begin(); }
+  iterator end() { return index_map.end(); }
+
+  const_iterator begin() const { return index_map.begin(); }
+  const_iterator end() const { return index_map.end(); }
+
+
+//   iterator find(viennagrid_index id) { return index_map.find(id); }
+//   const_iterator find(viennagrid_index id) const { return index_map.find(id); }
+
+
+
+  struct IndexMapComperator
+  {
+    bool operator()(std::pair<viennagrid_index, viennagrid_index> const & lhs, viennagrid_index rhs) const
+    {
+      return lhs.first < rhs;
+    }
+
+    bool operator()(viennagrid_index lhs, std::pair<viennagrid_index, viennagrid_index> const & rhs) const
+    {
+      return lhs < rhs.first;
+    }
+
+    bool operator()(std::pair<viennagrid_index, viennagrid_index> const & lhs, std::pair<viennagrid_index, viennagrid_index> const & rhs) const
+    {
+      return lhs.first < rhs.first;
+    }
+  };
+
+  iterator find(viennagrid_index id)
+  {
+    if (index_map.empty() || (id > index_map.back().first))
+      return index_map.end();
+
+    iterator it = std::lower_bound(index_map.begin(), index_map.end(), id, IndexMapComperator());
+    if ( (it != index_map.end()) && (*it).first == id )
+      return it;
+    else
+      return index_map.end();
+  }
+
+  const_iterator find(viennagrid_index id) const
+  {
+    if (index_map.empty() || (id > index_map.back().first))
+      return index_map.end();
+
+    const_iterator it = std::lower_bound(index_map.begin(), index_map.end(), id, IndexMapComperator());
+    if ( (it != index_map.end()) && (*it).first == id )
+      return it;
+    else
+      return index_map.end();
+  }
+
+  void insert(viennagrid_index id, viennagrid_index index)
+  {
+    if (index_map.empty() || (id > index_map.back().first))
+      index_map.push_back( std::make_pair(id, index) );
+    else
+    {
+      iterator it = std::lower_bound(index_map.begin(), index_map.end(), id, IndexMapComperator());
+      if ( (*it).first != id )
+        index_map.insert(it, std::make_pair(id, index));
+    }
+  }
+
+  void insert_at_end(viennagrid_index id, viennagrid_index index)
+  {
+    index_map.push_back( std::make_pair(id, index) );
+  }
+
+
+
+
+
+//   void insert(viennagrid_index id, viennagrid_index index)
+//   {
+//     index_map.insert( std::make_pair(id, index) );
+//   }
+
+//   void insert_at_end(viennagrid_index id, viennagrid_index index)
+//   {
+//     index_map.insert( index_map.end(), std::make_pair(id, index) );
+//   }
+
+  void erase(iterator it)
+  {
+    index_map.erase(it);
+  }
+
 
   ViennaGridCoBoundaryBufferType coboundary_indices[VIENNAGRID_TOPOLOGIC_DIMENSION_END];
   ViennaGridNeighborBufferType neighbor_indices[VIENNAGRID_TOPOLOGIC_DIMENSION_END][VIENNAGRID_TOPOLOGIC_DIMENSION_END];
@@ -207,6 +322,11 @@ public:
 
   void add_element(viennagrid_dimension element_topo_dim,
                    viennagrid_index element_id);
+//   void add_new_element(viennagrid_dimension element_topo_dim,
+//                    viennagrid_index element_id)
+//   {
+//     element_handle_buffer(element_topo_dim).add_new_element(element_id);
+//   }
 
 
   viennagrid_index make_refined_element(
