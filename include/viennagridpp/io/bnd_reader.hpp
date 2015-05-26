@@ -13,9 +13,11 @@
    License:      MIT (X11), see file LICENSE in the base directory
 ======================================================================= */
 
-#include "viennagrid/io/helper.hpp"
+#include "viennagridpp/io/helper.hpp"
 // #include "viennagrid/io/bnd.hpp"
-#include "viennagrid/mesh/element_creation.hpp"
+#include "viennagridpp/mesh/element_creation.hpp"
+
+#include <boost/array.hpp>
 
 /** @file viennagrid/io/bnd_reader.hpp
     @brief Provides a reader for .bnd files.
@@ -59,25 +61,25 @@ namespace viennagrid
     struct print
     {
       template<typename T1, std::size_t Size>
-      void operator()(viennagrid::static_array<T1, Size> const& vec, std::ostream& ostr = std::cout)
+      void operator()(boost::array<T1, Size> const& vec, std::ostream& ostr = std::cout)
       {
-          for(typename viennagrid::static_array<T1, Size>::const_iterator iter = vec.begin();
+          for(typename boost::array<T1, Size>::const_iterator iter = vec.begin();
               iter != vec.end(); iter++)
           {
             ostr << *iter << "  ";
           }
-          std::cout << std::endl;
+          ostr << std::endl;
       }
 
       template<typename T1, std::size_t Size>
-      void operator()(viennagrid::static_array<T1, Size> & vec, std::ostream& ostr = std::cout)
+      void operator()(boost::array<T1, Size> & vec, std::ostream& ostr = std::cout)
       {
-          for(typename viennagrid::static_array<T1, Size>::iterator iter = vec.begin();
+          for(typename boost::array<T1, Size>::iterator iter = vec.begin();
               iter != vec.end(); iter++)
           {
             ostr << *iter << "  ";
           }
-          std::cout << std::endl;
+          ostr << std::endl;
       }
 
       template<typename T1>
@@ -88,7 +90,7 @@ namespace viennagrid
           {
             ostr << *iter << "  ";
           }
-          std::cout << std::endl;
+          ostr << std::endl;
       }
 
       template<typename T1>
@@ -99,7 +101,7 @@ namespace viennagrid
           {
             ostr << *iter << "  ";
           }
-          std::cout << std::endl;
+          ostr << std::endl;
       }
 
       template<typename T0, typename T1>
@@ -816,16 +818,15 @@ namespace viennagrid
        * @param segmentation      The mesh where the file content is written to
        * @param filename          Name of the file
        */
-      template <typename MeshT, typename SegmentationT>
-      void operator()(MeshT & mesh, SegmentationT & segmentation, std::string const & filename) const
+      template <typename MeshT>
+      void operator()(MeshT & mesh,  std::string const & filename) const
       {
         typedef typename viennagrid::result_of::point<MeshT>::type PointType;
-        typedef typename viennagrid::result_of::vertex_handle<MeshT>::type VertexHandleType;
-        typedef typename viennagrid::result_of::cell_handle<MeshT>::type CellHandleType;
-        typedef typename viennagrid::result_of::segment_handle<SegmentationT>::type SegmentHandleType;
+        typedef typename viennagrid::result_of::element<MeshT>::type ElementType;
+        typedef typename viennagrid::result_of::region<MeshT>::type RegionType;
 
-        const int mesh_dimension = viennagrid::result_of::geometric_dimension<MeshT>::value;
-        const int num_vertices = viennagrid::boundary_elements<viennagrid::triangle_tag, viennagrid::vertex_tag>::num;
+        const int geometric_dimension = viennagrid::geometric_dimension(mesh);
+        const int num_vertices_per_triangle = 3;
 
         typedef viennagrid::io::bnd_helper BNDReaderType;
         typedef BNDReaderType::index_type BNDIndexType;
@@ -833,48 +834,46 @@ namespace viennagrid
         typedef BNDReaderType::polygon_container_type BNDPolygonContainerType;
         typedef BNDReaderType::polygon_type BNDPolygonType;
 
-
         BNDReaderType bnd;
         if (bnd(filename) != EXIT_SUCCESS)
           throw bad_file_format_exception("* ViennaGrid: bnd_reader::operator(): File " + filename + ": BND reading error");
 
-        if ( mesh_dimension != bnd.dim_geom() )
-          throw bad_file_format_exception("* ViennaGrid: bnd_reader::operator(): File " + filename + ": Geometric dimension mismatch.");
+//         if ( mesh_dimension != bnd.dim_geom() )
+//           throw bad_file_format_exception("* ViennaGrid: bnd_reader::operator(): File " + filename + ": Geometric dimension mismatch.");
 
 
-        std::map<BNDIndexType, VertexHandleType> vertices;
-        std::map<BNDPolygonType, CellHandleType> cells;
+        std::map<BNDIndexType, ElementType> vertices;
+        std::map<BNDPolygonType, ElementType> cells;
 
 
         for (std::size_t segment_id = 0; segment_id != bnd.segment_size(); ++segment_id)
         {
-          SegmentHandleType segment = segmentation.get_make_segment( segment_id );
+          RegionType region = mesh.get_make_region( segment_id );
           BNDPolygonContainerType & polygons = bnd.segment( segment_id );
 
 
           for (std::size_t poly_pos = 0; poly_pos != polygons.size(); ++poly_pos)
           {
             BNDPolygonType & polygon = polygons[poly_pos];
-//             std::cout << polygon.size() << std::endl;
             std::sort(polygon.begin(), polygon.end());
 
-            if ((num_vertices > 0) && (num_vertices != polygon.size()))
+            if ((num_vertices_per_triangle > 0) && (num_vertices_per_triangle != polygon.size()))
             {
               std::stringstream ss;
               ss << "* ViennaGrid: bnd_reader::operator(): File " << filename << ": ";
-              ss << "ERROR: polygon " << poly_pos << " has " << polygon.size() << " vertices but should have " << num_vertices << std::endl;
+              ss << "ERROR: polygon " << poly_pos << " has " << polygon.size() << " vertices but should have " << num_vertices_per_triangle << std::endl;
 
               throw bad_file_format_exception(ss.str());
             }
 
 
 
-            std::vector<VertexHandleType> vertex_handles;
+            std::vector<ElementType> element_vertices;
 
-            typename std::map<BNDPolygonType, CellHandleType>::iterator cit = cells.find( polygon );
+            typename std::map<BNDPolygonType, ElementType>::iterator cit = cells.find( polygon );
             if (cit != cells.end())
             {
-              viennagrid::add( segment, cit->second );
+              viennagrid::add( region, cit->second );
             }
             else
             {
@@ -882,23 +881,34 @@ namespace viennagrid
               {
                 BNDIndexType vtx_index = polygon[vtx_pos];
 
-                typename std::map<BNDIndexType, VertexHandleType>::iterator vit = vertices.find( vtx_index );
+                typename std::map<BNDIndexType, ElementType>::iterator vit = vertices.find( vtx_index );
                 if (vit != vertices.end())
-                  vertex_handles.push_back(vit->second);
+                  element_vertices.push_back(vit->second);
                 else
                 {
                   BNDPointType const & bnd_point = bnd.point( vtx_index );
-                  PointType point;
+                  PointType point( bnd.dim_geom() );
                   std::copy( bnd_point.begin(), bnd_point.end(), point.begin() );
 
-                  VertexHandleType vtx_handle = viennagrid::make_vertex( mesh, point );
+                  ElementType vtx_handle = viennagrid::make_vertex( mesh, point );
 
                   vertices[vtx_index] = vtx_handle;
-                  vertex_handles.push_back(vtx_handle);
+                  element_vertices.push_back(vtx_handle);
                 }
               }
 
-              cells[polygon] = viennagrid::make_cell( segment, vertex_handles.begin(), vertex_handles.end() );
+              if ( element_vertices.size() == 2)
+              {
+                cells[polygon] = viennagrid::make_element( region,
+                                                           viennagrid::line_tag(),
+                                                           element_vertices.begin(), element_vertices.end() );
+              }
+              else if ( element_vertices.size() == 3)
+              {
+                cells[polygon] = viennagrid::make_element( region,
+                                                           viennagrid::triangle_tag(),
+                                                           element_vertices.begin(), element_vertices.end() );
+              }
             }
           }
         }
