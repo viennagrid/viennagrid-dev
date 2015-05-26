@@ -46,3 +46,4 @@ foreach(f ${EXAMPLES_TESTDATA})
 endforeach()
 
 add_subdirectory(tutorial)
+add_subdirectory(benchmark)
