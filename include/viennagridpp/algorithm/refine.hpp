@@ -844,7 +844,7 @@ namespace viennagrid
       }
       else
       {
-        int number_of_new_lines = static_cast<int>(current_line_size / line_size + 0.5);
+        int number_of_new_lines = std::ceil(current_line_size / line_size);
         assert(number_of_new_lines > 1);
         PointType offset = (p1-p0) / number_of_new_lines;
 
@@ -876,7 +876,10 @@ namespace viennagrid
         std::copy( current_new_lines.begin(), current_new_lines.end(), std::back_inserter(new_lines) );
       }
 
-      viennagrid::make_plc( output_mesh, new_lines.begin(), new_lines.end() );
+      ElementType plc = viennagrid::make_plc( output_mesh, new_lines.begin(), new_lines.end() );
+      std::vector<PointType> hole_points = viennagrid::hole_points(*pit);
+      for (std::size_t i = 0; i != hole_points.size(); ++i)
+        viennagrid::add_hole_point(plc, hole_points[i]);
     }
   }
 
