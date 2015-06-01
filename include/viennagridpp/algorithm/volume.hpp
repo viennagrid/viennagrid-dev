@@ -318,20 +318,11 @@ namespace viennagrid
     return detail::volume_mesh(mesh_obj, viennagrid::topologic_dimension(mesh_obj));
   }
 
-  // default Element Tag = Cell Tag
-  /** @brief Returns the n-dimensional volume of a segment */
-  template<typename ElementTagT, bool mesh_region_is_const>
-  typename viennagrid::result_of::coord< base_mesh_region<mesh_region_is_const> >::type
-  volume(base_mesh_region<mesh_region_is_const> const & region)
-  {
-      return detail::volume_mesh(region, ElementTagT());
-  }
-
   template<bool mesh_region_is_const>
   typename viennagrid::result_of::coord< base_mesh_region<mesh_region_is_const> >::type
   volume(base_mesh_region<mesh_region_is_const> const & region)
   {
-      return detail::volume_mesh(region, region.mesh().cell_tag());
+      return detail::volume_mesh(region, viennagrid::topologic_dimension(region));
   }
 
 
