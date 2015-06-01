@@ -125,6 +125,14 @@ viennagrid_error viennagrid_vertex_create(viennagrid_mesh_hierarchy hierarchy,
   return VIENNAGRID_SUCCESS;
 }
 
+viennagrid_error viennagrid_vertex_pointer(viennagrid_mesh_hierarchy mesh_hierarchy,
+                                           viennagrid_numeric ** coords)
+{
+  *coords = mesh_hierarchy->get_vertex_pointer();
+  return VIENNAGRID_SUCCESS;
+}
+
+
 viennagrid_error viennagrid_vertex_get(viennagrid_mesh_hierarchy mesh_hierarchy,
                                        viennagrid_index id,
                                        viennagrid_numeric ** coords)
@@ -136,14 +144,13 @@ viennagrid_error viennagrid_vertex_get(viennagrid_mesh_hierarchy mesh_hierarchy,
 
 viennagrid_error viennagrid_element_create(viennagrid_mesh_hierarchy hierarchy,
                                            viennagrid_element_tag element_tag,
-                                           viennagrid_int index_count,
-                                           viennagrid_index * indices,
-                                           viennagrid_dimension * topo_dims,
+                                           viennagrid_int vertex_count,
+                                           viennagrid_index * vertex_indices,
                                            viennagrid_index * element_id)
 {
   viennagrid_mesh root = hierarchy->root();
 
-  std::pair<viennagrid_index, bool> tmp = hierarchy->get_make_element(element_tag, indices, topo_dims, index_count, root);
+  std::pair<viennagrid_index, bool> tmp = hierarchy->get_make_element(element_tag, vertex_indices, vertex_count, root);
 
   if (element_id)
     *element_id = tmp.first;
@@ -161,7 +168,6 @@ viennagrid_error viennagrid_element_create_refinement(viennagrid_mesh mesh,
                                                       viennagrid_element_tag    refined_element_tag,
                                                       viennagrid_int            refined_element_base_count,
                                                       viennagrid_index *        refined_element_base_indices,
-                                                      viennagrid_dimension *    refined_element_base_dimensions,
                                                       viennagrid_int            intersects_count,
                                                       viennagrid_index *        intersect_vertices_indices,
                                                       viennagrid_index *        intersects_indices,
@@ -170,7 +176,7 @@ viennagrid_error viennagrid_element_create_refinement(viennagrid_mesh mesh,
 {
   *id = mesh->make_refined_element(element_topo_dim, element_id,
                                    refined_element_tag, refined_element_base_count,
-                                   refined_element_base_indices, refined_element_base_dimensions,
+                                   refined_element_base_indices,
                                    intersects_count, intersect_vertices_indices,
                                    intersects_indices, intersects_topo_dims);
   return VIENNAGRID_SUCCESS;
@@ -188,6 +194,21 @@ viennagrid_error viennagrid_element_get_tag(viennagrid_mesh_hierarchy mesh_hiera
   *element_tag = mesh_hierarchy->element_buffer(element_topo_dim).element_tag(element_id);
   return VIENNAGRID_SUCCESS;
 }
+
+
+
+
+viennagrid_error viennagrid_element_boundary_pointers(viennagrid_mesh_hierarchy hierarchy,
+                                                      viennagrid_dimension element_topo_dim,
+                                                      viennagrid_dimension boundary_topo_dim,
+                                                      viennagrid_index ** boundary_offsets,
+                                                      viennagrid_index ** boundary_indices)
+{
+  *boundary_offsets = hierarchy->element_buffer(element_topo_dim).boundary_buffer(boundary_topo_dim).offset_pointer();
+  *boundary_indices = hierarchy->element_buffer(element_topo_dim).boundary_buffer(boundary_topo_dim).values_pointer();
+  return VIENNAGRID_SUCCESS;
+}
+
 
 
 viennagrid_error viennagrid_element_boundary_elements(viennagrid_mesh_hierarchy hierarchy,
@@ -434,32 +455,6 @@ viennagrid_error viennagrid_add_to_region(viennagrid_mesh_hierarchy hierarchy,
 
 
 
-viennagrid_error viennagrid_plc_add_hole_point(viennagrid_mesh_hierarchy mesh_hierarchy,
-                                               viennagrid_index plc_id,
-                                               viennagrid_numeric const * coords)
-{
-  mesh_hierarchy->add_hole_point(plc_id, coords);
-  return VIENNAGRID_SUCCESS;
-}
-
-viennagrid_error viennagrid_plc_get_hole_points(viennagrid_mesh_hierarchy mesh_hierarchy,
-                                                viennagrid_index plc_id,
-                                                viennagrid_numeric const ** hole_points_begin,
-                                                viennagrid_numeric const ** hole_points_end)
-{
-  *hole_points_begin = mesh_hierarchy->hole_points_begin(plc_id);
-  *hole_points_end = mesh_hierarchy->hole_points_end(plc_id);
-  return VIENNAGRID_SUCCESS;
-}
-
-
-
-
-
-
-
-
-
 
 
 
@@ -496,9 +491,6 @@ viennagrid_error viennagrid_serialized_mesh_hierarchy_make(
   (*serialized_mesh_hierarchy)->geometric_dimension = 0;
   (*serialized_mesh_hierarchy)->vertex_count = 0;
   (*serialized_mesh_hierarchy)->points = NULL;
-  (*serialized_mesh_hierarchy)->hole_point_element_count = 0;
-  (*serialized_mesh_hierarchy)->hole_points_offsets = NULL;
-  (*serialized_mesh_hierarchy)->hole_points = NULL;
 
   (*serialized_mesh_hierarchy)->cell_count = 0;
   (*serialized_mesh_hierarchy)->cell_dimension = 0;
@@ -529,9 +521,6 @@ viennagrid_error viennagrid_serialized_mesh_hierarchy_delete(
   if (serialized_mesh_hierarchy->data_owned == VIENNAGRID_TRUE)
   {
     viennagrid_delete( (void**)&serialized_mesh_hierarchy->points );
-    viennagrid_delete( (void**)&serialized_mesh_hierarchy->hole_points_offsets );
-    viennagrid_delete( (void**)&serialized_mesh_hierarchy->hole_points );
-
 
     viennagrid_delete( (void**)&serialized_mesh_hierarchy->cell_element_tags );
     viennagrid_delete( (void**)&serialized_mesh_hierarchy->cell_vertex_offsets );
@@ -605,14 +594,6 @@ viennagrid_error viennagrid_serialize_mesh_hierarchy(
   serialized_mesh_hierarchy->points = set(mesh_hierarchy->get_vertex(0),
                                           serialized_mesh_hierarchy->geometric_dimension*serialized_mesh_hierarchy->vertex_count,
                                           copy_data);
-
-//   serialized_mesh_hierarchy->hole_point_element_count = mesh_hierarchy->hole_point_element_count();
-//   serialized_mesh_hierarchy->hole_points_offsets = set(mesh_hierarchy->hole_points_offsets(),
-//                                                        serialized_mesh_hierarchy->hole_point_element_count,
-//                                                        copy_data);
-//   serialized_mesh_hierarchy->hole_points = set(mesh_hierarchy->hole_points_pointer(),
-//                                                serialized_mesh_hierarchy->hole_points_offsets[serialized_mesh_hierarchy->hole_point_element_count+1],
-//                                                copy_data);
 
   // cell information
   viennagrid_dimension cell_dimension = mesh_hierarchy->cell_dimension();
@@ -732,18 +713,6 @@ viennagrid_error viennagrid_deserialize_mesh_hierarchy(
                              &vertex_index);
   }
 
-  for (viennagrid_int plc_id = 0; plc_id != serialized_mesh_hierarchy->hole_point_element_count; ++plc_id)
-  {
-    for (viennagrid_index j = serialized_mesh_hierarchy->hole_points_offsets[plc_id];
-                          j != serialized_mesh_hierarchy->hole_points_offsets[plc_id+1];
-                          j += serialized_mesh_hierarchy->geometric_dimension)
-    {
-      viennagrid_plc_add_hole_point(*mesh_hierarchy,
-                                    plc_id,
-                                    serialized_mesh_hierarchy->hole_points + j);
-    }
-  }
-
   // deserialize meshes
   if (serialized_mesh_hierarchy->mesh_parents[0] != -1)
   {
@@ -785,13 +754,10 @@ viennagrid_error viennagrid_deserialize_mesh_hierarchy(
     viennagrid_index cell_index;
     viennagrid_int cell_vertex_count = serialized_mesh_hierarchy->cell_vertex_offsets[i+1] - serialized_mesh_hierarchy->cell_vertex_offsets[i];
 
-    std::vector<viennagrid_index> vertex_topo_dim(cell_vertex_count, 0);
-
     viennagrid_element_create(*mesh_hierarchy,
                               serialized_mesh_hierarchy->cell_element_tags[i],
                               cell_vertex_count,
                               serialized_mesh_hierarchy->cell_vertices + serialized_mesh_hierarchy->cell_vertex_offsets[i],
-                              &vertex_topo_dim[0],
                               &cell_index);
 
     viennagrid_element_parent_set(*mesh_hierarchy,

@@ -67,6 +67,8 @@ VIENNAGRID_DYNAMIC_EXPORT viennagrid_error viennagrid_vertex_create(viennagrid_m
                                                                     const viennagrid_numeric * coords,
                                                                     viennagrid_index * vertex_id);
 /* gets the coordinates of a vertex of a mesh */
+VIENNAGRID_DYNAMIC_EXPORT viennagrid_error viennagrid_vertex_pointer(viennagrid_mesh_hierarchy mesh_hierarchy,
+                                                                     viennagrid_numeric ** coords);
 VIENNAGRID_DYNAMIC_EXPORT viennagrid_error viennagrid_vertex_get(viennagrid_mesh_hierarchy mesh_hierarchy,
                                                                  viennagrid_index id,
                                                                  viennagrid_numeric ** coords);
@@ -75,9 +77,8 @@ VIENNAGRID_DYNAMIC_EXPORT viennagrid_error viennagrid_vertex_get(viennagrid_mesh
 /* indices are vertex indices for all elements but PLCs, where they are line indices */
 VIENNAGRID_DYNAMIC_EXPORT viennagrid_error viennagrid_element_create(viennagrid_mesh_hierarchy mesh_hierarchy,
                                                                     viennagrid_element_tag element_tag,
-                                                                    viennagrid_int index_count,
-                                                                    viennagrid_index * indices,
-                                                                    viennagrid_dimension * topo_dims,
+                                                                    viennagrid_int vertex_count,
+                                                                    viennagrid_index * vertex_indices,
                                                                     viennagrid_index * element_index);
 
 
@@ -88,7 +89,6 @@ VIENNAGRID_DYNAMIC_EXPORT viennagrid_error viennagrid_element_create_refinement(
                                                             viennagrid_element_tag    refined_element_tag,
                                                             viennagrid_int            refined_element_base_count,
                                                             viennagrid_index *        refined_element_base_indices,
-                                                            viennagrid_dimension *    refined_element_base_dimensions,
                                                             viennagrid_int            intersects_count,
                                                             viennagrid_index *        intersect_vertices_indices,
                                                             viennagrid_index *        intersects_indices,
@@ -100,6 +100,12 @@ VIENNAGRID_DYNAMIC_EXPORT viennagrid_error viennagrid_element_get_tag(viennagrid
                                                                       viennagrid_dimension element_topo_dim,
                                                                       viennagrid_index element_id,
                                                                       viennagrid_element_tag * element_tag);
+
+VIENNAGRID_DYNAMIC_EXPORT viennagrid_error viennagrid_element_boundary_pointers(viennagrid_mesh_hierarchy mesh_hierarchy,
+                                                                                viennagrid_dimension element_topo_dim,
+                                                                                viennagrid_dimension boundary_topo_dim,
+                                                                                viennagrid_index ** boundary_offsets,
+                                                                                viennagrid_index ** boundary_indices);
 
 VIENNAGRID_DYNAMIC_EXPORT viennagrid_error viennagrid_element_boundary_elements(viennagrid_mesh_hierarchy mesh_hierarchy,
                                                                                 viennagrid_dimension element_topo_dim,
@@ -209,19 +215,6 @@ VIENNAGRID_DYNAMIC_EXPORT viennagrid_error viennagrid_add_to_region(viennagrid_m
                                                                     viennagrid_region region);
 
 
-
-/* creates a set of vertices in a mesh_hierarchy */
-VIENNAGRID_DYNAMIC_EXPORT viennagrid_error viennagrid_plc_add_hole_point(viennagrid_mesh_hierarchy mesh_hierarchy,
-                                                                         viennagrid_index plc_id,
-                                                                         viennagrid_numeric const * coords);
-
-VIENNAGRID_DYNAMIC_EXPORT viennagrid_error viennagrid_plc_get_hole_points(viennagrid_mesh_hierarchy mesh_hierarchy,
-                                                                          viennagrid_index plc_id,
-                                                                          viennagrid_numeric const ** hole_points_begin,
-                                                                          viennagrid_numeric const ** hole_points_end);
-
-
-
 /* serialization/de-serialization */
 
 struct viennagrid_serialized_mesh_hierarchy_
@@ -230,9 +223,6 @@ struct viennagrid_serialized_mesh_hierarchy_
   viennagrid_dimension geometric_dimension;
   viennagrid_int vertex_count;
   viennagrid_numeric * points;                  /* may be shared with mesh hierarchy */
-  viennagrid_int hole_point_element_count;
-  viennagrid_index * hole_points_offsets;
-  viennagrid_numeric * hole_points;
 
   /* cell information */
   viennagrid_int cell_count;
@@ -241,7 +231,7 @@ struct viennagrid_serialized_mesh_hierarchy_
   viennagrid_index * cell_vertex_offsets;       /* may be shared with mesh hierarchy */
   viennagrid_index * cell_vertices;             /* may be shared with mesh hierarchy */
   viennagrid_index * cell_parents;              /* may be shared with mesh hierarchy */
-  viennagrid_index * cell_region_offsets;       /* may be shared with mesh hierarchy */
+  viennagrid_index * cell_region_offsets;
   viennagrid_index * cell_regions;
 
   /* mesh information */

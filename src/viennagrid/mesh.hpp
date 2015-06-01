@@ -7,7 +7,6 @@
 
 #include "viennagrid/forwards.h"
 #include "buffer.hpp"
-// #include "utils.hpp"
 
 
 typedef sparse_packed_multibuffer<viennagrid_index, viennagrid_index> ViennaGridCoBoundaryBufferType;
@@ -28,47 +27,7 @@ public:
 
   void add_element(viennagrid_index element_id)
   {
-    iterator it = find(element_id);
-    if (it == end())
-    {
-      insert( element_id, indices.size() );
-      indices.push_back(element_id);
-    }
-  }
-
-//   void add_new_element(viennagrid_index element_id)
-//   {
-//     iterator it = find(element_id);
-//     if (it == end())
-//     {
-//       insert( element_id, indices.size() );
-//       indices.push_back(element_id);
-//     }
-//
-// //     assert( find(element_id) == end() );
-// //
-// //     insert( element_id, indices.size() );
-// //     indices.push_back(element_id);
-//   }
-
-  bool remove_element(viennagrid_index element_id)
-  {
-    iterator it = find(element_id);
-    if (it != end())
-    {
-      for (iterator jt = begin(); jt != end(); ++jt)
-      {
-        if (jt->second > it->second)
-          --jt->second;
-      }
-
-      indices.erase( indices.begin()+it->second );
-      erase( it );
-
-      return true;
-    }
-
-    return false;
+    insert( element_id );
   }
 
   viennagrid_index * ids()
@@ -84,7 +43,6 @@ public:
   void clear()
   {
     indices.clear();
-    index_map.clear();
 
     for (int i = 0; i != VIENNAGRID_TOPOLOGIC_DIMENSION_END; ++i)
       coboundary_indices[i].clear();
@@ -95,105 +53,52 @@ public:
   }
 
 private:
+
   std::vector<viennagrid_index> indices;
 
+  typedef std::vector<viennagrid_index>::iterator iterator;
+  typedef std::vector<viennagrid_index>::const_iterator const_iterator;
 
-  typedef std::vector< std::pair<viennagrid_index, viennagrid_index> > IndexMapType;
-//   typedef std::map<viennagrid_index, viennagrid_index> IndexMapType;
+  iterator begin() { return indices.begin(); }
+  iterator end() { return indices.end(); }
 
-
-  typedef IndexMapType::iterator iterator;
-  typedef IndexMapType::const_iterator const_iterator;
-  IndexMapType index_map;
-
-  iterator begin() { return index_map.begin(); }
-  iterator end() { return index_map.end(); }
-
-  const_iterator begin() const { return index_map.begin(); }
-  const_iterator end() const { return index_map.end(); }
-
-
-//   iterator find(viennagrid_index id) { return index_map.find(id); }
-//   const_iterator find(viennagrid_index id) const { return index_map.find(id); }
-
-
-
-  struct IndexMapComperator
-  {
-    bool operator()(std::pair<viennagrid_index, viennagrid_index> const & lhs, viennagrid_index rhs) const
-    {
-      return lhs.first < rhs;
-    }
-
-    bool operator()(viennagrid_index lhs, std::pair<viennagrid_index, viennagrid_index> const & rhs) const
-    {
-      return lhs < rhs.first;
-    }
-
-    bool operator()(std::pair<viennagrid_index, viennagrid_index> const & lhs, std::pair<viennagrid_index, viennagrid_index> const & rhs) const
-    {
-      return lhs.first < rhs.first;
-    }
-  };
+  const_iterator begin() const { return indices.begin(); }
+  const_iterator end() const { return indices.end(); }
 
   iterator find(viennagrid_index id)
   {
-    if (index_map.empty() || (id > index_map.back().first))
-      return index_map.end();
+    if (indices.empty() || (id > indices.back()))
+      return end();
 
-    iterator it = std::lower_bound(index_map.begin(), index_map.end(), id, IndexMapComperator());
-    if ( (it != index_map.end()) && (*it).first == id )
+    iterator it = std::lower_bound( begin(), end(), id );
+    if ( (it != end()) && (*it) == id )
       return it;
     else
-      return index_map.end();
+      return end();
   }
 
   const_iterator find(viennagrid_index id) const
   {
-    if (index_map.empty() || (id > index_map.back().first))
-      return index_map.end();
+    if (indices.empty() || (id > indices.back()))
+      return end();
 
-    const_iterator it = std::lower_bound(index_map.begin(), index_map.end(), id, IndexMapComperator());
-    if ( (it != index_map.end()) && (*it).first == id )
+    const_iterator it = std::lower_bound(begin(), end(), id);
+    if ( (it != end()) && (*it) == id )
       return it;
     else
-      return index_map.end();
+      return end();
   }
 
-  void insert(viennagrid_index id, viennagrid_index index)
+  void insert(viennagrid_index id)
   {
-    if (index_map.empty() || (id > index_map.back().first))
-      index_map.push_back( std::make_pair(id, index) );
+    if (indices.empty() || (id > indices.back()))
+      indices.push_back(id);
     else
     {
-      iterator it = std::lower_bound(index_map.begin(), index_map.end(), id, IndexMapComperator());
-      if ( (*it).first != id )
-        index_map.insert(it, std::make_pair(id, index));
+      iterator it = std::lower_bound(begin(), end(), id);
+      if ( (*it) != id )
+        indices.insert(it, id);
     }
-  }
-
-  void insert_at_end(viennagrid_index id, viennagrid_index index)
-  {
-    index_map.push_back( std::make_pair(id, index) );
-  }
-
-
-
-
-
-//   void insert(viennagrid_index id, viennagrid_index index)
-//   {
-//     index_map.insert( std::make_pair(id, index) );
-//   }
-
-//   void insert_at_end(viennagrid_index id, viennagrid_index index)
-//   {
-//     index_map.insert( index_map.end(), std::make_pair(id, index) );
-//   }
-
-  void erase(iterator it)
-  {
-    index_map.erase(it);
   }
 
 
@@ -322,12 +227,6 @@ public:
 
   void add_element(viennagrid_dimension element_topo_dim,
                    viennagrid_index element_id);
-//   void add_new_element(viennagrid_dimension element_topo_dim,
-//                    viennagrid_index element_id)
-//   {
-//     element_handle_buffer(element_topo_dim).add_new_element(element_id);
-//   }
-
 
   viennagrid_index make_refined_element(
     viennagrid_dimension      element_topo_dim,
@@ -335,7 +234,6 @@ public:
     viennagrid_element_tag    refined_element_tag,
     viennagrid_int            refined_element_base_count,
     viennagrid_index *        refined_element_base_indices,
-    viennagrid_dimension *    refined_element_base_dimensions,
     viennagrid_int            intersects_count,
     viennagrid_index *        intersect_vertices_indices,
     viennagrid_index *        intersects_indices,

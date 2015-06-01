@@ -78,7 +78,6 @@ viennagrid_index viennagrid_mesh_::make_refined_element(
   viennagrid_element_tag    refined_element_tag,
   viennagrid_int            refined_element_base_count,
   viennagrid_index *        refined_element_base_indices,
-  viennagrid_dimension *    refined_element_base_dimensions,
   viennagrid_int            intersects_count,
   viennagrid_index *        intersect_vertices_indices,
   viennagrid_index *        intersects_indices,
@@ -101,7 +100,6 @@ viennagrid_index viennagrid_mesh_::make_refined_element(
   viennagrid_index child_element_id = mesh_hierarchy()->get_make_element(
           refined_element_tag,
           refined_element_base_indices,
-          refined_element_base_dimensions,
           refined_element_base_count,
           NULL ).first;
 

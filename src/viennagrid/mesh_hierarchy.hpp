@@ -9,17 +9,12 @@
 #include "buffer.hpp"
 #include "mesh.hpp"
 #include "region.hpp"
-// #include "utils.hpp"
 
 
 
 typedef dense_packed_multibuffer<viennagrid_index, viennagrid_index> ViennaGridBoundaryBufferType;
 typedef dense_packed_multibuffer<viennagrid_index, viennagrid_numeric> ViennaGridHolePointBufferType;
 typedef dense_packed_multibuffer<viennagrid_index, viennagrid_region> ViennaGridRegionBufferType;
-
-// typedef dense_multibuffer<viennagrid_index, viennagrid_index> ViennaGridBoundaryBufferType;
-// typedef dense_multibuffer<viennagrid_index, viennagrid_numeric> ViennaGridHolePointBufferType;
-// typedef dense_multibuffer<viennagrid_index, viennagrid_region> ViennaGridRegionBufferType;
 
 
 struct element_key
@@ -28,7 +23,7 @@ struct element_key
   element_key(viennagrid_index * indices, viennagrid_int index_count) : vertex_indices(index_count)
   {
     std::copy( indices, indices+index_count, &vertex_indices[0] );
-    std::sort(vertex_indices.begin(), vertex_indices.end());
+    std::sort( vertex_indices.begin(), vertex_indices.end()   );
   }
 
   bool operator<(element_key const & rhs) const
@@ -41,7 +36,6 @@ struct element_key
   { return !(*this == rhs); }
 
   viennagrid_index front() const { return vertex_indices.front(); }
-//   void pop_front() { vertex_indices.pop_front(); }
 
   std::vector<viennagrid_index> vertex_indices;
 };
@@ -60,11 +54,6 @@ public:
   {
     topologic_dimension = topo_dim_in;
     boundary_indices.resize(topologic_dimension);
-
-//     for (viennagrid_dimension i = 0; i != topologic_dimension; ++i)
-//       boundary_indices[i].second = true;
-//     if (topologic_dimension > 0)
-//       boundary_indices[0].second = true;
   }
 
 
@@ -89,17 +78,18 @@ public:
 
   void add_to_region(viennagrid_index element_id, viennagrid_region region_)
   {
-    for (viennagrid_region * it = region_buffer.begin(element_id); it != region_buffer.end(element_id); ++it)
+    for (viennagrid_region * it = regions_begin(element_id); it != regions_end(element_id); ++it)
     {
       if (*it == region_)
         return;
     }
 
-    region_buffer.add(element_id, region_);
+    region_buffer[element_id].push_back(region_);
   }
 
-  viennagrid_region * regions_begin(viennagrid_index element_id) { return region_buffer.begin(element_id); }
-  viennagrid_region * regions_end(viennagrid_index element_id) { return region_buffer.end(element_id); }
+  viennagrid_region * regions_begin(viennagrid_index element_id) { return &region_buffer[element_id][0]; }
+  viennagrid_region * regions_end(viennagrid_index element_id) { return &region_buffer[element_id][0] + region_buffer[element_id].size(); }
+
 
   void clear(viennagrid_mesh_hierarchy_ * mesh_hierarchy_)
   {
@@ -118,29 +108,18 @@ public:
   viennagrid_index * vertex_offsets_pointer() { return boundary_buffer(0).offset_pointer(); }
   viennagrid_index * vertex_indices_pointer() { return boundary_buffer(0).values_pointer(); }
   viennagrid_index * parent_id_pointer() { return &parents[0]; }
-  viennagrid_index * region_offsets_pointer() { return region_buffer.offset_pointer(); }
-
-
-private:
+//   viennagrid_index * region_offsets_pointer() { return region_buffer.offset_pointer(); }
+  viennagrid_index * region_offsets_pointer() { return 0; }
 
   ViennaGridBoundaryBufferType & boundary_buffer(viennagrid_dimension boundary_topo_dim)
   {
-    return boundary_indices[boundary_topo_dim].first;
+    return boundary_indices[boundary_topo_dim];
   }
 
-//   void calculate_boundary_buffer(viennagrid_index boundary_topo_dim);
-  void calculate_boundary_buffer(viennagrid_index boundary_topo_dim, viennagrid_index element_id, viennagrid_mesh mesh);
-  void calculate_boundary_buffers(viennagrid_index element_id, viennagrid_mesh mesh);
-
+private:
 
   viennagrid_index get_element(element_key const & key)
   {
-//     ElementMapType::iterator it = std::lower_bound( element_map.begin(), element_map.end(), key, IndicesComperator() );
-//     if ( (it != element_map.end()) &&  ((*it).first == key) )
-//       return (*it).second;
-//
-//     return -1;
-
     if (key.front() >= element_map.size())
       return -1;
 
@@ -158,37 +137,40 @@ private:
 
   viennagrid_index make_element(viennagrid_mesh_hierarchy mesh_hierarchy,
                                 viennagrid_element_tag element_tag_,
-                                viennagrid_index * indices,
-                                viennagrid_int index_count);
+                                viennagrid_index * vertex_indices,
+                                viennagrid_int vertex_count,
+                                bool reserve_boundary);
+
+  void reserve_boundary(viennagrid_index element_id);
+  void make_boundary(viennagrid_index element_id, viennagrid_mesh mesh);
 
 
+  // the current topologic dimension
   viennagrid_dimension topologic_dimension;
 
+  // tags of the element
   std::vector<viennagrid_element_tag> element_tags;
+
+  // element parent
   std::vector<viennagrid_index> parents;
-  dense_packed_multibuffer<viennagrid_index, viennagrid_region> region_buffer;
 
+  // explicit element or implicit?
+  std::vector<viennagrid_flag> element_flags;
 
-  std::vector< std::pair<ViennaGridBoundaryBufferType, bool> > boundary_indices;
+  // aux_data for elements
+//   std::vector<void*> aux_data;
 
+  // region of elements
+  std::vector< std::vector<viennagrid_region> > region_buffer;
 
-//   struct IndicesComperator
-//   {
-//     bool operator()(std::pair<element_key, viennagrid_index> const & lhs, element_key const & rhs)
-//     { return lhs.first < rhs; }
-//
-//     bool operator()(element_key const & lhs, std::pair<element_key, viennagrid_index> const & rhs)
-//     { return lhs < rhs.first; }
-//   };
+  // boundary indices
+  std::vector<ViennaGridBoundaryBufferType> boundary_indices;
 
-//   typedef std::vector< std::pair<element_key, viennagrid_index> > ElementMapType;
+  // element map (based on vertices)
   typedef std::map<element_key, viennagrid_index> ElementMapType;
-
-//   ElementMapType element_map;
-
   std::deque<ElementMapType> element_map;
 
-
+  // base pointer
   viennagrid_mesh_hierarchy_ * mesh_hierarchy;
 };
 
@@ -249,6 +231,7 @@ public:
 
   viennagrid_int boundary_layout() const { return boundary_layout_; }
   void set_boundary_layout(viennagrid_int boundary_layout_in);
+  bool full_boundary_layout() const { return boundary_layout() == VIENNAGRID_BOUNDARY_LAYOUT_FULL; }
 
 
 
@@ -280,7 +263,7 @@ public:
 
   viennagrid_index make_vertex(const viennagrid_numeric * coords)
   {
-    viennagrid_index id = element_buffer(0).make_element(this, VIENNAGRID_ELEMENT_TAG_VERTEX, 0, 0);
+    viennagrid_index id = element_buffer(0).make_element(this, VIENNAGRID_ELEMENT_TAG_VERTEX, 0, 0, false);
 
     viennagrid_int prev_size = vertex_buffer.size();
     vertex_buffer.resize( vertex_buffer.size() + geometric_dimension() );
@@ -289,6 +272,11 @@ public:
       std::copy( coords, coords+geometric_dimension(), &vertex_buffer[0] + prev_size );
 
     return id;
+  }
+
+  viennagrid_numeric * get_vertex_pointer()
+  {
+    return &vertex_buffer[0];
   }
 
   viennagrid_numeric * get_vertex(viennagrid_int id)
@@ -304,45 +292,10 @@ public:
 
 
   std::pair<viennagrid_index, bool> get_make_element(viennagrid_element_tag element_tag,
-                                    viennagrid_index * indices,
-                                    viennagrid_dimension * topo_dims,
-                                    viennagrid_int count,
-                                    viennagrid_mesh mesh);
-  viennagrid_index get_make_plc(viennagrid_index * indices,
-                                viennagrid_int count);
-
-
-
-
-
-
-  void make_plc()
-  {
-    hole_point_buffer.push_back(0);
-  }
-
-  viennagrid_numeric * hole_points_begin(viennagrid_int plc_id)
-  {
-    return hole_point_buffer.begin(plc_id);
-  }
-  viennagrid_numeric * hole_points_end(viennagrid_int plc_id)
-  {
-    return hole_point_buffer.end(plc_id);
-  }
-
-  void add_hole_point(viennagrid_int plc_id, viennagrid_numeric const * hole_point)
-  {
-    viennagrid_index old_count = hole_point_buffer.size(plc_id);
-    viennagrid_numeric * hp = hole_point_buffer.resize(plc_id, old_count+geometric_dimension());
-    std::copy(hole_point, hole_point+geometric_dimension(), hp+old_count);
-  }
-
-  viennagrid_int hole_point_element_count() const { return hole_point_buffer.size(); }
-  viennagrid_index * hole_points_offsets() { return hole_point_buffer.offset_pointer(); }
-  viennagrid_numeric * hole_points_pointer() { return hole_point_buffer.values_pointer(); }
-
-
-
+                                    viennagrid_index * vertex_indices,
+                                    viennagrid_int vertex_count,
+                                    viennagrid_mesh mesh,
+                                    bool make_boundary = true);
 
 
 
@@ -413,7 +366,8 @@ public:
 
   void clear()
   {
-    boundary_layout_ = VIENNAGRID_BOUNDARY_LAYOUT_SPARSE;
+//     boundary_layout_ = VIENNAGRID_BOUNDARY_LAYOUT_SPARSE;
+    boundary_layout_ = VIENNAGRID_BOUNDARY_LAYOUT_FULL;
 
     for (int i = 0; i != VIENNAGRID_TOPOLOGIC_DIMENSION_END; ++i)
     {
@@ -430,7 +384,6 @@ public:
     meshes_.push_back(root());
 
     vertex_buffer.clear();
-    hole_point_buffer.clear();
 
     for (std::vector<viennagrid_region>::iterator it = regions.begin(); it != regions.end(); ++it)
       delete *it;
@@ -470,49 +423,77 @@ public:
 
 private:
 
-  std::pair<viennagrid_index, bool> get_make_element(viennagrid_element_tag element_tag,
+
+
+  viennagrid_index get_make_line(viennagrid_index * vertex_indices, viennagrid_index vi0, viennagrid_index vi1, viennagrid_mesh mesh)
+  {
+    viennagrid_int tmp[2] = { vertex_indices[vi0], vertex_indices[vi1] };
+    return get_make_element(VIENNAGRID_ELEMENT_TAG_LINE, tmp, 2, mesh, false).first;
+  }
+
+  viennagrid_index get_make_triangle(
+        viennagrid_index * vertex_indices, viennagrid_index vi0, viennagrid_index vi1, viennagrid_index vi2,
+        viennagrid_index * line_indices, viennagrid_index li0, viennagrid_index li1, viennagrid_index li2,
+        viennagrid_mesh mesh)
+  {
+    viennagrid_int tmp[3] = { vertex_indices[vi0], vertex_indices[vi1], vertex_indices[vi2] };
+
+    std::pair<viennagrid_index, bool> triangle = get_make_element(VIENNAGRID_ELEMENT_TAG_TRIANGLE, tmp, 3, mesh, false);
+
+    if (triangle.second && full_boundary_layout())
+    {
+      viennagrid_index * local_line_indices = boundary_begin(2, triangle.first, 1);
+      local_line_indices[0] = line_indices[li0];
+      local_line_indices[1] = line_indices[li1];
+      local_line_indices[2] = line_indices[li2];
+    }
+
+    return triangle.first;
+//     return get_make_element(VIENNAGRID_ELEMENT_TAG_LINE, tmp, 2, mesh, false).first;
+  }
+
+
+
+  std::pair<viennagrid_index, bool> get_make_element_2(viennagrid_element_tag element_tag,
                                     viennagrid_index * vertex_indices,
                                     viennagrid_int i0, viennagrid_int i1,
-                                    viennagrid_mesh mesh)
+                                    viennagrid_mesh mesh,
+                                    bool make_boundary = true)
   {
     viennagrid_int tmp[2];
-    viennagrid_dimension dimensions[2];
-    std::fill(dimensions, dimensions+2, 0);
 
     tmp[0] = vertex_indices[i0];
     tmp[1] = vertex_indices[i1];
-    return get_make_element(element_tag, tmp, dimensions, 2, mesh);
+    return get_make_element(element_tag, tmp, 2, mesh, make_boundary);
   }
 
-  std::pair<viennagrid_index, bool> get_make_element(viennagrid_element_tag element_tag,
+  std::pair<viennagrid_index, bool> get_make_element_3(viennagrid_element_tag element_tag,
                                     viennagrid_index * vertex_indices,
                                     viennagrid_int i0, viennagrid_int i1, viennagrid_int i2,
-                                    viennagrid_mesh mesh)
+                                    viennagrid_mesh mesh,
+                                    bool make_boundary = true)
   {
     viennagrid_int tmp[3];
-    viennagrid_dimension dimensions[3];
-    std::fill(dimensions, dimensions+3, 0);
 
     tmp[0] = vertex_indices[i0];
     tmp[1] = vertex_indices[i1];
     tmp[2] = vertex_indices[i2];
-    return get_make_element(element_tag, tmp, dimensions, 3, mesh);
+    return get_make_element(element_tag, tmp, 3, mesh, make_boundary);
   }
 
-  std::pair<viennagrid_index, bool> get_make_element(viennagrid_element_tag element_tag,
+  std::pair<viennagrid_index, bool> get_make_element_4(viennagrid_element_tag element_tag,
                                     viennagrid_index * vertex_indices,
                                     viennagrid_int i0, viennagrid_int i1, viennagrid_int i2, viennagrid_int i3,
-                                    viennagrid_mesh mesh)
+                                    viennagrid_mesh mesh,
+                                    bool make_boundary = true)
   {
     viennagrid_int tmp[4];
-    viennagrid_dimension dimensions[4];
-    std::fill(dimensions, dimensions+4, 0);
 
     tmp[0] = vertex_indices[i0];
     tmp[1] = vertex_indices[i1];
     tmp[2] = vertex_indices[i2];
     tmp[3] = vertex_indices[i3];
-    return get_make_element(element_tag, tmp, dimensions, 4, mesh);
+    return get_make_element(element_tag, tmp, 4, mesh, make_boundary);
   }
 
 
@@ -529,7 +510,6 @@ private:
   viennagrid_mesh root_;
 
   std::vector<viennagrid_numeric> vertex_buffer;
-  ViennaGridHolePointBufferType hole_point_buffer;
 
   std::vector<viennagrid_region> regions;
   viennagrid_index highest_region_id;
