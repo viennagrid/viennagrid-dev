@@ -52,8 +52,8 @@ target_link_libraries(segments viennagridpp)
 add_executable(interface            interface.cpp)
 target_link_libraries(interface viennagridpp)
 
-add_executable(read_plc             read_plc.cpp)
-target_link_libraries(read_plc viennagridpp)
+# add_executable(read_plc             read_plc.cpp)
+# target_link_libraries(read_plc viennagridpp)
 
 add_executable(dump_info            dump_info.cpp)
 target_link_libraries(dump_info viennagridpp)
@@ -73,8 +73,8 @@ target_link_libraries(hybrid viennagridpp)
 add_executable(hierarchy    hierarchy.cpp)
 target_link_libraries(hierarchy viennagridpp)
 
-add_executable(plc_test    plc_test.cpp)
-target_link_libraries(plc_test viennagridpp)
+# add_executable(plc_test    plc_test.cpp)
+# target_link_libraries(plc_test viennagridpp)
 
 add_executable(serialize    serialize.cpp)
 target_link_libraries(serialize viennagridpp)

@@ -15,10 +15,12 @@
 #endif
 
 #include "viennagridpp/core.hpp"
+#include "viennagridpp/algorithm/volume.hpp"
 #include "viennagridpp/io/vtk_writer.hpp"
 
 #include "common.hpp"
 #include "bench.hpp"
+#include "iteration.hpp"
 
 
 int main()
@@ -27,20 +29,37 @@ int main()
   int cell_count = 1000000;
 
 
+  std::cout << "C pure triangles" << std::endl;
+  bench_iteration(cell_count, bench_count, make_aabb_triangles_CPP, volume_C_pure);
+  std::cout << std::endl;
+
   std::cout << "C triangles" << std::endl;
-  bench_creation(cell_count, bench_count, make_aabb_triangles_C);
+  bench_iteration(cell_count, bench_count, make_aabb_triangles_CPP, volume_C);
+  std::cout << std::endl;
+
+  std::cout << "CPP C mixed triangles" << std::endl;
+  bench_iteration(cell_count, bench_count, make_aabb_triangles_CPP, volume_mixed_CPP_C);
   std::cout << std::endl;
 
   std::cout << "CPP triangles" << std::endl;
-  bench_creation(cell_count, bench_count, make_aabb_triangles_CPP);
+  bench_iteration(cell_count, bench_count, make_aabb_triangles_CPP, volume_CPP);
+  std::cout << std::endl;
+
+
+  std::cout << "C pure tetrahedrons" << std::endl;
+  bench_iteration(cell_count, bench_count, make_aabb_tetrahedrons_CPP, volume_C_pure);
   std::cout << std::endl;
 
   std::cout << "C tetrahedrons" << std::endl;
-  bench_creation(cell_count, bench_count, make_aabb_tetrahedrons_C);
+  bench_iteration(cell_count, bench_count, make_aabb_tetrahedrons_CPP, volume_C);
+  std::cout << std::endl;
+
+  std::cout << "CPP C mixed tetrahedrons" << std::endl;
+  bench_iteration(cell_count, bench_count, make_aabb_tetrahedrons_CPP, volume_mixed_CPP_C);
   std::cout << std::endl;
 
   std::cout << "CPP tetrahedrons" << std::endl;
-  bench_creation(cell_count, bench_count, make_aabb_tetrahedrons_CPP);
+  bench_iteration(cell_count, bench_count, make_aabb_tetrahedrons_CPP, volume_CPP);
   std::cout << std::endl;
 
 

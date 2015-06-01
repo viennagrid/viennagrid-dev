@@ -18,31 +18,26 @@
 #include "viennagridpp/io/vtk_writer.hpp"
 
 #include "common.hpp"
-#include "bench.hpp"
 
 
 int main()
 {
-  int bench_count = 10;
-  int cell_count = 1000000;
+  int cell_count = 10000;
 
 
-  std::cout << "C triangles" << std::endl;
-  bench_creation(cell_count, bench_count, make_aabb_triangles_C);
-  std::cout << std::endl;
+  {
+    viennagrid::mesh_t mesh;
+    make_aabb_triangles_C(mesh, cell_count);
+    viennagrid::io::vtk_writer<viennagrid::mesh_t> writer;
+    writer(mesh, "triangles");
+  }
 
-  std::cout << "CPP triangles" << std::endl;
-  bench_creation(cell_count, bench_count, make_aabb_triangles_CPP);
-  std::cout << std::endl;
-
-  std::cout << "C tetrahedrons" << std::endl;
-  bench_creation(cell_count, bench_count, make_aabb_tetrahedrons_C);
-  std::cout << std::endl;
-
-  std::cout << "CPP tetrahedrons" << std::endl;
-  bench_creation(cell_count, bench_count, make_aabb_tetrahedrons_CPP);
-  std::cout << std::endl;
-
+  {
+    viennagrid::mesh_t mesh;
+    make_aabb_tetrahedrons_C(mesh, cell_count);
+    viennagrid::io::vtk_writer<viennagrid::mesh_t> writer;
+    writer(mesh, "tetrahedrons");
+  }
 
   return EXIT_SUCCESS;
 }
