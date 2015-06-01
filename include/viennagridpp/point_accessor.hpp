@@ -32,6 +32,9 @@ namespace viennagrid
   class root_mesh_point_accessor_t
   {
   public:
+    typedef viennagrid::point_t point_type;
+    typedef viennagrid::element_t element_type;
+
     template<typename ElementT>
     typename viennagrid::result_of::point<ElementT>::type get( ElementT const & element ) const { return viennagrid::get_point(element); }
 
