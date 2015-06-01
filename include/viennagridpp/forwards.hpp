@@ -154,7 +154,6 @@ namespace viennagrid
     element_tag_t() : element_tag_(VIENNAGRID_ELEMENT_TAG_NO_ELEMENT) {}
 
     viennagrid_element_tag internal() const { return element_tag_; }
-    element_tag_t facet_tag() const { return element_tag_t( viennagrid_facet_tag(internal()) ); }
 
     static element_tag_t vertex() { return element_tag_t(VIENNAGRID_ELEMENT_TAG_VERTEX); }
     static element_tag_t line() { return element_tag_t(VIENNAGRID_ELEMENT_TAG_LINE); }
@@ -162,7 +161,6 @@ namespace viennagrid
     static element_tag_t triangle() { return element_tag_t(VIENNAGRID_ELEMENT_TAG_TRIANGLE); }
     static element_tag_t quadrilateral() { return element_tag_t(VIENNAGRID_ELEMENT_TAG_QUADRILATERAL); }
     static element_tag_t polygon() { return element_tag_t(VIENNAGRID_ELEMENT_TAG_POLYGON); }
-    static element_tag_t plc() { return element_tag_t(VIENNAGRID_ELEMENT_TAG_PLC); }
     static element_tag_t tetrahedron() { return element_tag_t(VIENNAGRID_ELEMENT_TAG_TETRAHEDRON); }
     static element_tag_t hexahedron() { return element_tag_t(VIENNAGRID_ELEMENT_TAG_HEXAHEDRON); }
 
@@ -173,7 +171,6 @@ namespace viennagrid
     bool is_triangle() const { return *this == triangle(); }
     bool is_quadrilateral() const { return *this == quadrilateral(); }
     bool is_polygon() const { return *this == polygon(); }
-    bool is_plc() const { return *this == plc(); }
     bool is_tetrahedron() const { return *this == tetrahedron(); }
     bool is_hexahedron() const { return *this == hexahedron(); }
 
@@ -225,12 +222,8 @@ namespace viennagrid
   typedef static_tag_t<VIENNAGRID_ELEMENT_TAG_TRIANGLE> triangle_tag;
   typedef static_tag_t<VIENNAGRID_ELEMENT_TAG_QUADRILATERAL> quadrilateral_tag;
   typedef static_tag_t<VIENNAGRID_ELEMENT_TAG_POLYGON> polygon_tag;
-  typedef static_tag_t<VIENNAGRID_ELEMENT_TAG_PLC> plc_tag;
   typedef static_tag_t<VIENNAGRID_ELEMENT_TAG_TETRAHEDRON> tetrahedron_tag;
   typedef static_tag_t<VIENNAGRID_ELEMENT_TAG_HEXAHEDRON> hexahedron_tag;
-
-//   typedef static_tag_t<VIENNAGRID_ELEMENT_TAG_CELL> cell_tag;
-//   typedef static_tag_t<VIENNAGRID_ELEMENT_TAG_FACET> facet_tag;
 
 
 

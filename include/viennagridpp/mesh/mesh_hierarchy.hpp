@@ -161,10 +161,6 @@ namespace viennagrid
   { return element_count( internal_mesh_hierarchy(mesh_hierarchy), VIENNAGRID_ELEMENT_TAG_POLYGON ); }
 
   template<bool is_const>
-  viennagrid_int plc_count(base_mesh_hierarchy<is_const> const & mesh_hierarchy)
-  { return element_count( internal_mesh_hierarchy(mesh_hierarchy), VIENNAGRID_ELEMENT_TAG_PLC ); }
-
-  template<bool is_const>
   viennagrid_int tetrahedron_count(base_mesh_hierarchy<is_const> const & mesh_hierarchy)
   { return element_count( internal_mesh_hierarchy(mesh_hierarchy), VIENNAGRID_ELEMENT_TAG_TETRAHEDRON ); }
 
@@ -236,13 +232,13 @@ namespace viennagrid
   template<typename SomethingT>
   viennagrid_dimension cell_dimension( SomethingT const & something )
   {
-    return topologic_dimension(mesh_hierarchy(something));
+    return topologic_dimension(internal_mesh_hierarchy(something));
   }
 
   template<typename SomethingT>
   viennagrid_dimension facet_dimension( SomethingT const & something )
   {
-    return cell_dimension(mesh_hierarchy(something)) - 1;
+    return topologic_dimension(internal_mesh_hierarchy(something)) - 1;
   }
 
 

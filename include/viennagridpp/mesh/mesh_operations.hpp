@@ -99,9 +99,6 @@ namespace viennagrid
     template<bool element_is_const>
     DstElementType copy_element( base_element<element_is_const> const & src )
     {
-      if (src.tag().is_plc())
-        return copy_plc(src);
-
       typedef base_element<element_is_const> SrcElementType;
       typedef typename viennagrid::result_of::const_element_range<SrcElementType>::type ConstVerticesOnElementRangeType;
       typedef typename viennagrid::result_of::iterator<ConstVerticesOnElementRangeType>::type ConstVerticesOnElementIteratorType;
@@ -116,27 +113,6 @@ namespace viennagrid
         copy_region_information(src, dst);
       return dst;
     }
-
-    template<bool element_is_const>
-    DstElementType copy_plc( base_element<element_is_const> const & src )
-    {
-      assert( src.tag().is_plc() );
-
-      typedef base_element<element_is_const> SrcElementType;
-      typedef typename viennagrid::result_of::const_element_range<SrcElementType>::type ConstLinesOnElementRangeType;
-      typedef typename viennagrid::result_of::iterator<ConstLinesOnElementRangeType>::type ConstLinesOnElementRangeIteratorType;
-
-      std::vector<DstElementType> dst_lines;
-      ConstLinesOnElementRangeType lines(src, 1);
-      for (ConstLinesOnElementRangeIteratorType lit = lines.begin(); lit != lines.end(); ++lit)
-        dst_lines.push_back( (*this)(*lit) );
-
-      DstElementType dst = viennagrid::make_plc( dst_mesh(), dst_lines.begin(), dst_lines.end() );
-      if (copy_region_information_)
-        copy_region_information(src, dst);
-      return dst;
-    }
-
 
     DstMeshType const & dst_mesh() const { return dst_mesh_; }
 

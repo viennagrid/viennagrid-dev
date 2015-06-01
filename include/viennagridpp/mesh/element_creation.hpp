@@ -100,12 +100,10 @@ namespace viennagrid
                          ElementIteratorT elements_begin,
                          ElementIteratorT elements_end)
   {
-    std::vector<viennagrid_dimension> internal_element_dimensions;
     std::vector<viennagrid_index> internal_vertices_indices;
 
     for (; elements_begin != elements_end; ++elements_begin)
     {
-      internal_element_dimensions.push_back( viennagrid::topologic_dimension(*elements_begin) );
       internal_vertices_indices.push_back( (*elements_begin).id() );
     }
 
@@ -114,7 +112,6 @@ namespace viennagrid
                               tag.internal(),
                               internal_vertices_indices.size(),
                               &internal_vertices_indices[0],
-                              &internal_element_dimensions[0],
                               &id);
 
     return element_t(mesh_hierarchy, tag.topologic_dimension(), id);
@@ -198,12 +195,10 @@ namespace viennagrid
                                  IntersectionIteratorT intersects_begin,
                                  IntersectionIteratorT intersects_end)
   {
-    std::vector<viennagrid_dimension> internal_element_dimensions;
     std::vector<viennagrid_index> internal_vertices_indices;
 
     for (; elements_begin != elements_end; ++elements_begin)
     {
-      internal_element_dimensions.push_back( viennagrid::topologic_dimension(*elements_begin) );
       internal_vertices_indices.push_back( (*elements_begin).id() );
     }
 
@@ -226,7 +221,6 @@ namespace viennagrid
                                          tag.internal(),
                                          internal_vertices_indices.size(),
                                          &internal_vertices_indices[0],
-                                         &internal_element_dimensions[0],
                                          vertex_indices.size(),
                                          &vertex_indices[0],
                                          &intersects_indices[0], &intersects_dimensions[0],
@@ -269,12 +263,6 @@ namespace viennagrid
     v[2] = v2;
     v[3] = v3;
     return make_element<quadrilateral_tag>(something, v, v+4);
-  }
-
-  template<typename SomethingT, typename ElementIteratorT>
-  element_t make_plc(SomethingT const & something, ElementIteratorT elements_begin, ElementIteratorT elements_end)
-  {
-    return make_element<viennagrid::plc_tag>(something, elements_begin, elements_end);
   }
 
   template<typename SomethingT>

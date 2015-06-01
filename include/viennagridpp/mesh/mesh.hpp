@@ -154,7 +154,9 @@ namespace viennagrid
   template<bool is_const>
   viennagrid_mesh_hierarchy internal_mesh_hierarchy( base_mesh<is_const> const & mesh )
   {
-    return mesh.internal_mesh_hierarchy();
+    viennagrid_mesh_hierarchy tmp;
+    viennagrid_mesh_get_mesh_hierarchy(mesh.internal(), &tmp);
+    return tmp;
   }
 
 

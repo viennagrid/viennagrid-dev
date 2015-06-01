@@ -98,6 +98,7 @@ namespace viennagrid
   { return element.topologic_dimension(); }
 
 
+
   template<bool is_const>
   base_mesh_hierarchy<is_const> mesh_hierarchy( base_element<is_const> const & element )
   { return element.mesh_hierarchy(); }
@@ -148,19 +149,6 @@ namespace viennagrid
     if (element.tag().is_vertex())
     {
       os << viennagrid::get_point(element);
-    }
-    else if (element.tag().is_plc())
-    {
-      typedef typename viennagrid::result_of::const_element_range< base_element<is_const> >::type ConstLineRangeType;
-      ConstLineRangeType lines(element, 1);
-
-      os <<  "{";
-      typename ConstLineRangeType::iterator lit = lines.begin();
-      os << *lit++;
-
-      for (; lit != lines.end(); ++lit)
-        os << ", " << *lit;
-      os << " }";
     }
     else
     {
