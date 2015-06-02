@@ -13,8 +13,8 @@
 
 
 void make_triangle(viennagrid_mesh_hierarchy mesh_hierarchy,
-                   viennagrid_index * indices,
-                   viennagrid_index * cells)
+                   viennagrid_int * indices,
+                   viennagrid_int * cells)
 {
   viennagrid_element_create(mesh_hierarchy, VIENNAGRID_ELEMENT_TAG_TRIANGLE, 3, indices+0, cells+0);
   viennagrid_element_create(mesh_hierarchy, VIENNAGRID_ELEMENT_TAG_TRIANGLE, 3, indices+1, cells+1);
@@ -30,10 +30,10 @@ void make_triangle(viennagrid::mesh_t const & mesh,
 }
 
 void make_tetrahedron(viennagrid_mesh_hierarchy mesh_hierarchy,
-                      viennagrid_index * indices,
-                      viennagrid_index * cells)
+                      viennagrid_int * indices,
+                      viennagrid_int * cells)
 {
-  viennagrid_index local_indices[4];
+  viennagrid_int local_indices[4];
 
   local_indices[0] = indices[0];
   local_indices[1] = indices[2];
@@ -138,7 +138,7 @@ void make_aabb_triangles_C_full(viennagrid_mesh mesh,
   viennagrid_numeric step_x = (ur_x-ll_x) / (point_count_x-1);
   viennagrid_numeric step_y = (ur_y-ll_y) / (point_count_y-1);
 
-  std::vector<viennagrid_index> vertex_indices(point_count_x*point_count_y);
+  std::vector<viennagrid_int> vertex_indices(point_count_x*point_count_y);
   int i = 0;
 
   double p[2];
@@ -155,13 +155,13 @@ void make_aabb_triangles_C_full(viennagrid_mesh mesh,
   for (int yi = 0; yi != point_count_y-1; ++yi)
     for (int xi = 0; xi != point_count_x-1; ++xi)
     {
-      viennagrid_index indices[4];
+      viennagrid_int indices[4];
       indices[0] = vertex_indices[(yi+0)*point_count_y+(xi+0)];
       indices[1] = vertex_indices[(yi+0)*point_count_y+(xi+1)];
       indices[2] = vertex_indices[(yi+1)*point_count_y+(xi+0)];
       indices[3] = vertex_indices[(yi+1)*point_count_y+(xi+1)];
 
-      viennagrid_index cells[2];
+      viennagrid_int cells[2];
       make_triangle(mesh_hierarchy, indices, cells);
     }
 }
@@ -235,7 +235,7 @@ void make_aabb_tetrahedrons_C_full(viennagrid_mesh mesh,
   viennagrid_numeric step_y = (ur_y-ll_y) / (point_count_y-1);
   viennagrid_numeric step_z = (ur_z-ll_z) / (point_count_z-1);
 
-  std::vector<viennagrid_index> vertex_indices(point_count_x*point_count_y*point_count_z);
+  std::vector<viennagrid_int> vertex_indices(point_count_x*point_count_y*point_count_z);
   int i = 0;
 
   double p[3];
@@ -257,7 +257,7 @@ void make_aabb_tetrahedrons_C_full(viennagrid_mesh mesh,
     for (int yi = 0; yi != point_count_y-1; ++yi)
       for (int xi = 0; xi != point_count_x-1; ++xi)
       {
-        viennagrid_index indices[8];
+        viennagrid_int indices[8];
         indices[0] = vertex_indices[(zi+0)*point_count_z*point_count_y+(yi+0)*point_count_y+(xi+0)];
         indices[1] = vertex_indices[(zi+0)*point_count_z*point_count_y+(yi+0)*point_count_y+(xi+1)];
         indices[2] = vertex_indices[(zi+0)*point_count_z*point_count_y+(yi+1)*point_count_y+(xi+0)];
@@ -267,7 +267,7 @@ void make_aabb_tetrahedrons_C_full(viennagrid_mesh mesh,
         indices[6] = vertex_indices[(zi+1)*point_count_z*point_count_y+(yi+1)*point_count_y+(xi+0)];
         indices[7] = vertex_indices[(zi+1)*point_count_z*point_count_y+(yi+1)*point_count_y+(xi+1)];
 
-        viennagrid_index cells[6];
+        viennagrid_int cells[6];
         make_tetrahedron(mesh_hierarchy, indices, cells);
       }
 }
@@ -383,7 +383,7 @@ void make_aabb_triangles_region_C_full(viennagrid_mesh mesh,
   for (int i = 0; i != region_count; ++i)
     viennagrid_region_create(mesh_hierarchy, &regions[i]);
 
-  std::vector<viennagrid_index> vertex_indices(point_count_x*point_count_y);
+  std::vector<viennagrid_int> vertex_indices(point_count_x*point_count_y);
   int i = 0;
 
   double p[2];
@@ -401,13 +401,13 @@ void make_aabb_triangles_region_C_full(viennagrid_mesh mesh,
   for (int yi = 0; yi != point_count_y-1; ++yi)
     for (int xi = 0; xi != point_count_x-1; ++xi)
     {
-      viennagrid_index indices[4];
+      viennagrid_int indices[4];
       indices[0] = vertex_indices[(yi+0)*point_count_y+(xi+0)];
       indices[1] = vertex_indices[(yi+0)*point_count_y+(xi+1)];
       indices[2] = vertex_indices[(yi+1)*point_count_y+(xi+0)];
       indices[3] = vertex_indices[(yi+1)*point_count_y+(xi+1)];
 
-      viennagrid_index cells[2];
+      viennagrid_int cells[2];
       make_triangle(mesh_hierarchy, indices, cells);
 
       viennagrid_add_to_region(mesh_hierarchy, 2, cells[0], regions[(i++)%region_count]);
@@ -501,7 +501,7 @@ void make_aabb_tetrahedrons_region_C_full(viennagrid_mesh mesh,
   for (int i = 0; i != region_count; ++i)
     viennagrid_region_create(mesh_hierarchy, &regions[i]);
 
-  std::vector<viennagrid_index> vertex_indices(point_count_x*point_count_y*point_count_z);
+  std::vector<viennagrid_int> vertex_indices(point_count_x*point_count_y*point_count_z);
   int i = 0;
 
   double p[3];
@@ -523,7 +523,7 @@ void make_aabb_tetrahedrons_region_C_full(viennagrid_mesh mesh,
     for (int yi = 0; yi != point_count_y-1; ++yi)
       for (int xi = 0; xi != point_count_x-1; ++xi)
       {
-        viennagrid_index indices[8];
+        viennagrid_int indices[8];
         indices[0] = vertex_indices[(zi+0)*point_count_z*point_count_y+(yi+0)*point_count_y+(xi+0)];
         indices[1] = vertex_indices[(zi+0)*point_count_z*point_count_y+(yi+0)*point_count_y+(xi+1)];
         indices[2] = vertex_indices[(zi+0)*point_count_z*point_count_y+(yi+1)*point_count_y+(xi+0)];
@@ -533,7 +533,7 @@ void make_aabb_tetrahedrons_region_C_full(viennagrid_mesh mesh,
         indices[6] = vertex_indices[(zi+1)*point_count_z*point_count_y+(yi+1)*point_count_y+(xi+0)];
         indices[7] = vertex_indices[(zi+1)*point_count_z*point_count_y+(yi+1)*point_count_y+(xi+1)];
 
-        viennagrid_index cells[6];
+        viennagrid_int cells[6];
         make_tetrahedron(mesh_hierarchy, indices, cells);
 
         viennagrid_add_to_region(mesh_hierarchy, 3, cells[0], regions[(i++)%region_count]);

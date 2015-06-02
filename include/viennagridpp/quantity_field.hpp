@@ -121,7 +121,7 @@ namespace viennagrid
 
 
 
-    value_type get(viennagrid_index id) const
+    value_type get(viennagrid_int id) const
     {
       viennagrid_numeric * tmp;
       viennagrid_quantity_field_get_value(internal(), id, &tmp);
@@ -136,7 +136,7 @@ namespace viennagrid
       return get(element.id());
     }
 
-    bool valid(viennagrid_index id) const
+    bool valid(viennagrid_int id) const
     {
       return get(id).valid();
     }
@@ -148,22 +148,22 @@ namespace viennagrid
     }
 
 
-    void set(viennagrid_index id, viennagrid_numeric const * value)
+    void set(viennagrid_int id, viennagrid_numeric const * value)
     {
       viennagrid_quantity_field_set_value(internal(), id, const_cast<viennagrid_numeric*>(value));
     }
 
-    void set(viennagrid_index id, std::vector<viennagrid_numeric> const & value)
+    void set(viennagrid_int id, std::vector<viennagrid_numeric> const & value)
     {
       viennagrid_quantity_field_set_value(internal(), id, const_cast<viennagrid_numeric*>(&value[0]));
     }
 
-//     void set(viennagrid_index id, value_type const & value)
+//     void set(viennagrid_int id, value_type const & value)
 //     {
 //       viennagrid_quantity_field_set_value(internal(), id, value.values());
 //     }
 
-    void set(viennagrid_index id, viennagrid_numeric value)
+    void set(viennagrid_int id, viennagrid_numeric value)
     {
       viennagrid_quantity_field_set_value(internal(), id, &value);
     }

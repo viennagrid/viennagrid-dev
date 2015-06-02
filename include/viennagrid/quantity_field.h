@@ -46,10 +46,10 @@ VIENNAGRID_DYNAMIC_EXPORT viennagrid_error viennagrid_quantity_field_size(vienna
                                                                            viennagrid_int * value_count);
 
 VIENNAGRID_DYNAMIC_EXPORT viennagrid_error viennagrid_quantity_field_set_value(viennagrid_quantity_field quantity_field,
-                                                                                viennagrid_index element_id,
+                                                                                viennagrid_int element_id,
                                                                                 viennagrid_numeric * values);
 VIENNAGRID_DYNAMIC_EXPORT viennagrid_error viennagrid_quantity_field_get_value(viennagrid_quantity_field quantity_field,
-                                                                                viennagrid_index element_id,
+                                                                                viennagrid_int element_id,
                                                                                 viennagrid_numeric ** values);
 
 #endif

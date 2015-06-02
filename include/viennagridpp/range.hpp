@@ -27,8 +27,8 @@ namespace viennagrid
     unpack_element_functor(unpack_element_functor<other_is_const> const & other) : mesh_hierarchy_(other.mesh_hierarchy_), topologic_dimension_(other.topologic_dimension_) {}
 
 
-    value_type operator()(viennagrid_index & id) const { return value_type(mesh_hierarchy_, topologic_dimension_, id); }
-    const_value_type operator()(viennagrid_index const & id) const { return const_value_type(mesh_hierarchy_, topologic_dimension_, id); }
+    value_type operator()(viennagrid_int & id) const { return value_type(mesh_hierarchy_, topologic_dimension_, id); }
+    const_value_type operator()(viennagrid_int const & id) const { return const_value_type(mesh_hierarchy_, topologic_dimension_, id); }
 
     viennagrid_mesh_hierarchy mesh_hierarchy_;
     viennagrid_int topologic_dimension_;
@@ -49,8 +49,8 @@ namespace viennagrid
     typedef typename result_of::const_nonconst<mesh_t, is_const>::type mesh_type;
     typedef typename result_of::const_nonconst<mesh_t, true>::type const_mesh_type;
 
-    typedef typename result_of::const_nonconst<viennagrid_index *, is_const>::type index_pointer_type;
-    typedef typename result_of::const_nonconst<viennagrid_index *, true>::type const_index_pointer_type;
+    typedef typename result_of::const_nonconst<viennagrid_int *, is_const>::type index_pointer_type;
+    typedef typename result_of::const_nonconst<viennagrid_int *, true>::type const_index_pointer_type;
 
     typedef typename result_of::const_nonconst<element_t, is_const>::type element_type;
     typedef typename result_of::const_nonconst<element_t, false>::type nonconst_element_type;
@@ -68,8 +68,8 @@ namespace viennagrid
 
       viennagrid_elements_get(mesh,
                               topologic_dimension(),
-                              const_cast<viennagrid_index **>(&element_index_begin),
-                              const_cast<viennagrid_index **>(&element_index_end));
+                              const_cast<viennagrid_int **>(&element_index_begin),
+                              const_cast<viennagrid_int **>(&element_index_end));
     }
 
     template<bool element_is_const>
@@ -82,8 +82,8 @@ namespace viennagrid
                                            viennagrid::topologic_dimension(element),
                                            element.id(),
                                            topologic_dimension(),
-                                           const_cast<viennagrid_index **>(&element_index_begin),
-                                           const_cast<viennagrid_index **>(&element_index_end));
+                                           const_cast<viennagrid_int **>(&element_index_begin),
+                                           const_cast<viennagrid_int **>(&element_index_end));
     }
 
     template<bool element_is_const>
@@ -96,8 +96,8 @@ namespace viennagrid
                                              viennagrid::topologic_dimension(element),
                                              element.id(),
                                              topologic_dimension(),
-                                             const_cast<viennagrid_index **>(&element_index_begin),
-                                             const_cast<viennagrid_index **>(&element_index_end));
+                                             const_cast<viennagrid_int **>(&element_index_begin),
+                                             const_cast<viennagrid_int **>(&element_index_end));
     }
 
     template<bool element_is_const>
@@ -111,8 +111,8 @@ namespace viennagrid
                                            element.id(),
                                            connector_topo_dim_in,
                                            topologic_dimension(),
-                                           const_cast<viennagrid_index **>(&element_index_begin),
-                                           const_cast<viennagrid_index **>(&element_index_end));
+                                           const_cast<viennagrid_int **>(&element_index_begin),
+                                           const_cast<viennagrid_int **>(&element_index_end));
     }
 
 

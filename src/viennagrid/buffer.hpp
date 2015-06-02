@@ -153,6 +153,21 @@ public:
     return begin(index);
   }
 
+  void erase(size_type index, size_type first, size_type last)
+  {
+    if (last <= first)
+      return;
+
+    size_type old_count = size(index);
+    size_type to_delete_count = last-first;
+
+    pointer ptr = begin(index);
+    for (size_type i = last; i != old_count; ++i)
+      *(ptr+i-to_delete_count) = (*ptr+i);
+
+    resize(index, old_count-to_delete_count);
+  }
+
   void add(size_type index, value_type to_add)
   {
     assert( index < static_cast<size_type>(offsets.size()) );

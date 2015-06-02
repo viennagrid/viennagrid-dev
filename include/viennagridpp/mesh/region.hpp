@@ -16,7 +16,7 @@ namespace viennagrid
 
   public:
 
-    typedef viennagrid_index id_type;
+    typedef viennagrid_int id_type;
     typedef element_tag_t element_tag_type;
 
     typedef typename result_of::const_nonconst<mesh_hierarchy_t, is_const>::type mesh_hierarchy_type;

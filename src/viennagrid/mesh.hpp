@@ -9,9 +9,9 @@
 #include "buffer.hpp"
 
 
-typedef sparse_packed_multibuffer<viennagrid_index, viennagrid_index> ViennaGridCoBoundaryBufferType;
-typedef sparse_packed_multibuffer<viennagrid_index, viennagrid_index> ViennaGridNeighborBufferType;
-typedef sparse_packed_multibuffer<viennagrid_index, viennagrid_index> ViennaGridElementChildrenBufferType;
+typedef sparse_packed_multibuffer<viennagrid_int, viennagrid_int> ViennaGridCoBoundaryBufferType;
+typedef sparse_packed_multibuffer<viennagrid_int, viennagrid_int> ViennaGridNeighborBufferType;
+typedef sparse_packed_multibuffer<viennagrid_int, viennagrid_int> ViennaGridElementChildrenBufferType;
 
 
 struct viennagrid_element_handle_buffer
@@ -20,17 +20,17 @@ public:
 
   viennagrid_element_handle_buffer() { clear(); }
 
-  bool element_present(viennagrid_index element_id) const
+  bool element_present(viennagrid_int element_id) const
   {
     return find(element_id) != end();
   }
 
-  void add_element(viennagrid_index element_id)
+  void add_element(viennagrid_int element_id)
   {
     insert( element_id );
   }
 
-  viennagrid_index * ids()
+  viennagrid_int * ids()
   { return indices.empty() ? 0 : &indices[0]; }
   viennagrid_int count() const { return indices.size(); }
 
@@ -54,10 +54,10 @@ public:
 
 private:
 
-  std::vector<viennagrid_index> indices;
+  std::vector<viennagrid_int> indices;
 
-  typedef std::vector<viennagrid_index>::iterator iterator;
-  typedef std::vector<viennagrid_index>::const_iterator const_iterator;
+  typedef std::vector<viennagrid_int>::iterator iterator;
+  typedef std::vector<viennagrid_int>::const_iterator const_iterator;
 
   iterator begin() { return indices.begin(); }
   iterator end() { return indices.end(); }
@@ -65,7 +65,7 @@ private:
   const_iterator begin() const { return indices.begin(); }
   const_iterator end() const { return indices.end(); }
 
-  iterator find(viennagrid_index id)
+  iterator find(viennagrid_int id)
   {
     if (indices.empty() || (id > indices.back()))
       return end();
@@ -77,7 +77,7 @@ private:
       return end();
   }
 
-  const_iterator find(viennagrid_index id) const
+  const_iterator find(viennagrid_int id) const
   {
     if (indices.empty() || (id > indices.back()))
       return end();
@@ -89,7 +89,7 @@ private:
       return end();
   }
 
-  void insert(viennagrid_index id)
+  void insert(viennagrid_int id)
   {
     if (indices.empty() || (id > indices.back()))
       indices.push_back(id);
@@ -170,21 +170,21 @@ public:
   viennagrid_int element_count(viennagrid_dimension element_topo_dim)
   { return element_handle_buffer(element_topo_dim).count(); }
 
-  viennagrid_index * elements_begin(viennagrid_dimension element_topo_dim)
+  viennagrid_int * elements_begin(viennagrid_dimension element_topo_dim)
   { return element_handle_buffer(element_topo_dim).ids(); }
-  viennagrid_index * elements_end(viennagrid_dimension element_topo_dim)
+  viennagrid_int * elements_end(viennagrid_dimension element_topo_dim)
   { return elements_begin(element_topo_dim) + element_count(element_topo_dim); }
 
 
-  viennagrid_index * boundary_begin(viennagrid_dimension element_topo_dim, viennagrid_index element_id, viennagrid_dimension boundary_topo_dim);
-  viennagrid_index * boundary_end(viennagrid_dimension element_topo_dim, viennagrid_index element_id, viennagrid_dimension boundary_topo_dim);
+  viennagrid_int * boundary_begin(viennagrid_dimension element_topo_dim, viennagrid_int element_id, viennagrid_dimension boundary_topo_dim);
+  viennagrid_int * boundary_end(viennagrid_dimension element_topo_dim, viennagrid_int element_id, viennagrid_dimension boundary_topo_dim);
 
-  viennagrid_index * coboundary_begin(viennagrid_dimension element_tag, viennagrid_index element_id, viennagrid_dimension coboundary_tag)
+  viennagrid_int * coboundary_begin(viennagrid_dimension element_tag, viennagrid_int element_id, viennagrid_dimension coboundary_tag)
   {
     make_coboundary(element_tag, coboundary_tag);
     return element_handle_buffer(element_tag).coboundary_buffer(coboundary_tag).begin(element_id);
   }
-  viennagrid_index * coboundary_end(viennagrid_dimension element_tag, viennagrid_index element_id, viennagrid_dimension coboundary_tag)
+  viennagrid_int * coboundary_end(viennagrid_dimension element_tag, viennagrid_int element_id, viennagrid_dimension coboundary_tag)
   {
     make_coboundary(element_tag, coboundary_tag);
     return element_handle_buffer(element_tag).coboundary_buffer(coboundary_tag).end(element_id);
@@ -192,12 +192,12 @@ public:
 
 
 
-  viennagrid_index * neighbor_begin(viennagrid_dimension element_tag, viennagrid_index element_id, viennagrid_dimension connector_tag, viennagrid_dimension neighbor_tag)
+  viennagrid_int * neighbor_begin(viennagrid_dimension element_tag, viennagrid_int element_id, viennagrid_dimension connector_tag, viennagrid_dimension neighbor_tag)
   {
     make_neighbor(element_tag, connector_tag, neighbor_tag);
     return element_handle_buffer(element_tag).neighbor_buffer(connector_tag, neighbor_tag).begin(element_id);
   }
-  viennagrid_index * neighbor_end(viennagrid_dimension element_tag, viennagrid_index element_id, viennagrid_dimension connector_tag, viennagrid_dimension neighbor_tag)
+  viennagrid_int * neighbor_end(viennagrid_dimension element_tag, viennagrid_int element_id, viennagrid_dimension connector_tag, viennagrid_dimension neighbor_tag)
   {
     make_neighbor(element_tag, connector_tag, neighbor_tag);
     return element_handle_buffer(element_tag).neighbor_buffer(connector_tag, neighbor_tag).end(element_id);
@@ -206,7 +206,7 @@ public:
 
 
 
-  viennagrid_index * connected_begin(viennagrid_dimension element_tag, viennagrid_index element_id, viennagrid_dimension connected_tag)
+  viennagrid_int * connected_begin(viennagrid_dimension element_tag, viennagrid_int element_id, viennagrid_dimension connected_tag)
   {
     assert( element_tag != connected_tag );
     if (element_tag > connected_tag)
@@ -215,7 +215,7 @@ public:
       return coboundary_begin(element_tag, element_id, connected_tag);
   }
 
-  viennagrid_index * connected_end(viennagrid_dimension element_tag, viennagrid_index element_id, viennagrid_dimension connected_tag)
+  viennagrid_int * connected_end(viennagrid_dimension element_tag, viennagrid_int element_id, viennagrid_dimension connected_tag)
   {
     assert( element_tag != connected_tag );
     if (element_tag > connected_tag)
@@ -226,17 +226,17 @@ public:
 
 
   void add_element(viennagrid_dimension element_topo_dim,
-                   viennagrid_index element_id);
+                   viennagrid_int element_id);
 
-  viennagrid_index make_refined_element(
+  viennagrid_int make_refined_element(
     viennagrid_dimension      element_topo_dim,
-    viennagrid_index          element_id,
+    viennagrid_int          element_id,
     viennagrid_element_tag    refined_element_tag,
     viennagrid_int            refined_element_base_count,
-    viennagrid_index *        refined_element_base_indices,
+    viennagrid_int *        refined_element_base_indices,
     viennagrid_int            intersects_count,
-    viennagrid_index *        intersect_vertices_indices,
-    viennagrid_index *        intersects_indices,
+    viennagrid_int *        intersect_vertices_indices,
+    viennagrid_int *        intersects_indices,
     viennagrid_dimension *    intersects_topo_dims);
 
 
@@ -256,10 +256,10 @@ public:
   void set_neighbor_uptodate(viennagrid_dimension element_topo_dim, viennagrid_dimension connector_tag, viennagrid_dimension neighbor_tag);
 
 
-  bool is_boundary(viennagrid_dimension element_topo_dim, viennagrid_index element_id)
+  bool is_boundary(viennagrid_dimension element_topo_dim, viennagrid_int element_id)
   { return boundary_elements(element_topo_dim).find(element_id) != boundary_elements(element_topo_dim).end(); }
 
-  void set_boundary(viennagrid_dimension element_topo_dim, viennagrid_index element_id)
+  void set_boundary(viennagrid_dimension element_topo_dim, viennagrid_int element_id)
   { boundary_elements(element_topo_dim).insert(element_id); }
 
   void clear_boundary(viennagrid_dimension element_topo_dim)
@@ -355,10 +355,10 @@ private:
 
 
 
-  std::set<viennagrid_index> & boundary_elements(viennagrid_dimension element_topo_dim) { return boundary_elements_[element_topo_dim]; }
+  std::set<viennagrid_int> & boundary_elements(viennagrid_dimension element_topo_dim) { return boundary_elements_[element_topo_dim]; }
 
-  std::set<viennagrid_index> boundary_elements_[VIENNAGRID_TOPOLOGIC_DIMENSION_END];
-  viennagrid_index boundary_elements_change_counter;
+  std::set<viennagrid_int> boundary_elements_[VIENNAGRID_TOPOLOGIC_DIMENSION_END];
+  viennagrid_int boundary_elements_change_counter;
 };
 
 #endif

@@ -22,7 +22,7 @@ typedef int viennagrid_bool;
 typedef int viennagrid_int;
 typedef viennagrid_int viennagrid_error;
 typedef double viennagrid_numeric;
-typedef viennagrid_int viennagrid_index;
+// typedef viennagrid_int viennagrid_index;
 typedef unsigned char viennagrid_element_tag;
 typedef int viennagrid_dimension;
 typedef char viennagrid_flag;
@@ -31,7 +31,7 @@ typedef char viennagrid_flag;
 typedef struct viennagrid_mesh_hierarchy_ * viennagrid_mesh_hierarchy;
 typedef struct viennagrid_mesh_ * viennagrid_mesh;
 typedef struct viennagrid_region_ * viennagrid_region;
-
+typedef struct viennagrid_plc_ * viennagrid_plc;
 
 
 

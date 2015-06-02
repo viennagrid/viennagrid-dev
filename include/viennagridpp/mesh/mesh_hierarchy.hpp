@@ -27,7 +27,7 @@ namespace viennagrid
     typedef typename result_of::const_nonconst<element_t, is_const>::type element_type;
     typedef typename result_of::const_nonconst<element_t, true>::type const_element_type;
 
-    typedef viennagrid_index region_id_type;
+    typedef viennagrid_int region_id_type;
     typedef element_tag_t element_tag_type;
 
 

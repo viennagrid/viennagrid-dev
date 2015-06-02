@@ -19,7 +19,7 @@ namespace viennagrid
     typedef base_element<false> nonconst_element_type;
     typedef base_element<true> const_element_type;
 
-    typedef viennagrid_index id_type;
+    typedef viennagrid_int id_type;
     typedef element_tag_t tag_type;
     typedef viennagrid_dimension dimension_type;
 
@@ -113,7 +113,7 @@ namespace viennagrid
   template<bool is_const>
   base_element<is_const> parent(base_element<is_const> const & element)
   {
-    viennagrid_index parent_id;
+    viennagrid_int parent_id;
     viennagrid_element_parent_get(internal_mesh_hierarchy(element),
                                   viennagrid::topologic_dimension(element),
                                   element.id(),

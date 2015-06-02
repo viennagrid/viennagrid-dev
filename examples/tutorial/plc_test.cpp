@@ -1,135 +1,141 @@
-#include <iostream>
-#include <typeinfo>
-
-#include <map>
-#include <iterator>
-
-using std::cout;
-using std::endl;
-
-
-#include "viennagridpp/core.hpp"
+#include "stdio.h"
+#include "viennagrid/viennagrid.h"
 
 int main()
 {
+  viennagrid_plc plc;
+  viennagrid_plc_make(&plc);
+  viennagrid_plc_set_geometric_dimension(plc, 2);
 
-    //
-    // First define the type of handle to use:
-    //
+  viennagrid_int i = 0;
+  viennagrid_int vertices[11];
+  viennagrid_numeric point[2];
 
-    typedef viennagrid::mesh_t MeshType;
-    MeshType mesh;
+  point[0] = 0;
+  point[1] = 0;
+  viennagrid_plc_vertex_create(plc, point, vertices+(i++));
 
-    //
-    // typedefs for the element types
-    //
+  point[0] = 10;
+  point[1] = 0;
+  viennagrid_plc_vertex_create(plc, point, vertices+(i++));
 
-    typedef viennagrid::result_of::point<MeshType>::type PointType;
+  point[0] = 20;
+  point[1] = 10;
+  viennagrid_plc_vertex_create(plc, point, vertices+(i++));
 
-    typedef viennagrid::result_of::element<MeshType, viennagrid::vertex_tag>::type VertexType;
-    typedef viennagrid::result_of::element<MeshType, viennagrid::line_tag>::type LineType;
+  point[0] = 20;
+  point[1] = 20;
+  viennagrid_plc_vertex_create(plc, point, vertices+(i++));
 
+  point[0] = 10;
+  point[1] = 20;
+  viennagrid_plc_vertex_create(plc, point, vertices+(i++));
 
-    std::vector<VertexType> v;
+  point[0] = 0;
+  point[1] = 10;
+  viennagrid_plc_vertex_create(plc, point, vertices+(i++));
 
-    v.push_back( viennagrid::make_vertex( mesh, viennagrid::make_point(0, 0) ) );
-    v.push_back( viennagrid::make_vertex( mesh, viennagrid::make_point(10, 0) ) );
-    v.push_back( viennagrid::make_vertex( mesh, viennagrid::make_point(20, 10) ) );
-    v.push_back( viennagrid::make_vertex( mesh, viennagrid::make_point(20, 20) ) );
-    v.push_back( viennagrid::make_vertex( mesh, viennagrid::make_point(10, 20) ) );
-    v.push_back( viennagrid::make_vertex( mesh, viennagrid::make_point(0, 10) ) );
-    v.push_back( viennagrid::make_vertex( mesh, viennagrid::make_point(5, 5) ) );
+  point[0] = 5;
+  point[1] = 5;
+  viennagrid_plc_vertex_create(plc, point, vertices+(i++));
 
-    v.push_back( viennagrid::make_vertex( mesh, viennagrid::make_point(10, 10) ) );
-    v.push_back( viennagrid::make_vertex( mesh, viennagrid::make_point(12, 10) ) );
-    v.push_back( viennagrid::make_vertex( mesh, viennagrid::make_point(10, 12) ) );
+  point[0] = 10;
+  point[1] = 10;
+  viennagrid_plc_vertex_create(plc, point, vertices+(i++));
 
-    v.push_back( viennagrid::make_vertex( mesh, viennagrid::make_point(8, 10) ) );
+  point[0] = 12;
+  point[1] = 10;
+  viennagrid_plc_vertex_create(plc, point, vertices+(i++));
 
+  point[0] = 10;
+  point[1] = 12;
+  viennagrid_plc_vertex_create(plc, point, vertices+(i++));
 
-    std::vector<LineType> lines;
-
-    {
-        std::vector<VertexType>::iterator start = v.begin();
-        std::vector<VertexType>::iterator end = v.begin() + 7;
-
-        std::vector<VertexType>::iterator it1 = start;
-        std::vector<VertexType>::iterator it2 = it1; ++it2;
-        for (; it2 != end; ++it1, ++it2)
-            lines.push_back( viennagrid::make_line(mesh, *it1, *it2) );
-        lines.push_back( viennagrid::make_line(mesh, *it1, *start) );
-    }
-
-    {
-        std::vector<VertexType>::iterator start = v.begin() + 7;
-        std::vector<VertexType>::iterator end = v.begin() + 10;
-
-        std::vector<VertexType>::iterator it1 = start;
-        std::vector<VertexType>::iterator it2 = it1; ++it2;
-        for (; it2 != end; ++it1, ++it2)
-            lines.push_back( viennagrid::make_line(mesh, *it1, *it2) );
-        lines.push_back( viennagrid::make_line(mesh, *it1, *start) );
-    }
-
-    lines.push_back( viennagrid::make_line( mesh, *(v.begin() + 9), *(v.begin() + 10) ) );
-
-    typedef viennagrid::result_of::element<MeshType>::type PLCType;
-
-    PLCType plc = viennagrid::make_element<viennagrid::plc_tag>( mesh, lines.begin(), lines.end() );
-    viennagrid::add_hole_point( plc, viennagrid::make_point(10.5, 10.5) );
-    viennagrid::add_hole_point( plc, viennagrid::make_point(0.5, 0.5) );
-
-    typedef viennagrid::result_of::vertex_range<PLCType>::type VertexOnPLCRange;
-    typedef viennagrid::result_of::iterator<VertexOnPLCRange>::type VertexOnPLCIterator;
-
-
-    std::cout << "All vertices of the PLC" << std::endl;
-    VertexOnPLCRange vertex_range( plc );
-    for (VertexOnPLCIterator it = vertex_range.begin(); it != vertex_range.end(); ++it)
-        std::cout << *it << " " << viennagrid::get_point(mesh, *it) << std::endl;
-    std::cout << std::endl;
-
-    typedef viennagrid::result_of::element_range<PLCType, 1>::type LineOnPLCRange;
-    typedef viennagrid::result_of::iterator<LineOnPLCRange>::type LineOnPLCIterator;
-
-    std::cout << "All lines of the PLC" << std::endl;
-    LineOnPLCRange line_range( plc );
-    for (LineOnPLCIterator it = line_range.begin(); it != line_range.end(); ++it)
-        std::cout << *it << std::endl;
-    std::cout << std::endl;
-
-    std::cout << "All PLCs of the mesh" << std::endl;
-    typedef viennagrid::result_of::element_range< MeshType, 2 >::type PLCRangeType;
-    PLCRangeType plc_range(mesh);
-    for ( PLCRangeType::iterator it = plc_range.begin(); it != plc_range.end(); ++it)
-        std::cout << *it << std::endl;
-    std::cout << std::endl;
-
-
-//     typedef viennagrid::result_of::const_element_view<plc_type, vertex_type>::type vertex_view_type;
-//     typedef viennagrid::result_of::iterator<vertex_view_type>::type vertex_view_iterator;
-//
-//     std::cout << "All loose points of the plc" << std::endl;
-//     vertex_view_type vertex_view = viennagrid::loose_elements<vertex_type>(plc);
-//     for (vertex_view_iterator it = vertex_view.begin(); it != vertex_view.end(); ++it)
-//         std::cout << *it << std::endl;
-//     std::cout << std::endl;
+  point[0] = 8;
+  point[1] = 10;
+  viennagrid_plc_vertex_create(plc, point, vertices+(i++));
 
 
 
-//     typedef viennagrid::result_of::element_view<plc_type, line_type>::type line_view_type;
-//
-//     std::cout << "All inner lines of the plc" << std::endl;
-//     viennagrid::tagging::result_of::element_tag<plc_type, viennagrid::bounding_tag>::type bounding_tag = viennagrid::tagging::make_element_tag<viennagrid::bounding_tag>(plc);
-//     line_view_type inner_lines = viennagrid::untagged_elements<line_type>(plc, bounding_tag);
-//     std::copy( inner_lines.begin(), inner_lines.end(), std::ostream_iterator<line_type>(std::cout, "\n") );
-//     std::cout << std::endl;
+  i = 0;
+  viennagrid_int lines[7+3+1];
+  {
+    viennagrid_int * start = vertices;
+    viennagrid_int * end = vertices+7;
+
+    viennagrid_int * it1 = start;
+    viennagrid_int * it2 = it1; ++it2;
+    for (; it2 != end; ++it1, ++it2)
+      viennagrid_plc_line_create(plc, *it1, *it2, lines+(i++));
+    viennagrid_plc_line_create(plc, *it1, *start, lines+(i++));
+  }
+
+  {
+    viennagrid_int * start = vertices+7;
+    viennagrid_int * end = vertices+10;
+
+    viennagrid_int * it1 = start;
+    viennagrid_int * it2 = it1; ++it2;
+    for (; it2 != end; ++it1, ++it2)
+      viennagrid_plc_line_create(plc, *it1, *it2, lines+(i++));
+    viennagrid_plc_line_create(plc, *it1, *start, lines+(i++));
+  }
+
+  viennagrid_plc_line_create(plc, *(vertices+9), *(vertices+10), lines+(i++));
 
 
-    std::cout << "All hole points of the plc" << std::endl;
-    std::vector<PointType> pts = viennagrid::hole_points(plc);// viennagrid::hole_points<MeshType>(plc);
-    std::copy( pts.begin(), pts.end(), std::ostream_iterator<PointType>(std::cout, "\n") );
+  viennagrid_int facet;
+  viennagrid_plc_facet_create(plc, lines, 11, &facet);
+
+  point[0] = 10.5;
+  point[1] = 10.5;
+  viennagrid_plc_facet_hole_point_add(plc, facet, point);
+
+  point[0] = 0.5;
+  point[1] = 0.5;
+  viennagrid_plc_facet_hole_point_add(plc, facet, point);
 
 
-    return 0;
+
+  printf("All vertices of the facet\n");
+  viennagrid_int * vertices_begin;
+  viennagrid_int * vertices_end;
+  viennagrid_plc_boundary_elements(plc, 2, facet, 0, &vertices_begin, &vertices_end);
+
+  for (viennagrid_int * it = vertices_begin; it != vertices_end; ++it)
+  {
+    viennagrid_numeric * coords;
+    viennagrid_plc_vertex_get(plc, *it, &coords);
+    printf("  %d (%f, %f)\n", *it, coords[0], coords[1]);
+  }
+
+
+  printf("All lines of the facet\n");
+  viennagrid_int * lines_begin;
+  viennagrid_int * lines_end;
+  viennagrid_plc_boundary_elements(plc, 2, facet, 1, &lines_begin, &lines_end);
+
+  for (viennagrid_int * it = lines_begin; it != lines_end; ++it)
+  {
+    viennagrid_int * vertices_on_line_begin;
+    viennagrid_int * vertices_on_line_end;
+    viennagrid_plc_boundary_elements(plc, 1, *it, 0, &vertices_on_line_begin, &vertices_on_line_end);
+
+    printf("  [line %d: %d, %d]\n", *it, *vertices_on_line_begin, *(vertices_on_line_begin+1));
+  }
+
+
+  printf("All hole points of the facet\n");
+  viennagrid_numeric * hole_points;
+  viennagrid_int hole_point_count;
+  viennagrid_plc_facet_get_hole_points(plc, facet, &hole_points, &hole_point_count);
+
+  for (viennagrid_int i = 0; i != hole_point_count; ++i)
+  {
+    printf("  (%f, %f)\n", hole_points[2*i+0], hole_points[2*i+1]);
+  }
+
+
+  viennagrid_plc_delete(plc);
+  return 0;
 }

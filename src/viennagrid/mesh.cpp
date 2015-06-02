@@ -17,12 +17,12 @@ viennagrid_mesh_::viennagrid_mesh_(viennagrid_mesh_hierarchy hierarchy_in, vienn
 
 
 void viennagrid_mesh_::add_element(viennagrid_dimension element_topo_dim,
-                                   viennagrid_index element_id)
+                                   viennagrid_int element_id)
 {
   assert( (element_topo_dim >= 0) && (element_topo_dim < VIENNAGRID_TOPOLOGIC_DIMENSION_END) );
   assert( element_id >= 0 );
 
-  viennagrid_index parent_id = mesh_hierarchy()->element_buffer(element_topo_dim).parent_id(element_id);
+  viennagrid_int parent_id = mesh_hierarchy()->element_buffer(element_topo_dim).parent_id(element_id);
 
   if (element_topo_dim == cell_dimension())
   {
@@ -72,15 +72,15 @@ bool is_subset(SortedContainerT1 const & cont1, SortedContainerT2 const & cont2)
 
 
 
-viennagrid_index viennagrid_mesh_::make_refined_element(
+viennagrid_int viennagrid_mesh_::make_refined_element(
   viennagrid_dimension      element_topo_dim,
-  viennagrid_index          element_id,
+  viennagrid_int          element_id,
   viennagrid_element_tag    refined_element_tag,
   viennagrid_int            refined_element_base_count,
-  viennagrid_index *        refined_element_base_indices,
+  viennagrid_int *        refined_element_base_indices,
   viennagrid_int            intersects_count,
-  viennagrid_index *        intersect_vertices_indices,
-  viennagrid_index *        intersects_indices,
+  viennagrid_int *        intersect_vertices_indices,
+  viennagrid_int *        intersects_indices,
   viennagrid_dimension *    intersects_topo_dims)
 {
   assert( !is_root() );
@@ -89,7 +89,7 @@ viennagrid_index viennagrid_mesh_::make_refined_element(
   std::vector<viennagrid_int> refined_elements;
 
 
-  std::map< viennagrid_dimension, std::map<viennagrid_index, std::vector<viennagrid_index> > > intersects;
+  std::map< viennagrid_dimension, std::map<viennagrid_int, std::vector<viennagrid_int> > > intersects;
 
   for (viennagrid_int i = 0; i != intersects_count; ++i)
   {
@@ -97,7 +97,7 @@ viennagrid_index viennagrid_mesh_::make_refined_element(
   }
 
 
-  viennagrid_index child_element_id = mesh_hierarchy()->get_make_element(
+  viennagrid_int child_element_id = mesh_hierarchy()->get_make_element(
           refined_element_tag,
           refined_element_base_indices,
           refined_element_base_count,
@@ -109,8 +109,8 @@ viennagrid_index viennagrid_mesh_::make_refined_element(
   add_element(element_topo_dim, child_element_id);
   for (viennagrid_dimension boundary_dim = 0; boundary_dim != element_topo_dim; ++boundary_dim)
   {
-    viennagrid_index * boundary = boundary_begin(element_topo_dim, child_element_id, boundary_dim);
-    viennagrid_index * end = boundary_end(element_topo_dim, child_element_id, boundary_dim);
+    viennagrid_int * boundary = boundary_begin(element_topo_dim, child_element_id, boundary_dim);
+    viennagrid_int * end = boundary_end(element_topo_dim, child_element_id, boundary_dim);
 
     for (; boundary != end; ++boundary)
     {
@@ -122,24 +122,24 @@ viennagrid_index viennagrid_mesh_::make_refined_element(
         continue;
 
 
-      viennagrid_index * bv = boundary_begin(boundary_dim, boundary_id, 0);
-      viennagrid_index * bv_end = boundary_end(boundary_dim, boundary_id, 0);
+      viennagrid_int * bv = boundary_begin(boundary_dim, boundary_id, 0);
+      viennagrid_int * bv_end = boundary_end(boundary_dim, boundary_id, 0);
 
-      std::vector<viennagrid_index> boundary_vertices(bv_end-bv);
+      std::vector<viennagrid_int> boundary_vertices(bv_end-bv);
 
       std::copy(bv, bv_end, boundary_vertices.begin());
       std::sort(boundary_vertices.begin(), boundary_vertices.end());
 
       if (mesh_hierarchy()->element_buffer(boundary_dim).parent_id(boundary_id) < 0)
       {
-        std::map<viennagrid_index, std::vector<viennagrid_index> > & intersected_elements = intersects[boundary_dim];
+        std::map<viennagrid_int, std::vector<viennagrid_int> > & intersected_elements = intersects[boundary_dim];
 
-        for (std::map<viennagrid_index, std::vector<viennagrid_index> >::iterator kt = intersected_elements.begin(); kt != intersected_elements.end(); ++kt)
+        for (std::map<viennagrid_int, std::vector<viennagrid_int> >::iterator kt = intersected_elements.begin(); kt != intersected_elements.end(); ++kt)
         {
-          viennagrid_index * iv = boundary_begin(boundary_dim, kt->first, 0);
-          viennagrid_index * iv_end = boundary_end(boundary_dim, kt->first, 0);
+          viennagrid_int * iv = boundary_begin(boundary_dim, kt->first, 0);
+          viennagrid_int * iv_end = boundary_end(boundary_dim, kt->first, 0);
 
-          std::vector<viennagrid_index> intersected_element_indices(iv_end-iv + kt->second.size());
+          std::vector<viennagrid_int> intersected_element_indices(iv_end-iv + kt->second.size());
 
           std::copy(iv, iv_end, intersected_element_indices.begin());
           std::copy(kt->second.begin(), kt->second.end(), &intersected_element_indices[iv_end-iv]);
@@ -165,9 +165,9 @@ bool viennagrid_mesh_::is_root() const { return hierarchy_->root() == this; }
 viennagrid_dimension viennagrid_mesh_::geometric_dimension() { return hierarchy_->geometric_dimension(); }
 viennagrid_dimension viennagrid_mesh_::cell_dimension() { return hierarchy_->cell_dimension(); }
 
-viennagrid_index * viennagrid_mesh_::boundary_begin(viennagrid_dimension element_topo_dim, viennagrid_index element_id, viennagrid_dimension boundary_topo_dim)
+viennagrid_int * viennagrid_mesh_::boundary_begin(viennagrid_dimension element_topo_dim, viennagrid_int element_id, viennagrid_dimension boundary_topo_dim)
 { return mesh_hierarchy()->boundary_begin(element_topo_dim, element_id, boundary_topo_dim); }
-viennagrid_index * viennagrid_mesh_::boundary_end(viennagrid_dimension element_topo_dim, viennagrid_index element_id, viennagrid_dimension boundary_topo_dim)
+viennagrid_int * viennagrid_mesh_::boundary_end(viennagrid_dimension element_topo_dim, viennagrid_int element_id, viennagrid_dimension boundary_topo_dim)
 { return mesh_hierarchy()->boundary_end(element_topo_dim, element_id, boundary_topo_dim); }
 
 
@@ -205,14 +205,14 @@ void viennagrid_mesh_::make_element_children(viennagrid_mesh child, viennagrid_i
     return;
 
 
-  std::map<viennagrid_index, std::vector<viennagrid_index> > children;
+  std::map<viennagrid_int, std::vector<viennagrid_int> > children;
 
-  viennagrid_index * it       = child->elements_begin(element_topo_dim);
-  viennagrid_index * it_end   = child->elements_end(element_topo_dim);
+  viennagrid_int * it       = child->elements_begin(element_topo_dim);
+  viennagrid_int * it_end   = child->elements_end(element_topo_dim);
 
   for (; it != it_end; ++it)
   {
-    viennagrid_index parent_id = mesh_hierarchy()->element_buffer(element_topo_dim).parent_id(*it);
+    viennagrid_int parent_id = mesh_hierarchy()->element_buffer(element_topo_dim).parent_id(*it);
     assert( element_handle_buffer(element_topo_dim).element_present(parent_id) );
     children[parent_id].push_back(*it);
   }
@@ -236,16 +236,16 @@ void viennagrid_mesh_::make_coboundary(viennagrid_int element_topo_dim, viennagr
   if (!is_coboundary_obsolete(element_topo_dim, coboundary_topo_dim))
     return;
 
-  viennagrid_index * coboundary_ids = element_handle_buffer(coboundary_topo_dim).ids();
+  viennagrid_int * coboundary_ids = element_handle_buffer(coboundary_topo_dim).ids();
   viennagrid_int coboundary_count = element_handle_buffer(coboundary_topo_dim).count();
 
-  std::map< viennagrid_index, std::vector<viennagrid_index> > tmp;
+  std::map< viennagrid_int, std::vector<viennagrid_int> > tmp;
 
   for (viennagrid_int i = 0; i < coboundary_count; ++i)
   {
-    viennagrid_index coboundary_index = coboundary_ids[i];
-    viennagrid_index * element_it = boundary_begin(coboundary_topo_dim, coboundary_index, element_topo_dim);
-    viennagrid_index * element_end = boundary_end(coboundary_topo_dim, coboundary_index, element_topo_dim);
+    viennagrid_int coboundary_index = coboundary_ids[i];
+    viennagrid_int * element_it = boundary_begin(coboundary_topo_dim, coboundary_index, element_topo_dim);
+    viennagrid_int * element_end = boundary_end(coboundary_topo_dim, coboundary_index, element_topo_dim);
 
     for (; element_it != element_end; ++element_it)
       tmp[*element_it].push_back(coboundary_index);
@@ -255,9 +255,9 @@ void viennagrid_mesh_::make_coboundary(viennagrid_int element_topo_dim, viennagr
   ViennaGridCoBoundaryBufferType & coboundary_buffer = element_handle_buffer(element_topo_dim).coboundary_buffer(coboundary_topo_dim);
 
   coboundary_buffer.clear();
-  for (std::map< viennagrid_index, std::vector<viennagrid_index> >::iterator it = tmp.begin(); it != tmp.end(); ++it)
+  for (std::map< viennagrid_int, std::vector<viennagrid_int> >::iterator it = tmp.begin(); it != tmp.end(); ++it)
   {
-    viennagrid_index * indices = coboundary_buffer.insert( it->first, it->second.size() );
+    viennagrid_int * indices = coboundary_buffer.insert( it->first, it->second.size() );
     std::copy( it->second.begin(), it->second.end(), indices );
   }
 
@@ -278,7 +278,7 @@ void viennagrid_mesh_::make_neighbor(viennagrid_int element_topo_dim, viennagrid
   if ((element_topo_dim == connector_topo_dim) || (connector_topo_dim == neighbor_topo_dim))
     return;
 
-  viennagrid_index * element_ids = element_handle_buffer(element_topo_dim).ids();
+  viennagrid_int * element_ids = element_handle_buffer(element_topo_dim).ids();
   viennagrid_int element_count = element_handle_buffer(element_topo_dim).count();
 
 
@@ -287,23 +287,23 @@ void viennagrid_mesh_::make_neighbor(viennagrid_int element_topo_dim, viennagrid
 
   for (viennagrid_int i = 0; i < element_count; ++i)
   {
-    viennagrid_index element_index = element_ids[i];
-    std::set<viennagrid_index> tmp;
+    viennagrid_int element_index = element_ids[i];
+    std::set<viennagrid_int> tmp;
 
-    viennagrid_index * connector_it = connected_begin(element_topo_dim, element_index, connector_topo_dim);
-    viennagrid_index * connector_end = connected_end(element_topo_dim, element_index, connector_topo_dim);
+    viennagrid_int * connector_it = connected_begin(element_topo_dim, element_index, connector_topo_dim);
+    viennagrid_int * connector_end = connected_end(element_topo_dim, element_index, connector_topo_dim);
 
     for (; connector_it != connector_end; ++connector_it)
     {
-      viennagrid_index connector_index = *connector_it;
+      viennagrid_int connector_index = *connector_it;
 
-      viennagrid_index * neighbor_it = connected_begin(connector_topo_dim, connector_index, neighbor_topo_dim);
-      viennagrid_index * neighbor_end = connected_end(connector_topo_dim, connector_index, neighbor_topo_dim);
+      viennagrid_int * neighbor_it = connected_begin(connector_topo_dim, connector_index, neighbor_topo_dim);
+      viennagrid_int * neighbor_end = connected_end(connector_topo_dim, connector_index, neighbor_topo_dim);
 
 
       for (; neighbor_it != neighbor_end; ++neighbor_it)
       {
-        viennagrid_index neighbor_index = *neighbor_it;
+        viennagrid_int neighbor_index = *neighbor_it;
         if ((element_topo_dim == neighbor_topo_dim) && (element_index == neighbor_index))
           continue;
 
@@ -313,8 +313,8 @@ void viennagrid_mesh_::make_neighbor(viennagrid_int element_topo_dim, viennagrid
 
     if (element_topo_dim > neighbor_topo_dim)
     {
-      viennagrid_index * it = boundary_begin(element_topo_dim, element_index, neighbor_topo_dim);
-      viennagrid_index * end = boundary_begin(element_topo_dim, element_index, neighbor_topo_dim);
+      viennagrid_int * it = boundary_begin(element_topo_dim, element_index, neighbor_topo_dim);
+      viennagrid_int * end = boundary_begin(element_topo_dim, element_index, neighbor_topo_dim);
 
       for (; it != end; ++it)
         tmp.erase(*it);
@@ -322,7 +322,7 @@ void viennagrid_mesh_::make_neighbor(viennagrid_int element_topo_dim, viennagrid
 
 
 
-    viennagrid_index * indices = neighbor_buffer.insert( element_index, tmp.size() );
+    viennagrid_int * indices = neighbor_buffer.insert( element_index, tmp.size() );
     std::copy( tmp.begin(), tmp.end(), indices );
   }
 
@@ -343,10 +343,10 @@ void viennagrid_mesh_::make_boundary_flags(viennagrid_region region)
   region->clear_boundary(facet_topo_dim);
   make_coboundary(facet_topo_dim, cell_topo_dim);
 
-  for (viennagrid_index * facet = elements_begin(facet_topo_dim); facet != elements_end(facet_topo_dim); ++facet)
+  for (viennagrid_int * facet = elements_begin(facet_topo_dim); facet != elements_end(facet_topo_dim); ++facet)
   {
-    viennagrid_index * it = coboundary_begin(facet_topo_dim, *facet, cell_topo_dim);
-    viennagrid_index * cells_end = coboundary_end(facet_topo_dim, *facet, cell_topo_dim);
+    viennagrid_int * it = coboundary_begin(facet_topo_dim, *facet, cell_topo_dim);
+    viennagrid_int * cells_end = coboundary_end(facet_topo_dim, *facet, cell_topo_dim);
 
     viennagrid_int size = 0;
     for (; it != cells_end; ++it)
@@ -361,8 +361,8 @@ void viennagrid_mesh_::make_boundary_flags(viennagrid_region region)
       {
         if (viennagrid_is_boundary_tag(facet_topo_dim, boundary_topo_dim) == VIENNAGRID_TRUE)
         {
-          viennagrid_index * it = mesh_hierarchy()->element_buffer(facet_topo_dim).boundary_buffer(boundary_topo_dim).begin(*facet);
-          viennagrid_index * boundary_end = mesh_hierarchy()->element_buffer(facet_topo_dim).boundary_buffer(boundary_topo_dim).end(*facet);
+          viennagrid_int * it = mesh_hierarchy()->element_buffer(facet_topo_dim).boundary_buffer(boundary_topo_dim).begin(*facet);
+          viennagrid_int * boundary_end = mesh_hierarchy()->element_buffer(facet_topo_dim).boundary_buffer(boundary_topo_dim).end(*facet);
           for (; it != boundary_end; ++it)
           {
             region->set_boundary(boundary_topo_dim, *it);
@@ -390,10 +390,10 @@ void viennagrid_mesh_::make_boundary_flags()
   clear_boundary(facet_topo_dim);
   make_coboundary(facet_topo_dim, cell_topo_dim);
 
-  for (viennagrid_index * facet = elements_begin(facet_topo_dim); facet != elements_end(facet_topo_dim); ++facet)
+  for (viennagrid_int * facet = elements_begin(facet_topo_dim); facet != elements_end(facet_topo_dim); ++facet)
   {
-    viennagrid_index * cells_begin = coboundary_begin(facet_topo_dim, *facet, cell_topo_dim);
-    viennagrid_index * cells_end = coboundary_end(facet_topo_dim, *facet, cell_topo_dim);
+    viennagrid_int * cells_begin = coboundary_begin(facet_topo_dim, *facet, cell_topo_dim);
+    viennagrid_int * cells_end = coboundary_end(facet_topo_dim, *facet, cell_topo_dim);
 
     viennagrid_int size = cells_end - cells_begin;
 
@@ -403,8 +403,8 @@ void viennagrid_mesh_::make_boundary_flags()
       {
         if (viennagrid_is_boundary_tag(facet_topo_dim, boundary_topo_dim) == VIENNAGRID_TRUE)
         {
-          viennagrid_index * it = mesh_hierarchy()->element_buffer(facet_topo_dim).boundary_buffer(boundary_topo_dim).begin(*facet);
-          viennagrid_index * boundary_end = mesh_hierarchy()->element_buffer(facet_topo_dim).boundary_buffer(boundary_topo_dim).end(*facet);
+          viennagrid_int * it = mesh_hierarchy()->element_buffer(facet_topo_dim).boundary_buffer(boundary_topo_dim).begin(*facet);
+          viennagrid_int * boundary_end = mesh_hierarchy()->element_buffer(facet_topo_dim).boundary_buffer(boundary_topo_dim).end(*facet);
           for (; it != boundary_end; ++it)
           {
             set_boundary(boundary_topo_dim, *it);

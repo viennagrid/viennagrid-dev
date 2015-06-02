@@ -200,7 +200,7 @@ viennagrid_error viennagrid_quantity_field_size(viennagrid_quantity_field quanti
 
 
 viennagrid_error viennagrid_quantity_field_set_value(viennagrid_quantity_field quantity_field,
-                                                 viennagrid_index element_id,
+                                                 viennagrid_int element_id,
                                                  viennagrid_numeric * values)
 {
   assert( 0 <= element_id );
@@ -210,7 +210,7 @@ viennagrid_error viennagrid_quantity_field_set_value(viennagrid_quantity_field q
   switch ( quantity_field->storage_layout )
   {
     case QUANTITY_FIELD_STORAGE_DENSE:
-      if ( element_id >= static_cast<viennagrid_index>(quantity_field->dense_valid_flags.size()) )
+      if ( element_id >= static_cast<viennagrid_int>(quantity_field->dense_valid_flags.size()) )
         viennagrid_quantity_field_resize(quantity_field, element_id+1);
 
       dst = &quantity_field->dense_values[0] + element_id*quantity_field->values_dimension;
@@ -232,7 +232,7 @@ viennagrid_error viennagrid_quantity_field_set_value(viennagrid_quantity_field q
 }
 
 viennagrid_error viennagrid_quantity_field_get_value(viennagrid_quantity_field quantity_field,
-                                                 viennagrid_index element_id,
+                                                 viennagrid_int element_id,
                                                  viennagrid_numeric ** values)
 {
   assert( 0 <= element_id );
@@ -241,7 +241,7 @@ viennagrid_error viennagrid_quantity_field_get_value(viennagrid_quantity_field q
   {
     case QUANTITY_FIELD_STORAGE_DENSE:
     {
-      if ( (element_id < static_cast<viennagrid_index>(quantity_field->dense_valid_flags.size())) &&
+      if ( (element_id < static_cast<viennagrid_int>(quantity_field->dense_valid_flags.size())) &&
            (quantity_field->dense_valid_flags[element_id]) )
       {
         *values = &quantity_field->dense_values[0] + element_id*quantity_field->values_dimension;

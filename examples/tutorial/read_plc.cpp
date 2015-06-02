@@ -10,88 +10,88 @@
    License:      MIT (X11), see file LICENSE in the base directory
 ======================================================================= */
 
-#include <iostream>
-#include <typeinfo>
 
-#include <map>
-#include <iterator>
-
-using std::cout;
-using std::endl;
-
-#ifdef _MSC_VER
-  #pragma warning( disable : 4503 )     //truncated name decoration
-#endif
-
-
-#include "viennagridpp/core.hpp"
-#include "viennagridpp/io/tetgen_poly_reader.hpp"
-
+#include "stdio.h"
+#include "viennagrid/viennagrid.h"
 
 
 int main()
 {
+  viennagrid_plc plc;
+  viennagrid_plc_make(&plc);
 
-  //
-  // typedefing and instancing the mesh type
-  //
-
-  typedef viennagrid::mesh_t MeshType;
-  MeshType mesh;
+  viennagrid_plc_read_tetgen_poly(plc, "../data/two_cubes.poly");
 
 
-  //
-  // typedefs for the element types
-  //
-
-  typedef viennagrid::result_of::point<MeshType>::type point_type;
-
-  typedef viennagrid::result_of::element<MeshType>::type         PLCType;
-
-  //
-  // Reading the PLC mesh
-  //
-
-  viennagrid::io::tetgen_poly_reader reader;
-  reader(mesh, "../data/cube_with_tunnel.poly");
+  viennagrid_int facet_count;
+  viennagrid_plc_get_element_count(plc, 2, &facet_count);
 
 
-  // querying the first PLC in the mesh
-  PLCType plc = viennagrid::elements<2>(mesh)[0];
+  for (viennagrid_int facet = 0; facet != facet_count; ++facet)
+  {
+    printf("Facet %d\n", facet);
+
+    printf("  All vertices of the facet\n");
+    viennagrid_int * vertices_begin;
+    viennagrid_int * vertices_end;
+    viennagrid_plc_boundary_elements(plc, 2, facet, 0, &vertices_begin, &vertices_end);
+
+    for (viennagrid_int * it = vertices_begin; it != vertices_end; ++it)
+    {
+      viennagrid_numeric * coords;
+      viennagrid_plc_vertex_get(plc, *it, &coords);
+      printf("    %d (%f, %f, %f)\n", *it, coords[0], coords[1], coords[2]);
+    }
 
 
-  // printing all vertices of the first PLC
-  typedef viennagrid::result_of::vertex_range<PLCType>::type vertex_on_plc_range;
-  typedef viennagrid::result_of::iterator<vertex_on_plc_range>::type vertex_on_plc_iterator;
+    printf("  All lines of the facet\n");
+    viennagrid_int * lines_begin;
+    viennagrid_int * lines_end;
+    viennagrid_plc_boundary_elements(plc, 2, facet, 1, &lines_begin, &lines_end);
 
-  std::cout << "All vertices of the PLC" << std::endl;
-  vertex_on_plc_range vertex_range( plc );
-  for (vertex_on_plc_iterator it = vertex_range.begin(); it != vertex_range.end(); ++it)
-      std::cout << *it << " " << viennagrid::get_point(mesh, *it) << std::endl;
-  std::cout << std::endl;
+    for (viennagrid_int * it = lines_begin; it != lines_end; ++it)
+    {
+      viennagrid_int * vertices_on_line_begin;
+      viennagrid_int * vertices_on_line_end;
+      viennagrid_plc_boundary_elements(plc, 1, *it, 0, &vertices_on_line_begin, &vertices_on_line_end);
 
-  // printing all lines of the first PLC
-  typedef viennagrid::result_of::element_range<PLCType, 1>::type line_on_plc_range;
-  typedef viennagrid::result_of::iterator<line_on_plc_range>::type line_on_plc_iterator;
+      printf("    [line %d: %d, %d]\n", *it, *vertices_on_line_begin, *(vertices_on_line_begin+1));
+    }
 
-  std::cout << "All lines of the PLC" << std::endl;
-  line_on_plc_range line_range( plc );
-  for (line_on_plc_iterator it = line_range.begin(); it != line_range.end(); ++it)
-      std::cout << *it << std::endl;
-  std::cout << std::endl;
 
-  // printing all PLC of the mesh
-  std::cout << "All PLCs of the mesh" << std::endl;
-  typedef viennagrid::result_of::element_range<MeshType, 2>::type PLCRangeTYpe;
-  PLCRangeTYpe plc_range(mesh);
-  for ( PLCRangeTYpe::iterator it = plc_range.begin(); it != plc_range.end(); ++it)
-      std::cout << *it << std::endl;
-  std::cout << std::endl;
+    printf("  All hole points of the facet\n");
+    viennagrid_numeric * hole_points;
+    viennagrid_int hole_point_count;
+    viennagrid_plc_facet_get_hole_points(plc, facet, &hole_points, &hole_point_count);
 
-  // printing all hole points of the first PLC
-  std::cout << "All hole points of the plc" << std::endl;
-  std::vector<point_type> pts = viennagrid::hole_points(plc);
-  std::copy( pts.begin(), pts.end(), std::ostream_iterator<point_type>(std::cout, "\n") );
+    for (viennagrid_int i = 0; i != hole_point_count; ++i)
+    {
+      printf("    (%f, %f, %f)\n", hole_points[3*i+0], hole_points[3*i+1], hole_points[3*i+2]);
+    }
+  }
 
+  viennagrid_int hole_point_count;
+  viennagrid_plc_hole_point_get_count(plc, &hole_point_count);
+  printf("All hole points of the PLC\n");
+  for (viennagrid_int i = 0; i != hole_point_count; ++i)
+  {
+    viennagrid_numeric * coords;
+    viennagrid_plc_hole_point_get(plc, i, &coords);
+    printf("  (%f, %f, %f)\n", coords[0], coords[1], coords[2]);
+  }
+
+  viennagrid_int seed_point_count;
+  viennagrid_plc_seed_point_get_count(plc, &seed_point_count);
+  printf("All seed points of the PLC\n");
+  for (viennagrid_int i = 0; i != seed_point_count; ++i)
+  {
+    viennagrid_numeric * coords;
+    viennagrid_int region_id;
+    viennagrid_plc_seed_point_get(plc, i, &coords, &region_id);
+    printf("  (%f, %f, %f) - %d\n", coords[0], coords[1], coords[2], region_id);
+  }
+
+
+  viennagrid_plc_delete(plc);
   return 0;
 }
