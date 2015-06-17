@@ -9,7 +9,7 @@ namespace viennagrid
   {
     viennagrid_region * begin;
     viennagrid_region * end;
-    viennagrid_regions_get(internal_mesh_hierarchy(), &begin, &end);
+    viennagrid_mesh_hierarchy_regions_get(internal_mesh_hierarchy(), &begin, &end);
     return end-begin;
   }
 

@@ -57,7 +57,7 @@ namespace viennagrid
     tag_type tag() const
     {
       viennagrid_element_tag tag;
-      viennagrid_element_get_tag( internal_mesh_hierarchy(), topologic_dimension(), id(), &tag);
+      viennagrid_element_tag_get( internal_mesh_hierarchy(), topologic_dimension(), id(), &tag);
       return tag_type(tag);
     }
     dimension_type topologic_dimension() const { return topologic_dimension_; }

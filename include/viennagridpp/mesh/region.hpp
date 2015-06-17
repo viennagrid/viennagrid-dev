@@ -33,20 +33,20 @@ namespace viennagrid
     id_type id() const
     {
       id_type id_;
-      viennagrid_region_get_id(region_, &id_);
+      viennagrid_region_id_get(region_, &id_);
       return id_;
     }
 
     std::string name() const
     {
       const char * name_;
-      viennagrid_region_get_name(internal(), &name_);
+      viennagrid_region_name_get(internal(), &name_);
       return std::string(name_);
     }
 
     void set_name(std::string const & name_)
     {
-      viennagrid_region_set_name(internal(), name_.c_str());
+      viennagrid_region_name_set(internal(), name_.c_str());
     }
 
     mesh_hierarchy_type mesh_hierarchy()
@@ -62,7 +62,7 @@ namespace viennagrid
     viennagrid_mesh_hierarchy internal_mesh_hierarchy() const
     {
       viennagrid_mesh_hierarchy tmp;
-      viennagrid_region_get_mesh_hierarchy(region_, &tmp);
+      viennagrid_region_mesh_hierarchy_get(region_, &tmp);
       return tmp;
     }
 
@@ -117,18 +117,18 @@ namespace viennagrid
 
     base_region_range(mesh_hierarchy_type const & mesh_hierarchy_in) //: mesh_hierarchy_(mesh_hierarchy_in)
     {
-      viennagrid_regions_get(internal_mesh_hierarchy(mesh_hierarchy_in),
-                             const_cast<viennagrid_region **>(&begin_),
-                             const_cast<viennagrid_region **>(&end_));
+      viennagrid_mesh_hierarchy_regions_get(internal_mesh_hierarchy(mesh_hierarchy_in),
+                                            const_cast<viennagrid_region **>(&begin_),
+                                            const_cast<viennagrid_region **>(&end_));
     }
 
     base_region_range(element_type const & element_) //: mesh_hierarchy_( element_.mesh_hierarchy() )
     {
-      viennagrid_get_regions(internal_mesh_hierarchy(element_),
-                             viennagrid::topologic_dimension(element_),
-                             element_.id(),
-                             const_cast<viennagrid_region **>(&begin_),
-                             const_cast<viennagrid_region **>(&end_));
+      viennagrid_element_regions_get(internal_mesh_hierarchy(element_),
+                                     viennagrid::topologic_dimension(element_),
+                                     element_.id(),
+                                     const_cast<viennagrid_region **>(&begin_),
+                                     const_cast<viennagrid_region **>(&end_));
     }
 
     typedef transform_iterator<region_pointer_type, unpack_region_functor<is_const> > iterator;
@@ -233,7 +233,7 @@ namespace viennagrid
     viennagrid_mesh_hierarchy internal_mesh_hierarchy() const
     {
       viennagrid_mesh_hierarchy tmp;
-      viennagrid_region_get_mesh_hierarchy(region_, &tmp);
+      viennagrid_region_mesh_hierarchy_get(region_, &tmp);
       return tmp;
     }
 
@@ -289,18 +289,18 @@ namespace viennagrid
 
     base_mesh_region_range(mesh_type const & mesh_in) : mesh_(mesh_in.internal())
     {
-      viennagrid_regions_get(internal_mesh_hierarchy(mesh_in),
-                             const_cast<viennagrid_region **>(&begin_),
-                             const_cast<viennagrid_region **>(&end_));
+      viennagrid_mesh_hierarchy_regions_get(internal_mesh_hierarchy(mesh_in),
+                                            const_cast<viennagrid_region **>(&begin_),
+                                            const_cast<viennagrid_region **>(&end_));
     }
 
     base_mesh_region_range(mesh_type const & mesh_in, element_t const & element_) : mesh_(mesh_in.internal())
     {
-      viennagrid_get_regions(internal_mesh_hierarchy(mesh_in),
-                             viennagrid::topologic_dimension(element_),
-                             element_.id(),
-                             const_cast<viennagrid_region **>(&begin_),
-                             const_cast<viennagrid_region **>(&end_));
+      viennagrid_element_regions_get(internal_mesh_hierarchy(mesh_in),
+                                     viennagrid::topologic_dimension(element_),
+                                     element_.id(),
+                                     const_cast<viennagrid_region **>(&begin_),
+                                     const_cast<viennagrid_region **>(&end_));
     }
 
     typedef transform_iterator<region_pointer_type, unpack_mesh_region_functor<is_const> > iterator;

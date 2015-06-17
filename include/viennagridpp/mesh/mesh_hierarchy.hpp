@@ -201,7 +201,7 @@ namespace viennagrid
   inline viennagrid_dimension geometric_dimension( viennagrid_mesh_hierarchy mesh_hierarchy )
   {
     viennagrid_dimension tmp;
-    viennagrid_mesh_hierarchy_get_geometric_dimension(mesh_hierarchy, &tmp);
+    viennagrid_mesh_hierarchy_geometric_dimension_get(mesh_hierarchy, &tmp);
     return tmp;
   }
 
@@ -216,7 +216,7 @@ namespace viennagrid
   inline viennagrid_dimension topologic_dimension( viennagrid_mesh_hierarchy mesh_hierarchy )
   {
     viennagrid_dimension tmp;
-    viennagrid_mesh_hierarchy_get_cell_dimension(mesh_hierarchy, &tmp);
+    viennagrid_mesh_hierarchy_cell_dimension_get(mesh_hierarchy, &tmp);
     return tmp;
   }
 

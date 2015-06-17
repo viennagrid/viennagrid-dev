@@ -18,11 +18,11 @@ namespace viennagrid
     viennagrid_region * it;
     viennagrid_region * end;
 
-    viennagrid_get_regions(internal_mesh_hierarchy(element),
-                           viennagrid::topologic_dimension(element),
-                           element.id(),
-                           &it,
-                           &end);
+    viennagrid_element_regions_get(internal_mesh_hierarchy(element),
+                                   viennagrid::topologic_dimension(element),
+                                   element.id(),
+                                   &it,
+                                   &end);
 
     for (; it != end; ++it)
     {

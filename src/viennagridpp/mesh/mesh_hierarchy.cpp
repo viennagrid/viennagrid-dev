@@ -8,7 +8,7 @@ namespace viennagrid
   typename base_mesh_hierarchy<is_const>::mesh_type base_mesh_hierarchy<is_const>::root()
   {
     viennagrid_mesh internal_root;
-    viennagrid_mesh_hierarchy_get_root(internal(), &internal_root);
+    viennagrid_mesh_hierarchy_root_mesh_get(internal(), &internal_root);
     return mesh_type(internal_root);
   }
 
@@ -20,7 +20,7 @@ namespace viennagrid
   typename base_mesh_hierarchy<is_const>::const_mesh_type base_mesh_hierarchy<is_const>::root() const
   {
     viennagrid_mesh internal_root;
-    viennagrid_mesh_hierarchy_get_root(internal(), &internal_root);
+    viennagrid_mesh_hierarchy_root_mesh_get(internal(), &internal_root);
     return const_mesh_type(internal_root);
   }
 
@@ -85,7 +85,7 @@ namespace viennagrid
   {
     point_t result( viennagrid::geometric_dimension(mesh_hierarchy) );
     viennagrid_numeric const * tmp;
-    viennagrid_vertex_get(mesh_hierarchy, vertex.id(), const_cast<viennagrid_numeric **>(&tmp));
+    viennagrid_point_get(mesh_hierarchy, vertex.id(), const_cast<viennagrid_numeric **>(&tmp));
     std::copy(tmp, tmp+result.size(), result.begin());
     return result;
   }
@@ -98,7 +98,7 @@ namespace viennagrid
   void set_point(viennagrid_mesh_hierarchy mesh_hierarchy, base_element<false> const & vertex, point_t const & point)
   {
     viennagrid_numeric * tmp;
-    viennagrid_vertex_get(mesh_hierarchy, vertex.id(), &tmp);
+    viennagrid_point_get(mesh_hierarchy, vertex.id(), &tmp);
     std::copy(point.begin(), point.end(), tmp);
   }
 

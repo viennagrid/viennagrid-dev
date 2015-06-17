@@ -85,7 +85,7 @@ namespace viennagrid
     viennagrid_mesh_hierarchy internal_mesh_hierarchy() const
     {
       viennagrid_mesh_hierarchy tmp;
-      viennagrid_mesh_get_mesh_hierarchy(internal(), &tmp);
+      viennagrid_mesh_mesh_hierarchy_get(internal(), &tmp);
       return tmp;
     }
 
@@ -101,7 +101,7 @@ namespace viennagrid
     bool is_root() const
     {
       viennagrid_mesh mesh;
-      viennagrid_mesh_hierarchy_get_root( internal_mesh_hierarchy(), &mesh);
+      viennagrid_mesh_hierarchy_root_mesh_get( internal_mesh_hierarchy(), &mesh);
       return internal() == mesh;
     }
 
@@ -147,7 +147,7 @@ namespace viennagrid
   inline viennagrid_mesh_hierarchy internal_mesh_hierarchy(viennagrid_mesh mesh)
   {
     viennagrid_mesh_hierarchy tmp;
-    viennagrid_mesh_get_mesh_hierarchy(mesh, &tmp);
+    viennagrid_mesh_mesh_hierarchy_get(mesh, &tmp);
     return tmp;
   }
 
@@ -155,7 +155,7 @@ namespace viennagrid
   viennagrid_mesh_hierarchy internal_mesh_hierarchy( base_mesh<is_const> const & mesh )
   {
     viennagrid_mesh_hierarchy tmp;
-    viennagrid_mesh_get_mesh_hierarchy(mesh.internal(), &tmp);
+    viennagrid_mesh_mesh_hierarchy_get(mesh.internal(), &tmp);
     return tmp;
   }
 

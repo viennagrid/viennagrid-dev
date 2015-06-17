@@ -14,7 +14,7 @@ namespace viennagrid
                                point_t const & point)
   {
     if ( viennagrid::geometric_dimension(mesh_hierarchy) <= 0 && !point.empty() )
-      viennagrid_mesh_hierarchy_set_geometric_dimension( mesh_hierarchy, point.size() );
+      viennagrid_mesh_hierarchy_geometric_dimension_set( mesh_hierarchy, point.size() );
 
     viennagrid_int id;
     viennagrid_vertex_create( mesh_hierarchy, &point[0], &id );
