@@ -108,8 +108,6 @@ public:
   viennagrid_int * vertex_offsets_pointer() { return boundary_buffer(0).offset_pointer(); }
   viennagrid_int * vertex_indices_pointer() { return boundary_buffer(0).values_pointer(); }
   viennagrid_int * parent_id_pointer() { return &parents[0]; }
-//   viennagrid_int * region_offsets_pointer() { return region_buffer.offset_pointer(); }
-  viennagrid_int * region_offsets_pointer() { return 0; }
 
   ViennaGridBoundaryBufferType & boundary_buffer(viennagrid_dimension boundary_topo_dim)
   {
