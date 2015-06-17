@@ -5,6 +5,7 @@
 #include "viennagridpp/forwards.hpp"
 #include "viennagridpp/point.hpp"
 #include "viennagridpp/utils.hpp"
+#include "viennagridpp/plc.hpp"
 
 #include "viennagridpp/element/element.hpp"
 #include "viennagridpp/mesh/region.hpp"
@@ -15,7 +16,6 @@
 
 #include "viennagridpp/mesh/element_creation.hpp"
 #include "viennagridpp/mesh/mesh_operations.hpp"
-#include "viennagridpp/element/plc.hpp"
 
 
 #endif
