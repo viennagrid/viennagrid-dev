@@ -5,7 +5,7 @@ int main()
 {
   viennagrid_plc plc;
   viennagrid_plc_make(&plc);
-  viennagrid_plc_set_geometric_dimension(plc, 2);
+  viennagrid_plc_geometric_dimension_set(plc, 2);
 
   viennagrid_int i = 0;
   viennagrid_int vertices[11];
@@ -105,7 +105,7 @@ int main()
   for (viennagrid_int * it = vertices_begin; it != vertices_end; ++it)
   {
     viennagrid_numeric * coords;
-    viennagrid_plc_vertex_get(plc, *it, &coords);
+    viennagrid_plc_point_get(plc, *it, &coords);
     printf("  %d (%f, %f)\n", *it, coords[0], coords[1]);
   }
 
@@ -128,7 +128,7 @@ int main()
   printf("All hole points of the facet\n");
   viennagrid_numeric * hole_points;
   viennagrid_int hole_point_count;
-  viennagrid_plc_facet_get_hole_points(plc, facet, &hole_points, &hole_point_count);
+  viennagrid_plc_facet_hole_points_get(plc, facet, &hole_points, &hole_point_count);
 
   for (viennagrid_int i = 0; i != hole_point_count; ++i)
   {

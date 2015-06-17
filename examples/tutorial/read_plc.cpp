@@ -24,7 +24,7 @@ int main()
 
 
   viennagrid_int facet_count;
-  viennagrid_plc_get_element_count(plc, 2, &facet_count);
+  viennagrid_plc_element_count_get(plc, 2, &facet_count);
 
 
   for (viennagrid_int facet = 0; facet != facet_count; ++facet)
@@ -39,7 +39,7 @@ int main()
     for (viennagrid_int * it = vertices_begin; it != vertices_end; ++it)
     {
       viennagrid_numeric * coords;
-      viennagrid_plc_vertex_get(plc, *it, &coords);
+      viennagrid_plc_point_get(plc, *it, &coords);
       printf("    %d (%f, %f, %f)\n", *it, coords[0], coords[1], coords[2]);
     }
 
@@ -62,7 +62,7 @@ int main()
     printf("  All hole points of the facet\n");
     viennagrid_numeric * hole_points;
     viennagrid_int hole_point_count;
-    viennagrid_plc_facet_get_hole_points(plc, facet, &hole_points, &hole_point_count);
+    viennagrid_plc_facet_hole_points_get(plc, facet, &hole_points, &hole_point_count);
 
     for (viennagrid_int i = 0; i != hole_point_count; ++i)
     {
@@ -70,25 +70,23 @@ int main()
     }
   }
 
+  viennagrid_numeric * hole_points;
   viennagrid_int hole_point_count;
-  viennagrid_plc_hole_point_get_count(plc, &hole_point_count);
+  viennagrid_plc_hole_points_get(plc, &hole_points, &hole_point_count);
   printf("All hole points of the PLC\n");
   for (viennagrid_int i = 0; i != hole_point_count; ++i)
   {
-    viennagrid_numeric * coords;
-    viennagrid_plc_hole_point_get(plc, i, &coords);
-    printf("  (%f, %f, %f)\n", coords[0], coords[1], coords[2]);
+    printf("  (%f, %f, %f)\n", hole_points[3*i+0], hole_points[3*i+1], hole_points[3*i+2]);
   }
 
+  viennagrid_numeric * seed_points;
+  viennagrid_int * seed_point_regions;
   viennagrid_int seed_point_count;
-  viennagrid_plc_seed_point_get_count(plc, &seed_point_count);
+  viennagrid_plc_seed_points_get(plc, &seed_points, &seed_point_regions, &seed_point_count);
   printf("All seed points of the PLC\n");
   for (viennagrid_int i = 0; i != seed_point_count; ++i)
   {
-    viennagrid_numeric * coords;
-    viennagrid_int region_id;
-    viennagrid_plc_seed_point_get(plc, i, &coords, &region_id);
-    printf("  (%f, %f, %f) - %d\n", coords[0], coords[1], coords[2], region_id);
+    printf("  (%f, %f, %f) - %d\n", seed_points[3*i+0], seed_points[3*i+1], seed_points[3*i+2], seed_point_regions[i]);
   }
 
 

@@ -133,7 +133,7 @@ viennagrid_numeric volume(viennagrid_mesh_hierarchy mesh_hierarchy,
                           viennagrid_int * vertices_end)
 {
   viennagrid_numeric * coords;
-  viennagrid_vertex_pointer(mesh_hierarchy, &coords);
+  viennagrid_point_pointer(mesh_hierarchy, &coords);
 
   switch (element_tag)
   {
@@ -172,10 +172,10 @@ viennagrid_numeric volume(viennagrid_mesh_hierarchy mesh_hierarchy,
                           viennagrid_int element_id)
 {
   viennagrid_element_tag element_tag;
-  viennagrid_element_get_tag(mesh_hierarchy, element_dimension, element_id, &element_tag);
+  viennagrid_element_tag_get(mesh_hierarchy, element_dimension, element_id, &element_tag);
 
   viennagrid_dimension geometry_dimension;
-  viennagrid_mesh_hierarchy_get_geometric_dimension(mesh_hierarchy, &geometry_dimension);
+  viennagrid_mesh_hierarchy_geometric_dimension_get(mesh_hierarchy, &geometry_dimension);
 
   viennagrid_int * vertices_start;
   viennagrid_int * vertices_end;
@@ -220,10 +220,10 @@ viennagrid_numeric volume_C(viennagrid::mesh_t const & mesh_)
   viennagrid_mesh mesh = mesh_.internal();
 
   viennagrid_mesh_hierarchy mesh_hierarchy;
-  viennagrid_mesh_get_mesh_hierarchy(mesh, &mesh_hierarchy);
+  viennagrid_mesh_mesh_hierarchy_get(mesh, &mesh_hierarchy);
 
   viennagrid_dimension cell_dimension;
-  viennagrid_mesh_hierarchy_get_cell_dimension(mesh_hierarchy, &cell_dimension);
+  viennagrid_mesh_hierarchy_cell_dimension_get(mesh_hierarchy, &cell_dimension);
 
   viennagrid_int * cells_start;
   viennagrid_int * cells_end;
@@ -244,13 +244,13 @@ viennagrid_numeric volume_C_pure(viennagrid::mesh_t const & mesh_)
   viennagrid_mesh mesh = mesh_.internal();
 
   viennagrid_mesh_hierarchy mesh_hierarchy;
-  viennagrid_mesh_get_mesh_hierarchy(mesh, &mesh_hierarchy);
+  viennagrid_mesh_mesh_hierarchy_get(mesh, &mesh_hierarchy);
 
   viennagrid_dimension cell_dimension;
-  viennagrid_mesh_hierarchy_get_cell_dimension(mesh_hierarchy, &cell_dimension);
+  viennagrid_mesh_hierarchy_cell_dimension_get(mesh_hierarchy, &cell_dimension);
 
   viennagrid_dimension geometry_dimension;
-  viennagrid_mesh_hierarchy_get_geometric_dimension(mesh_hierarchy, &geometry_dimension);
+  viennagrid_mesh_hierarchy_geometric_dimension_get(mesh_hierarchy, &geometry_dimension);
 
   viennagrid_int * cells_start;
   viennagrid_int * cells_end;
@@ -266,7 +266,7 @@ viennagrid_numeric volume_C_pure(viennagrid::mesh_t const & mesh_)
   for (viennagrid_int * cell_id = cells_start; cell_id != cells_end; ++cell_id)
   {
     viennagrid_element_tag element_tag;
-    viennagrid_element_get_tag(mesh_hierarchy, cell_dimension, *cell_id, &element_tag);
+    viennagrid_element_tag_get(mesh_hierarchy, cell_dimension, *cell_id, &element_tag);
 
     sum += volume(mesh_hierarchy, geometry_dimension, element_tag,
                   boundary_indices + boundary_offsets[*cell_id],
@@ -350,10 +350,10 @@ viennagrid_int iteration_C(viennagrid::mesh_t const & mesh_)
   viennagrid_mesh mesh = mesh_.internal();
 
   viennagrid_mesh_hierarchy mesh_hierarchy;
-  viennagrid_mesh_get_mesh_hierarchy(mesh, &mesh_hierarchy);
+  viennagrid_mesh_mesh_hierarchy_get(mesh, &mesh_hierarchy);
 
   viennagrid_dimension cell_dimension;
-  viennagrid_mesh_hierarchy_get_cell_dimension(mesh_hierarchy, &cell_dimension);
+  viennagrid_mesh_hierarchy_cell_dimension_get(mesh_hierarchy, &cell_dimension);
 
   viennagrid_int * cells_start;
   viennagrid_int * cells_end;
@@ -407,10 +407,10 @@ viennagrid_int boundary_iteration_C(viennagrid::mesh_t const & mesh_, int bounda
   viennagrid_mesh mesh = mesh_.internal();
 
   viennagrid_mesh_hierarchy mesh_hierarchy;
-  viennagrid_mesh_get_mesh_hierarchy(mesh, &mesh_hierarchy);
+  viennagrid_mesh_mesh_hierarchy_get(mesh, &mesh_hierarchy);
 
   viennagrid_dimension cell_dimension;
-  viennagrid_mesh_hierarchy_get_cell_dimension(mesh_hierarchy, &cell_dimension);
+  viennagrid_mesh_hierarchy_cell_dimension_get(mesh_hierarchy, &cell_dimension);
 
   viennagrid_int * cells_start;
   viennagrid_int * cells_end;
@@ -437,13 +437,13 @@ viennagrid_int boundary_iteration_C_pure(viennagrid::mesh_t const & mesh_, int b
   viennagrid_mesh mesh = mesh_.internal();
 
   viennagrid_mesh_hierarchy mesh_hierarchy;
-  viennagrid_mesh_get_mesh_hierarchy(mesh, &mesh_hierarchy);
+  viennagrid_mesh_mesh_hierarchy_get(mesh, &mesh_hierarchy);
 
   viennagrid_dimension cell_dimension;
-  viennagrid_mesh_hierarchy_get_cell_dimension(mesh_hierarchy, &cell_dimension);
+  viennagrid_mesh_hierarchy_cell_dimension_get(mesh_hierarchy, &cell_dimension);
 
   viennagrid_dimension geometry_dimension;
-  viennagrid_mesh_hierarchy_get_geometric_dimension(mesh_hierarchy, &geometry_dimension);
+  viennagrid_mesh_hierarchy_geometric_dimension_get(mesh_hierarchy, &geometry_dimension);
 
   viennagrid_int * cells_start;
   viennagrid_int * cells_end;

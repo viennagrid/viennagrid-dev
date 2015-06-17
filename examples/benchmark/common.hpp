@@ -132,8 +132,8 @@ void make_aabb_triangles_C_full(viennagrid_mesh mesh,
                            int point_count_x, int point_count_y)
 {
   viennagrid_mesh_hierarchy mesh_hierarchy;
-  viennagrid_mesh_get_mesh_hierarchy(mesh, &mesh_hierarchy);
-  viennagrid_mesh_hierarchy_set_geometric_dimension(mesh_hierarchy, 2);
+  viennagrid_mesh_mesh_hierarchy_get(mesh, &mesh_hierarchy);
+  viennagrid_mesh_hierarchy_geometric_dimension_set(mesh_hierarchy, 2);
 
   viennagrid_numeric step_x = (ur_x-ll_x) / (point_count_x-1);
   viennagrid_numeric step_y = (ur_y-ll_y) / (point_count_y-1);
@@ -228,8 +228,8 @@ void make_aabb_tetrahedrons_C_full(viennagrid_mesh mesh,
                            int point_count_x, int point_count_y, int point_count_z)
 {
   viennagrid_mesh_hierarchy mesh_hierarchy;
-  viennagrid_mesh_get_mesh_hierarchy(mesh, &mesh_hierarchy);
-  viennagrid_mesh_hierarchy_set_geometric_dimension(mesh_hierarchy, 3);
+  viennagrid_mesh_mesh_hierarchy_get(mesh, &mesh_hierarchy);
+  viennagrid_mesh_hierarchy_geometric_dimension_set(mesh_hierarchy, 3);
 
   viennagrid_numeric step_x = (ur_x-ll_x) / (point_count_x-1);
   viennagrid_numeric step_y = (ur_y-ll_y) / (point_count_y-1);
@@ -373,8 +373,8 @@ void make_aabb_triangles_region_C_full(viennagrid_mesh mesh,
                            int region_count)
 {
   viennagrid_mesh_hierarchy mesh_hierarchy;
-  viennagrid_mesh_get_mesh_hierarchy(mesh, &mesh_hierarchy);
-  viennagrid_mesh_hierarchy_set_geometric_dimension(mesh_hierarchy, 2);
+  viennagrid_mesh_mesh_hierarchy_get(mesh, &mesh_hierarchy);
+  viennagrid_mesh_hierarchy_geometric_dimension_set(mesh_hierarchy, 2);
 
   viennagrid_numeric step_x = (ur_x-ll_x) / (point_count_x-1);
   viennagrid_numeric step_y = (ur_y-ll_y) / (point_count_y-1);
@@ -490,8 +490,8 @@ void make_aabb_tetrahedrons_region_C_full(viennagrid_mesh mesh,
                            int region_count)
 {
   viennagrid_mesh_hierarchy mesh_hierarchy;
-  viennagrid_mesh_get_mesh_hierarchy(mesh, &mesh_hierarchy);
-  viennagrid_mesh_hierarchy_set_geometric_dimension(mesh_hierarchy, 3);
+  viennagrid_mesh_mesh_hierarchy_get(mesh, &mesh_hierarchy);
+  viennagrid_mesh_hierarchy_geometric_dimension_set(mesh_hierarchy, 3);
 
   viennagrid_numeric step_x = (ur_x-ll_x) / (point_count_x-1);
   viennagrid_numeric step_y = (ur_y-ll_y) / (point_count_y-1);
