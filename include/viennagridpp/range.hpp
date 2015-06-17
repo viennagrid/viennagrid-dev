@@ -787,6 +787,12 @@ namespace viennagrid
       typedef coboundary_region_element_range<false> type;
     };
 
+    template<bool mesh_is_const>
+    struct const_coboundary_range<base_mesh_region<mesh_is_const>, -1>
+    {
+      typedef coboundary_region_element_range<true> type;
+    };
+
     template<int coboundary_topologic_dimension>
     struct coboundary_range<mesh_region_t, coboundary_topologic_dimension>
     {
