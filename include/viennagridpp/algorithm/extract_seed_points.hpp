@@ -24,37 +24,38 @@ namespace viennagrid
   namespace detail
   {
     /** @brief For internal use only. */
-    template<typename MeshT, typename UnvisitedCellMapT>
-    void neighbor_mark( MeshT const & mesh, UnvisitedCellMapT & unvisitied_cells )
+    template<typename MeshRegionT, typename UnvisitedCellMapT, typename ElementT>
+    void neighbor_mark( MeshRegionT const & mesh, UnvisitedCellMapT & unvisitied_cells, ElementT to_mark )
     {
       bool found = true;
       while (found)
       {
         found = false;
 
-        for (typename UnvisitedCellMapT::iterator ucit = unvisitied_cells.begin(); ucit != unvisitied_cells.end(); )
+        for (typename UnvisitedCellMapT::iterator cit = unvisitied_cells.begin(); cit != unvisitied_cells.end(); ++cit)
         {
-          typedef typename viennagrid::result_of::const_neighbor_range<MeshT>::type NeighborRangeType;
+          typedef typename viennagrid::result_of::const_neighbor_range<MeshRegionT>::type NeighborRangeType;
           typedef typename viennagrid::result_of::iterator<NeighborRangeType>::type NeighborIteratorType;
 
-          NeighborRangeType neighbors( mesh, (*ucit).second,
-                                       topologic_dimension((*ucit).second)-1, topologic_dimension((*ucit).second) );
-          NeighborIteratorType ncit = neighbors.begin();
-          for (; ncit != neighbors.end(); ++ncit)
-          {
-            typename UnvisitedCellMapT::iterator ucit2 = unvisitied_cells.find( (*ncit).id() );
-            if (ucit2 == unvisitied_cells.end())
-              break;
-          }
+          if ( (*cit).second == to_mark )
+            continue;
 
-          if (ncit != neighbors.end())
+          NeighborRangeType neighbors( mesh, (*cit).first, topologic_dimension((*cit).first)-1, topologic_dimension((*cit).first) );
+
+          for (NeighborIteratorType ncit = neighbors.begin(); ncit != neighbors.end(); ++ncit)
           {
-            found = true;
-            unvisitied_cells.erase( ucit++ );
+            typename UnvisitedCellMapT::iterator ncit2 = unvisitied_cells.find(*ncit);
+            if (ncit2 != unvisitied_cells.end())
+            {
+              if ( (*ncit2).second == to_mark )
+              {
+                (*cit).second = to_mark;
+                found = true;
+              }
+            }
           }
-          else
-            ++ucit;
         }
+
       }
     }
 
@@ -64,45 +65,47 @@ namespace viennagrid
     * @param mesh                    The input mesh
     * @param seed_points             A container of seed points. The container has to support .push_back() for points of the mesh.
     */
-    template<typename MeshSegmentT, typename PointContainerT>
-    void extract_seed_points_impl( MeshSegmentT const & mesh, PointContainerT & seed_points )
+    template<typename MeshRegionT, typename PointContainerT>
+    void extract_seed_points_impl( MeshRegionT const & mesh, PointContainerT & seed_points )
     {
-      typedef typename viennagrid::result_of::element_id<MeshSegmentT>::type CellIDType;
-      typedef typename viennagrid::result_of::const_element<MeshSegmentT>::type ConstCellType;
+      typedef typename viennagrid::result_of::const_element<MeshRegionT>::type ConstCellType;
 
-      typedef typename viennagrid::result_of::const_cell_range<MeshSegmentT>::type CellRangeType;
+      typedef typename viennagrid::result_of::const_cell_range<MeshRegionT>::type CellRangeType;
       typedef typename viennagrid::result_of::iterator<CellRangeType>::type CellIteratorType;
 
       CellRangeType cells(mesh);
 
       if (!cells.empty())
       {
-        typedef std::map<CellIDType, ConstCellType> UnvisitedCellMapType;
+        typedef std::map<ConstCellType, ConstCellType> UnvisitedCellMapType;
         UnvisitedCellMapType unvisited_cells;
 
         for (CellIteratorType cit = cells.begin(); cit != cells.end(); ++cit)
-          unvisited_cells[ (*cit).id() ] = *cit;
+          unvisited_cells[*cit] = *cit;
 
         while (!unvisited_cells.empty())
         {
-          for (CellIteratorType cit = cells.begin(); cit != cells.end(); ++cit)
+          for (typename UnvisitedCellMapType::iterator cit = unvisited_cells.begin(); cit != unvisited_cells.end(); )
           {
-            typename UnvisitedCellMapType::iterator ucit = unvisited_cells.find( (*cit).id() );
-            if (ucit == unvisited_cells.end())
-              continue;
+            seed_points.push_back( viennagrid::centroid( (*cit).first ) );
+            neighbor_mark( mesh, unvisited_cells, (*cit).first );
 
-            seed_points.push_back( viennagrid::centroid(*cit) );
-            unvisited_cells.erase( ucit );
+            typename UnvisitedCellMapType::iterator cit2 = cit; ++cit2;
+            for (; cit2 != unvisited_cells.end();)
+            {
+              if ( (*cit2).second == (*cit).first )
+                unvisited_cells.erase(cit2++);
+              else
+                ++cit2;
+            }
 
-            neighbor_mark( mesh, unvisited_cells );
+            unvisited_cells.erase(cit++);
           }
         }
       }
     }
 
   }
-
-
 
   /** @brief Extracts seed points of a mesh with segmentation. For each segment, seed points are extracted.
    *
