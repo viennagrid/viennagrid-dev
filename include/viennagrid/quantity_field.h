@@ -1,7 +1,7 @@
 #ifndef QUANTITY_FIELD_H
 #define QUANTITY_FIELD_H
 
-#include "viennagrid/forwards.h"
+#include "viennagrid/viennagrid.h"
 
 
 #define QUANTITY_FIELD_STORAGE_DENSE 0
