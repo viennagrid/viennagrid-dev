@@ -5,7 +5,7 @@
 #include <sstream>
 #include <deque>
 
-#include "viennagrid/forwards.h"
+#include "viennagrid/viennagrid.h"
 #include "buffer.hpp"
 #include "mesh.hpp"
 #include "region.hpp"
@@ -120,7 +120,7 @@ private:
 
   viennagrid_int get_element(element_key const & key)
   {
-    if (key.front() >= element_map.size())
+    if (key.front() >= static_cast<viennagrid_int>(element_map.size()))
       return -1;
 
     std::map<element_key, viennagrid_int>::iterator it = element_map[key.front()].find(key);

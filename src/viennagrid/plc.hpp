@@ -88,9 +88,9 @@ public:
     return holes_points_.size() / geometric_dimension();
   }
 
-  viennagrid_numeric * get_hole_point(viennagrid_int id)
+  viennagrid_numeric * get_hole_points()
   {
-    return &holes_points_[id*geometric_dimension()];
+    return &holes_points_[0];
   }
 
   void add_hole_point(const viennagrid_numeric * coords)
@@ -99,8 +99,10 @@ public:
     holes_points_.resize( holes_points_.size() + geometric_dimension() );
 
     if (coords)
-      std::copy(coords, coords + geometric_dimension(), get_hole_point(id));
+      std::copy(coords, coords + geometric_dimension(), &holes_points_[id*geometric_dimension()]);
   }
+
+
 
 
   viennagrid_int seed_point_count()
@@ -108,14 +110,14 @@ public:
     return seed_point_regions_.size();
   }
 
-  viennagrid_numeric * get_seed_point(viennagrid_int id)
+  viennagrid_numeric * get_seed_points()
   {
-    return &seed_points_[id*geometric_dimension()];
+    return &seed_points_[0];
   }
 
-  viennagrid_int get_seed_point_region(viennagrid_int id)
+  viennagrid_int * get_seed_point_regions()
   {
-    return seed_point_regions_[id];
+    return &seed_point_regions_[0];
   }
 
   void add_seed_point(const viennagrid_numeric * coords, viennagrid_int region_id)
@@ -125,10 +127,27 @@ public:
     seed_point_regions_.push_back(region_id);
 
     if (coords)
-      std::copy(coords, coords + geometric_dimension(), get_seed_point(id));
+      std::copy(coords, coords + geometric_dimension(), &seed_points_[id*geometric_dimension()]);
   }
 
 
+
+  void clear()
+  {
+    geometric_dimension_ = 0;
+    vertex_buffer.clear();
+
+    line_vertices_.clear();
+
+    facet_vertices_.clear();
+    facet_lines_.clear();
+    facet_hole_points_.clear();
+
+    holes_points_.clear();
+
+    seed_points_.clear();
+    seed_point_regions_.clear();
+  }
 
 
 private:

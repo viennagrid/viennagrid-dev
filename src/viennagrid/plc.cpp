@@ -38,7 +38,7 @@ viennagrid_int viennagrid_plc_::element_count(int topologic_dimension)
 
 viennagrid_int viennagrid_plc_::get_make_line(viennagrid_int vertex_index0, viennagrid_int vertex_index1)
 {
-  if (vertex_index0 > vertex_index1)
+  if (vertex_index1 < vertex_index0)
     std::swap(vertex_index0, vertex_index1);
 
   for (viennagrid_int i = 0; i != line_vertices_.size(); ++i)
@@ -195,14 +195,6 @@ bool get_valid_line( stream_type & stream, std::string & line, char comment_line
 
 viennagrid_int viennagrid_plc_::read_tetgen_poly(std::string const & filename)
 {
-//   typedef typename viennagrid::result_of::point<MeshT>::type           PointType;
-//
-//   typedef typename result_of::element<MeshT>::type         VertexType;
-//   typedef typename result_of::element_id<VertexType>::type         VertexIDType;
-//
-//   typedef typename result_of::element<MeshT>::type            LineType;
-//   typedef typename result_of::element<MeshT>::type PLCType;
-
   typedef std::vector<viennagrid_numeric> PointType;
 
   std::ifstream reader(filename.c_str());
@@ -262,7 +254,7 @@ viennagrid_int viennagrid_plc_::read_tetgen_poly(std::string const & filename)
       return VIENNAGRID_PLC_POLY_READER_EOF_ENCOUNTERED;
 
     int id;
-    viennagrid_int vertex;
+//     viennagrid_int vertex;
 
     current_line.str(tmp); current_line.clear();
     current_line >> id;
@@ -431,7 +423,7 @@ viennagrid_int viennagrid_plc_::read_tetgen_poly(std::string const & filename)
 
 
 
-  long segment_num;
+  long region_num;
 
   if (!get_valid_line(reader, tmp))
   {
@@ -440,22 +432,22 @@ viennagrid_int viennagrid_plc_::read_tetgen_poly(std::string const & filename)
   }
 
   current_line.str(tmp); current_line.clear();
-  current_line >> segment_num;
+  current_line >> region_num;
 
-  if (segment_num < 0)
+  if (region_num < 0)
     return VIENNAGRID_PLC_POLY_READER_INVALID_SEED_POINT_COUNT;
 
-  for (int i=0; i<segment_num; ++i)
+  for (int i=0; i<region_num; ++i)
   {
     if (!get_valid_line(reader, tmp))
       return VIENNAGRID_PLC_POLY_READER_EOF_ENCOUNTERED;
 
-    long segment_number;
+    long region_number;
     PointType seed_point(point_dim);
     int region_id;
 
     current_line.str(tmp); current_line.clear();
-    current_line >> segment_number;
+    current_line >> region_number;
 
     for (std::size_t j=0; j < point_dim; j++)
       current_line >> seed_point[j];

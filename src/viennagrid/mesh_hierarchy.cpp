@@ -1,8 +1,4 @@
 #include "mesh_hierarchy.hpp"
-#include "../../include/viennagrid/forwards.h"
-
-
-
 
 void viennagrid_element_buffer::reserve_boundary(viennagrid_int element_id)
 {
@@ -102,9 +98,9 @@ void viennagrid_element_buffer::make_boundary(viennagrid_int element_id, viennag
       line_indices[5] = mesh_hierarchy->get_make_line(vertex_indices, 2, 3, mesh);
 
       triangle_indices[0] = mesh_hierarchy->get_make_triangle(vertex_indices, 0, 1, 2, line_indices, 0, 1, 3, mesh);
-      triangle_indices[1] = mesh_hierarchy->get_make_triangle(vertex_indices, 0, 1, 2, line_indices, 0, 2, 4, mesh);
-      triangle_indices[2] = mesh_hierarchy->get_make_triangle(vertex_indices, 0, 1, 2, line_indices, 1, 3, 5, mesh);
-      triangle_indices[3] = mesh_hierarchy->get_make_triangle(vertex_indices, 0, 1, 2, line_indices, 3, 4, 5, mesh);
+      triangle_indices[1] = mesh_hierarchy->get_make_triangle(vertex_indices, 0, 1, 3, line_indices, 0, 2, 4, mesh);
+      triangle_indices[2] = mesh_hierarchy->get_make_triangle(vertex_indices, 0, 2, 3, line_indices, 1, 3, 5, mesh);
+      triangle_indices[3] = mesh_hierarchy->get_make_triangle(vertex_indices, 1, 2, 3, line_indices, 3, 4, 5, mesh);
 
       break;
     }
@@ -147,7 +143,7 @@ void viennagrid_element_buffer::make_boundary(viennagrid_int element_id, viennag
 
 
 
-viennagrid_int viennagrid_element_buffer::make_element(viennagrid_mesh_hierarchy mesh_hierarchy,
+viennagrid_int viennagrid_element_buffer::make_element(viennagrid_mesh_hierarchy /*mesh_hierarchy*/,
                                                          viennagrid_element_tag element_tag,
                                                          viennagrid_int * vertex_indices,
                                                          viennagrid_int vertex_count,
@@ -200,7 +196,7 @@ viennagrid_int viennagrid_element_buffer::make_element(viennagrid_mesh_hierarchy
   std::copy( vertex_indices, vertex_indices+vertex_count, ptr );
 
   element_key key(vertex_indices, vertex_count);
-  if (key.front() >= element_map.size())
+  if (key.front() >= static_cast<viennagrid_int>(element_map.size()))
     element_map.resize( key.front()+1 );
 
   element_map[key.front()][key] = id;

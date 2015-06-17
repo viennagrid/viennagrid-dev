@@ -4,7 +4,7 @@
 #include <set>
 #include <string>
 
-#include "viennagrid/forwards.h"
+#include "viennagrid/viennagrid.h"
 
 struct viennagrid_region_
 {

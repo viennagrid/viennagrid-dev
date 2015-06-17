@@ -5,7 +5,7 @@
 #include <set>
 #include <algorithm>
 
-#include "viennagrid/forwards.h"
+#include "viennagrid/viennagrid.h"
 #include "buffer.hpp"
 
 
