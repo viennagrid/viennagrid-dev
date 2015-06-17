@@ -204,7 +204,7 @@ namespace viennagrid
           }
         }
 
-        assert( found_hole_point );
+//         assert( found_hole_point );
       }
     }
   }
