@@ -18,14 +18,14 @@ namespace viennagrid
 
 
 
-  template<int d>
+  template<viennagrid_dimension d>
   struct dimension_tag
   {
-    static const int value = d;
+    static const viennagrid_dimension value = d;
   };
 
   class point_t;
-  typedef std::pair<point_t, int> seed_point_t;
+  typedef std::pair<point_t, viennagrid_int> seed_point_t;
 
 
   template<bool is_const = false>
