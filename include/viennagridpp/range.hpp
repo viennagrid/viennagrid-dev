@@ -66,6 +66,9 @@ namespace viennagrid
       topologic_dimension_ = topologic_dimension_in;
       mesh_hierarchy_ = viennagrid::internal_mesh_hierarchy(mesh);
 
+      if ( !((topologic_dimension() == 0) || (topologic_dimension() == cell_dimension(mesh_hierarchy()))) )
+        viennagrid_mesh_hierarchy_option_set(mesh_hierarchy_, VIENNAGRID_BOUNDARY_LAYOUT_FLAG, VIENNAGRID_BOUNDARY_LAYOUT_FULL);
+
       viennagrid_elements_get(mesh,
                               topologic_dimension(),
                               const_cast<viennagrid_int **>(&element_index_begin),
@@ -77,6 +80,9 @@ namespace viennagrid
     {
       topologic_dimension_ = topologic_dimension_in;
       mesh_hierarchy_ = element.internal_mesh_hierarchy();
+
+      if (topologic_dimension() != 0)
+        viennagrid_mesh_hierarchy_option_set(mesh_hierarchy_, VIENNAGRID_BOUNDARY_LAYOUT_FLAG, VIENNAGRID_BOUNDARY_LAYOUT_FULL);
 
       viennagrid_element_boundary_elements(internal_mesh_hierarchy(),
                                            viennagrid::topologic_dimension(element),
@@ -92,6 +98,10 @@ namespace viennagrid
       topologic_dimension_ = coboundary_topo_dim_in;
       mesh_hierarchy_ = element.internal_mesh_hierarchy();
 
+
+      if ( !((viennagrid::topologic_dimension(element) == 0) && (coboundary_topo_dim_in == cell_dimension(mesh_hierarchy()))) )
+        viennagrid_mesh_hierarchy_option_set(mesh_hierarchy_, VIENNAGRID_BOUNDARY_LAYOUT_FLAG, VIENNAGRID_BOUNDARY_LAYOUT_FULL);
+
       viennagrid_element_coboundary_elements(mesh,
                                              viennagrid::topologic_dimension(element),
                                              element.id(),
@@ -105,6 +115,11 @@ namespace viennagrid
     {
       topologic_dimension_ = neighbor_topo_dim_in;
       mesh_hierarchy_ = element.internal_mesh_hierarchy();
+
+      if ( !((viennagrid::topologic_dimension(element) == cell_dimension(mesh_hierarchy_)) &&
+            (connector_topo_dim_in == 0) &&
+            (neighbor_topo_dim_in == cell_dimension(mesh_hierarchy_))) )
+        viennagrid_mesh_hierarchy_option_set(mesh_hierarchy_, VIENNAGRID_BOUNDARY_LAYOUT_FLAG, VIENNAGRID_BOUNDARY_LAYOUT_FULL);
 
       viennagrid_element_neighbor_elements(mesh,
                                            viennagrid::topologic_dimension(element),
