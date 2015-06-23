@@ -819,7 +819,7 @@ namespace viennagrid
        * @param filename          Name of the file
        */
       template <typename MeshT>
-      void operator()(MeshT & mesh,  std::string const & filename) const
+      void operator()(MeshT const & mesh,  std::string const & filename) const
       {
         typedef typename viennagrid::result_of::point<MeshT>::type PointType;
         typedef typename viennagrid::result_of::element<MeshT>::type ElementType;
