@@ -103,6 +103,14 @@ public:
     mesh_hierarchy = mesh_hierarchy_;
   }
 
+  void clear_boundary()
+  {
+    for (std::size_t i = 1; i != boundary_indices.size(); ++i)
+    {
+      boundary_indices[i].clear();
+    }
+  }
+
   viennagrid_int size() const { return parents.size(); }
   viennagrid_element_tag * element_tags_pointer() { return &element_tags[0]; }
   viennagrid_int * vertex_offsets_pointer() { return boundary_buffer(0).offset_pointer(); }
@@ -228,7 +236,7 @@ public:
 
 
   viennagrid_int boundary_layout() const { return boundary_layout_; }
-  void set_boundary_layout(viennagrid_int boundary_layout_in);
+  viennagrid_error set_boundary_layout(viennagrid_int boundary_layout_in);
   bool full_boundary_layout() const { return boundary_layout() == VIENNAGRID_BOUNDARY_LAYOUT_FULL; }
 
 
