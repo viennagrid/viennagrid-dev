@@ -251,6 +251,42 @@ viennagrid_error viennagrid_mesh_hierarchy_release(viennagrid_mesh_hierarchy mes
   return VIENNAGRID_SUCCESS;
 }
 
+viennagrid_error viennagrid_mesh_hierarchy_option_set(viennagrid_mesh_hierarchy mesh_hierarchy,
+                                                      viennagrid_int flag,
+                                                      viennagrid_int option)
+{
+  switch (flag)
+  {
+    case VIENNAGRID_BOUNDARY_LAYOUT_FLAG:
+      mesh_hierarchy->set_boundary_layout(option);
+
+    default:
+      return VIENNAGRID_UNKNOWN_FLAG;
+  }
+
+  return VIENNAGRID_SUCCESS;
+}
+
+viennagrid_error viennagrid_mesh_hierarchy_option_get(viennagrid_mesh_hierarchy mesh_hierarchy,
+                                                      viennagrid_int flag,
+                                                      viennagrid_int * option)
+{
+  switch (flag)
+  {
+    case VIENNAGRID_BOUNDARY_LAYOUT_FLAG:
+      if (option)
+        *option = mesh_hierarchy->boundary_layout();
+      break;
+
+    default:
+      return VIENNAGRID_UNKNOWN_FLAG;
+  }
+
+  return VIENNAGRID_SUCCESS;
+}
+
+
+
 viennagrid_error viennagrid_mesh_hierarchy_cell_dimension_get(viennagrid_mesh_hierarchy mesh_hierarchy,
                                                               viennagrid_dimension * cell_dimension)
 {
