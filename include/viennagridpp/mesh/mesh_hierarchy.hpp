@@ -39,6 +39,7 @@ namespace viennagrid
     base_mesh_hierarchy() : internal_mesh_hierarchy_(0)
     {
       viennagrid_mesh_hierarchy_create(&internal_mesh_hierarchy_);
+      viennagrid_mesh_hierarchy_option_set(internal_mesh_hierarchy_, VIENNAGRID_BOUNDARY_LAYOUT_FLAG, VIENNAGRID_BOUNDARY_LAYOUT_SPARSE);
     }
 
     template<bool other_is_const>
@@ -171,6 +172,10 @@ namespace viennagrid
 
 
 
+  inline viennagrid_mesh_hierarchy internal_mesh_hierarchy(viennagrid_mesh_hierarchy mesh_hierarchy)
+  {
+    return mesh_hierarchy;
+  }
 
 
   template<bool is_const>
