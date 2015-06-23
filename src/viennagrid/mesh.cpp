@@ -15,6 +15,18 @@ viennagrid_mesh_::viennagrid_mesh_(viennagrid_mesh_hierarchy hierarchy_in, vienn
   clear();
 }
 
+viennagrid_mesh viennagrid_mesh_::make_child()
+{
+  // switching to full boundary layout, sparse boundary layout is support for root-only meshes only
+  mesh_hierarchy()->set_boundary_layout(VIENNAGRID_BOUNDARY_LAYOUT_FULL);
+
+  viennagrid_mesh mesh = new viennagrid_mesh_( mesh_hierarchy(), this );
+  children.push_back( mesh );
+  element_children.push_back( viennagrid_element_children_() );
+  mesh_children_map[ children.back() ] = children.size()-1;
+  return mesh;
+}
+
 
 void viennagrid_mesh_::add_element(viennagrid_dimension element_topo_dim,
                                    viennagrid_int element_id)
