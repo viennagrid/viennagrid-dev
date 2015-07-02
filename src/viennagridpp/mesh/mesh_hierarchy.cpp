@@ -34,7 +34,7 @@ namespace viennagrid
   typename base_mesh_hierarchy<is_const>::region_type base_mesh_hierarchy<is_const>::get_make_region(region_id_type region_id)
   {
     viennagrid_region region;
-    viennagrid_region_get_create( internal(), region_id, &region );
+    viennagrid_region_get_or_create( internal(), region_id, &region );
     return region_type(region);
   }
 
@@ -85,7 +85,7 @@ namespace viennagrid
   {
     point_t result( viennagrid::geometric_dimension(mesh_hierarchy) );
     viennagrid_numeric const * tmp;
-    viennagrid_point_get(mesh_hierarchy, vertex.id(), const_cast<viennagrid_numeric **>(&tmp));
+    viennagrid_mesh_hierarchy_vertex_coords_get(mesh_hierarchy, vertex.id(), const_cast<viennagrid_numeric **>(&tmp));
     std::copy(tmp, tmp+result.size(), result.begin());
     return result;
   }
@@ -98,7 +98,7 @@ namespace viennagrid
   void set_point(viennagrid_mesh_hierarchy mesh_hierarchy, base_element<false> const & vertex, point_t const & point)
   {
     viennagrid_numeric * tmp;
-    viennagrid_point_get(mesh_hierarchy, vertex.id(), &tmp);
+    viennagrid_mesh_hierarchy_vertex_coords_get(mesh_hierarchy, vertex.id(), &tmp);
     std::copy(point.begin(), point.end(), tmp);
   }
 

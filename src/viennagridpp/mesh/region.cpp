@@ -5,10 +5,10 @@ namespace viennagrid
 
  void add(viennagrid_region region, element_t const & element)
   {
-    viennagrid_add_to_region(internal_mesh_hierarchy(element),
-                             viennagrid::topologic_dimension(element),
-                             element.id(),
-                             region );
+    viennagrid_element_add_to_region(internal_mesh_hierarchy(element),
+                                     viennagrid::topologic_dimension(element),
+                                     element.id(),
+                                     region);
   }
 
 
@@ -43,11 +43,11 @@ namespace viennagrid
   bool is_boundary( base_mesh_region<region_is_const> const & region, base_element<element_is_const> const & element )
   {
     viennagrid_bool result;
-    viennagrid_is_boundary_region(region.region().internal(),
-                                  region.mesh().internal(),
-                                  viennagrid::topologic_dimension(element),
-                                  element.id(),
-                                  &result);
+    viennagrid_element_is_region_boundary(region.region().internal(),
+                                          region.mesh().internal(),
+                                          viennagrid::topologic_dimension(element),
+                                          element.id(),
+                                          &result);
     return result == VIENNAGRID_TRUE;
   }
 

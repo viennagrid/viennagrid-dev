@@ -21,7 +21,7 @@ namespace viennagrid
   typename base_mesh<false>::region_type base_mesh<false>::get_make_region(region_id_type region_id) const
   {
     viennagrid_region region;
-    viennagrid_region_get_create( internal_mesh_hierarchy(), region_id, &region );
+    viennagrid_region_get_or_create( internal_mesh_hierarchy(), region_id, &region );
     return region_type(internal(), region);
   }
 
@@ -82,10 +82,10 @@ namespace viennagrid
   bool is_boundary( base_mesh<mesh_is_const> const & mesh, base_element<element_is_const> const & element )
   {
     viennagrid_bool result;
-    viennagrid_is_boundary_mesh(mesh.internal(),
-                                viennagrid::topologic_dimension(element),
-                                element.id(),
-                                &result);
+    viennagrid_element_is_mesh_boundary(mesh.internal(),
+                                        viennagrid::topologic_dimension(element),
+                                        element.id(),
+                                        &result);
     return result == VIENNAGRID_TRUE;
   }
 
@@ -120,7 +120,7 @@ namespace viennagrid
 
   void non_recursive_add(mesh_t const & mesh, element_t const & element)
   {
-    viennagrid_element_add(mesh.internal(),
+    viennagrid_mesh_element_add(mesh.internal(),
                            viennagrid::topologic_dimension(element),
                            element.id());
   }
