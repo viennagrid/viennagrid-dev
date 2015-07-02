@@ -674,9 +674,9 @@ viennagrid_error viennagrid_plc_init_from_plc(viennagrid_plc src_plc,
   {
     viennagrid_numeric * hole_points;
     viennagrid_int hole_point_count;
-    viennagrid_plc_hole_points_get(src_plc, &hole_points, &hole_point_count);
+    viennagrid_plc_volumetric_hole_points_get(src_plc, &hole_points, &hole_point_count);
     for (viennagrid_int i = 0; i != hole_point_count; ++i)
-      viennagrid_plc_hole_point_add(dst_plc, hole_points + i*geometric_dimension);
+      viennagrid_plc_volumetric_hole_point_add(dst_plc, hole_points + i*geometric_dimension);
   }
 
   if (copy_seed_points == VIENNAGRID_TRUE)
@@ -805,16 +805,16 @@ viennagrid_error viennagrid_plc_facet_hole_points_get(viennagrid_plc plc,
 }
 
 
-viennagrid_error viennagrid_plc_hole_point_add(viennagrid_plc plc,
-                                               const viennagrid_numeric * coords)
+viennagrid_error viennagrid_plc_volumetric_hole_point_add(viennagrid_plc plc,
+                                                          const viennagrid_numeric * coords)
 {
   plc->add_hole_point(coords);
   return VIENNAGRID_SUCCESS;
 }
 
-viennagrid_error viennagrid_plc_hole_points_get(viennagrid_plc plc,
-                                                viennagrid_numeric ** coords,
-                                                viennagrid_int * count)
+viennagrid_error viennagrid_plc_volumetric_hole_points_get(viennagrid_plc plc,
+                                                           viennagrid_numeric ** coords,
+                                                           viennagrid_int * count)
 {
   *coords = plc->get_hole_points();
   *count = plc->hole_point_count();
