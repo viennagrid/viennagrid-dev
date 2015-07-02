@@ -16,8 +16,8 @@ void make_triangle(viennagrid_mesh_hierarchy mesh_hierarchy,
                    viennagrid_int * indices,
                    viennagrid_int * cells)
 {
-  viennagrid_element_create(mesh_hierarchy, VIENNAGRID_ELEMENT_TAG_TRIANGLE, 3, indices+0, cells+0);
-  viennagrid_element_create(mesh_hierarchy, VIENNAGRID_ELEMENT_TAG_TRIANGLE, 3, indices+1, cells+1);
+  viennagrid_mesh_hierarchy_element_create(mesh_hierarchy, VIENNAGRID_ELEMENT_TYPE_TRIANGLE, 3, indices+0, cells+0);
+  viennagrid_mesh_hierarchy_element_create(mesh_hierarchy, VIENNAGRID_ELEMENT_TYPE_TRIANGLE, 3, indices+1, cells+1);
 }
 
 template<typename ElementT>
@@ -39,37 +39,37 @@ void make_tetrahedron(viennagrid_mesh_hierarchy mesh_hierarchy,
   local_indices[1] = indices[2];
   local_indices[2] = indices[6];
   local_indices[3] = indices[7];
-  viennagrid_element_create(mesh_hierarchy, VIENNAGRID_ELEMENT_TAG_TETRAHEDRON, 4, local_indices, cells+0);
+  viennagrid_mesh_hierarchy_element_create(mesh_hierarchy, VIENNAGRID_ELEMENT_TYPE_TETRAHEDRON, 4, local_indices, cells+0);
 
   local_indices[0] = indices[0];
   local_indices[1] = indices[2];
   local_indices[2] = indices[3];
   local_indices[3] = indices[7];
-  viennagrid_element_create(mesh_hierarchy, VIENNAGRID_ELEMENT_TAG_TETRAHEDRON, 4, local_indices, cells+1);
+  viennagrid_mesh_hierarchy_element_create(mesh_hierarchy, VIENNAGRID_ELEMENT_TYPE_TETRAHEDRON, 4, local_indices, cells+1);
 
   local_indices[0] = indices[0];
   local_indices[1] = indices[1];
   local_indices[2] = indices[3];
   local_indices[3] = indices[7];
-  viennagrid_element_create(mesh_hierarchy, VIENNAGRID_ELEMENT_TAG_TETRAHEDRON, 4, local_indices, cells+2);
+  viennagrid_mesh_hierarchy_element_create(mesh_hierarchy, VIENNAGRID_ELEMENT_TYPE_TETRAHEDRON, 4, local_indices, cells+2);
 
   local_indices[0] = indices[0];
   local_indices[1] = indices[1];
   local_indices[2] = indices[5];
   local_indices[3] = indices[7];
-  viennagrid_element_create(mesh_hierarchy, VIENNAGRID_ELEMENT_TAG_TETRAHEDRON, 4, local_indices, cells+3);
+  viennagrid_mesh_hierarchy_element_create(mesh_hierarchy, VIENNAGRID_ELEMENT_TYPE_TETRAHEDRON, 4, local_indices, cells+3);
 
   local_indices[0] = indices[0];
   local_indices[1] = indices[4];
   local_indices[2] = indices[5];
   local_indices[3] = indices[7];
-  viennagrid_element_create(mesh_hierarchy, VIENNAGRID_ELEMENT_TAG_TETRAHEDRON, 4, local_indices, cells+4);
+  viennagrid_mesh_hierarchy_element_create(mesh_hierarchy, VIENNAGRID_ELEMENT_TYPE_TETRAHEDRON, 4, local_indices, cells+4);
 
   local_indices[0] = indices[0];
   local_indices[1] = indices[4];
   local_indices[2] = indices[6];
   local_indices[3] = indices[7];
-  viennagrid_element_create(mesh_hierarchy, VIENNAGRID_ELEMENT_TAG_TETRAHEDRON, 4, local_indices, cells+5);
+  viennagrid_mesh_hierarchy_element_create(mesh_hierarchy, VIENNAGRID_ELEMENT_TYPE_TETRAHEDRON, 4, local_indices, cells+5);
 }
 
 template<typename ElementT>
@@ -148,7 +148,7 @@ void make_aabb_triangles_C_full(viennagrid_mesh mesh,
     p[0] = ll_x;
     for (int xi = 0; xi != point_count_x; ++xi, p[0] += step_x, ++i)
     {
-      viennagrid_vertex_create(mesh_hierarchy, p, &vertex_indices[i]);
+      viennagrid_mesh_hierarchy_vertex_create(mesh_hierarchy, p, &vertex_indices[i]);
     }
   }
 
@@ -248,7 +248,7 @@ void make_aabb_tetrahedrons_C_full(viennagrid_mesh mesh,
       p[0] = ll_x;
       for (int xi = 0; xi != point_count_x; ++xi, p[0] += step_x, ++i)
       {
-        viennagrid_vertex_create(mesh_hierarchy, p, &vertex_indices[i]);
+        viennagrid_mesh_hierarchy_vertex_create(mesh_hierarchy, p, &vertex_indices[i]);
       }
     }
   }
@@ -393,7 +393,7 @@ void make_aabb_triangles_region_C_full(viennagrid_mesh mesh,
     p[0] = ll_x;
     for (int xi = 0; xi != point_count_x; ++xi, p[0] += step_x)
     {
-      viennagrid_vertex_create(mesh_hierarchy, p, &vertex_indices[i++]);
+      viennagrid_mesh_hierarchy_vertex_create(mesh_hierarchy, p, &vertex_indices[i++]);
     }
   }
 
@@ -410,8 +410,8 @@ void make_aabb_triangles_region_C_full(viennagrid_mesh mesh,
       viennagrid_int cells[2];
       make_triangle(mesh_hierarchy, indices, cells);
 
-      viennagrid_add_to_region(mesh_hierarchy, 2, cells[0], regions[(i++)%region_count]);
-      viennagrid_add_to_region(mesh_hierarchy, 2, cells[1], regions[(i++)%region_count]);
+      viennagrid_element_add_to_region(mesh_hierarchy, 2, cells[0], regions[(i++)%region_count]);
+      viennagrid_element_add_to_region(mesh_hierarchy, 2, cells[1], regions[(i++)%region_count]);
     }
 }
 
@@ -514,7 +514,7 @@ void make_aabb_tetrahedrons_region_C_full(viennagrid_mesh mesh,
       p[0] = ll_x;
       for (int xi = 0; xi != point_count_x; ++xi, p[0] += step_x)
       {
-        viennagrid_vertex_create(mesh_hierarchy, p, &vertex_indices[i++]);
+        viennagrid_mesh_hierarchy_vertex_create(mesh_hierarchy, p, &vertex_indices[i++]);
       }
     }
   }
@@ -536,12 +536,12 @@ void make_aabb_tetrahedrons_region_C_full(viennagrid_mesh mesh,
         viennagrid_int cells[6];
         make_tetrahedron(mesh_hierarchy, indices, cells);
 
-        viennagrid_add_to_region(mesh_hierarchy, 3, cells[0], regions[(i++)%region_count]);
-        viennagrid_add_to_region(mesh_hierarchy, 3, cells[1], regions[(i++)%region_count]);
-        viennagrid_add_to_region(mesh_hierarchy, 3, cells[2], regions[(i++)%region_count]);
-        viennagrid_add_to_region(mesh_hierarchy, 3, cells[3], regions[(i++)%region_count]);
-        viennagrid_add_to_region(mesh_hierarchy, 3, cells[4], regions[(i++)%region_count]);
-        viennagrid_add_to_region(mesh_hierarchy, 3, cells[5], regions[(i++)%region_count]);
+        viennagrid_element_add_to_region(mesh_hierarchy, 3, cells[0], regions[(i++)%region_count]);
+        viennagrid_element_add_to_region(mesh_hierarchy, 3, cells[1], regions[(i++)%region_count]);
+        viennagrid_element_add_to_region(mesh_hierarchy, 3, cells[2], regions[(i++)%region_count]);
+        viennagrid_element_add_to_region(mesh_hierarchy, 3, cells[3], regions[(i++)%region_count]);
+        viennagrid_element_add_to_region(mesh_hierarchy, 3, cells[4], regions[(i++)%region_count]);
+        viennagrid_element_add_to_region(mesh_hierarchy, 3, cells[5], regions[(i++)%region_count]);
       }
 }
 

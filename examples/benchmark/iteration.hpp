@@ -128,23 +128,23 @@ viennagrid_numeric spanned_volume(PointT1 const & p1,
 
 viennagrid_numeric volume(viennagrid_mesh_hierarchy mesh_hierarchy,
                           viennagrid_dimension geometry_dimension,
-                          viennagrid_element_tag element_tag,
+                          viennagrid_element_type element_type,
                           viennagrid_int * vertices_start,
                           viennagrid_int * vertices_end)
 {
   viennagrid_numeric * coords;
-  viennagrid_point_pointer(mesh_hierarchy, &coords);
+  viennagrid_mesh_hierarchy_vertex_coords_pointer(mesh_hierarchy, &coords);
 
-  switch (element_tag)
+  switch (element_type)
   {
-    case VIENNAGRID_ELEMENT_TAG_LINE:
+    case VIENNAGRID_ELEMENT_TYPE_LINE:
     {
       viennagrid_numeric * p0 = coords + *(vertices_start+0) * geometry_dimension;
       viennagrid_numeric * p1 = coords + *(vertices_start+1) * geometry_dimension;
 
       return spanned_volume(p0, p1, geometry_dimension);
     }
-    case VIENNAGRID_ELEMENT_TAG_TRIANGLE:
+    case VIENNAGRID_ELEMENT_TYPE_TRIANGLE:
     {
       viennagrid_numeric * p0 = coords + *(vertices_start+0) * geometry_dimension;
       viennagrid_numeric * p1 = coords + *(vertices_start+1) * geometry_dimension;
@@ -152,7 +152,7 @@ viennagrid_numeric volume(viennagrid_mesh_hierarchy mesh_hierarchy,
 
       return spanned_volume(p0, p1, p2, geometry_dimension);
     }
-    case VIENNAGRID_ELEMENT_TAG_TETRAHEDRON:
+    case VIENNAGRID_ELEMENT_TYPE_TETRAHEDRON:
     {
       viennagrid_numeric * p0 = coords + *(vertices_start+0) * geometry_dimension;
       viennagrid_numeric * p1 = coords + *(vertices_start+1) * geometry_dimension;
@@ -171,8 +171,8 @@ viennagrid_numeric volume(viennagrid_mesh_hierarchy mesh_hierarchy,
                           viennagrid_dimension element_dimension,
                           viennagrid_int element_id)
 {
-  viennagrid_element_tag element_tag;
-  viennagrid_element_tag_get(mesh_hierarchy, element_dimension, element_id, &element_tag);
+  viennagrid_element_type element_type;
+  viennagrid_element_type_get(mesh_hierarchy, element_dimension, element_id, &element_type);
 
   viennagrid_dimension geometry_dimension;
   viennagrid_mesh_hierarchy_geometric_dimension_get(mesh_hierarchy, &geometry_dimension);
@@ -182,7 +182,7 @@ viennagrid_numeric volume(viennagrid_mesh_hierarchy mesh_hierarchy,
 
   viennagrid_element_boundary_elements(mesh_hierarchy, element_dimension, element_id, 0, &vertices_start, &vertices_end);
 
-  return volume(mesh_hierarchy, geometry_dimension, element_tag, vertices_start, vertices_end);
+  return volume(mesh_hierarchy, geometry_dimension, element_type, vertices_start, vertices_end);
 }
 
 
@@ -227,7 +227,7 @@ viennagrid_numeric volume_C(viennagrid::mesh_t const & mesh_)
 
   viennagrid_int * cells_start;
   viennagrid_int * cells_end;
-  viennagrid_elements_get(mesh, cell_dimension, &cells_start, &cells_end);
+  viennagrid_mesh_elements_get(mesh, cell_dimension, &cells_start, &cells_end);
 
   viennagrid_numeric sum = 0;
   for (viennagrid_int * cell_id = cells_start; cell_id != cells_end; ++cell_id)
@@ -254,21 +254,21 @@ viennagrid_numeric volume_C_pure(viennagrid::mesh_t const & mesh_)
 
   viennagrid_int * cells_start;
   viennagrid_int * cells_end;
-  viennagrid_elements_get(mesh, cell_dimension, &cells_start, &cells_end);
+  viennagrid_mesh_elements_get(mesh, cell_dimension, &cells_start, &cells_end);
 
 
   viennagrid_int * boundary_offsets;
   viennagrid_int * boundary_indices;
-  viennagrid_element_boundary_pointers(mesh_hierarchy, cell_dimension, 0, &boundary_offsets, &boundary_indices);
+  viennagrid_element_boundary_element_pointers(mesh_hierarchy, cell_dimension, 0, &boundary_offsets, &boundary_indices);
 
 
   viennagrid_numeric sum = 0;
   for (viennagrid_int * cell_id = cells_start; cell_id != cells_end; ++cell_id)
   {
-    viennagrid_element_tag element_tag;
-    viennagrid_element_tag_get(mesh_hierarchy, cell_dimension, *cell_id, &element_tag);
+    viennagrid_element_type element_type;
+    viennagrid_element_type_get(mesh_hierarchy, cell_dimension, *cell_id, &element_type);
 
-    sum += volume(mesh_hierarchy, geometry_dimension, element_tag,
+    sum += volume(mesh_hierarchy, geometry_dimension, element_type,
                   boundary_indices + boundary_offsets[*cell_id],
                   boundary_indices + boundary_offsets[*cell_id+1]);
   }
@@ -357,7 +357,7 @@ viennagrid_int iteration_C(viennagrid::mesh_t const & mesh_)
 
   viennagrid_int * cells_start;
   viennagrid_int * cells_end;
-  viennagrid_elements_get(mesh, cell_dimension, &cells_start, &cells_end);
+  viennagrid_mesh_elements_get(mesh, cell_dimension, &cells_start, &cells_end);
 
   static viennagrid_int sum = 0;
   for (viennagrid_int * cell_id = cells_start; cell_id != cells_end; ++cell_id)
@@ -414,7 +414,7 @@ viennagrid_int boundary_iteration_C(viennagrid::mesh_t const & mesh_, int bounda
 
   viennagrid_int * cells_start;
   viennagrid_int * cells_end;
-  viennagrid_elements_get(mesh, cell_dimension, &cells_start, &cells_end);
+  viennagrid_mesh_elements_get(mesh, cell_dimension, &cells_start, &cells_end);
 
   static viennagrid_int sum = 0;
   for (viennagrid_int * cell_id = cells_start; cell_id != cells_end; ++cell_id)
@@ -447,12 +447,12 @@ viennagrid_int boundary_iteration_C_pure(viennagrid::mesh_t const & mesh_, int b
 
   viennagrid_int * cells_start;
   viennagrid_int * cells_end;
-  viennagrid_elements_get(mesh, cell_dimension, &cells_start, &cells_end);
+  viennagrid_mesh_elements_get(mesh, cell_dimension, &cells_start, &cells_end);
 
 
   viennagrid_int * boundary_offsets;
   viennagrid_int * boundary_indices;
-  viennagrid_element_boundary_pointers(mesh_hierarchy, cell_dimension, boundary_dimension, &boundary_offsets, &boundary_indices);
+  viennagrid_element_boundary_element_pointers(mesh_hierarchy, cell_dimension, boundary_dimension, &boundary_offsets, &boundary_indices);
 
 
   viennagrid_int sum = 0;
@@ -466,7 +466,6 @@ viennagrid_int boundary_iteration_C_pure(viennagrid::mesh_t const & mesh_, int b
     }
   }
 
-//   std::cout << sum << std::endl;
   return sum;
 }
 
