@@ -11,7 +11,6 @@
 #include "region.hpp"
 
 
-
 typedef dense_packed_multibuffer<viennagrid_int, viennagrid_int> ViennaGridBoundaryBufferType;
 typedef dense_packed_multibuffer<viennagrid_int, viennagrid_numeric> ViennaGridHolePointBufferType;
 typedef dense_packed_multibuffer<viennagrid_int, viennagrid_region> ViennaGridRegionBufferType;
@@ -20,24 +19,24 @@ typedef dense_packed_multibuffer<viennagrid_int, viennagrid_region> ViennaGridRe
 struct element_key
 {
   element_key() {}
-  element_key(viennagrid_int * indices, viennagrid_int index_count) : vertex_indices(index_count)
+  element_key(viennagrid_int * ids, viennagrid_int id_count) : vertex_ids(id_count)
   {
-    std::copy( indices, indices+index_count, &vertex_indices[0] );
-    std::sort( vertex_indices.begin(), vertex_indices.end()   );
+    std::copy( ids, ids+id_count, &vertex_ids[0] );
+    std::sort( vertex_ids.begin(), vertex_ids.end()   );
   }
 
   bool operator<(element_key const & rhs) const
-  { return vertex_indices < rhs.vertex_indices; }
+  { return vertex_ids < rhs.vertex_ids; }
 
   bool operator==(element_key const & rhs) const
-  { return vertex_indices == rhs.vertex_indices; }
+  { return vertex_ids == rhs.vertex_ids; }
 
   bool operator!=(element_key const & rhs) const
   { return !(*this == rhs); }
 
-  viennagrid_int front() const { return vertex_indices.front(); }
+  viennagrid_int front() const { return vertex_ids.front(); }
 
-  std::vector<viennagrid_int> vertex_indices;
+  std::vector<viennagrid_int> vertex_ids;
 };
 
 
@@ -53,13 +52,13 @@ public:
   void set_topologic_dimension(viennagrid_dimension topo_dim_in)
   {
     topologic_dimension = topo_dim_in;
-    boundary_indices.resize(topologic_dimension);
+    boundary_ids.resize(topologic_dimension);
   }
 
 
-  viennagrid_element_tag element_tag(viennagrid_int element_id) const
+  viennagrid_element_type element_type(viennagrid_int element_id) const
   {
-    return element_tags[element_id];
+    return element_types[element_id];
   }
 
   viennagrid_int * boundary_begin(viennagrid_int boundary_topo_dim, viennagrid_int element_id)
@@ -93,11 +92,11 @@ public:
 
   void clear(viennagrid_mesh_hierarchy_ * mesh_hierarchy_)
   {
-    element_tags.clear();
+    element_types.clear();
     parents.clear();
     region_buffer.clear();
 
-    boundary_indices.clear();
+    boundary_ids.clear();
     element_map.clear();
 
     mesh_hierarchy = mesh_hierarchy_;
@@ -105,21 +104,21 @@ public:
 
   void clear_boundary()
   {
-    for (std::size_t i = 1; i != boundary_indices.size(); ++i)
+    for (std::size_t i = 1; i != boundary_ids.size(); ++i)
     {
-      boundary_indices[i].clear();
+      boundary_ids[i].clear();
     }
   }
 
   viennagrid_int size() const { return parents.size(); }
-  viennagrid_element_tag * element_tags_pointer() { return &element_tags[0]; }
+  viennagrid_element_type * element_types_pointer() { return &element_types[0]; }
   viennagrid_int * vertex_offsets_pointer() { return boundary_buffer(0).offset_pointer(); }
-  viennagrid_int * vertex_indices_pointer() { return boundary_buffer(0).values_pointer(); }
+  viennagrid_int * vertex_ids_pointer() { return boundary_buffer(0).values_pointer(); }
   viennagrid_int * parent_id_pointer() { return &parents[0]; }
 
   ViennaGridBoundaryBufferType & boundary_buffer(viennagrid_dimension boundary_topo_dim)
   {
-    return boundary_indices[boundary_topo_dim];
+    return boundary_ids[boundary_topo_dim];
   }
 
 private:
@@ -136,14 +135,14 @@ private:
     return it->second;
   }
 
-  viennagrid_int get_element(viennagrid_int * indices, viennagrid_int index_count)
+  viennagrid_int get_element(viennagrid_int * ids, viennagrid_int id_count)
   {
-    return get_element( element_key(indices, index_count) );
+    return get_element( element_key(ids, id_count) );
   }
 
   viennagrid_int make_element(viennagrid_mesh_hierarchy mesh_hierarchy,
-                                viennagrid_element_tag element_tag_,
-                                viennagrid_int * vertex_indices,
+                                viennagrid_element_type element_type_,
+                                viennagrid_int * vertex_ids,
                                 viennagrid_int vertex_count,
                                 bool reserve_boundary);
 
@@ -154,8 +153,8 @@ private:
   // the current topologic dimension
   viennagrid_dimension topologic_dimension;
 
-  // tags of the element
-  std::vector<viennagrid_element_tag> element_tags;
+  // types of the element
+  std::vector<viennagrid_element_type> element_types;
 
   // element parent
   std::vector<viennagrid_int> parents;
@@ -169,8 +168,8 @@ private:
   // region of elements
   std::vector< std::vector<viennagrid_region> > region_buffer;
 
-  // boundary indices
-  std::vector<ViennaGridBoundaryBufferType> boundary_indices;
+  // boundary ids
+  std::vector<ViennaGridBoundaryBufferType> boundary_ids;
 
   // element map (based on vertices)
   typedef std::map<element_key, viennagrid_int> ElementMapType;
@@ -190,15 +189,15 @@ struct viennagrid_mesh_hierarchy_
 
 public:
   viennagrid_mesh_hierarchy_() : geometric_dimension_(0), cell_dimension_(-1),
-  root_( new viennagrid_mesh_(this) ), highest_region_id(0), change_counter_(0), use_count_(1), retain_release_count(0)
+  root_( new viennagrid_mesh_(this) ), highest_region_id(0), change_counter_(0), retain_release_count(0), reference_counter(1)
   {
     clear();
-//     std::cout << "NEW HIERARCHY " << this << std::endl;
+//     std::cout << "  NEW HIERARCHY " << this << std::endl;
   }
 
   ~viennagrid_mesh_hierarchy_()
   {
-//     std::cout << "DELETE HIERARCHY " << this << " (retain-release count=" << retain_release_count << ")" << std::endl;
+//     std::cout << "  DELETE HIERARCHY " << this << " (retain-release count=" << retain_release_count << ")" << std::endl;
 
     delete root_;
 
@@ -251,25 +250,25 @@ public:
   { return element_buffer(element_topo_dim).boundary_end(boundary_topo_dim, element_id); }
 
 
-  viennagrid_int * make_boundary_indices(viennagrid_element_tag host_tag,
-                                           viennagrid_element_tag boundary_tag,
-                                           viennagrid_int count)
+  viennagrid_int * make_boundary_ids(viennagrid_element_type host_type,
+                                         viennagrid_element_type boundary_type,
+                                         viennagrid_int count)
   {
-    return element_buffer(viennagrid_topological_dimension(host_tag)).boundary_buffer(viennagrid_topological_dimension(boundary_tag)).push_back(count);
+    return element_buffer(viennagrid_topological_dimension(host_type)).boundary_buffer(viennagrid_topological_dimension(boundary_type)).push_back(count);
   }
 
-  viennagrid_int * make_boundary_indices(viennagrid_element_tag host_tag,
-                                           viennagrid_element_tag boundary_tag)
+  viennagrid_int * make_boundary_ids(viennagrid_element_type host_type,
+                                         viennagrid_element_type boundary_type)
   {
-    return make_boundary_indices(host_tag, boundary_tag,
-                                 viennagrid_boundary_element_count_from_element_tag(host_tag, boundary_tag));
+    return make_boundary_ids(host_type, boundary_type,
+                                 viennagrid_boundary_element_count_from_element_type(host_type, boundary_type));
   }
 
 
 
   viennagrid_int make_vertex(const viennagrid_numeric * coords)
   {
-    viennagrid_int id = element_buffer(0).make_element(this, VIENNAGRID_ELEMENT_TAG_VERTEX, 0, 0, false);
+    viennagrid_int id = element_buffer(0).make_element(this, VIENNAGRID_ELEMENT_TYPE_VERTEX, 0, 0, false);
 
     viennagrid_int prev_size = vertex_buffer.size();
     vertex_buffer.resize( vertex_buffer.size() + geometric_dimension() );
@@ -297,8 +296,8 @@ public:
 
 
 
-  std::pair<viennagrid_int, bool> get_make_element(viennagrid_element_tag element_tag,
-                                    viennagrid_int * vertex_indices,
+  std::pair<viennagrid_int, bool> get_make_element(viennagrid_element_type element_type,
+                                    viennagrid_int * vertex_ids,
                                     viennagrid_int vertex_count,
                                     viennagrid_mesh mesh,
                                     bool make_boundary = true);
@@ -367,7 +366,7 @@ public:
   void increment_change_counter() { ++change_counter_; }
 
 
-  viennagrid_int element_count( viennagrid_element_tag element_tag ) const { return element_counts[element_tag]; }
+  viennagrid_int element_count( viennagrid_element_type element_type ) const { return element_counts[element_type]; }
 
 
   void clear()
@@ -402,25 +401,6 @@ public:
 //     retain_release_count = 0;
   }
 
-  void retain() const
-  {
-    ++use_count_;
-    ++retain_release_count;
-//     std::cout << "MESH HIERARCHY RETAIN (retain-release count=" << retain_release_count << ")" << std::endl;
-  }
-
-  bool release() const
-  {
-//     std::cout << "MESH HIERARCHY RELEASE" << std::endl;
-    if (--use_count_ <= 0)
-    {
-      delete this;
-      return false;
-    }
-
-    return true;
-  }
-
 
   viennagrid_int mesh_count() const { return meshes_.size(); }
   viennagrid_mesh mesh(viennagrid_int i) { return meshes_[i]; }
@@ -431,27 +411,27 @@ private:
 
 
 
-  viennagrid_int get_make_line(viennagrid_int * vertex_indices, viennagrid_int vi0, viennagrid_int vi1, viennagrid_mesh mesh)
+  viennagrid_int get_make_line(viennagrid_int * vertex_ids, viennagrid_int vi0, viennagrid_int vi1, viennagrid_mesh mesh)
   {
-    viennagrid_int tmp[2] = { vertex_indices[vi0], vertex_indices[vi1] };
-    return get_make_element(VIENNAGRID_ELEMENT_TAG_LINE, tmp, 2, mesh, false).first;
+    viennagrid_int tmp[2] = { vertex_ids[vi0], vertex_ids[vi1] };
+    return get_make_element(VIENNAGRID_ELEMENT_TYPE_LINE, tmp, 2, mesh, false).first;
   }
 
   viennagrid_int get_make_triangle(
-        viennagrid_int * vertex_indices, viennagrid_int vi0, viennagrid_int vi1, viennagrid_int vi2,
-        viennagrid_int * line_indices, viennagrid_int li0, viennagrid_int li1, viennagrid_int li2,
+        viennagrid_int * vertex_ids, viennagrid_int vi0, viennagrid_int vi1, viennagrid_int vi2,
+        viennagrid_int * line_ids, viennagrid_int li0, viennagrid_int li1, viennagrid_int li2,
         viennagrid_mesh mesh)
   {
-    viennagrid_int tmp[3] = { vertex_indices[vi0], vertex_indices[vi1], vertex_indices[vi2] };
+    viennagrid_int tmp[3] = { vertex_ids[vi0], vertex_ids[vi1], vertex_ids[vi2] };
 
-    std::pair<viennagrid_int, bool> triangle = get_make_element(VIENNAGRID_ELEMENT_TAG_TRIANGLE, tmp, 3, mesh, false);
+    std::pair<viennagrid_int, bool> triangle = get_make_element(VIENNAGRID_ELEMENT_TYPE_TRIANGLE, tmp, 3, mesh, false);
 
     if (triangle.second && full_boundary_layout())
     {
-      viennagrid_int * local_line_indices = boundary_begin(2, triangle.first, 1);
-      local_line_indices[0] = line_indices[li0];
-      local_line_indices[1] = line_indices[li1];
-      local_line_indices[2] = line_indices[li2];
+      viennagrid_int * local_line_ids = boundary_begin(2, triangle.first, 1);
+      local_line_ids[0] = line_ids[li0];
+      local_line_ids[1] = line_ids[li1];
+      local_line_ids[2] = line_ids[li2];
     }
 
     return triangle.first;
@@ -460,46 +440,46 @@ private:
 
 
 
-  std::pair<viennagrid_int, bool> get_make_element_2(viennagrid_element_tag element_tag,
-                                    viennagrid_int * vertex_indices,
-                                    viennagrid_int i0, viennagrid_int i1,
-                                    viennagrid_mesh mesh,
-                                    bool make_boundary = true)
+  std::pair<viennagrid_int, bool> get_make_element_2(viennagrid_element_type element_type,
+                                                     viennagrid_int * vertex_ids,
+                                                     viennagrid_int i0, viennagrid_int i1,
+                                                     viennagrid_mesh mesh,
+                                                     bool make_boundary = true)
   {
     viennagrid_int tmp[2];
 
-    tmp[0] = vertex_indices[i0];
-    tmp[1] = vertex_indices[i1];
-    return get_make_element(element_tag, tmp, 2, mesh, make_boundary);
+    tmp[0] = vertex_ids[i0];
+    tmp[1] = vertex_ids[i1];
+    return get_make_element(element_type, tmp, 2, mesh, make_boundary);
   }
 
-  std::pair<viennagrid_int, bool> get_make_element_3(viennagrid_element_tag element_tag,
-                                    viennagrid_int * vertex_indices,
-                                    viennagrid_int i0, viennagrid_int i1, viennagrid_int i2,
-                                    viennagrid_mesh mesh,
-                                    bool make_boundary = true)
+  std::pair<viennagrid_int, bool> get_make_element_3(viennagrid_element_type element_type,
+                                                     viennagrid_int * vertex_ids,
+                                                     viennagrid_int i0, viennagrid_int i1, viennagrid_int i2,
+                                                     viennagrid_mesh mesh,
+                                                     bool make_boundary = true)
   {
     viennagrid_int tmp[3];
 
-    tmp[0] = vertex_indices[i0];
-    tmp[1] = vertex_indices[i1];
-    tmp[2] = vertex_indices[i2];
-    return get_make_element(element_tag, tmp, 3, mesh, make_boundary);
+    tmp[0] = vertex_ids[i0];
+    tmp[1] = vertex_ids[i1];
+    tmp[2] = vertex_ids[i2];
+    return get_make_element(element_type, tmp, 3, mesh, make_boundary);
   }
 
-  std::pair<viennagrid_int, bool> get_make_element_4(viennagrid_element_tag element_tag,
-                                    viennagrid_int * vertex_indices,
-                                    viennagrid_int i0, viennagrid_int i1, viennagrid_int i2, viennagrid_int i3,
-                                    viennagrid_mesh mesh,
-                                    bool make_boundary = true)
+  std::pair<viennagrid_int, bool> get_make_element_4(viennagrid_element_type element_type,
+                                                     viennagrid_int * vertex_ids,
+                                                     viennagrid_int i0, viennagrid_int i1, viennagrid_int i2, viennagrid_int i3,
+                                                     viennagrid_mesh mesh,
+                                                     bool make_boundary = true)
   {
     viennagrid_int tmp[4];
 
-    tmp[0] = vertex_indices[i0];
-    tmp[1] = vertex_indices[i1];
-    tmp[2] = vertex_indices[i2];
-    tmp[3] = vertex_indices[i3];
-    return get_make_element(element_tag, tmp, 4, mesh, make_boundary);
+    tmp[0] = vertex_ids[i0];
+    tmp[1] = vertex_ids[i1];
+    tmp[2] = vertex_ids[i2];
+    tmp[3] = vertex_ids[i3];
+    return get_make_element(element_type, tmp, 4, mesh, make_boundary);
   }
 
 
@@ -507,7 +487,7 @@ private:
 
 
   viennagrid_element_buffer element_buffers[VIENNAGRID_TOPOLOGIC_DIMENSION_END];
-  viennagrid_int element_counts[VIENNAGRID_ELEMENT_TAG_COUNT];
+  viennagrid_int element_counts[VIENNAGRID_ELEMENT_TYPE_COUNT];
 
   viennagrid_dimension geometric_dimension_;
   viennagrid_dimension cell_dimension_;
@@ -522,8 +502,10 @@ private:
   std::map<viennagrid_int, viennagrid_int> region_id_map;
 
   viennagrid_int change_counter_;
-  mutable viennagrid_int use_count_;
-  mutable viennagrid_int retain_release_count;
+  viennagrid_int retain_release_count;
+
+public:
+  viennagrid_int reference_counter;
 };
 
 #endif

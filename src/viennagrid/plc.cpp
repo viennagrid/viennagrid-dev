@@ -36,32 +36,32 @@ viennagrid_int viennagrid_plc_::element_count(int topologic_dimension)
 
 
 
-viennagrid_int viennagrid_plc_::get_make_line(viennagrid_int vertex_index0, viennagrid_int vertex_index1)
+viennagrid_int viennagrid_plc_::get_make_line(viennagrid_int vertex_id0, viennagrid_int vertex_id1)
 {
-  if (vertex_index1 < vertex_index0)
-    std::swap(vertex_index0, vertex_index1);
+  if (vertex_id1 < vertex_id0)
+    std::swap(vertex_id0, vertex_id1);
 
   for (viennagrid_int i = 0; i != line_vertices_.size(); ++i)
   {
     viennagrid_int * vptr = line_vertices_.begin(i);
 
-    if ( (vertex_index0 == *vptr) && (vertex_index1 == *(vptr+1)) )
+    if ( (vertex_id0 == *vptr) && (vertex_id1 == *(vptr+1)) )
       return i;
   }
 
   viennagrid_int id = line_vertices_.size();
   viennagrid_int * vptr = line_vertices_.push_back(2);
-  *vptr = vertex_index0;
-  *(vptr+1) = vertex_index1;
+  *vptr = vertex_id0;
+  *(vptr+1) = vertex_id1;
   return id;
 }
 
 
-viennagrid_int viennagrid_plc_::get_make_facet(viennagrid_int * line_indices, viennagrid_int line_count)
+viennagrid_int viennagrid_plc_::get_make_facet(viennagrid_int * line_ids, viennagrid_int line_count)
 {
-  std::vector<viennagrid_int> sorted_line_indices(line_count);
-  std::copy(line_indices, line_indices+line_count, sorted_line_indices.begin());
-  std::sort(sorted_line_indices.begin(), sorted_line_indices.end());
+  std::vector<viennagrid_int> sorted_line_ids(line_count);
+  std::copy(line_ids, line_ids+line_count, sorted_line_ids.begin());
+  std::sort(sorted_line_ids.begin(), sorted_line_ids.end());
 
   for (viennagrid_int id = 0; id != facet_lines_.size(); ++id)
   {
@@ -74,7 +74,7 @@ viennagrid_int viennagrid_plc_::get_make_facet(viennagrid_int * line_indices, vi
     int j = 0;
     for (; j != line_count; ++j)
     {
-      if ( sorted_line_indices[j] != *(lptr_begin+j) )
+      if ( sorted_line_ids[j] != *(lptr_begin+j) )
         break;
     }
 
@@ -84,13 +84,13 @@ viennagrid_int viennagrid_plc_::get_make_facet(viennagrid_int * line_indices, vi
 
   viennagrid_int id = facet_lines_.size();
   viennagrid_int * lptr = facet_lines_.push_back(line_count);
-  std::copy( sorted_line_indices.begin(), sorted_line_indices.end(), lptr );
+  std::copy( sorted_line_ids.begin(), sorted_line_ids.end(), lptr );
 
   std::set<viennagrid_int> vertices;
   for (int i = 0; i != line_count; ++i)
   {
-    viennagrid_int * vptr_begin = boundary_begin(1, sorted_line_indices[i], 0);
-    viennagrid_int * vptr_end = boundary_end(1, sorted_line_indices[i], 0);
+    viennagrid_int * vptr_begin = boundary_begin(1, sorted_line_ids[i], 0);
+    viennagrid_int * vptr_end = boundary_end(1, sorted_line_ids[i], 0);
 
     for (viennagrid_int * vptr = vptr_begin; vptr != vptr_end; ++vptr)
       vertices.insert(*vptr);
@@ -204,7 +204,7 @@ viennagrid_int viennagrid_plc_::read_tetgen_poly(std::string const & filename)
   #endif
 
   if (!reader)
-    return VIENNAGRID_PLC_POLY_READER_CANNOT_OPEN_FILE;
+    return VIENNAGRID_ERROR_IO_CANNOT_OPEN_FILE;
 
   std::vector<PointType> hole_points;
   std::vector<PointType> seed_points;
@@ -219,13 +219,13 @@ viennagrid_int viennagrid_plc_::read_tetgen_poly(std::string const & filename)
 
 
   if (!reader.good())
-    return VIENNAGRID_PLC_POLY_READER_FILE_EMPTY;
+    return VIENNAGRID_ERROR_IO_FILE_EMPTY;
 
   //
   // Read vertices:
   //
   if (!get_valid_line(reader, tmp))
-    return VIENNAGRID_PLC_POLY_READER_EOF_ENCOUNTERED;
+    return VIENNAGRID_ERROR_IO_EOF_ENCOUNTERED;
 
   current_line.str(tmp); current_line.clear();
   current_line >> node_num >> point_dim >> attribute_num >> boundary_marker_num;
@@ -233,14 +233,14 @@ viennagrid_int viennagrid_plc_::read_tetgen_poly(std::string const & filename)
   set_geometric_dimension(point_dim);
 
   if (node_num < 0)
-    return VIENNAGRID_PLC_POLY_READER_INVALID_VERTEX_COUNT;
+    return VIENNAGRID_ERROR_IO_INVALID_VERTEX_COUNT;
 //         if (dim != point_dim)
 //           throw bad_file_format_exception("* ViennaGrid: tetgen_poly_reader::operator(): File " + filename + ": POLY point dimension missmatch");
   if (attribute_num < 0)
-    return VIENNAGRID_PLC_POLY_READER_INVALID_ATTRIBUTE_COUNT;
+    return VIENNAGRID_ERROR_IO_INVALID_ATTRIBUTE_COUNT;
 
   if ((boundary_marker_num < 0) || (boundary_marker_num > 1))
-    return VIENNAGRID_PLC_POLY_READER_INVALID_BOUNDARY_MARKER_COUNT;
+    return VIENNAGRID_ERROR_IO_INVALID_BOUNDARY_MARKER_COUNT;
 
   #if defined VIENNAGRID_DEBUG_STATUS || defined VIENNAGRID_DEBUG_IO
   std::cout << "* poly_reader::operator(): Reading " << node_num << " vertices... " << std::endl;
@@ -251,7 +251,7 @@ viennagrid_int viennagrid_plc_::read_tetgen_poly(std::string const & filename)
   for (int i=0; i<node_num; i++)
   {
     if (!get_valid_line(reader, tmp))
-      return VIENNAGRID_PLC_POLY_READER_EOF_ENCOUNTERED;
+      return VIENNAGRID_ERROR_IO_EOF_ENCOUNTERED;
 
     int id;
 //     viennagrid_int vertex;
@@ -268,7 +268,7 @@ viennagrid_int viennagrid_plc_::read_tetgen_poly(std::string const & filename)
   }
 
   if (!reader.good())
-    return VIENNAGRID_PLC_POLY_READER_EOF_ENCOUNTERED;
+    return VIENNAGRID_ERROR_IO_EOF_ENCOUNTERED;
 
 
   //
@@ -276,16 +276,16 @@ viennagrid_int viennagrid_plc_::read_tetgen_poly(std::string const & filename)
   //
   long facet_num = 0;
   if (!get_valid_line(reader, tmp))
-    return VIENNAGRID_PLC_POLY_READER_EOF_ENCOUNTERED;
+    return VIENNAGRID_ERROR_IO_EOF_ENCOUNTERED;
 
 
   current_line.str(tmp); current_line.clear();
   current_line >> facet_num >> boundary_marker_num;
 
   if (facet_num < 0)
-    return VIENNAGRID_PLC_POLY_READER_INVALID_FACET_COUNT;
+    return VIENNAGRID_ERROR_IO_INVALID_FACET_COUNT;
   if ((boundary_marker_num < 0) || (boundary_marker_num > 1))
-    return VIENNAGRID_PLC_POLY_READER_INVALID_BOUNDARY_MARKER_COUNT;
+    return VIENNAGRID_ERROR_IO_INVALID_BOUNDARY_MARKER_COUNT;
 
   #if defined VIENNAGRID_DEBUG_STATUS || defined VIENNAGRID_DEBUG_IO
   std::cout << "* netgen_reader::operator(): Reading " << cell_num << " cells... " << std::endl;
@@ -297,16 +297,16 @@ viennagrid_int viennagrid_plc_::read_tetgen_poly(std::string const & filename)
     long hole_num;
 
     if (!get_valid_line(reader, tmp))
-      return VIENNAGRID_PLC_POLY_READER_EOF_ENCOUNTERED;
+      return VIENNAGRID_ERROR_IO_EOF_ENCOUNTERED;
 
 
     current_line.str(tmp); current_line.clear();
     current_line >> polygon_num >> hole_num;
 
     if (polygon_num < 0)
-      return VIENNAGRID_PLC_POLY_READER_INVALID_FACET_POLYGON_COUNT;
+      return VIENNAGRID_ERROR_IO_INVALID_FACET_POLYGON_COUNT;
     if (hole_num < 0)
-      return VIENNAGRID_PLC_POLY_READER_INVALID_FACET_HOLE_POINT_COUNT;
+      return VIENNAGRID_ERROR_IO_INVALID_FACET_HOLE_POINT_COUNT;
 
     std::vector<viennagrid_int> lines;
     std::vector<viennagrid_int> vertices;
@@ -316,14 +316,14 @@ viennagrid_int viennagrid_plc_::read_tetgen_poly(std::string const & filename)
       long vertex_num;
 
       if (!get_valid_line(reader, tmp))
-        return VIENNAGRID_PLC_POLY_READER_EOF_ENCOUNTERED;
+        return VIENNAGRID_ERROR_IO_EOF_ENCOUNTERED;
 
 
       current_line.str(tmp); current_line.clear();
       current_line >> vertex_num;
 
       if (vertex_num < 0)
-        return VIENNAGRID_PLC_POLY_READER_INVALID_POLYGON_VERTEX_COUNT;
+        return VIENNAGRID_ERROR_IO_INVALID_POLYGON_VERTEX_COUNT;
 
       std::vector<viennagrid_int> local_vertices(vertex_num);
 
@@ -334,7 +334,7 @@ viennagrid_int viennagrid_plc_::read_tetgen_poly(std::string const & filename)
 
         std::map<int, viennagrid_int>::iterator it = vertex_map.find(id);
         if (it == vertex_map.end())
-          return VIENNAGRID_PLC_POLY_READER_INVALID_VERTEX_ID;
+          return VIENNAGRID_ERROR_IO_INVALID_VERTEX_ID;
 
         local_vertices[k] = vertex_map[id];
       }
@@ -362,7 +362,7 @@ viennagrid_int viennagrid_plc_::read_tetgen_poly(std::string const & filename)
     for (int j = 0; j<hole_num; ++j)
     {
       if (!get_valid_line(reader, tmp))
-        return VIENNAGRID_PLC_POLY_READER_EOF_ENCOUNTERED;
+        return VIENNAGRID_ERROR_IO_EOF_ENCOUNTERED;
 
       long hole_id;
 
@@ -401,12 +401,12 @@ viennagrid_int viennagrid_plc_::read_tetgen_poly(std::string const & filename)
   current_line >> hole_num;
 
   if (hole_num < 0)
-    return VIENNAGRID_PLC_POLY_READER_INVALID_HOLE_POINT_COUNT;
+    return VIENNAGRID_ERROR_IO_INVALID_HOLE_POINT_COUNT;
 
   for (int i=0; i<hole_num; ++i)
   {
     if (!get_valid_line(reader, tmp))
-      return VIENNAGRID_PLC_POLY_READER_EOF_ENCOUNTERED;
+      return VIENNAGRID_ERROR_IO_EOF_ENCOUNTERED;
 
     long hole_number;
     PointType hole_point(point_dim);
@@ -435,12 +435,12 @@ viennagrid_int viennagrid_plc_::read_tetgen_poly(std::string const & filename)
   current_line >> region_num;
 
   if (region_num < 0)
-    return VIENNAGRID_PLC_POLY_READER_INVALID_SEED_POINT_COUNT;
+    return VIENNAGRID_ERROR_IO_INVALID_SEED_POINT_COUNT;
 
   for (int i=0; i<region_num; ++i)
   {
     if (!get_valid_line(reader, tmp))
-      return VIENNAGRID_PLC_POLY_READER_EOF_ENCOUNTERED;
+      return VIENNAGRID_ERROR_IO_EOF_ENCOUNTERED;
 
     long region_number;
     PointType seed_point(point_dim);

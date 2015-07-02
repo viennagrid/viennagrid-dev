@@ -14,7 +14,7 @@
 struct viennagrid_plc_
 {
 public:
-  viennagrid_plc_() : geometric_dimension_(0) {}
+  viennagrid_plc_() : geometric_dimension_(0), reference_counter(1) {}
 
 
   viennagrid_dimension geometric_dimension() { return geometric_dimension_; }
@@ -42,8 +42,8 @@ public:
   }
 
 
-  viennagrid_int get_make_line(viennagrid_int vertex_index0, viennagrid_int vertex_index1);
-  viennagrid_int get_make_facet(viennagrid_int * line_indices, viennagrid_int line_count);
+  viennagrid_int get_make_line(viennagrid_int vertex_id0, viennagrid_int vertex_id1);
+  viennagrid_int get_make_facet(viennagrid_int * line_ids, viennagrid_int line_count);
 
 
   viennagrid_int * boundary_begin(viennagrid_dimension topologic_dimension,
@@ -63,9 +63,9 @@ public:
       facet_hole_points_.add(id, coords[i]);
   }
 
-  void delete_facet_hole_point(viennagrid_int id, viennagrid_int point_index)
+  void delete_facet_hole_point(viennagrid_int id, viennagrid_int point_id)
   {
-    facet_hole_points_.erase(id, point_index*geometric_dimension(), (point_index+1)*geometric_dimension());
+    facet_hole_points_.erase(id, point_id*geometric_dimension(), (point_id+1)*geometric_dimension());
   }
 
   viennagrid_int facet_hole_point_count(viennagrid_int id)
@@ -149,7 +149,6 @@ public:
     seed_point_regions_.clear();
   }
 
-
 private:
 
   viennagrid_int vertex_count()
@@ -170,6 +169,9 @@ private:
 
   std::vector<viennagrid_numeric> seed_points_;
   std::vector<viennagrid_int> seed_point_regions_;
+
+public:
+  viennagrid_int reference_counter;
 };
 
 

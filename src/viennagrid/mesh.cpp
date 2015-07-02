@@ -87,12 +87,12 @@ bool is_subset(SortedContainerT1 const & cont1, SortedContainerT2 const & cont2)
 viennagrid_int viennagrid_mesh_::make_refined_element(
   viennagrid_dimension      element_topo_dim,
   viennagrid_int          element_id,
-  viennagrid_element_tag    refined_element_tag,
-  viennagrid_int            refined_element_base_count,
-  viennagrid_int *        refined_element_base_indices,
+  viennagrid_element_type    refined_element_type,
+  viennagrid_int            refined_element_vertex_count,
+  viennagrid_int *        refined_element_vertex_ids,
   viennagrid_int            intersects_count,
-  viennagrid_int *        intersect_vertices_indices,
-  viennagrid_int *        intersects_indices,
+  viennagrid_int *        intersect_vertices_ids,
+  viennagrid_int *        intersects_ids,
   viennagrid_dimension *    intersects_topo_dims)
 {
   assert( !is_root() );
@@ -105,14 +105,14 @@ viennagrid_int viennagrid_mesh_::make_refined_element(
 
   for (viennagrid_int i = 0; i != intersects_count; ++i)
   {
-    intersects[intersects_topo_dims[i]][intersects_indices[i]].push_back( intersect_vertices_indices[i] );
+    intersects[intersects_topo_dims[i]][intersects_ids[i]].push_back( intersect_vertices_ids[i] );
   }
 
 
   viennagrid_int child_element_id = mesh_hierarchy()->get_make_element(
-          refined_element_tag,
-          refined_element_base_indices,
-          refined_element_base_count,
+          refined_element_type,
+          refined_element_vertex_ids,
+          refined_element_vertex_count,
           NULL ).first;
 
   mesh_hierarchy()->element_buffer(element_topo_dim).set_parent_id( child_element_id, element_id );
@@ -151,13 +151,13 @@ viennagrid_int viennagrid_mesh_::make_refined_element(
           viennagrid_int * iv = boundary_begin(boundary_dim, kt->first, 0);
           viennagrid_int * iv_end = boundary_end(boundary_dim, kt->first, 0);
 
-          std::vector<viennagrid_int> intersected_element_indices(iv_end-iv + kt->second.size());
+          std::vector<viennagrid_int> intersected_element_ids(iv_end-iv + kt->second.size());
 
-          std::copy(iv, iv_end, intersected_element_indices.begin());
-          std::copy(kt->second.begin(), kt->second.end(), &intersected_element_indices[iv_end-iv]);
-          std::sort(intersected_element_indices.begin(), intersected_element_indices.end());
+          std::copy(iv, iv_end, intersected_element_ids.begin());
+          std::copy(kt->second.begin(), kt->second.end(), &intersected_element_ids[iv_end-iv]);
+          std::sort(intersected_element_ids.begin(), intersected_element_ids.end());
 
-          if ( is_subset(boundary_vertices, intersected_element_indices) )
+          if ( is_subset(boundary_vertices, intersected_element_ids) )
             mesh_hierarchy()->element_buffer(boundary_dim).set_parent_id(boundary_id, kt->first);
         }
       }
@@ -203,17 +203,17 @@ void viennagrid_mesh_::set_boundary_flags_uptodate()
 
 
 
-bool viennagrid_mesh_::is_element_children_obsolete(viennagrid_int child_mesh_index_, viennagrid_int element_topo_dim)
-{ return mesh_hierarchy()->is_obsolete( element_children_change_counter(child_mesh_index_, element_topo_dim) ); }
-void viennagrid_mesh_::set_element_children_uptodate(viennagrid_int child_mesh_index_, viennagrid_int element_topo_dim)
-{ return mesh_hierarchy()->update_change_counter( element_children_change_counter(child_mesh_index_, element_topo_dim) ); }
+bool viennagrid_mesh_::is_element_children_obsolete(viennagrid_int child_mesh_id_, viennagrid_int element_topo_dim)
+{ return mesh_hierarchy()->is_obsolete( element_children_change_counter(child_mesh_id_, element_topo_dim) ); }
+void viennagrid_mesh_::set_element_children_uptodate(viennagrid_int child_mesh_id_, viennagrid_int element_topo_dim)
+{ return mesh_hierarchy()->update_change_counter( element_children_change_counter(child_mesh_id_, element_topo_dim) ); }
 
 
 void viennagrid_mesh_::make_element_children(viennagrid_mesh child, viennagrid_int element_topo_dim)
 {
-  viennagrid_int child_mesh_index_ = child_mesh_index(child);
+  viennagrid_int child_mesh_id_ = child_mesh_id(child);
 
-  if (!is_element_children_obsolete(child_mesh_index_, element_topo_dim))
+  if (!is_element_children_obsolete(child_mesh_id_, element_topo_dim))
     return;
 
 
@@ -231,12 +231,12 @@ void viennagrid_mesh_::make_element_children(viennagrid_mesh child, viennagrid_i
 
 
 
-  ViennaGridElementChildrenBufferType & element_children_buffer = element_children[child_mesh_index_].children_indices_buffer(element_topo_dim);
+  ViennaGridElementChildrenBufferType & element_children_buffer = element_children[child_mesh_id_].children_ids_buffer(element_topo_dim);
   element_children_buffer.clear();
 
 
 
-  set_element_children_uptodate(child_mesh_index_, element_topo_dim);
+  set_element_children_uptodate(child_mesh_id_, element_topo_dim);
 }
 
 
@@ -255,12 +255,12 @@ void viennagrid_mesh_::make_coboundary(viennagrid_int element_topo_dim, viennagr
 
   for (viennagrid_int i = 0; i < coboundary_count; ++i)
   {
-    viennagrid_int coboundary_index = coboundary_ids[i];
-    viennagrid_int * element_it = boundary_begin(coboundary_topo_dim, coboundary_index, element_topo_dim);
-    viennagrid_int * element_end = boundary_end(coboundary_topo_dim, coboundary_index, element_topo_dim);
+    viennagrid_int coboundary_id= coboundary_ids[i];
+    viennagrid_int * element_it = boundary_begin(coboundary_topo_dim, coboundary_id, element_topo_dim);
+    viennagrid_int * element_end = boundary_end(coboundary_topo_dim, coboundary_id, element_topo_dim);
 
     for (; element_it != element_end; ++element_it)
-      tmp[*element_it].push_back(coboundary_index);
+      tmp[*element_it].push_back(coboundary_id);
   }
 
 
@@ -269,8 +269,8 @@ void viennagrid_mesh_::make_coboundary(viennagrid_int element_topo_dim, viennagr
   coboundary_buffer.clear();
   for (std::map< viennagrid_int, std::vector<viennagrid_int> >::iterator it = tmp.begin(); it != tmp.end(); ++it)
   {
-    viennagrid_int * indices = coboundary_buffer.insert( it->first, it->second.size() );
-    std::copy( it->second.begin(), it->second.end(), indices );
+    viennagrid_int * ids = coboundary_buffer.insert( it->first, it->second.size() );
+    std::copy( it->second.begin(), it->second.end(), ids );
   }
 
   set_coboundary_uptodate(element_topo_dim, coboundary_topo_dim);
@@ -299,34 +299,34 @@ void viennagrid_mesh_::make_neighbor(viennagrid_int element_topo_dim, viennagrid
 
   for (viennagrid_int i = 0; i < element_count; ++i)
   {
-    viennagrid_int element_index = element_ids[i];
+    viennagrid_int element_id= element_ids[i];
     std::set<viennagrid_int> tmp;
 
-    viennagrid_int * connector_it = connected_begin(element_topo_dim, element_index, connector_topo_dim);
-    viennagrid_int * connector_end = connected_end(element_topo_dim, element_index, connector_topo_dim);
+    viennagrid_int * connector_it = connected_begin(element_topo_dim, element_id, connector_topo_dim);
+    viennagrid_int * connector_end = connected_end(element_topo_dim, element_id, connector_topo_dim);
 
     for (; connector_it != connector_end; ++connector_it)
     {
-      viennagrid_int connector_index = *connector_it;
+      viennagrid_int connector_id= *connector_it;
 
-      viennagrid_int * neighbor_it = connected_begin(connector_topo_dim, connector_index, neighbor_topo_dim);
-      viennagrid_int * neighbor_end = connected_end(connector_topo_dim, connector_index, neighbor_topo_dim);
+      viennagrid_int * neighbor_it = connected_begin(connector_topo_dim, connector_id, neighbor_topo_dim);
+      viennagrid_int * neighbor_end = connected_end(connector_topo_dim, connector_id, neighbor_topo_dim);
 
 
       for (; neighbor_it != neighbor_end; ++neighbor_it)
       {
-        viennagrid_int neighbor_index = *neighbor_it;
-        if ((element_topo_dim == neighbor_topo_dim) && (element_index == neighbor_index))
+        viennagrid_int neighbor_id = *neighbor_it;
+        if ((element_topo_dim == neighbor_topo_dim) && (element_id == neighbor_id))
           continue;
 
-        tmp.insert( neighbor_index );
+        tmp.insert( neighbor_id );
       }
     }
 
     if (element_topo_dim > neighbor_topo_dim)
     {
-      viennagrid_int * it = boundary_begin(element_topo_dim, element_index, neighbor_topo_dim);
-      viennagrid_int * end = boundary_begin(element_topo_dim, element_index, neighbor_topo_dim);
+      viennagrid_int * it = boundary_begin(element_topo_dim, element_id, neighbor_topo_dim);
+      viennagrid_int * end = boundary_begin(element_topo_dim, element_id, neighbor_topo_dim);
 
       for (; it != end; ++it)
         tmp.erase(*it);
@@ -334,8 +334,8 @@ void viennagrid_mesh_::make_neighbor(viennagrid_int element_topo_dim, viennagrid
 
 
 
-    viennagrid_int * indices = neighbor_buffer.insert( element_index, tmp.size() );
-    std::copy( tmp.begin(), tmp.end(), indices );
+    viennagrid_int * ids = neighbor_buffer.insert( element_id, tmp.size() );
+    std::copy( tmp.begin(), tmp.end(), ids );
   }
 
   set_neighbor_uptodate(element_topo_dim, connector_topo_dim, neighbor_topo_dim);
@@ -371,7 +371,7 @@ void viennagrid_mesh_::make_boundary_flags(viennagrid_region region)
     {
       for (viennagrid_int boundary_topo_dim = 0; boundary_topo_dim != facet_topo_dim; ++boundary_topo_dim)
       {
-        if (viennagrid_is_boundary_tag(facet_topo_dim, boundary_topo_dim) == VIENNAGRID_TRUE)
+        if (viennagrid_is_boundary_type(facet_topo_dim, boundary_topo_dim) == VIENNAGRID_TRUE)
         {
           viennagrid_int * it = mesh_hierarchy()->element_buffer(facet_topo_dim).boundary_buffer(boundary_topo_dim).begin(*facet);
           viennagrid_int * boundary_end = mesh_hierarchy()->element_buffer(facet_topo_dim).boundary_buffer(boundary_topo_dim).end(*facet);
@@ -413,7 +413,7 @@ void viennagrid_mesh_::make_boundary_flags()
     {
       for (viennagrid_int boundary_topo_dim = 0; boundary_topo_dim != facet_topo_dim; ++boundary_topo_dim)
       {
-        if (viennagrid_is_boundary_tag(facet_topo_dim, boundary_topo_dim) == VIENNAGRID_TRUE)
+        if (viennagrid_is_boundary_type(facet_topo_dim, boundary_topo_dim) == VIENNAGRID_TRUE)
         {
           viennagrid_int * it = mesh_hierarchy()->element_buffer(facet_topo_dim).boundary_buffer(boundary_topo_dim).begin(*facet);
           viennagrid_int * boundary_end = mesh_hierarchy()->element_buffer(facet_topo_dim).boundary_buffer(boundary_topo_dim).end(*facet);

@@ -5,62 +5,65 @@
 #include <vector>
 #include <map>
 
-#include "viennagrid/quantity_field.h"
+#include "viennagrid/viennagrid.h"
+#include "common.hpp"
 
 
 
 // quantities
 struct viennagrid_quantity_field_t
 {
+  viennagrid_quantity_field_t() : topologic_dimension(-1), size_of_value(-1), storage_layout(-1), reference_counter(1) {}
+
   std::string name;
   std::string unit;
   viennagrid_dimension topologic_dimension;
 
 
-  viennagrid_dimension values_dimension;
+  viennagrid_int size_of_value;
   viennagrid_int storage_layout;
 
 
-  std::vector<viennagrid_numeric> dense_values;
+  std::vector<char> dense_values;
   std::vector<bool> dense_valid_flags;
 
-  std::map< viennagrid_int, std::vector<viennagrid_numeric> > sparse_values;
+  std::map< viennagrid_int, char * > sparse_values;
 
 
-  viennagrid_int use_count;                                                           // initialized with 1
+
+  void clear()
+  {
+    for (std::map< viennagrid_int, char * >::iterator it = sparse_values.begin(); it != sparse_values.end(); ++it)
+    {
+      delete[] (*it).second;
+    }
+  }
+
+public:
+  viennagrid_int reference_counter;
 };
 
 
 
 
-viennagrid_error viennagrid_quantity_field_make(viennagrid_quantity_field * quantity_field)
+viennagrid_error viennagrid_quantity_field_create(viennagrid_quantity_field * quantity_field)
 {
   *quantity_field = new viennagrid_quantity_field_t;
-
-  (*quantity_field)->topologic_dimension = -1;
-
-  (*quantity_field)->values_dimension = -1;
-  (*quantity_field)->storage_layout = -1;
-
-  (*quantity_field)->use_count = 1;
-
   return VIENNAGRID_SUCCESS;
 }
 
 viennagrid_error viennagrid_quantity_field_retain(viennagrid_quantity_field quantity_field)
 {
-  ++quantity_field->use_count;
+  if (quantity_field)
+    retain(quantity_field);
 
   return VIENNAGRID_SUCCESS;
 }
 
 viennagrid_error viennagrid_quantity_field_release(viennagrid_quantity_field quantity_field)
 {
-  if (!quantity_field)
-    return VIENNAGRID_SUCCESS;
-
-  if ( --(quantity_field->use_count) <= 0 )
-    delete quantity_field;
+  if (quantity_field)
+    release(quantity_field);
 
   return VIENNAGRID_SUCCESS;
 }
@@ -68,20 +71,20 @@ viennagrid_error viennagrid_quantity_field_release(viennagrid_quantity_field qua
 
 viennagrid_error viennagrid_quantity_field_init(viennagrid_quantity_field quantity_field,
                                                 viennagrid_dimension topologic_dimension,
-                                                viennagrid_dimension values_dimension,
+                                                viennagrid_int size_of_value,
                                                 viennagrid_int storage_layout)
 {
   if ( (topologic_dimension == quantity_field->topologic_dimension) &&
        (storage_layout == quantity_field->storage_layout) &&
-       (values_dimension == quantity_field->values_dimension) )
+       (size_of_value == quantity_field->size_of_value) )
     return VIENNAGRID_SUCCESS;
 
-  if ( (storage_layout != QUANTITY_FIELD_STORAGE_DENSE) && (storage_layout != QUANTITY_FIELD_STORAGE_SPARSE) )
-    return VIENNAGRID_INVALID_ARGUMENTS;
+  if ( (storage_layout != VIENNAGRID_QUANTITY_FIELD_STORAGE_DENSE) && (storage_layout != VIENNAGRID_QUANTITY_FIELD_STORAGE_SPARSE) )
+    return VIENNAGRID_ERROR_INVALID_ARGUMENTS;
 
   quantity_field->topologic_dimension = topologic_dimension;
 
-  quantity_field->values_dimension = values_dimension;
+  quantity_field->size_of_value = size_of_value;
   quantity_field->storage_layout = storage_layout;
 
   quantity_field->dense_values.clear();
@@ -106,10 +109,10 @@ viennagrid_error viennagrid_quantity_field_get_storage_layout(viennagrid_quantit
   return VIENNAGRID_SUCCESS;
 }
 
-viennagrid_error viennagrid_quantity_field_get_values_dimension(viennagrid_quantity_field quantity_field,
-                                                                viennagrid_dimension * values_dimension)
+viennagrid_error viennagrid_quantity_field_get_size_of_value(viennagrid_quantity_field quantity_field,
+                                                             viennagrid_int * size_of_value)
 {
-  *values_dimension = quantity_field->values_dimension;
+  *size_of_value = quantity_field->size_of_value;
   return VIENNAGRID_SUCCESS;
 }
 
@@ -164,11 +167,13 @@ viennagrid_error viennagrid_quantity_field_resize(viennagrid_quantity_field quan
 {
   switch ( quantity_field->storage_layout )
   {
-    case QUANTITY_FIELD_STORAGE_DENSE:
-      quantity_field->dense_values.resize( quantity_field->values_dimension * value_count );
+    case VIENNAGRID_QUANTITY_FIELD_STORAGE_DENSE:
+    {
+      quantity_field->dense_values.resize( quantity_field->size_of_value / value_count );
       quantity_field->dense_valid_flags.resize( value_count, false );
       break;
-    case QUANTITY_FIELD_STORAGE_SPARSE:
+    }
+    case VIENNAGRID_QUANTITY_FIELD_STORAGE_SPARSE:
       break;
     default:
       assert(false);
@@ -184,10 +189,10 @@ viennagrid_error viennagrid_quantity_field_size(viennagrid_quantity_field quanti
   {
     switch ( quantity_field->storage_layout )
     {
-      case QUANTITY_FIELD_STORAGE_DENSE:
-        *value_count = quantity_field->dense_values.size() / quantity_field->values_dimension;
+      case VIENNAGRID_QUANTITY_FIELD_STORAGE_DENSE:
+        *value_count = quantity_field->dense_values.size() / quantity_field->size_of_value;
         break;
-      case QUANTITY_FIELD_STORAGE_SPARSE:
+      case VIENNAGRID_QUANTITY_FIELD_STORAGE_SPARSE:
         *value_count = quantity_field->sparse_values.size();
         break;
       default:
@@ -200,51 +205,60 @@ viennagrid_error viennagrid_quantity_field_size(viennagrid_quantity_field quanti
 
 
 viennagrid_error viennagrid_quantity_field_set_value(viennagrid_quantity_field quantity_field,
-                                                 viennagrid_int element_id,
-                                                 viennagrid_numeric * values)
+                                                     viennagrid_int element_id,
+                                                     void * value)
 {
   assert( 0 <= element_id );
 
-  viennagrid_numeric * dst = NULL;
+  void * dst = NULL;
 
   switch ( quantity_field->storage_layout )
   {
-    case QUANTITY_FIELD_STORAGE_DENSE:
+    case VIENNAGRID_QUANTITY_FIELD_STORAGE_DENSE:
+    {
       if ( element_id >= static_cast<viennagrid_int>(quantity_field->dense_valid_flags.size()) )
         viennagrid_quantity_field_resize(quantity_field, element_id+1);
 
-      dst = &quantity_field->dense_values[0] + element_id*quantity_field->values_dimension;
+      dst = &quantity_field->dense_values[0] + element_id*quantity_field->size_of_value;
       quantity_field->dense_valid_flags[element_id] = true;
-      break;
 
-    case QUANTITY_FIELD_STORAGE_SPARSE:
-      quantity_field->sparse_values[element_id].resize(quantity_field->values_dimension);
-      dst = &quantity_field->sparse_values[element_id][0];
       break;
+    }
+
+    case VIENNAGRID_QUANTITY_FIELD_STORAGE_SPARSE:
+    {
+      std::map< viennagrid_int, char* >::iterator it = quantity_field->sparse_values.find(element_id);
+      if (it == quantity_field->sparse_values.end())
+        it = quantity_field->sparse_values.insert( std::make_pair(element_id, new char[quantity_field->size_of_value]) ).first;
+
+      dst = (*it).second;
+
+      break;
+    }
 
     default:
       assert(false);
   }
 
-  std::copy(values, values+quantity_field->values_dimension, dst);
+  memcpy(dst, value, quantity_field->size_of_value);
 
   return VIENNAGRID_SUCCESS;
 }
 
 viennagrid_error viennagrid_quantity_field_get_value(viennagrid_quantity_field quantity_field,
-                                                 viennagrid_int element_id,
-                                                 viennagrid_numeric ** values)
+                                                     viennagrid_int element_id,
+                                                     void ** values)
 {
   assert( 0 <= element_id );
 
   switch ( quantity_field->storage_layout )
   {
-    case QUANTITY_FIELD_STORAGE_DENSE:
+    case VIENNAGRID_QUANTITY_FIELD_STORAGE_DENSE:
     {
       if ( (element_id < static_cast<viennagrid_int>(quantity_field->dense_valid_flags.size())) &&
            (quantity_field->dense_valid_flags[element_id]) )
       {
-        *values = &quantity_field->dense_values[0] + element_id*quantity_field->values_dimension;
+        *values = &quantity_field->dense_values[0] + element_id*quantity_field->size_of_value;
       }
       else
       {
@@ -253,13 +267,17 @@ viennagrid_error viennagrid_quantity_field_get_value(viennagrid_quantity_field q
       break;
     }
 
-    case QUANTITY_FIELD_STORAGE_SPARSE:
+    case VIENNAGRID_QUANTITY_FIELD_STORAGE_SPARSE:
     {
-      std::map< viennagrid_int, std::vector<viennagrid_numeric> >::iterator it = quantity_field->sparse_values.find(element_id);
+      std::map< viennagrid_int, char* >::iterator it = quantity_field->sparse_values.find(element_id);
       if (it != quantity_field->sparse_values.end())
+      {
         *values = &(*it).second[0];
+      }
       else
+      {
         *values = NULL;
+      }
       break;
     }
 
