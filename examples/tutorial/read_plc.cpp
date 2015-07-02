@@ -18,7 +18,7 @@
 int main()
 {
   viennagrid_plc plc;
-  viennagrid_plc_make(&plc);
+  viennagrid_plc_create(&plc);
 
   viennagrid_plc_read_tetgen_poly(plc, "../data/two_cubes.poly");
 
@@ -39,7 +39,7 @@ int main()
     for (viennagrid_int * it = vertices_begin; it != vertices_end; ++it)
     {
       viennagrid_numeric * coords;
-      viennagrid_plc_point_get(plc, *it, &coords);
+      viennagrid_plc_vertex_coords_get(plc, *it, &coords);
       printf("    %d (%f, %f, %f)\n", *it, coords[0], coords[1], coords[2]);
     }
 
@@ -90,6 +90,6 @@ int main()
   }
 
 
-  viennagrid_plc_delete(plc);
+  viennagrid_plc_release(plc);
   return 0;
 }

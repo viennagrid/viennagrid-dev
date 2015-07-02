@@ -15,8 +15,8 @@
 #endif
 
 #include "viennagridpp/core.hpp"
-#include "viennagridpp/io/vtk_reader.hpp"
 #include "viennagridpp/io/vtk_writer.hpp"
+#include "viennagridpp/algorithm/refine.hpp"
 
 
 int main()
@@ -29,31 +29,26 @@ int main()
   typedef viennagrid::result_of::mesh<MeshHierarchyType>::type MeshType;
 
 
-  void * buffer;
-  viennagrid_int size;
+  std::cout << "-------------------------------------------------------------- " << std::endl;
+  std::cout << "-- ViennaGrid tutorial: Setup of a mesh with two segments -- " << std::endl;
+  std::cout << "-------------------------------------------------------------- " << std::endl;
+  std::cout << std::endl;
 
+  //
+  // Step 1: Instantiate the mesh and the segmentation and create 2 segments:
+  //
+  MeshType mesh;
 
-  {
-    viennagrid::io::vtk_reader<MeshType> reader;
-    MeshHierarchyType mesh_hierarchy;
-    MeshType mesh = mesh_hierarchy.root();
-    reader(mesh, "../data/tets_with_data_main.pvd");
+  viennagrid_mesh_io mesh_io;
+  viennagrid_mesh_io_create(&mesh_io);
+  viennagrid_mesh_io_mesh_set(mesh_io, mesh.internal());
 
-    mesh_hierarchy.serialize( &buffer, &size );
-  }
+  viennagrid_mesh_io_read( mesh_io, "../data/cube3072.mesh" );
 
-  {
-    MeshHierarchyType mesh_hierarchy;
-    mesh_hierarchy.deserialize( buffer, size );
+  viennagrid_mesh_io_release(mesh_io);
 
-    MeshType mesh = mesh_hierarchy.root();
-
-    viennagrid::io::vtk_writer<MeshType> writer;
-    writer(mesh, "deserialized");
-  }
-
-  viennagrid_delete(&buffer);
-
+  viennagrid::io::vtk_writer<MeshType> writer;
+  writer(mesh, "netgen_c_reader");
 
 
   std::cout << "-----------------------------------------------" << std::endl;

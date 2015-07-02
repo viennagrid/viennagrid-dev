@@ -79,7 +79,11 @@ target_link_libraries(plc_test viennagridpp)
 add_executable(serialize    serialize.cpp)
 target_link_libraries(serialize viennagridpp)
 
+add_executable(point_ntree    point_ntree.cpp)
+target_link_libraries(point_ntree viennagridpp)
 
+add_executable(netgen_c_reader    netgen_c_reader.cpp)
+target_link_libraries(netgen_c_reader viennagridpp)
 
 # Old (TODO cleanup, merge to tests)
 #add_executable(collection_test              old/collection_test.cpp)
