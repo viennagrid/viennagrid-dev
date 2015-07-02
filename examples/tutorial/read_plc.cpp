@@ -72,7 +72,7 @@ int main()
 
   viennagrid_numeric * hole_points;
   viennagrid_int hole_point_count;
-  viennagrid_plc_hole_points_get(plc, &hole_points, &hole_point_count);
+  viennagrid_plc_volumetric_hole_points_get(plc, &hole_points, &hole_point_count);
   printf("All hole points of the PLC\n");
   for (viennagrid_int i = 0; i != hole_point_count; ++i)
   {

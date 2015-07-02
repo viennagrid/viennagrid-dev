@@ -83,15 +83,28 @@ viennagrid_error viennagrid_mesh_io_quantity_field_get(viennagrid_mesh_io mesh_i
 }
 
 viennagrid_error viennagrid_mesh_io_quantity_field_set(viennagrid_mesh_io mesh_io,
-                                                       const char * quantity_name,
                                                        viennagrid_quantity_field quantity_field)
 {
-  if (mesh_io)
+  if (mesh_io && quantity_field)
+  {
+    const char * quantity_name;
+    viennagrid_quantity_field_get_name(quantity_field, &quantity_name);
     mesh_io->set_quantity_field( quantity_name, quantity_field );
+  }
+
   return VIENNAGRID_SUCCESS;
 }
 
+viennagrid_error viennagrid_mesh_io_quantity_field_unset(viennagrid_mesh_io mesh_io,
+                                                         const char * quantity_name)
+{
+  if (mesh_io)
+  {
+    mesh_io->set_quantity_field( quantity_name, 0 );
+  }
 
+  return VIENNAGRID_SUCCESS;
+}
 
 
 
@@ -133,6 +146,7 @@ viennagrid_error viennagrid_mesh_io_filetype_from_filename(const char * filename
     return VIENNAGRID_SUCCESS;
   }
 
+  *filetype = VIENNAGRID_FILETYPE_UNKNOWN;
   return VIENNAGRID_ERROR_IO_UNKNOWN_FILETYPE;
 }
 
