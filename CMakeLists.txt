@@ -11,6 +11,10 @@ set(VERSION_MINOR 0)
 set(VERSION_PATCH 0)
 set(VERSION ${VERSION_MAJOR}.${VERSION_MINOR}.${VERSION_PATCH})
 
+add_definitions( -D_VERSION_MAJOR_=${VERSION_MAJOR} )
+add_definitions( -D_VERSION_MINOR_=${VERSION_MINOR} )
+add_definitions( -D_VERSION_PATCH_=${VERSION_PATCH} )
+
 list(APPEND CMAKE_MODULE_PATH "${PROJECT_SOURCE_DIR}/cmake")
 
 # Common options
