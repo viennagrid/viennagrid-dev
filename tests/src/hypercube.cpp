@@ -18,12 +18,12 @@
 #include "viennagridpp/io/vtk_writer.hpp"
 
 template <typename MeshType>
-void setup(MeshType & mesh, viennagrid::element_tag_t element_tag)
+void setup(MeshType & mesh, viennagrid::element_tag et)
 {
   typedef typename viennagrid::result_of::point<MeshType>::type               PointType;
   typedef typename viennagrid::result_of::element<MeshType>::type       VertexType;
 
-  if (element_tag.is_hexahedron())
+  if (et.is_hexahedron())
   {
     PointType p0 = viennagrid::make_point(0.0, 0.0, 0.0);
     PointType p1 = viennagrid::make_point(1.0, 0.0, 0.0);
@@ -59,7 +59,7 @@ void setup(MeshType & mesh, viennagrid::element_tag_t element_tag)
     viennagrid::make_hexahedron( mesh, v1, v8, v2, v9, v5, v10, v6, v11 );
   }
 
-  if (element_tag.is_quadrilateral())
+  if (et.is_quadrilateral())
   {
     PointType p0 = viennagrid::make_point(0.0, 0.0);
     PointType p1 = viennagrid::make_point(1.0, 0.0);
@@ -82,10 +82,9 @@ void setup(MeshType & mesh, viennagrid::element_tag_t element_tag)
 }
 
 
-void test(std::string outfile, viennagrid::element_tag_t element_tag)
+void test(std::string outfile, viennagrid::element_tag et)
 {
   typedef viennagrid::mesh_t MeshType;
-//   typedef viennagrid::result_of::cell_tag<MeshType>::type            CellTag;
 
   typedef viennagrid::result_of::vertex_range<MeshType>::type       VertexContainer;
   typedef viennagrid::result_of::iterator<VertexContainer>::type    VertexIterator;
@@ -101,7 +100,7 @@ void test(std::string outfile, viennagrid::element_tag_t element_tag)
 
   MeshType mesh;
 
-  setup(mesh, element_tag);
+  setup(mesh, et);
 
   std::cout << "Vertices: " << std::endl;
   VertexContainer vertices(mesh);
