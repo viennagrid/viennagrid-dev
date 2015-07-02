@@ -128,12 +128,12 @@ namespace viennagrid
 
 
 
-  template<viennagrid_element_tag et>
-  class static_tag_t;
+  template<viennagrid_element_type et>
+  class static_element_tag;
 
 
 
-  class element_tag_t
+  class element_tag
   {
     template<bool is_const>
     friend class base_element;
@@ -141,30 +141,30 @@ namespace viennagrid
     template<bool is_const>
     friend class base_mesh_hierarchy;
 
-    template<viennagrid_element_tag et>
-    friend class static_tag_t;
+    template<viennagrid_element_type et>
+    friend class static_element_tag;
 
   public:
 
 
-    template<viennagrid_element_tag et>
-    element_tag_t( static_tag_t<et> ) : element_tag_(et) {}
+    template<viennagrid_element_type et>
+    element_tag( static_element_tag<et> ) : element_tag_(et) {}
 
 
-    element_tag_t() : element_tag_(VIENNAGRID_ELEMENT_TAG_NO_ELEMENT) {}
+    element_tag() : element_tag_(VIENNAGRID_ELEMENT_TYPE_NO_ELEMENT) {}
 
-    viennagrid_element_tag internal() const { return element_tag_; }
+    viennagrid_element_type internal() const { return element_tag_; }
 
-    static element_tag_t vertex() { return element_tag_t(VIENNAGRID_ELEMENT_TAG_VERTEX); }
-    static element_tag_t line() { return element_tag_t(VIENNAGRID_ELEMENT_TAG_LINE); }
-    static element_tag_t edge() { return element_tag_t(VIENNAGRID_ELEMENT_TAG_EDGE); }
-    static element_tag_t triangle() { return element_tag_t(VIENNAGRID_ELEMENT_TAG_TRIANGLE); }
-    static element_tag_t quadrilateral() { return element_tag_t(VIENNAGRID_ELEMENT_TAG_QUADRILATERAL); }
-    static element_tag_t polygon() { return element_tag_t(VIENNAGRID_ELEMENT_TAG_POLYGON); }
-    static element_tag_t tetrahedron() { return element_tag_t(VIENNAGRID_ELEMENT_TAG_TETRAHEDRON); }
-    static element_tag_t hexahedron() { return element_tag_t(VIENNAGRID_ELEMENT_TAG_HEXAHEDRON); }
+    static element_tag vertex() { return element_tag(VIENNAGRID_ELEMENT_TYPE_VERTEX); }
+    static element_tag line() { return element_tag(VIENNAGRID_ELEMENT_TYPE_LINE); }
+    static element_tag edge() { return element_tag(VIENNAGRID_ELEMENT_TYPE_EDGE); }
+    static element_tag triangle() { return element_tag(VIENNAGRID_ELEMENT_TYPE_TRIANGLE); }
+    static element_tag quadrilateral() { return element_tag(VIENNAGRID_ELEMENT_TYPE_QUADRILATERAL); }
+    static element_tag polygon() { return element_tag(VIENNAGRID_ELEMENT_TYPE_POLYGON); }
+    static element_tag tetrahedron() { return element_tag(VIENNAGRID_ELEMENT_TYPE_TETRAHEDRON); }
+    static element_tag hexahedron() { return element_tag(VIENNAGRID_ELEMENT_TYPE_HEXAHEDRON); }
 
-    bool valid() const { return internal() != VIENNAGRID_ELEMENT_TAG_NO_ELEMENT; }
+    bool valid() const { return internal() != VIENNAGRID_ELEMENT_TYPE_NO_ELEMENT; }
     bool is_vertex() const { return *this == vertex(); }
     bool is_line() const { return *this == line(); }
     bool is_edge() const { return *this == edge(); }
@@ -174,56 +174,62 @@ namespace viennagrid
     bool is_tetrahedron() const { return *this == tetrahedron(); }
     bool is_hexahedron() const { return *this == hexahedron(); }
 
-    bool is_simplex() const { return viennagrid_is_simplex(internal()) == VIENNAGRID_TRUE; }
+//     bool is_simplex() const { return viennagrid_is_simplex(internal()) == VIENNAGRID_TRUE; }
 
-    bool operator==(element_tag_t rhs) const { return internal() == rhs.internal();}
-    bool operator!=(element_tag_t rhs) const { return !(*this == rhs);}
+    bool operator==(element_tag rhs) const { return internal() == rhs.internal();}
+    bool operator!=(element_tag rhs) const { return !(*this == rhs);}
 
-    bool operator<(element_tag_t rhs) const { return internal() < rhs.internal();}
-    bool operator<=(element_tag_t rhs) const { return !(rhs < *this);}
-    bool operator>(element_tag_t rhs) const { return rhs < *this;}
-    bool operator>=(element_tag_t rhs) const { return !(*this < rhs);}
+    bool operator<(element_tag rhs) const { return internal() < rhs.internal();}
+    bool operator<=(element_tag rhs) const { return !(rhs < *this);}
+    bool operator>(element_tag rhs) const { return rhs < *this;}
+    bool operator>=(element_tag rhs) const { return !(*this < rhs);}
 
     viennagrid_dimension topologic_dimension() const
     { return viennagrid_topological_dimension(internal()); }
 
 
-    bool is_boundary(element_tag_t host_tag) const
-    { return viennagrid_is_boundary_tag(host_tag.internal(), internal()) == VIENNAGRID_TRUE; }
+//     bool is_boundary(element_tag host_tag) const
+//     { return viennagrid_is_boundary_type(host_tag.internal(), internal()) == VIENNAGRID_TRUE; }
 
-    viennagrid_int boundary_element_count(element_tag_t boundary_tag) const
-    { return viennagrid_boundary_element_count_from_element_tag( internal(), boundary_tag.internal() ); }
+    viennagrid_int boundary_element_count(element_tag boundary_tag) const
+    { return viennagrid_boundary_element_count_from_element_type( internal(), boundary_tag.internal() ); }
     viennagrid_int vertex_count() const { return boundary_element_count( vertex() ); }
 
-    std::string name() const { return std::string( viennagrid_element_tag_string(internal()) ); }
+    std::string name() const
+    {
+      const char * tmp = viennagrid_element_type_string(internal());
+      if (tmp)
+        return tmp;
+      return std::string();
+    }
 
-    static element_tag_t from_internal(viennagrid_element_tag element_tag_in)
-    { return element_tag_t(element_tag_in); }
+    static element_tag from_internal(viennagrid_element_type element_tag_in)
+    { return element_tag(element_tag_in); }
 
   private:
-    element_tag_t(viennagrid_element_tag element_tag_in) : element_tag_(element_tag_in) {}
+    element_tag(viennagrid_element_type element_tag_in) : element_tag_(element_tag_in) {}
 
-    viennagrid_element_tag element_tag_;
+    viennagrid_element_type element_tag_;
   };
 
 
 
 
-  template<viennagrid_element_tag et>
-  class static_tag_t : public element_tag_t
+  template<viennagrid_element_type et>
+  class static_element_tag : public element_tag
   {
   public:
-    static_tag_t() : element_tag_t(et) {}
+    static_element_tag() : element_tag(et) {}
   };
 
-  typedef static_tag_t<VIENNAGRID_ELEMENT_TAG_VERTEX> vertex_tag;
-  typedef static_tag_t<VIENNAGRID_ELEMENT_TAG_LINE> line_tag;
-  typedef static_tag_t<VIENNAGRID_ELEMENT_TAG_EDGE> edge_tag;
-  typedef static_tag_t<VIENNAGRID_ELEMENT_TAG_TRIANGLE> triangle_tag;
-  typedef static_tag_t<VIENNAGRID_ELEMENT_TAG_QUADRILATERAL> quadrilateral_tag;
-  typedef static_tag_t<VIENNAGRID_ELEMENT_TAG_POLYGON> polygon_tag;
-  typedef static_tag_t<VIENNAGRID_ELEMENT_TAG_TETRAHEDRON> tetrahedron_tag;
-  typedef static_tag_t<VIENNAGRID_ELEMENT_TAG_HEXAHEDRON> hexahedron_tag;
+  typedef static_element_tag<VIENNAGRID_ELEMENT_TYPE_VERTEX> vertex_tag;
+  typedef static_element_tag<VIENNAGRID_ELEMENT_TYPE_LINE> line_tag;
+  typedef static_element_tag<VIENNAGRID_ELEMENT_TYPE_EDGE> edge_tag;
+  typedef static_element_tag<VIENNAGRID_ELEMENT_TYPE_TRIANGLE> triangle_tag;
+  typedef static_element_tag<VIENNAGRID_ELEMENT_TYPE_QUADRILATERAL> quadrilateral_tag;
+  typedef static_element_tag<VIENNAGRID_ELEMENT_TYPE_POLYGON> polygon_tag;
+  typedef static_element_tag<VIENNAGRID_ELEMENT_TYPE_TETRAHEDRON> tetrahedron_tag;
+  typedef static_element_tag<VIENNAGRID_ELEMENT_TYPE_HEXAHEDRON> hexahedron_tag;
 
 
 
@@ -429,13 +435,13 @@ namespace viennagrid
     template<typename SomethingT>
     struct element_tag
     {
-      typedef element_tag_t type;
+      typedef element_tag type;
     };
 
-    template<viennagrid_element_tag et>
-    struct element_tag< static_tag_t<et> >
+    template<viennagrid_element_type et>
+    struct element_tag< static_element_tag<et> >
     {
-      typedef static_tag_t<et> type;
+      typedef static_element_tag<et> type;
     };
 
 

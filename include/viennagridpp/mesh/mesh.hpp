@@ -22,7 +22,7 @@ namespace viennagrid
 
   public:
 
-    typedef element_tag_t element_tag_type;
+    typedef element_tag element_tag_type;
 
     typedef typename result_of::const_nonconst<mesh_hierarchy_t, is_const>::type mesh_hierarchy_type;
     typedef typename result_of::const_nonconst<mesh_hierarchy_t, true>::type const_mesh_hierarchy_type;
@@ -117,6 +117,18 @@ namespace viennagrid
     region_type get_make_region(std::string const & name) const;
     const_region_type get_region(std::string const & name) const;
     bool region_exists(std::string const & name) const;
+
+    std::string name() const
+    {
+      const char * name_;
+      viennagrid_mesh_name_get(internal(), &name_);
+      return name_;
+    }
+
+    void set_name(std::string const & name_)
+    {
+      viennagrid_mesh_name_set(internal(), name_.c_str());
+    }
 
   private:
 

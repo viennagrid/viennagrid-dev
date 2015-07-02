@@ -21,7 +21,7 @@
 
 // #include "viennagridpp/forwards.hpp"
 #include "viennagridpp/element/element.hpp"
-#include "viennagrid/quantity_field.h"
+#include "viennagrid/viennagrid.h"
 
 /** @file viennagrid/accessor.hpp
     @brief Defines various accessors for storing data for the different element types.
@@ -30,6 +30,38 @@
 
 namespace viennagrid
 {
+
+
+
+//   class point_quantity_value
+//   {
+//   public:
+//
+//     typedef viennagrid_numeric value_type;
+//
+//     point_quantity_value() : ptr(0), dimension(0) {}
+//     point_quantity_value(viennagrid_numeric * ptr_in, viennagrid_dimension dimension_in) : ptr(ptr_in), dimension(dimension_in) {}
+//
+//     operator point_t() const
+//     {
+//       point_t pt(dimension);
+//       std::copy( ptr, ptr+dimension, pt.begin() );
+//       return pt;
+//     }
+//
+//     operator value_type() const
+//     {
+//       assert(valid());
+//       assert(size() == 1);
+//       return (*this)[0];
+//     }
+//
+//     bool valid() const { return ptr; }
+//
+//   private:
+//     value_type * ptr;
+//     viennagrid_int dimension;
+//   };
 
 
   class quantity_value : public point_t
@@ -61,6 +93,7 @@ namespace viennagrid
   };
 
 
+//   template<typename T>
   class quantity_field
   {
   public:
@@ -69,14 +102,14 @@ namespace viennagrid
 
     quantity_field()
     {
-      viennagrid_quantity_field_make( &internal_quantity_field );
+      viennagrid_quantity_field_create( &internal_quantity_field );
     }
 
     quantity_field(viennagrid_dimension topologic_dimension,
                    viennagrid_dimension values_dimension,
-                   viennagrid_int storage_type = QUANTITY_FIELD_STORAGE_DENSE)
+                   viennagrid_int storage_type = VIENNAGRID_QUANTITY_FIELD_STORAGE_DENSE)
     {
-      viennagrid_quantity_field_make( &internal_quantity_field );
+      viennagrid_quantity_field_create( &internal_quantity_field );
       init(topologic_dimension, values_dimension, storage_type);
     }
 
@@ -97,7 +130,7 @@ namespace viennagrid
 
     void init(viennagrid_dimension topologic_dimension,
               viennagrid_dimension values_dimension,
-              viennagrid_int storage_type = QUANTITY_FIELD_STORAGE_DENSE)
+              viennagrid_int storage_type = VIENNAGRID_QUANTITY_FIELD_STORAGE_DENSE)
     {
       viennagrid_quantity_field_init(internal(), topologic_dimension, values_dimension, storage_type);
     }
@@ -123,10 +156,10 @@ namespace viennagrid
 
     value_type get(viennagrid_int id) const
     {
-      viennagrid_numeric * tmp;
+      void * tmp;
       viennagrid_quantity_field_get_value(internal(), id, &tmp);
 
-      return value_type(tmp, values_dimension());
+      return value_type( (viennagrid_numeric*)tmp, values_dimension() );
     }
 
     template<bool element_is_const>
@@ -158,11 +191,6 @@ namespace viennagrid
       viennagrid_quantity_field_set_value(internal(), id, const_cast<viennagrid_numeric*>(&value[0]));
     }
 
-//     void set(viennagrid_int id, value_type const & value)
-//     {
-//       viennagrid_quantity_field_set_value(internal(), id, value.values());
-//     }
-
     void set(viennagrid_int id, viennagrid_numeric value)
     {
       viennagrid_quantity_field_set_value(internal(), id, &value);
@@ -181,13 +209,6 @@ namespace viennagrid
       check_init(element, value.size());
       set(element.id(), value);
     }
-
-//     template<bool element_is_const>
-//     void set(base_element<element_is_const> const & element, value_type const & value)
-//     {
-//       check_init(element, value.size());
-//       set(element.id(), value);
-//     }
 
     template<bool element_is_const>
     void set(base_element<element_is_const> const & element, viennagrid_numeric value)
@@ -218,8 +239,8 @@ namespace viennagrid
     viennagrid_dimension values_dimension() const
     {
       viennagrid_dimension values_dimension_;
-      viennagrid_quantity_field_get_values_dimension(internal(), &values_dimension_);
-      return values_dimension_;
+      viennagrid_quantity_field_get_size_of_value(internal(), &values_dimension_);
+      return values_dimension_ / sizeof(viennagrid_numeric);
     }
 
     viennagrid_int storage_layout() const
@@ -283,7 +304,7 @@ namespace viennagrid
     {
       if (!is_initialized())
       {
-        init( viennagrid::topologic_dimension(element), size, QUANTITY_FIELD_STORAGE_DENSE );
+        init( viennagrid::topologic_dimension(element), size, VIENNAGRID_QUANTITY_FIELD_STORAGE_DENSE );
       }
 
       assert( topologic_dimension() == viennagrid::topologic_dimension(element) );

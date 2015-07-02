@@ -656,8 +656,8 @@ namespace viennagrid
                         base_element<element1_is_const> const & el1,
                         base_element<element2_is_const> const & el2)
     {
-      element_tag_t tag1 = el1.tag();
-      element_tag_t tag2 = el2.tag();
+      element_tag tag1 = el1.tag();
+      element_tag tag2 = el2.tag();
 
       if (tag1 > tag2)
         return closest_points_impl(accessor, el2, el1);

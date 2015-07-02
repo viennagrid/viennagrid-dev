@@ -19,8 +19,8 @@ namespace viennagrid
 
     point_t() {}
     point_t(std::vector<viennagrid_numeric> const & pt) : std::vector<viennagrid_numeric>(pt) {}
-    point_t(size_type size_in) : std::vector<viennagrid_numeric>(size_in)
-    { std::fill(begin(), end(), value_type(0)); }
+    point_t(size_type size_in) : std::vector<viennagrid_numeric>(size_in, 0) {}
+    point_t(size_type size_in, viennagrid_numeric init_value) : std::vector<viennagrid_numeric>(size_in, init_value) {}
 
     template<typename PointT>
     point_t & operator+=(PointT const & other)
@@ -153,6 +153,24 @@ namespace viennagrid
 
 
 
+
+  inline bool operator<(point_t const & p1, point_t const & p2)
+  {
+    for (std::size_t i = 0; i < p1.size(); ++i)
+      if (p1[i] >= p2[i])
+        return false;
+
+    return true;
+  }
+
+  inline bool operator<=(point_t const & p1, point_t const & p2)
+  {
+    for (std::size_t i = 0; i < p1.size(); ++i)
+      if (p1[i] > p2[i])
+        return false;
+
+    return true;
+  }
 
 
   /** @brief Returns the pointwise minimum point of two points, i.e. result[i] = min(x[i], y[i]) for all i. */

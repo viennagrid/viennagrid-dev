@@ -253,21 +253,21 @@ namespace viennagrid
 
 
   template<typename SomethingT, typename ElementCopyMapT>
-  void copy_elements(element_tag_t element_tag, SomethingT something, ElementCopyMapT & copy_map)
+  void copy_elements(element_tag et, SomethingT something, ElementCopyMapT & copy_map)
   {
     typedef typename viennagrid::result_of::const_element_range<SomethingT>::type ConstElementRangeType;
-    ConstElementRangeType elements(something, element_tag);
+    ConstElementRangeType elements(something, et);
     copy_elements(elements.begin(), elements.end(), copy_map);
   }
 
   template<typename SomethingT>
-  void copy_elements(element_tag_t element_tag, SomethingT something, mesh_t mesh)
+  void copy_elements(element_tag et, SomethingT something, mesh_t mesh)
   {
     typedef typename viennagrid::result_of::element<SomethingT>::type ElementType;
     typedef typename viennagrid::result_of::coord<ElementType>::type NumericType;
     typename viennagrid::result_of::element_copy_map<NumericType>::type copy_map(mesh);
 
-    copy_elements(element_tag, something, copy_map);
+    copy_elements(et, something, copy_map);
   }
 
 }

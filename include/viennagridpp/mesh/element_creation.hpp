@@ -10,52 +10,43 @@
 
 namespace viennagrid
 {
-  inline element_t make_vertex(viennagrid_mesh_hierarchy mesh_hierarchy,
+  inline element_t make_vertex(viennagrid_mesh mesh,
                                point_t const & point)
   {
+    viennagrid_mesh_hierarchy mesh_hierarchy;
+    viennagrid_mesh_mesh_hierarchy_get(mesh, &mesh_hierarchy);
+
     if ( viennagrid::geometric_dimension(mesh_hierarchy) <= 0 && !point.empty() )
       viennagrid_mesh_hierarchy_geometric_dimension_set( mesh_hierarchy, point.size() );
 
     viennagrid_int id;
-    viennagrid_vertex_create( mesh_hierarchy, &point[0], &id );
+    viennagrid_mesh_vertex_create( mesh, &point[0], &id );
     return element_t(mesh_hierarchy, 0, id);
   }
 
 
-  inline element_t make_vertex(mesh_hierarchy_t const & mesh_hierarchy,
+  inline element_t make_vertex(mesh_t const & mesh,
                                point_t const & point)
   {
-    return make_vertex( mesh_hierarchy.internal(), point );
-  }
-
-
-  inline element_t make_vertex(mesh_hierarchy_t const & mesh_hierarchy)
-  {
-    return make_vertex( mesh_hierarchy.internal(), point_t() );
-  }
-
-  inline element_t make_vertex(mesh_t const & mesh, point_t const & point)
-  {
-    assert( mesh.is_root() );
-    element_t vertex = make_vertex(mesh.internal_mesh_hierarchy(), point);
-    return vertex;
+    return make_vertex( mesh.internal(), point );
   }
 
   inline element_t make_vertex(mesh_t const & mesh)
   {
-    return make_vertex(mesh.internal_mesh_hierarchy(), point_t());
+    return make_vertex( mesh.internal(), point_t() );
   }
+
 
   inline element_t make_vertex(mesh_region_t const & mesh_region, point_t const & point)
   {
-    element_t vertex = make_vertex(mesh_region.internal_mesh_hierarchy(), point);
+    element_t vertex = make_vertex(mesh_region.internal_mesh(), point);
     add(mesh_region, vertex);
     return vertex;
   }
 
   inline element_t make_vertex(mesh_region_t const & mesh_region)
   {
-    element_t vertex = make_vertex(mesh_region.internal_mesh_hierarchy(), point_t());
+    element_t vertex = make_vertex(mesh_region.internal_mesh(), point_t());
     add(mesh_region, vertex);
     return vertex;
   }
@@ -95,11 +86,14 @@ namespace viennagrid
 
 
   template<typename ElementIteratorT>
-  element_t make_element(viennagrid_mesh_hierarchy mesh_hierarchy,
-                         element_tag_t tag,
+  element_t make_element(viennagrid_mesh mesh,
+                         element_tag et,
                          ElementIteratorT elements_begin,
                          ElementIteratorT elements_end)
   {
+    viennagrid_mesh_hierarchy mesh_hierarchy;
+    viennagrid_mesh_mesh_hierarchy_get(mesh, &mesh_hierarchy);
+
     std::vector<viennagrid_int> internal_vertices_indices;
 
     for (; elements_begin != elements_end; ++elements_begin)
@@ -108,44 +102,25 @@ namespace viennagrid
     }
 
     viennagrid_int id;
-    viennagrid_element_create(mesh_hierarchy,
-                              tag.internal(),
-                              internal_vertices_indices.size(),
-                              &internal_vertices_indices[0],
-                              &id);
+    viennagrid_mesh_element_create(mesh,
+                                   et.internal(),
+                                   internal_vertices_indices.size(),
+                                   &internal_vertices_indices[0],
+                                   &id);
 
-    return element_t(mesh_hierarchy, tag.topologic_dimension(), id);
+    return element_t(mesh_hierarchy, et.topologic_dimension(), id);
   }
-
-  template<typename ElementIteratorT>
-  element_t make_element(mesh_hierarchy_t const & mesh_hierarchy,
-                         element_tag_t tag,
-                         ElementIteratorT elements_begin,
-                         ElementIteratorT elements_end)
-  {
-    return make_element(mesh_hierarchy.internal(), tag, elements_begin, elements_end);
-  }
-
-  template<typename ElementTagT, typename ElementIteratorT>
-  element_t make_element(mesh_hierarchy_t const & mh,
-                         ElementIteratorT elements_begin,
-                         ElementIteratorT elements_end)
-  {
-    return make_element(mh.internal(), ElementTagT(), elements_begin, elements_end);
-  }
-
 
 
 
 
   template<typename ElementIteratorT>
   element_t make_element(mesh_t const & mesh,
-                         element_tag_t tag,
+                         element_tag et,
                          ElementIteratorT elements_begin,
                          ElementIteratorT elements_end)
   {
-    assert( mesh.is_root() );
-    return make_element(mesh.internal_mesh_hierarchy(), tag, elements_begin, elements_end);
+    return make_element(mesh.internal(), et, elements_begin, elements_end);
   }
 
   template<typename ElementTagT, typename ElementIteratorT>
@@ -153,7 +128,7 @@ namespace viennagrid
                          ElementIteratorT elements_begin,
                          ElementIteratorT elements_end)
   {
-    return make_element(mesh.internal_mesh_hierarchy(), ElementTagT(), elements_begin, elements_end);
+    return make_element(mesh.internal(), ElementTagT(), elements_begin, elements_end);
   }
 
 
@@ -162,11 +137,11 @@ namespace viennagrid
 
   template<typename ElementIteratorT>
   element_t make_element(mesh_region_t const & mr,
-                         element_tag_t tag,
+                         element_tag et,
                          ElementIteratorT elements_begin,
                          ElementIteratorT elements_end)
   {
-    element_t element = make_element(mr.internal_mesh_hierarchy(), tag, elements_begin, elements_end);
+    element_t element = make_element(mr.internal_mesh(), et, elements_begin, elements_end);
     add(mr, element);
     return element;
   }
@@ -176,7 +151,7 @@ namespace viennagrid
                          ElementIteratorT elements_begin,
                          ElementIteratorT elements_end)
   {
-    element_t element = make_element(mr.internal_mesh_hierarchy(), ElementTagT(), elements_begin, elements_end);
+    element_t element = make_element(mr.internal_mesh(), ElementTagT(), elements_begin, elements_end);
     add(mr, element);
     return element;
   }
@@ -189,7 +164,7 @@ namespace viennagrid
   template<typename ElementIteratorT, typename IntersectionIteratorT>
   element_t make_refined_element(mesh_t const & mesh,
                                  element_t parent,
-                                 element_tag_t tag,
+                                 element_tag et,
                                  ElementIteratorT elements_begin,
                                  ElementIteratorT elements_end,
                                  IntersectionIteratorT intersects_begin,
@@ -218,7 +193,7 @@ namespace viennagrid
     viennagrid_element_create_refinement(mesh.internal(),
                                          viennagrid::topologic_dimension(parent),
                                          parent.id(),
-                                         tag.internal(),
+                                         et.internal(),
                                          internal_vertices_indices.size(),
                                          &internal_vertices_indices[0],
                                          vertex_indices.size(),
@@ -226,7 +201,7 @@ namespace viennagrid
                                          &intersects_indices[0], &intersects_dimensions[0],
                                          &id);
 
-    return element_t(mesh.mesh_hierarchy(), tag.topologic_dimension(), id);
+    return element_t(mesh.mesh_hierarchy(), et.topologic_dimension(), id);
   }
 
 

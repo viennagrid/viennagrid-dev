@@ -94,7 +94,7 @@ namespace viennagrid
       std::map<int, std::deque<std::size_t> >              local_to_global_map;
       std::map<int, std::deque<std::size_t> >              local_cell_vertices;
       std::map<int, std::deque<std::size_t> >              local_cell_offsets;
-      std::map<int, std::deque<element_tag_t> >            local_cell_types;
+      std::map<int, std::deque<element_tag> >            local_cell_types;
       std::map<int, std::size_t>                           local_cell_num;
       std::map<int, std::deque<ElementType> >              local_cells;
 
@@ -470,7 +470,7 @@ namespace viennagrid
 
           VertexRange vertices(mesh_obj);
 
-          element_tag_t cell_tag = local_cell_types[region_id][i];
+          element_tag cell_tag = local_cell_types[region_id][i];
 
           detail::vtk_to_viennagrid_orientations reorderer(cell_tag);
           for (std::size_t j = 0; j < numVertices; j++)
@@ -1329,7 +1329,7 @@ namespace viennagrid
                   std::map<std::string, std::map<region_id_type, DataT> > const & data,
                   std::string const & name) const
       {
-        viennagrid::quantity_field result( 0, values_dimension(DataT()), QUANTITY_FIELD_STORAGE_DENSE );
+        viennagrid::quantity_field result( 0, values_dimension(DataT()), VIENNAGRID_QUANTITY_FIELD_STORAGE_DENSE );
         result.set_name(name);
 //         result.set_topologic_dimension(0);
 //         result.set_values_dimension( values_dimension(DataT()) );
@@ -1370,7 +1370,7 @@ namespace viennagrid
                   std::map<std::string, std::map<region_id_type, DataT> > const & data,
                   std::string const & name) const
       {
-        viennagrid::quantity_field result( cell_dimension, values_dimension(DataT()), QUANTITY_FIELD_STORAGE_DENSE );
+        viennagrid::quantity_field result( cell_dimension, values_dimension(DataT()), VIENNAGRID_QUANTITY_FIELD_STORAGE_DENSE );
         result.set_name(name);
 //         result.set_topologic_dimension(cell_dimension);
 //         result.set_values_dimension( values_dimension(DataT()) );

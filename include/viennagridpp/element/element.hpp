@@ -20,7 +20,7 @@ namespace viennagrid
     typedef base_element<true> const_element_type;
 
     typedef viennagrid_int id_type;
-    typedef element_tag_t tag_type;
+    typedef element_tag element_tag_type;
     typedef viennagrid_dimension dimension_type;
 
     typedef typename result_of::const_nonconst<mesh_hierarchy_t, is_const>::type mesh_hierarchy_type;
@@ -54,11 +54,11 @@ namespace viennagrid
 
     viennagrid_mesh_hierarchy internal_mesh_hierarchy() const { return const_cast<viennagrid_mesh_hierarchy>(mesh_hierarchy_); }
 
-    tag_type tag() const
+    element_tag_type tag() const
     {
-      viennagrid_element_tag tag;
-      viennagrid_element_tag_get( internal_mesh_hierarchy(), topologic_dimension(), id(), &tag);
-      return tag_type(tag);
+      viennagrid_element_type type;
+      viennagrid_element_type_get( internal_mesh_hierarchy(), topologic_dimension(), id(), &type);
+      return element_tag_type(type);
     }
     dimension_type topologic_dimension() const { return topologic_dimension_; }
 

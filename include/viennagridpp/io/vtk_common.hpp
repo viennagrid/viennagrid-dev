@@ -29,23 +29,23 @@ namespace viennagrid
 {
   namespace io
   {
-    inline int vtk_element_tag( element_tag_t tag )
+    inline int vtk_element_tag( element_tag et)
     {
-      switch (tag.internal())
+      switch (et.internal())
       {
-        case VIENNAGRID_ELEMENT_TAG_VERTEX:
+        case VIENNAGRID_ELEMENT_TYPE_VERTEX:
           return 1;
-        case VIENNAGRID_ELEMENT_TAG_LINE:
+        case VIENNAGRID_ELEMENT_TYPE_LINE:
           return 3;
-        case VIENNAGRID_ELEMENT_TAG_TRIANGLE:
+        case VIENNAGRID_ELEMENT_TYPE_TRIANGLE:
           return 5;
-        case VIENNAGRID_ELEMENT_TAG_QUADRILATERAL:
+        case VIENNAGRID_ELEMENT_TYPE_QUADRILATERAL:
           return 9;
-        case VIENNAGRID_ELEMENT_TAG_POLYGON:
+        case VIENNAGRID_ELEMENT_TYPE_POLYGON:
           return 7;
-        case VIENNAGRID_ELEMENT_TAG_TETRAHEDRON:
+        case VIENNAGRID_ELEMENT_TYPE_TETRAHEDRON:
           return 10;
-        case VIENNAGRID_ELEMENT_TAG_HEXAHEDRON:
+        case VIENNAGRID_ELEMENT_TYPE_HEXAHEDRON:
           return 12;
 
         default:
@@ -53,7 +53,7 @@ namespace viennagrid
       }
     }
 
-    inline element_tag_t from_vtk_element_tag(int tag)
+    inline element_tag from_vtk_element_tag(int tag)
     {
       switch (tag)
       {
@@ -73,7 +73,7 @@ namespace viennagrid
           return viennagrid::hexahedron_tag();
 
         default:
-          return element_tag_t();
+          return element_tag();
       }
     }
 
@@ -86,13 +86,13 @@ namespace viennagrid
        */
       struct vtk_to_viennagrid_orientations
       {
-        vtk_to_viennagrid_orientations(element_tag_t cell_tag) : cell_tag_(cell_tag) {}
+        vtk_to_viennagrid_orientations(element_tag ct) : cell_tag_(ct) {}
 
         std::size_t operator()(std::size_t j) const
         {
           switch (cell_tag_.internal())
           {
-            case VIENNAGRID_ELEMENT_TAG_QUADRILATERAL:
+            case VIENNAGRID_ELEMENT_TYPE_QUADRILATERAL:
             {
               switch (j)
               {
@@ -101,7 +101,7 @@ namespace viennagrid
                 default: return j;
               }
             }
-            case VIENNAGRID_ELEMENT_TAG_HEXAHEDRON:
+            case VIENNAGRID_ELEMENT_TYPE_HEXAHEDRON:
             {
               switch (j)
               {
@@ -117,7 +117,7 @@ namespace viennagrid
           }
         }
 
-        element_tag_t cell_tag_;
+        element_tag cell_tag_;
       };
 
       /** @brief Tranformations of reference orientations from ViennaGrid to VTK

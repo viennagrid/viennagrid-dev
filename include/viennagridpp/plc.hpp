@@ -11,7 +11,7 @@ namespace viennagrid
     viennagrid_plc_geometric_dimension_get(plc, &geometric_dimension);
 
     viennagrid_numeric * coords;
-    viennagrid_plc_point_get(plc, vertex_id, &coords);
+    viennagrid_plc_vertex_coords_get(plc, vertex_id, &coords);
 
     point_t tmp(geometric_dimension);
     std::copy( coords, coords+geometric_dimension, &tmp[0] );
