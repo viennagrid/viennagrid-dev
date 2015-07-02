@@ -43,9 +43,9 @@ namespace viennagrid
                                EdgeRefinementFlagAccessor const & edge_refinement_flag_accessor,
                                EdgeToVertexHandleAccessor const & edge_to_vertex_handle_accessor)
     {
-      if (element.tag().is_triangle())
+      if (element.is_triangle())
         detail::element_refinement<viennagrid::triangle_tag>::apply(element, mesh, elements_vertices, vertex_copy_map_, edge_refinement_flag_accessor, edge_to_vertex_handle_accessor);
-      else if (element.tag().is_tetrahedron())
+      else if (element.is_tetrahedron())
         detail::element_refinement<viennagrid::tetrahedron_tag>::apply(element, mesh, elements_vertices, vertex_copy_map_, edge_refinement_flag_accessor, edge_to_vertex_handle_accessor);
       else
         assert(false);

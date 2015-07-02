@@ -47,27 +47,27 @@ namespace viennagrid
       typedef typename viennagrid::result_of::coord<PointType>::type CoordType;
 
 
-      if (element.tag().is_vertex())
+      if (element.is_vertex())
         return CoordType(1);
 
       typedef typename viennagrid::result_of::const_vertex_range<ElementT>::type ConstVertexRangeType;
       ConstVertexRangeType vertices(element);
 
-      if (element.tag().is_line())
+      if (element.is_line())
         return norm( accessor.get(vertices[0]) - accessor.get(vertices[1]) );
 
-      if (element.tag().is_triangle())
+      if (element.is_triangle())
         return spanned_volume(accessor.get(vertices[0]), accessor.get(vertices[1]), accessor.get(vertices[2]));
 
-      if (element.tag().is_quadrilateral())
+      if (element.is_quadrilateral())
         return spanned_volume(accessor.get(vertices[0]), accessor.get(vertices[1]), accessor.get(vertices[3])) +
                spanned_volume(accessor.get(vertices[1]), accessor.get(vertices[2]), accessor.get(vertices[3])); //sum up the two triangular parts
 
-      if (element.tag().is_tetrahedron())
+      if (element.is_tetrahedron())
         return spanned_volume( accessor.get(vertices[0]), accessor.get(vertices[1]),
                                accessor.get(vertices[2]), accessor.get(vertices[3]) );
 
-      if (element.tag().is_hexahedron())
+      if (element.is_hexahedron())
       {
         PointType const & p0 = accessor.get( vertices[0] );
         PointType const & p1 = accessor.get( vertices[1] );
@@ -87,7 +87,7 @@ namespace viennagrid
       }
 
 
-      if (element.tag().is_polygon())
+      if (element.is_polygon())
       {
         typedef typename viennagrid::result_of::coord< PointType >::type NumericType;
         typedef typename viennagrid::result_of::const_vertex_range<ElementT>::type       VertexOnCellContainer;

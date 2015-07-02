@@ -60,7 +60,7 @@ private:
   viennautils::dfise::grid_reader grid_reader_;
   viennautils::dfise::data_reader data_reader_;
 
-  static viennagrid_element_tag to_viennagrid_element_tag(viennautils::dfise::grid_reader::element_tag::type dfise_tag);
+  static viennagrid_element_type to_viennagrid_element_type(viennautils::dfise::grid_reader::element_tag::type dfise_tag);
 
   template<typename PointT>
   static PointT normal_vector(PointT const & p0, PointT const & p1);
@@ -122,7 +122,7 @@ bool dfise_text_reader::to_viennagrid(MeshT const & mesh, std::vector<viennagrid
     for (typename std::vector<VertexType>::size_type i = 0; i < vertices.size(); ++i)
     {
       PointType point(dimension);
-      for (int j = 0; j < dimension; ++j)
+      for (unsigned int j = 0; j < dimension; ++j)
       {
         point[j] = grid_reader_.get_vertices()[dimension*i+j];
       }
@@ -137,7 +137,7 @@ bool dfise_text_reader::to_viennagrid(MeshT const & mesh, std::vector<viennagrid
   viennagrid_dimension cell_dimension = -1;
   for (grid_reader::ElementVector::const_iterator it = dfise_elements.begin(); it != dfise_elements.end(); ++it)
   {
-    cell_dimension = std::max(cell_dimension, viennagrid_topological_dimension(to_viennagrid_element_tag(it->tag_)));
+    cell_dimension = std::max(cell_dimension, viennagrid_topological_dimension(to_viennagrid_element_type(it->tag_)));
   }
 
   RegionContactMap region_contacts;
@@ -166,7 +166,7 @@ bool dfise_text_reader::to_viennagrid(MeshT const & mesh, std::vector<viennagrid
         cell_vertices[2] = vertices[e.vertex_indices_[2]];
 
         viennagrid::make_element( mesh.get_make_region(region_name),
-                                viennagrid::element_tag_t::from_internal(VIENNAGRID_ELEMENT_TAG_TRIANGLE),
+                                viennagrid::element_tag::from_internal(VIENNAGRID_ELEMENT_TYPE_TRIANGLE),
                                 cell_vertices.begin(), cell_vertices.end() );
 
         cell_vertices[0] = vertices[e.vertex_indices_[2]];
@@ -174,7 +174,7 @@ bool dfise_text_reader::to_viennagrid(MeshT const & mesh, std::vector<viennagrid
         cell_vertices[2] = vertices[e.vertex_indices_[0]];
 
         viennagrid::make_element( mesh.get_make_region(region_name),
-                                viennagrid::element_tag_t::from_internal(VIENNAGRID_ELEMENT_TAG_TRIANGLE),
+                                viennagrid::element_tag::from_internal(VIENNAGRID_ELEMENT_TYPE_TRIANGLE),
                                 cell_vertices.begin(), cell_vertices.end() );
       }
       else
@@ -185,10 +185,10 @@ bool dfise_text_reader::to_viennagrid(MeshT const & mesh, std::vector<viennagrid
           cell_vertices[i] = vertices[e.vertex_indices_[i]];
         }
 
-        if (viennagrid_topological_dimension(to_viennagrid_element_tag(e.tag_)) == cell_dimension)
+        if (viennagrid_topological_dimension(to_viennagrid_element_type(e.tag_)) == cell_dimension)
         {
           viennagrid::make_element( mesh.get_make_region(region_name),
-                                    viennagrid::element_tag_t::from_internal(to_viennagrid_element_tag(e.tag_)),
+                                    viennagrid::element_tag::from_internal(to_viennagrid_element_type(e.tag_)),
                                     cell_vertices.begin(), cell_vertices.end() );
         }
         else
@@ -217,8 +217,8 @@ bool dfise_text_reader::to_viennagrid(MeshT const & mesh, std::vector<viennagrid
         PointType normal;
         double size = 0;
 
-        viennagrid_element_tag contact_tag;
-        if (e.tag_ == VIENNAGRID_ELEMENT_TAG_LINE)
+        viennagrid_element_type contact_type;
+        if (e.tag_ == VIENNAGRID_ELEMENT_TYPE_LINE)
         {
           PointType p0 = viennagrid::get_point( vertices[e.vertex_indices_[0]] );
           PointType p1 = viennagrid::get_point( vertices[e.vertex_indices_[1]] );
@@ -227,7 +227,7 @@ bool dfise_text_reader::to_viennagrid(MeshT const & mesh, std::vector<viennagrid
           normal = normal_vector(p0, p1);
 
           size = viennagrid::distance(center, p0);
-          contact_tag = VIENNAGRID_ELEMENT_TAG_TRIANGLE;
+          contact_type = VIENNAGRID_ELEMENT_TYPE_TRIANGLE;
         }
         else
         {
@@ -264,23 +264,23 @@ bool dfise_text_reader::to_viennagrid(MeshT const & mesh, std::vector<viennagrid
         cell_vertices.push_back( new_vertex );
 
         viennagrid::make_element( mesh.get_make_region(rc_it->second.region_name_),
-                                  viennagrid::element_tag_t::from_internal(contact_tag),
+                                  viennagrid::element_tag::from_internal(contact_type),
                                   cell_vertices.begin(), cell_vertices.end() );
         }
     }
   }
-  
+
   for ( data_reader::CompleteDatasetMap::const_iterator dataset_it = data_reader_.get_complete_datasets().begin()
       ; dataset_it != data_reader_.get_complete_datasets().end()
       ; ++dataset_it
       )
   {
     size_t value_dimension = dataset_it->second.first;
-    viennagrid::quantity_field qf(0, value_dimension, QUANTITY_FIELD_STORAGE_DENSE);
+    viennagrid::quantity_field qf(0, value_dimension, VIENNAGRID_QUANTITY_FIELD_STORAGE_DENSE);
     std::string quantity_name = dataset_it->first;
     qf.set_name(quantity_name);
     qf.resize(vertices.size() + new_vertices.size());
-    
+
     data_reader::ValueVector const & values = dataset_it->second.second;
 
     for (size_t i = 0; i < vertices.size(); ++i)
@@ -295,23 +295,23 @@ bool dfise_text_reader::to_viennagrid(MeshT const & mesh, std::vector<viennagrid
 
     quantity_fields.push_back(qf);
   }
-  
+
   for ( data_reader::PartialDatasetMap::const_iterator dataset_it = data_reader_.get_partial_datasets().begin()
       ; dataset_it != data_reader_.get_partial_datasets().end()
       ; ++dataset_it
       )
   {
     size_t value_dimension = dataset_it->second.first;
-    viennagrid::quantity_field qf(0, value_dimension, QUANTITY_FIELD_STORAGE_SPARSE);
+    viennagrid::quantity_field qf(0, value_dimension, VIENNAGRID_QUANTITY_FIELD_STORAGE_SPARSE);
     std::string quantity_name = dataset_it->first;
     qf.set_name(quantity_name);
-    
+
     data_reader::VertexIndexVector const & vertex_indices = dataset_it->second.second.first;
     data_reader::ValueVector const & values = dataset_it->second.second.second;
     for (size_t i = 0; i < vertex_indices.size(); ++i)
     {
       qf.set(vertex_indices[i], &values[i*value_dimension]);
-      
+
       //set the same value for all new vertices that were "derived" of the current vertex
       for ( typename NewVertexMap::const_iterator new_it = new_vertices.find(vertex_indices[i])
           ; new_it != new_vertices.end() && new_it->first == vertex_indices[i]
@@ -327,15 +327,15 @@ bool dfise_text_reader::to_viennagrid(MeshT const & mesh, std::vector<viennagrid
   return true;
 }
 
-inline viennagrid_element_tag dfise_text_reader::to_viennagrid_element_tag(viennautils::dfise::grid_reader::element_tag::type dfise_tag)
+inline viennagrid_element_type dfise_text_reader::to_viennagrid_element_type(viennautils::dfise::grid_reader::element_tag::type dfise_tag)
 {
   switch(dfise_tag)
   {
-    case viennautils::dfise::grid_reader::element_tag::line:          return VIENNAGRID_ELEMENT_TAG_LINE;
-    case viennautils::dfise::grid_reader::element_tag::triangle:      return VIENNAGRID_ELEMENT_TAG_TRIANGLE;
-    case viennautils::dfise::grid_reader::element_tag::quadrilateral: return VIENNAGRID_ELEMENT_TAG_QUADRILATERAL;
+    case viennautils::dfise::grid_reader::element_tag::line:          return VIENNAGRID_ELEMENT_TYPE_LINE;
+    case viennautils::dfise::grid_reader::element_tag::triangle:      return VIENNAGRID_ELEMENT_TYPE_TRIANGLE;
+    case viennautils::dfise::grid_reader::element_tag::quadrilateral: return VIENNAGRID_ELEMENT_TYPE_QUADRILATERAL;
   }
-  
+
   assert(false);
   return viennautils::dfise::grid_reader::element_tag::line;
 }

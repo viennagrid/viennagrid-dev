@@ -109,11 +109,11 @@ namespace viennagrid
                   base_element<element1_is_const> const & el1,
                   base_element<element2_is_const> const & el2)
     {
-      if (el1.tag().is_vertex() && el2.tag().is_vertex())
+      if (el1.is_vertex() && el2.is_vertex())
         return distance_impl(accessor.get(el1), accessor.get(el2));
-      if (el1.tag().is_vertex())
+      if (el1.is_vertex())
         return distance_impl(accessor, accessor.get(el1), el2);
-      if (el2.tag().is_vertex())
+      if (el2.is_vertex())
         return distance_impl(accessor, el1, accessor.get(el2));
 
       //typedef typename result_of::point<ElementType1>::type      PointT;
@@ -218,11 +218,11 @@ namespace viennagrid
                            base_element<element1_is_const> const & el1,
                            base_element<element2_is_const> const & el2)
     {
-      if (el1.tag().is_vertex() && el2.tag().is_vertex())
+      if (el1.is_vertex() && el2.is_vertex())
         return boundary_distance_impl(accessor, accessor.get(el1), accessor.get(el2));
-      if (el1.tag().is_vertex())
+      if (el1.is_vertex())
         return boundary_distance_impl(accessor, accessor.get(el1), el2);
-      if (el2.tag().is_vertex())
+      if (el2.is_vertex())
         return boundary_distance_impl(accessor, el1, accessor.get(el2));
 
       //typedef typename result_of::point<ElementType1>::type      PointT;

@@ -64,7 +64,7 @@ namespace viennagrid
         return src;
       }
 
-      if (src.tag().is_vertex())
+      if (src.is_vertex())
         return copy_vertex(src);
       return copy_element(src);
     }

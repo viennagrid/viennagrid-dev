@@ -19,7 +19,7 @@ namespace viennagrid
     template<typename BoxT>
     bool intersect(BoxT const & box) const
     {
-      if (element.tag().is_vertex())
+      if (element.is_vertex())
       {
         PointType point = viennagrid::get_point(element);
         return (box.min() <= point) && (point < box.max());
@@ -50,7 +50,7 @@ namespace viennagrid
     template<typename BoxT>
     bool intersect(BoxT const & box) const
     {
-      assert( element.tag().is_vertex() );
+      assert( element.is_vertex() );
       PointType point = viennagrid::get_point(element);
       PointType p_min = point - PointType( point.size(), distance );
       PointType p_max = point + PointType( point.size(), distance );

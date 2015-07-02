@@ -9,7 +9,7 @@ namespace viennagrid
 
   void make_aa_cube_hull(viennagrid::mesh_t const & mesh,
                          viennagrid::point_t const & ll, viennagrid::point_t const & ur,
-                         viennagrid::element_tag_t element_tag = viennagrid::triangle_tag())
+                         viennagrid::element_tag element_tag = viennagrid::triangle_tag())
   {
     typedef viennagrid::mesh_t MeshType;
     typedef viennagrid::point_t PointType;
@@ -70,7 +70,7 @@ namespace viennagrid
   void make_aa_cube_hull(viennagrid::mesh_t const & mesh,
                          viennagrid::point_t const & position,
                          viennagrid_numeric size_x, viennagrid_numeric size_y, viennagrid_numeric size_z,
-                         viennagrid::element_tag_t element_tag = viennagrid::triangle_tag())
+                         viennagrid::element_tag element_tag = viennagrid::triangle_tag())
   {
     make_aa_cube_hull(mesh,
                       position - viennagrid::make_point(size_x, size_y, size_z)/2.0,

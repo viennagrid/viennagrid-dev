@@ -619,17 +619,17 @@ namespace viennagrid
                         point_t const & p,
                         base_element<element_is_const> const & el2)
     {
-      if (el2.tag().is_vertex())
+      if (el2.is_vertex())
         return closest_points_impl(accessor, p, el2, vertex_tag());
-      if (el2.tag().is_line())
+      if (el2.is_line())
         return closest_points_impl(accessor, p, el2, line_tag());
-      if (el2.tag().is_triangle())
+      if (el2.is_triangle())
         return closest_points_impl(accessor, p, el2, triangle_tag());
-      if (el2.tag().is_quadrilateral())
+      if (el2.is_quadrilateral())
         return closest_points_impl(accessor, p, el2, quadrilateral_tag());
-      if (el2.tag().is_tetrahedron())
+      if (el2.is_tetrahedron())
         return closest_points_impl(accessor, p, el2, tetrahedron_tag());
-      if (el2.tag().is_hexahedron())
+      if (el2.is_hexahedron())
         return closest_points_impl(accessor, p, el2, hexahedron_tag());
 
       assert(false);

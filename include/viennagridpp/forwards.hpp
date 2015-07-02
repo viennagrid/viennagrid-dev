@@ -174,7 +174,7 @@ namespace viennagrid
     bool is_tetrahedron() const { return *this == tetrahedron(); }
     bool is_hexahedron() const { return *this == hexahedron(); }
 
-//     bool is_simplex() const { return viennagrid_is_simplex(internal()) == VIENNAGRID_TRUE; }
+    bool is_simplex() const { return viennagrid_is_simplex(internal()) == VIENNAGRID_TRUE; }
 
     bool operator==(element_tag rhs) const { return internal() == rhs.internal();}
     bool operator!=(element_tag rhs) const { return !(*this == rhs);}
@@ -187,9 +187,8 @@ namespace viennagrid
     viennagrid_dimension topologic_dimension() const
     { return viennagrid_topological_dimension(internal()); }
 
-
-//     bool is_boundary(element_tag host_tag) const
-//     { return viennagrid_is_boundary_type(host_tag.internal(), internal()) == VIENNAGRID_TRUE; }
+    bool is_boundary(element_tag host_tag) const
+    { return viennagrid_is_boundary_type(host_tag.internal(), internal()) == VIENNAGRID_TRUE; }
 
     viennagrid_int boundary_element_count(element_tag boundary_tag) const
     { return viennagrid_boundary_element_count_from_element_type( internal(), boundary_tag.internal() ); }

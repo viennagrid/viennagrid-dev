@@ -75,9 +75,9 @@ namespace viennagrid
                                              PointT const & point,
                                              AccessorT const & accessor)
   {
-    if (element.tag().is_triangle())
+    if (element.is_triangle())
       return detail::interpolate_triangle(element, point, accessor);
-    if (element.tag().is_tetrahedron())
+    if (element.is_tetrahedron())
       return detail::interpolate_tetrahedron(element, point, accessor);
 
     assert(false);

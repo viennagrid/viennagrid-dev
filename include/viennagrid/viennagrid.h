@@ -79,6 +79,7 @@ typedef struct viennagrid_mesh_io_ * viennagrid_mesh_io;
 #define VIENNAGRID_ERROR_IO_INVALID_VERTEX_ID                         116
 #define VIENNAGRID_ERROR_IO_INVALID_HOLE_POINT_COUNT                  117
 #define VIENNAGRID_ERROR_IO_INVALID_SEED_POINT_COUNT                  118
+#define VIENNAGRID_ERROR_IO_UNSUPPORTED_ELEMENT_TYPE                  119
 
 /* VIENNAGRID BOOL DEFINES */
 #define VIENNAGRID_TRUE                             1
@@ -225,6 +226,20 @@ static inline viennagrid_bool viennagrid_is_boundary_type(viennagrid_element_typ
 {
   return viennagrid_boundary_element_count_from_element_type(host, boundary) != 0 ? VIENNAGRID_TRUE : VIENNAGRID_FALSE;
 }
+
+/* return the element type with the larger topological dimension */
+static inline viennagrid_element_type viennagrid_topological_max(viennagrid_element_type lhs, viennagrid_element_type rhs)
+{
+  return (viennagrid_topological_dimension(lhs) < viennagrid_topological_dimension(rhs)) ? rhs : lhs;
+}
+
+/* queries if an element type is a simplex */
+static inline viennagrid_bool viennagrid_is_simplex(viennagrid_element_type et)
+{
+  return (et == VIENNAGRID_ELEMENT_TYPE_VERTEX) || (et == VIENNAGRID_ELEMENT_TYPE_LINE) ||
+         (et == VIENNAGRID_ELEMENT_TYPE_TRIANGLE) || (et == VIENNAGRID_ELEMENT_TYPE_TETRAHEDRON);
+}
+
 
 /* return the string of a given element type */
 static inline const char * viennagrid_element_type_string(viennagrid_element_type element_type)

@@ -36,7 +36,7 @@ public:
 
   viennagrid_quantity_field get_quantity_field(viennagrid_int i)
   {
-    if ((i < 0) || (i >= quantity_fields_.size()))
+    if ((i < 0) || (i >= (viennagrid_int)quantity_fields_.size()))
       return 0;
 
     std::map<std::string, viennagrid_quantity_field>::iterator it = quantity_fields_.begin();

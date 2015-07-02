@@ -22,8 +22,6 @@ namespace viennagrid
 
   public:
 
-    typedef element_tag element_tag_type;
-
     typedef typename result_of::const_nonconst<mesh_hierarchy_t, is_const>::type mesh_hierarchy_type;
     typedef typename result_of::const_nonconst<mesh_hierarchy_t, true>::type const_mesh_hierarchy_type;
 

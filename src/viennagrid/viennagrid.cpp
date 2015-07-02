@@ -256,6 +256,9 @@ viennagrid_error viennagrid_mesh_vertex_create(viennagrid_mesh mesh,
 
   viennagrid_mesh_element_add(mesh, 0, vid);
 
+  if (vertex_id)
+    *vertex_id = vid;
+
   return VIENNAGRID_SUCCESS;
 }
 
@@ -309,6 +312,9 @@ viennagrid_error viennagrid_mesh_element_create(viennagrid_mesh mesh,
   viennagrid_mesh_hierarchy_element_create(mesh_hierarchy, element_type, vertex_count, vertex_ids, &eid);
 
   viennagrid_mesh_element_add(mesh, viennagrid_topological_dimension(element_type), eid);
+
+  if (element_id)
+    *element_id = eid;
 
   return VIENNAGRID_SUCCESS;
 }

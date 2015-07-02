@@ -251,13 +251,13 @@ namespace viennagrid
     {
       switch (element.tag().internal())
       {
-        case VIENNAGRID_ELEMENT_TAG_VERTEX:
+        case VIENNAGRID_ELEMENT_TYPE_VERTEX:
           return element_line_intersect_impl(point_accessor, element, vertex_tag(), DimensionTagT(), line_start, line_end, nc);
 
-        case VIENNAGRID_ELEMENT_TAG_LINE:
+        case VIENNAGRID_ELEMENT_TYPE_LINE:
           return element_line_intersect_impl(point_accessor, element, line_tag(), DimensionTagT(), line_start, line_end, nc);
 
-        case VIENNAGRID_ELEMENT_TAG_TRIANGLE:
+        case VIENNAGRID_ELEMENT_TYPE_TRIANGLE:
           return element_line_intersect_impl(point_accessor, element, triangle_tag(), DimensionTagT(), line_start, line_end, nc);
 
         default:

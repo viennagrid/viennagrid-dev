@@ -114,13 +114,13 @@ namespace viennagrid
   {
     typedef typename viennagrid::result_of::point<PointAccessorT, ElementT>::type PointType;
 
-    if (element.tag().is_vertex())
+    if (element.is_vertex())
       return detail::normal_vector_impl( point_accessor, element, vertex_tag(), dimension_tag<1>() );
-    else if (element.tag().is_line())
+    else if (element.is_line())
       return detail::normal_vector_impl( point_accessor, element, line_tag(), dimension_tag<2>() );
-    else if (element.tag().is_triangle())
+    else if (element.is_triangle())
       return detail::normal_vector_impl( point_accessor, element, triangle_tag(), dimension_tag<3>() );
-    else if (element.tag().is_quadrilateral())
+    else if (element.is_quadrilateral())
       return detail::normal_vector_impl( point_accessor, element, quadrilateral_tag(), dimension_tag<3>() );
 
     assert(false);

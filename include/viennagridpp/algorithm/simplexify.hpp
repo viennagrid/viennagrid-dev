@@ -40,7 +40,7 @@ namespace viennagrid
     void simplexify_impl(viennagrid::base_element<element_is_const> const & element,
                     CopyMapT & copy_map)
     {
-      if (element.tag().is_quadrilateral())
+      if (element.is_quadrilateral())
         simplexify_impl(element, viennagrid::quadrilateral_tag(), copy_map);
       else
       {
@@ -63,7 +63,7 @@ namespace viennagrid
     ConstCellRangeType cells(src_mesh);
     for (ConstCellIterator cit = cells.begin(); cit != cells.end(); ++cit)
     {
-      if ( (*cit).tag().is_simplex() )
+      if ( (*cit).is_simplex() )
         copy_map( *cit );
       else
         detail::simplexify_impl( *cit, copy_map );

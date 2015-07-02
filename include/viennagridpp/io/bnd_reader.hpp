@@ -825,7 +825,7 @@ namespace viennagrid
         typedef typename viennagrid::result_of::element<MeshT>::type ElementType;
         typedef typename viennagrid::result_of::region<MeshT>::type RegionType;
 
-        const int geometric_dimension = viennagrid::geometric_dimension(mesh);
+//         const int geometric_dimension = viennagrid::geometric_dimension(mesh);
         const int num_vertices_per_triangle = 3;
 
         typedef viennagrid::io::bnd_helper BNDReaderType;

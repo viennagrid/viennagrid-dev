@@ -66,7 +66,7 @@ viennagrid_error viennagrid_mesh_io_read_netgen(viennagrid_mesh_io mesh_io,
       viennagrid_mesh_geometric_dimension_set(mesh, p.size());
       geometric_dimension = p.size();
     }
-    else if (geometric_dimension != p.size())
+    else if (geometric_dimension != (viennagrid_dimension)p.size())
     {
       return VIENNAGRID_ERROR_IO_VERTEX_DIMENSION_MISMATCH;
     }
@@ -123,6 +123,8 @@ viennagrid_error viennagrid_mesh_io_read_netgen(viennagrid_mesh_io mesh_io,
       et = VIENNAGRID_ELEMENT_TYPE_TRIANGLE;
     else if (vertex_ids.size() == 4)
       et = VIENNAGRID_ELEMENT_TYPE_TETRAHEDRON;
+    else
+      return VIENNAGRID_ERROR_IO_UNSUPPORTED_ELEMENT_TYPE;
 
     viennagrid_mesh_element_create(mesh, et, vertex_ids.size(), &vertex_ids[0], NULL);
   }

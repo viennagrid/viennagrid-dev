@@ -309,9 +309,9 @@ namespace viennagrid
     typename viennagrid::result_of::point< PointAccessorT, ElementT >::type
     circumcenter(PointAccessorT const accessor, ElementT const & element, viennagrid::dimension_tag<1>)
     {
-      if (element.tag().is_vertex())
+      if (element.is_vertex())
         return circumcenter(accessor, element, viennagrid::vertex_tag(), viennagrid::dimension_tag<1>());
-      if (element.tag().is_line())
+      if (element.is_line())
         return circumcenter(accessor, element, viennagrid::line_tag(), viennagrid::dimension_tag<1>());
 
       return typename viennagrid::result_of::point< PointAccessorT, ElementT >::type( 1 );
@@ -321,18 +321,14 @@ namespace viennagrid
     typename viennagrid::result_of::point< PointAccessorT, ElementT >::type
     circumcenter(PointAccessorT const accessor, ElementT const & element, viennagrid::dimension_tag<2>)
     {
-      if (element.tag().is_vertex())
+      if (element.is_vertex())
         return circumcenter(accessor, element, viennagrid::vertex_tag(), viennagrid::dimension_tag<2>());
-      if (element.tag().is_line())
+      if (element.is_line())
         return circumcenter(accessor, element, viennagrid::line_tag(), viennagrid::dimension_tag<2>());
-      if (element.tag().is_triangle())
+      if (element.is_triangle())
         return circumcenter(accessor, element, viennagrid::triangle_tag(), viennagrid::dimension_tag<2>());
-      if (element.tag().is_quadrilateral())
+      if (element.is_quadrilateral())
         return circumcenter(accessor, element, viennagrid::quadrilateral_tag(), viennagrid::dimension_tag<2>());
-//       if (element.tag().is_polygon())
-//         return circumcenter(accessor, element, viennagrid::polygon_tag(), viennagrid::dimension_tag<2>());
-//       if (element.tag().is_plc())
-//         return circumcenter(accessor, element, viennagrid::plc_tag(), viennagrid::dimension_tag<2>());
 
       return typename viennagrid::result_of::point< PointAccessorT, ElementT >::type( 2 );
     }
@@ -341,21 +337,17 @@ namespace viennagrid
     typename viennagrid::result_of::point< PointAccessorT, ElementT >::type
     circumcenter(PointAccessorT const accessor, ElementT const & element, viennagrid::dimension_tag<3>)
     {
-      if (element.tag().is_vertex())
+      if (element.is_vertex())
         return circumcenter(accessor, element, viennagrid::vertex_tag(), viennagrid::dimension_tag<3>());
-      if (element.tag().is_line())
+      if (element.is_line())
         return circumcenter(accessor, element, viennagrid::line_tag(), viennagrid::dimension_tag<3>());
-      if (element.tag().is_triangle())
+      if (element.is_triangle())
         return circumcenter(accessor, element, viennagrid::triangle_tag(), viennagrid::dimension_tag<3>());
-      if (element.tag().is_quadrilateral())
+      if (element.is_quadrilateral())
         return circumcenter(accessor, element, viennagrid::quadrilateral_tag(), viennagrid::dimension_tag<3>());
-//       if (element.tag().is_polygon())
-//         return circumcenter(accessor, element, viennagrid::polygon_tag(), viennagrid::dimension_tag<3>());
-//       if (element.tag().is_plc())
-//         return circumcenter(accessor, element, viennagrid::plc_tag(), viennagrid::dimension_tag<3>());
-      if (element.tag().is_tetrahedron())
+      if (element.is_tetrahedron())
         return circumcenter(accessor, element, viennagrid::tetrahedron_tag(), viennagrid::dimension_tag<3>());
-      if (element.tag().is_hexahedron())
+      if (element.is_hexahedron())
         return circumcenter(accessor, element, viennagrid::hexahedron_tag(), viennagrid::dimension_tag<3>());
 
       return typename viennagrid::result_of::point< PointAccessorT, ElementT >::type( 3 );

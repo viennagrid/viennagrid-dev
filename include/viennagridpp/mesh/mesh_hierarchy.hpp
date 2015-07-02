@@ -24,12 +24,7 @@ namespace viennagrid
     typedef typename result_of::const_nonconst<region_t, is_const>::type region_type;
     typedef typename result_of::const_nonconst<region_t, true>::type const_region_type;
 
-    typedef typename result_of::const_nonconst<element_t, is_const>::type element_type;
-    typedef typename result_of::const_nonconst<element_t, true>::type const_element_type;
-
     typedef viennagrid_int region_id_type;
-    typedef element_tag element_tag_type;
-
 
     base_mesh_hierarchy(viennagrid_mesh_hierarchy internal_mesh_hierarchy_in) : internal_mesh_hierarchy_(internal_mesh_hierarchy_in)
     {
@@ -118,10 +113,10 @@ namespace viennagrid
 
 
 
-  inline viennagrid_int element_count( viennagrid_mesh_hierarchy mesh_hierarchy, viennagrid_element_type element_type )
+  inline viennagrid_int element_count( viennagrid_mesh_hierarchy mesh_hierarchy, viennagrid_element_type et )
   {
     viennagrid_int count;
-    viennagrid_mesh_hierarchy_element_count(mesh_hierarchy, element_type, &count);
+    viennagrid_mesh_hierarchy_element_count(mesh_hierarchy, et, &count);
     return count;
   }
 
