@@ -95,21 +95,21 @@ viennagrid_error viennagrid_quantity_field_init(viennagrid_quantity_field quanti
 }
 
 
-viennagrid_error viennagrid_quantity_field_get_topologic_dimension(viennagrid_quantity_field quantity_field,
+viennagrid_error viennagrid_quantity_field_topologic_dimension_get(viennagrid_quantity_field quantity_field,
                                                                    viennagrid_dimension * topologic_dimension)
 {
   *topologic_dimension = quantity_field->topologic_dimension;
   return VIENNAGRID_SUCCESS;
 }
 
-viennagrid_error viennagrid_quantity_field_get_storage_layout(viennagrid_quantity_field quantity_field,
+viennagrid_error viennagrid_quantity_field_storage_layout_get(viennagrid_quantity_field quantity_field,
                                                               viennagrid_int * storage_layout)
 {
   *storage_layout  = quantity_field->storage_layout;
   return VIENNAGRID_SUCCESS;
 }
 
-viennagrid_error viennagrid_quantity_field_get_size_of_value(viennagrid_quantity_field quantity_field,
+viennagrid_error viennagrid_quantity_field_size_of_value_get(viennagrid_quantity_field quantity_field,
                                                              viennagrid_int * size_of_value)
 {
   *size_of_value = quantity_field->size_of_value;
@@ -123,8 +123,8 @@ viennagrid_error viennagrid_quantity_field_get_size_of_value(viennagrid_quantity
 
 
 
-viennagrid_error viennagrid_quantity_field_set_name(viennagrid_quantity_field quantity_field,
-                                                const char * name)
+viennagrid_error viennagrid_quantity_field_name_set(viennagrid_quantity_field quantity_field,
+                                                    const char * name)
 {
   if (!name)
     quantity_field->name.clear();
@@ -134,8 +134,8 @@ viennagrid_error viennagrid_quantity_field_set_name(viennagrid_quantity_field qu
   return VIENNAGRID_SUCCESS;
 }
 
-viennagrid_error viennagrid_quantity_field_get_name(viennagrid_quantity_field quantity_field,
-                                                const char ** name)
+viennagrid_error viennagrid_quantity_field_name_get(viennagrid_quantity_field quantity_field,
+                                                    const char ** name)
 {
   if (name)
     *name = quantity_field->name.c_str();
@@ -143,8 +143,8 @@ viennagrid_error viennagrid_quantity_field_get_name(viennagrid_quantity_field qu
 }
 
 
-viennagrid_error viennagrid_quantity_field_set_unit(viennagrid_quantity_field quantity_field,
-                                                const char * unit)
+viennagrid_error viennagrid_quantity_field_unit_set(viennagrid_quantity_field quantity_field,
+                                                    const char * unit)
 {
   if (!unit)
     quantity_field->unit.clear();
@@ -154,8 +154,8 @@ viennagrid_error viennagrid_quantity_field_set_unit(viennagrid_quantity_field qu
   return VIENNAGRID_SUCCESS;
 }
 
-viennagrid_error viennagrid_quantity_field_get_unit(viennagrid_quantity_field quantity_field,
-                                                const char ** unit)
+viennagrid_error viennagrid_quantity_field_unit_get(viennagrid_quantity_field quantity_field,
+                                                    const char ** unit)
 {
   if (unit)
     *unit = quantity_field->unit.c_str();
@@ -204,7 +204,7 @@ viennagrid_error viennagrid_quantity_field_size(viennagrid_quantity_field quanti
 }
 
 
-viennagrid_error viennagrid_quantity_field_set_value(viennagrid_quantity_field quantity_field,
+viennagrid_error viennagrid_quantity_field_value_set(viennagrid_quantity_field quantity_field,
                                                      viennagrid_int element_id,
                                                      void * value)
 {
@@ -245,7 +245,7 @@ viennagrid_error viennagrid_quantity_field_set_value(viennagrid_quantity_field q
   return VIENNAGRID_SUCCESS;
 }
 
-viennagrid_error viennagrid_quantity_field_get_value(viennagrid_quantity_field quantity_field,
+viennagrid_error viennagrid_quantity_field_value_get(viennagrid_quantity_field quantity_field,
                                                      viennagrid_int element_id,
                                                      void ** values)
 {

@@ -190,16 +190,16 @@ namespace viennagrid
 
 
     viennagrid_int id;
-    viennagrid_element_create_refinement(mesh.internal(),
-                                         viennagrid::topologic_dimension(parent),
-                                         parent.id(),
-                                         et.internal(),
-                                         internal_vertices_indices.size(),
-                                         &internal_vertices_indices[0],
-                                         vertex_indices.size(),
-                                         &vertex_indices[0],
-                                         &intersects_indices[0], &intersects_dimensions[0],
-                                         &id);
+    viennagrid_mesh_refined_element_create(mesh.internal(),
+                                           viennagrid::topologic_dimension(parent),
+                                           parent.id(),
+                                           et.internal(),
+                                           internal_vertices_indices.size(),
+                                           &internal_vertices_indices[0],
+                                           vertex_indices.size(),
+                                           &vertex_indices[0],
+                                           &intersects_indices[0], &intersects_dimensions[0],
+                                           &id);
 
     return element_t(mesh.mesh_hierarchy(), et.topologic_dimension(), id);
   }

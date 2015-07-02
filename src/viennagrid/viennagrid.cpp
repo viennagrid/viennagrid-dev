@@ -316,17 +316,17 @@ viennagrid_error viennagrid_mesh_element_create(viennagrid_mesh mesh,
 
 
 
-viennagrid_error viennagrid_element_create_refinement(viennagrid_mesh mesh,
-                                                      viennagrid_dimension element_topo_dim,
-                                                      viennagrid_int element_id,
-                                                      viennagrid_element_type    refined_element_type,
-                                                      viennagrid_int            refined_element_vertex_count,
-                                                      viennagrid_int *        refined_element_vertex_ids,
-                                                      viennagrid_int            intersects_count,
-                                                      viennagrid_int *        intersect_vertices_ids,
-                                                      viennagrid_int *        intersects_ids,
-                                                      viennagrid_dimension *    intersects_topo_dims,
-                                                      viennagrid_int *        id)
+viennagrid_error viennagrid_mesh_refined_element_create(viennagrid_mesh mesh,
+                                                        viennagrid_dimension element_topo_dim,
+                                                        viennagrid_int element_id,
+                                                        viennagrid_element_type    refined_element_type,
+                                                        viennagrid_int            refined_element_vertex_count,
+                                                        viennagrid_int *        refined_element_vertex_ids,
+                                                        viennagrid_int            intersects_count,
+                                                        viennagrid_int *        intersect_vertices_ids,
+                                                        viennagrid_int *        intersects_ids,
+                                                        viennagrid_dimension *    intersects_topo_dims,
+                                                        viennagrid_int *        id)
 {
   *id = mesh->make_refined_element(element_topo_dim, element_id,
                                    refined_element_type, refined_element_vertex_count,
@@ -848,9 +848,9 @@ viennagrid_error viennagrid_plc_read_tetgen_poly(viennagrid_plc plc,
   return plc->read_tetgen_poly(filename);
 }
 
-viennagrid_error viennagrid_plc_refine_lines(viennagrid_plc plc,
-                                             viennagrid_plc output_plc,
-                                             viennagrid_numeric line_size)
+viennagrid_error viennagrid_plc_line_refine(viennagrid_plc plc,
+                                            viennagrid_plc output_plc,
+                                            viennagrid_numeric line_size)
 {
   viennagrid_dimension geometric_dimension;
   viennagrid_plc_geometric_dimension_get(plc, &geometric_dimension);

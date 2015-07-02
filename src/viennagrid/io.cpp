@@ -88,7 +88,7 @@ viennagrid_error viennagrid_mesh_io_quantity_field_set(viennagrid_mesh_io mesh_i
   if (mesh_io && quantity_field)
   {
     const char * quantity_name;
-    viennagrid_quantity_field_get_name(quantity_field, &quantity_name);
+    viennagrid_quantity_field_name_get(quantity_field, &quantity_name);
     mesh_io->set_quantity_field( quantity_name, quantity_field );
   }
 

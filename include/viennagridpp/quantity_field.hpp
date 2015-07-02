@@ -157,7 +157,7 @@ namespace viennagrid
     value_type get(viennagrid_int id) const
     {
       void * tmp;
-      viennagrid_quantity_field_get_value(internal(), id, &tmp);
+      viennagrid_quantity_field_value_get(internal(), id, &tmp);
 
       return value_type( (viennagrid_numeric*)tmp, values_dimension() );
     }
@@ -183,17 +183,17 @@ namespace viennagrid
 
     void set(viennagrid_int id, viennagrid_numeric const * value)
     {
-      viennagrid_quantity_field_set_value(internal(), id, const_cast<viennagrid_numeric*>(value));
+      viennagrid_quantity_field_value_set(internal(), id, const_cast<viennagrid_numeric*>(value));
     }
 
     void set(viennagrid_int id, std::vector<viennagrid_numeric> const & value)
     {
-      viennagrid_quantity_field_set_value(internal(), id, const_cast<viennagrid_numeric*>(&value[0]));
+      viennagrid_quantity_field_value_set(internal(), id, const_cast<viennagrid_numeric*>(&value[0]));
     }
 
     void set(viennagrid_int id, viennagrid_numeric value)
     {
-      viennagrid_quantity_field_set_value(internal(), id, &value);
+      viennagrid_quantity_field_value_set(internal(), id, &value);
     }
 
     template<bool element_is_const>
@@ -232,21 +232,21 @@ namespace viennagrid
     viennagrid_dimension topologic_dimension() const
     {
       viennagrid_dimension topologic_dimension_;
-      viennagrid_quantity_field_get_topologic_dimension(internal(), &topologic_dimension_);
+      viennagrid_quantity_field_topologic_dimension_get(internal(), &topologic_dimension_);
       return topologic_dimension_;
     }
 
     viennagrid_dimension values_dimension() const
     {
       viennagrid_dimension values_dimension_;
-      viennagrid_quantity_field_get_size_of_value(internal(), &values_dimension_);
+      viennagrid_quantity_field_size_of_value_get(internal(), &values_dimension_);
       return values_dimension_ / sizeof(viennagrid_numeric);
     }
 
     viennagrid_int storage_layout() const
     {
       viennagrid_int storage_layout_;
-      viennagrid_quantity_field_get_storage_layout(internal(), &storage_layout_);
+      viennagrid_quantity_field_storage_layout_get(internal(), &storage_layout_);
       return storage_layout_;
     }
 
@@ -255,7 +255,7 @@ namespace viennagrid
       assert(valid());
 
       const char * tmp;
-      viennagrid_quantity_field_get_name(internal(), &tmp);
+      viennagrid_quantity_field_name_get(internal(), &tmp);
       if (tmp)
         return tmp;
       else
@@ -267,9 +267,9 @@ namespace viennagrid
       assert(valid());
 
       if (name_.empty())
-        viennagrid_quantity_field_set_name(internal(), NULL);
+        viennagrid_quantity_field_name_set(internal(), NULL);
 
-      viennagrid_quantity_field_set_name(internal(), name_.c_str());
+      viennagrid_quantity_field_name_set(internal(), name_.c_str());
     }
 
 
@@ -278,7 +278,7 @@ namespace viennagrid
       assert(valid());
 
       const char * tmp;
-      viennagrid_quantity_field_get_unit(internal(), &tmp);
+      viennagrid_quantity_field_unit_get(internal(), &tmp);
       if (tmp)
         return tmp;
       else
@@ -290,9 +290,9 @@ namespace viennagrid
       assert(valid());
 
       if (unit_.empty())
-        viennagrid_quantity_field_set_unit(internal(), NULL);
+        viennagrid_quantity_field_unit_set(internal(), NULL);
 
-      viennagrid_quantity_field_set_unit(internal(), unit_.c_str());
+      viennagrid_quantity_field_unit_set(internal(), unit_.c_str());
     }
 
     viennagrid_quantity_field internal() const { return internal_quantity_field; }
