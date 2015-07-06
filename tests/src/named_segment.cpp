@@ -39,7 +39,7 @@ inline std::string random_name()
 
 void test(int region_count, int test_count)
 {
-  typedef viennagrid::mesh_t MeshType;
+  typedef viennagrid::mesh MeshType;
   for (int i = 0; i < test_count; ++i)
   {
     MeshType mesh;

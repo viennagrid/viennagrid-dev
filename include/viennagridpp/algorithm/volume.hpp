@@ -259,24 +259,19 @@ namespace viennagrid
     typename viennagrid::result_of::coord< MeshSegmentHandleType >::type
     volume_mesh(MeshSegmentHandleType const & mesh_obj,
                 viennagrid_int topologic_dimension
-//                 viennagrid::element_tag_t cell_tag,
-//                 viennagrid::element_tag_t cell_tag_end
                )
     {
       typedef typename viennagrid::result_of::const_element_range<MeshSegmentHandleType>::type  ElementContainerType;
       typedef typename viennagrid::result_of::iterator<ElementContainerType>::type              ElementContainerIterator;
 
       typename viennagrid::result_of::coord< MeshSegmentHandleType >::type new_volume = 0;
-//       for (; cell_tag != cell_tag_end; ++cell_tag)
-//       {
-        ElementContainerType new_cells(mesh_obj, topologic_dimension);
-        for (ElementContainerIterator new_cit = new_cells.begin();
-                                      new_cit != new_cells.end();
-                                    ++new_cit)
-        {
-          new_volume += volume( point_accessor(mesh_obj), *new_cit);
-        }
-//       }
+      ElementContainerType new_cells(mesh_obj, topologic_dimension);
+      for (ElementContainerIterator new_cit = new_cells.begin();
+                                    new_cit != new_cells.end();
+                                  ++new_cit)
+      {
+        new_volume += volume( mesh_point_accessor(mesh_obj), *new_cit);
+      }
 
       return new_volume;
     }

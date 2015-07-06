@@ -86,7 +86,7 @@ namespace viennagrid
       std::size_t                                          geometric_dim;
       viennagrid_dimension                                 cell_dimension;
 
-      typedef point_t                                      PointType;
+      typedef point                                        PointType;
       std::map<PointType, std::size_t, point_less>         global_points;
       std::map<std::size_t, PointType>                     global_points_2;
       bool                                                 use_local_points_;
@@ -94,7 +94,7 @@ namespace viennagrid
       std::map<int, std::deque<std::size_t> >              local_to_global_map;
       std::map<int, std::deque<std::size_t> >              local_cell_vertices;
       std::map<int, std::deque<std::size_t> >              local_cell_offsets;
-      std::map<int, std::deque<element_tag> >            local_cell_types;
+      std::map<int, std::deque<element_tag> >              local_cell_types;
       std::map<int, std::size_t>                           local_cell_num;
       std::map<int, std::deque<ElementType> >              local_cells;
 

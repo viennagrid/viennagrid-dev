@@ -114,9 +114,9 @@ namespace viennagrid
    * @param seed_points             A container of seed points and segment ids. The container has to support .push_back() for std::pair<MeshPointType,int>
    */
   template<typename SeedPointContainerT>
-  void extract_seed_points( viennagrid::const_mesh_t const & mesh, SeedPointContainerT & seed_points )
+  void extract_seed_points( viennagrid::const_mesh const & mesh, SeedPointContainerT & seed_points )
   {
-    typedef viennagrid::const_mesh_t MeshType;
+    typedef viennagrid::const_mesh MeshType;
     typedef typename viennagrid::result_of::point<MeshType>::type PointType;
 
     viennagrid_int num_regions = mesh.region_count();

@@ -28,11 +28,11 @@
 template <typename ReaderType>
 void test(ReaderType & my_reader, std::string const & infile)
 {
-  typedef viennagrid::mesh_t MeshType;
+  typedef viennagrid::mesh                                              MeshType;
   MeshType mesh;
 
-  typedef typename viennagrid::result_of::cell_range<MeshType>::type            CellRange;
-  typedef typename viennagrid::result_of::iterator<CellRange>::type               CellIterator;
+  typedef typename viennagrid::result_of::cell_range<MeshType>::type    CellRange;
+  typedef typename viennagrid::result_of::iterator<CellRange>::type     CellIterator;
 
   try
   {
@@ -61,9 +61,7 @@ void test(ReaderType & my_reader, std::string const & infile)
 
 int main()
 {
-//   typedef viennagrid::result_of::mesh<viennagrid::config::quadrilateral_2d>::type        Mesh2d;
-//   typedef viennagrid::result_of::mesh<viennagrid::config::hexahedral_3d>::type       Mesh3d;
-  typedef viennagrid::mesh_t MeshType;
+  typedef viennagrid::mesh MeshType;
 
   std::cout << "*****************" << std::endl;
   std::cout << "* Test started! *" << std::endl;

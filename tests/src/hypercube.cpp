@@ -84,19 +84,19 @@ void setup(MeshType & mesh, viennagrid::element_tag et)
 
 void test(std::string outfile, viennagrid::element_tag et)
 {
-  typedef viennagrid::mesh_t MeshType;
+  typedef viennagrid::mesh                                                MeshType;
 
-  typedef viennagrid::result_of::vertex_range<MeshType>::type       VertexContainer;
-  typedef viennagrid::result_of::iterator<VertexContainer>::type    VertexIterator;
+  typedef viennagrid::result_of::vertex_range<MeshType>::type             VertexContainer;
+  typedef viennagrid::result_of::iterator<VertexContainer>::type          VertexIterator;
 
-  typedef viennagrid::result_of::element_range<MeshType, 1>::type       EdgeContainer;
-  typedef viennagrid::result_of::iterator<EdgeContainer>::type      EdgeIterator;
+  typedef viennagrid::result_of::element_range<MeshType, 1>::type         EdgeContainer;
+  typedef viennagrid::result_of::iterator<EdgeContainer>::type            EdgeIterator;
 
-  typedef viennagrid::result_of::facet_range<MeshType>::type   FacetContainer;
-  typedef viennagrid::result_of::iterator<FacetContainer>::type                         FacetIterator;
+  typedef viennagrid::result_of::facet_range<MeshType>::type              FacetContainer;
+  typedef viennagrid::result_of::iterator<FacetContainer>::type           FacetIterator;
 
-  typedef viennagrid::result_of::cell_range<MeshType>::type   CellContainer;
-  typedef viennagrid::result_of::iterator<CellContainer>::type                        CellIterator;
+  typedef viennagrid::result_of::cell_range<MeshType>::type               CellContainer;
+  typedef viennagrid::result_of::iterator<CellContainer>::type            CellIterator;
 
   MeshType mesh;
 

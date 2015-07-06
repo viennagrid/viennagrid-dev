@@ -37,12 +37,12 @@ int main()
   // Define the necessary types:
   //
 
-  typedef viennagrid::mesh_t MeshType;
+  typedef viennagrid::mesh                                        MeshType;
 
-  typedef viennagrid::result_of::element<MeshType>::type           VertexType;
+  typedef viennagrid::result_of::element<MeshType>::type          VertexType;
 
-  typedef viennagrid::result_of::element_range<MeshType>::type      ElementRange;
-  typedef viennagrid::result_of::iterator<ElementRange>::type          ElementIterator;
+  typedef viennagrid::result_of::element_range<MeshType>::type    ElementRange;
+  typedef viennagrid::result_of::iterator<ElementRange>::type     ElementIterator;
 
   std::cout << "-------------------------------------------------------------- " << std::endl;
   std::cout << "-- ViennaGrid tutorial: Setup of a mesh with two segments -- " << std::endl;

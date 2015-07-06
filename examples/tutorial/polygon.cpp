@@ -30,14 +30,14 @@ int main()
   // typedefing and setting up the topological mesh
   //
 
-  typedef viennagrid::mesh_t MeshType;
+  typedef viennagrid::mesh                                 MeshType;
   MeshType mesh;
 
   //
   // typedefs for the element types
   //
 
-  typedef viennagrid::result_of::element<MeshType>::type VertexType;
+  typedef viennagrid::result_of::element<MeshType>::type   VertexType;
 
 
 //   viennagrid::static_array<vertex_handle_type, 7> handles;

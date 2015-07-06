@@ -93,12 +93,12 @@ double line_distance_via_cross_prod(MeshType const & mesh, LineType const & line
 // Line 3d
 //
 
-inline void setup_line3d(viennagrid::mesh_t & mesh)
+inline void setup_line3d(viennagrid::mesh & mesh)
 {
-  typedef viennagrid::mesh_t                      MeshType;
+  typedef viennagrid::mesh                                  MeshType;
 
-  typedef viennagrid::result_of::point<MeshType>::type          PointType;
-  typedef viennagrid::result_of::element<MeshType>::type       VertexType;
+  typedef viennagrid::result_of::point<MeshType>::type      PointType;
+  typedef viennagrid::result_of::element<MeshType>::type    VertexType;
 
   const size_t s = 9;
   PointType p[s];
@@ -149,11 +149,10 @@ inline void setup_line3d(viennagrid::mesh_t & mesh)
 
 inline void test_line3d()
 {
-  typedef viennagrid::mesh_t                            Mesh;
-  typedef viennagrid::line_tag                                          CellTag;
+  typedef viennagrid::mesh                              Mesh;
 
-  typedef viennagrid::result_of::point<Mesh>::type                PointType;
-  typedef viennagrid::result_of::element<Mesh, CellTag>::type  CellType;
+  typedef viennagrid::result_of::point<Mesh>::type      PointType;
+  typedef viennagrid::result_of::element<Mesh>::type    CellType;
 
   Mesh mesh;
 
@@ -357,12 +356,12 @@ inline void test_line3d()
 // Triangular
 //
 
-inline void setup_triangular3d(viennagrid::mesh_t & mesh)
+inline void setup_triangular3d(viennagrid::mesh & mesh)
 {
-  typedef viennagrid::mesh_t                      MeshType;
+  typedef viennagrid::mesh                                  MeshType;
 
-  typedef viennagrid::result_of::point<MeshType>::type          PointType;
-  typedef viennagrid::result_of::element<MeshType>::type       VertexType;
+  typedef viennagrid::result_of::point<MeshType>::type      PointType;
+  typedef viennagrid::result_of::element<MeshType>::type    VertexType;
 
   const size_t s = 4;
   PointType p[s];
@@ -400,12 +399,12 @@ inline void setup_triangular3d(viennagrid::mesh_t & mesh)
 
 inline void test_triangular3d()
 {
-  typedef viennagrid::mesh_t                      Mesh;
+  typedef viennagrid::mesh                              Mesh;
 
-  typedef viennagrid::result_of::point<Mesh>::type                PointType;
-  typedef viennagrid::result_of::element<Mesh>::type             VertexType;
-  typedef viennagrid::result_of::element<Mesh>::type             EdgeType;
-  typedef viennagrid::result_of::element<Mesh>::type  CellType;
+  typedef viennagrid::result_of::point<Mesh>::type      PointType;
+  typedef viennagrid::result_of::element<Mesh>::type    VertexType;
+  typedef viennagrid::result_of::element<Mesh>::type    EdgeType;
+  typedef viennagrid::result_of::element<Mesh>::type    CellType;
 
   Mesh mesh;
 
@@ -588,12 +587,12 @@ inline void test_triangular3d()
 // Quadrilateral
 //
 
-inline void setup_quadrilateral3d(viennagrid::mesh_t & mesh)
+inline void setup_quadrilateral3d(viennagrid::mesh & mesh)
 {
-  typedef viennagrid::mesh_t                  MeshType;
+  typedef viennagrid::mesh                                  MeshType;
 
-  typedef viennagrid::result_of::point<MeshType>::type          PointType;
-  typedef viennagrid::result_of::element<MeshType>::type       VertexType;
+  typedef viennagrid::result_of::point<MeshType>::type      PointType;
+  typedef viennagrid::result_of::element<MeshType>::type    VertexType;
 
   const size_t s = 4;
   PointType p[s];
@@ -618,14 +617,11 @@ inline void setup_quadrilateral3d(viennagrid::mesh_t & mesh)
 
 inline void test_quadrilateral3d()
 {
-  typedef viennagrid::mesh_t                            Mesh;
-  typedef viennagrid::quadrilateral_tag                                          CellTag;
+  typedef viennagrid::mesh                              Mesh;
 
-
-  typedef viennagrid::result_of::point<Mesh>::type                PointType;
-  typedef viennagrid::result_of::element<Mesh, viennagrid::vertex_tag>::type             VertexType;
-  typedef viennagrid::result_of::element<Mesh, viennagrid::line_tag>::type             EdgeType;
-  typedef viennagrid::result_of::element<Mesh, CellTag>::type  CellType;
+  typedef viennagrid::result_of::point<Mesh>::type      PointType;
+  typedef viennagrid::result_of::element<Mesh>::type    ElementType;
+  typedef viennagrid::result_of::element<Mesh>::type    CellType;
 
   Mesh mesh;
 
@@ -662,21 +658,15 @@ inline void test_quadrilateral3d()
   // Distance checks for quadrilateral
   //
 
-  VertexType v0 = viennagrid::vertices(quad)[0];
-  VertexType v1 = viennagrid::vertices(quad)[1];
-  VertexType v2 = viennagrid::vertices(quad)[2];
-  VertexType v3 = viennagrid::vertices(quad)[3];
+  ElementType v0 = viennagrid::vertices(quad)[0];
+  ElementType v1 = viennagrid::vertices(quad)[1];
+  ElementType v2 = viennagrid::vertices(quad)[2];
+  ElementType v3 = viennagrid::vertices(quad)[3];
 
-  EdgeType e0 = viennagrid::elements<1>(quad)[0];
-  EdgeType e1 = viennagrid::elements<1>(quad)[1];
-  EdgeType e2 = viennagrid::elements<1>(quad)[2];
-  EdgeType e3 = viennagrid::elements<1>(quad)[3];
-
-//   EdgeType e_diag;
-//   VertexType * diag_vertices[2];
-//   diag_vertices[0] = &v1;
-//   diag_vertices[1] = &v2;
-//   e_diag.vertices(diag_vertices);
+  ElementType e0 = viennagrid::elements<1>(quad)[0];
+  ElementType e1 = viennagrid::elements<1>(quad)[1];
+  ElementType e2 = viennagrid::elements<1>(quad)[2];
+  ElementType e3 = viennagrid::elements<1>(quad)[3];
 
 
   std::cout << "Distance of point A to quadrilateral... ";
@@ -746,12 +736,12 @@ inline void test_quadrilateral3d()
 //
 
 
-inline void setup_tetrahedral3d(viennagrid::mesh_t & mesh)
+inline void setup_tetrahedral3d(viennagrid::mesh & mesh)
 {
-  typedef viennagrid::mesh_t                      MeshType;
+  typedef viennagrid::mesh                                  MeshType;
 
-  typedef viennagrid::result_of::point<MeshType>::type          PointType;
-  typedef viennagrid::result_of::element<MeshType>::type       VertexType;
+  typedef viennagrid::result_of::point<MeshType>::type      PointType;
+  typedef viennagrid::result_of::element<MeshType>::type    VertexType;
 
   const size_t s = 4;
   PointType p[s];
@@ -776,14 +766,11 @@ inline void setup_tetrahedral3d(viennagrid::mesh_t & mesh)
 
 inline void test_tetrahedral3d()
 {
-  typedef viennagrid::mesh_t                            Mesh;
-//   typedef viennagrid::tetrahedron_tag                                          CellTag;
+  typedef viennagrid::mesh                              Mesh;
 
-  typedef viennagrid::result_of::point<Mesh>::type                PointType;
-  typedef viennagrid::result_of::element<Mesh>::type             VertexType;
-  typedef viennagrid::result_of::element<Mesh>::type             EdgeType;
-  typedef viennagrid::result_of::element<Mesh>::type  CellType;
-  typedef viennagrid::result_of::element<CellType>::type    FacetType;
+  typedef viennagrid::result_of::point<Mesh>::type      PointType;
+  typedef viennagrid::result_of::element<Mesh>::type    ElementType;
+  typedef viennagrid::result_of::element<Mesh>::type    CellType;
 
   Mesh mesh;
 
@@ -816,22 +803,22 @@ inline void test_tetrahedral3d()
   // Distance checks for quadrilateral
   //
 
-  VertexType v0 = viennagrid::vertices(tet)[0];
-  VertexType v1 = viennagrid::vertices(tet)[1];
-  VertexType v2 = viennagrid::vertices(tet)[2];
-  VertexType v3 = viennagrid::vertices(tet)[3];
+  ElementType v0 = viennagrid::vertices(tet)[0];
+  ElementType v1 = viennagrid::vertices(tet)[1];
+  ElementType v2 = viennagrid::vertices(tet)[2];
+  ElementType v3 = viennagrid::vertices(tet)[3];
 
-  EdgeType e0 = viennagrid::elements<1>(tet)[0];
-  EdgeType e1 = viennagrid::elements<1>(tet)[1];
-  EdgeType e2 = viennagrid::elements<1>(tet)[2];
-  EdgeType e3 = viennagrid::elements<1>(tet)[3];
-  EdgeType e4 = viennagrid::elements<1>(tet)[4];
-  EdgeType e5 = viennagrid::elements<1>(tet)[5];
+  ElementType e0 = viennagrid::elements<1>(tet)[0];
+  ElementType e1 = viennagrid::elements<1>(tet)[1];
+  ElementType e2 = viennagrid::elements<1>(tet)[2];
+  ElementType e3 = viennagrid::elements<1>(tet)[3];
+  ElementType e4 = viennagrid::elements<1>(tet)[4];
+  ElementType e5 = viennagrid::elements<1>(tet)[5];
 
-  FacetType f0 = viennagrid::facets(tet)[0];
-  FacetType f1 = viennagrid::facets(tet)[1];
-  FacetType f2 = viennagrid::facets(tet)[2];
-  FacetType f3 = viennagrid::facets(tet)[3];
+  ElementType f0 = viennagrid::facets(tet)[0];
+  ElementType f1 = viennagrid::facets(tet)[1];
+  ElementType f2 = viennagrid::facets(tet)[2];
+  ElementType f3 = viennagrid::facets(tet)[3];
 
   // vertices
 
@@ -901,12 +888,12 @@ inline void test_tetrahedral3d()
 // Quadrilateral
 //
 
-inline void setup_hexahedral3d(viennagrid::mesh_t & mesh)
+inline void setup_hexahedral3d(viennagrid::mesh & mesh)
 {
-  typedef viennagrid::mesh_t                      MeshType;
+  typedef viennagrid::mesh                                  MeshType;
 
-  typedef viennagrid::result_of::point<MeshType>::type          PointType;
-  typedef viennagrid::result_of::element<MeshType>::type       VertexType;
+  typedef viennagrid::result_of::point<MeshType>::type      PointType;
+  typedef viennagrid::result_of::element<MeshType>::type    VertexType;
 
   const size_t s = 8;
   PointType p[s];
@@ -935,12 +922,10 @@ inline void setup_hexahedral3d(viennagrid::mesh_t & mesh)
 
 inline void test_hexahedral3d()
 {
-  typedef viennagrid::mesh_t                            Mesh;
-  typedef viennagrid::hexahedron_tag                                          CellTag;
+  typedef viennagrid::mesh                              Mesh;
 
-
-  typedef viennagrid::result_of::point<Mesh>::type                PointType;
-  typedef viennagrid::result_of::element<Mesh, CellTag>::type  CellType;
+  typedef viennagrid::result_of::point<Mesh>::type      PointType;
+  typedef viennagrid::result_of::element<Mesh>::type    CellType;
 
   Mesh mesh;
 

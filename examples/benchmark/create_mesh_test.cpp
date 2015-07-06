@@ -26,16 +26,16 @@ int main()
 
 
   {
-    viennagrid::mesh_t mesh;
+    viennagrid::mesh mesh;
     make_aabb_triangles_C(mesh, cell_count);
-    viennagrid::io::vtk_writer<viennagrid::mesh_t> writer;
+    viennagrid::io::vtk_writer<viennagrid::mesh> writer;
     writer(mesh, "triangles");
   }
 
   {
-    viennagrid::mesh_t mesh;
+    viennagrid::mesh mesh;
     make_aabb_tetrahedrons_C(mesh, cell_count);
-    viennagrid::io::vtk_writer<viennagrid::mesh_t> writer;
+    viennagrid::io::vtk_writer<viennagrid::mesh> writer;
     writer(mesh, "tetrahedrons");
   }
 

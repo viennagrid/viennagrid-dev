@@ -52,7 +52,7 @@ bool dump_information(std::string const & filename, std::string const & outputfi
 
 int main(int argc, char *argv[])
 {
-  typedef viennagrid::mesh_t MeshType;
+  typedef viennagrid::mesh            MeshType;
 
   // checking number of arguments
   if (argc != 4)

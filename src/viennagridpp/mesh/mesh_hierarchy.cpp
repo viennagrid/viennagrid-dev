@@ -81,36 +81,36 @@ namespace viennagrid
 
 
   template<bool element_is_const>
-  point_t get_point(viennagrid_mesh_hierarchy mesh_hierarchy, base_element<element_is_const> const & vertex)
+  point get_point(viennagrid_mesh_hierarchy mesh_hierarchy, base_element<element_is_const> const & vertex)
   {
-    point_t result( viennagrid::geometric_dimension(mesh_hierarchy) );
+    point result( viennagrid::geometric_dimension(mesh_hierarchy) );
     viennagrid_numeric const * tmp;
     viennagrid_mesh_hierarchy_vertex_coords_get(mesh_hierarchy, vertex.id(), const_cast<viennagrid_numeric **>(&tmp));
     std::copy(tmp, tmp+result.size(), result.begin());
     return result;
   }
 
-  template point_t get_point<false>(viennagrid_mesh_hierarchy mesh_hierarchy, base_element<false> const & vertex);
-  template point_t get_point<true>(viennagrid_mesh_hierarchy mesh_hierarchy, base_element<true> const & vertex);
+  template point get_point<false>(viennagrid_mesh_hierarchy mesh_hierarchy, base_element<false> const & vertex);
+  template point get_point<true>(viennagrid_mesh_hierarchy mesh_hierarchy, base_element<true> const & vertex);
 
 
 
-  void set_point(viennagrid_mesh_hierarchy mesh_hierarchy, base_element<false> const & vertex, point_t const & point)
+  void set_point(viennagrid_mesh_hierarchy mesh_hierarchy, base_element<false> const & vertex, point const & p)
   {
     viennagrid_numeric * tmp;
     viennagrid_mesh_hierarchy_vertex_coords_get(mesh_hierarchy, vertex.id(), &tmp);
-    std::copy(point.begin(), point.end(), tmp);
+    std::copy(p.begin(), p.end(), tmp);
   }
 
 
   template<bool element_is_const>
-  point_t get_point(base_element<element_is_const> const & element, viennagrid_int index)
+  point get_point(base_element<element_is_const> const & element, viennagrid_int index)
   {
     return get_point( viennagrid::vertices(element)[index] );
   }
 
-  template point_t get_point(base_element<false> const & element, viennagrid_int index);
-  template point_t get_point(base_element<true> const & element, viennagrid_int index);
+  template point get_point(base_element<false> const & element, viennagrid_int index);
+  template point get_point(base_element<true> const & element, viennagrid_int index);
 
 
 

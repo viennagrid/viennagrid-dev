@@ -40,12 +40,12 @@ inline void fuzzy_check(double a, double b)
 // Line 2d
 //
 
-inline void setup_mesh(viennagrid::mesh_t & mesh)
+inline void setup_mesh(viennagrid::mesh & mesh)
 {
-  typedef viennagrid::mesh_t                      MeshType;
+  typedef viennagrid::mesh                                  MeshType;
 
-  typedef viennagrid::result_of::point<MeshType>::type          PointType;
-  typedef viennagrid::result_of::element<MeshType>::type       VertexType;
+  typedef viennagrid::result_of::point<MeshType>::type      PointType;
+  typedef viennagrid::result_of::element<MeshType>::type    VertexType;
 
   const size_t s = 6;
   PointType p[s];
@@ -73,11 +73,10 @@ inline void setup_mesh(viennagrid::mesh_t & mesh)
 
 inline void test()
 {
-  typedef viennagrid::mesh_t                            Mesh;
-//   typedef viennagrid::line_tag                                          CellTag;
+  typedef viennagrid::mesh                              Mesh;
 
-  typedef viennagrid::result_of::point<Mesh>::type                PointType;
-  typedef viennagrid::result_of::element<Mesh>::type  CellType;
+  typedef viennagrid::result_of::point<Mesh>::type      PointType;
+  typedef viennagrid::result_of::element<Mesh>::type    CellType;
 
   Mesh mesh;
 

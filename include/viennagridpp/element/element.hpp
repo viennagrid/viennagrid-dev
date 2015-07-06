@@ -22,8 +22,8 @@ namespace viennagrid
     typedef viennagrid_int id_type;
     typedef viennagrid_dimension dimension_type;
 
-    typedef typename result_of::const_nonconst<mesh_hierarchy_t, is_const>::type mesh_hierarchy_type;
-    typedef typename result_of::const_nonconst<mesh_hierarchy_t, true>::type const_mesh_hierarchy_type;
+    typedef typename result_of::const_nonconst<mesh_hierarchy, is_const>::type mesh_hierarchy_type;
+    typedef typename result_of::const_nonconst<mesh_hierarchy, true>::type const_mesh_hierarchy_type;
 
     base_element() : mesh_hierarchy_(0), id_(-1) {}
     base_element(viennagrid_mesh_hierarchy mesh_hierarchy_in,
@@ -110,9 +110,9 @@ namespace viennagrid
 
 
 
-  template<bool is_const>
-  base_mesh_hierarchy<is_const> mesh_hierarchy( base_element<is_const> const & element )
-  { return element.mesh_hierarchy(); }
+//   template<bool is_const>
+//   base_mesh_hierarchy<is_const> mesh_hierarchy( base_element<is_const> const & element )
+//   { return element.mesh_hierarchy(); }
 
   template<bool is_const>
   viennagrid_mesh_hierarchy internal_mesh_hierarchy( base_element<is_const> const & element )

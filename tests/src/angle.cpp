@@ -50,7 +50,7 @@ int main()
   std::cout << "* Test started! *" << std::endl;
   std::cout << "*****************" << std::endl;
 
-  typedef viennagrid::mesh_t MeshType;
+  typedef viennagrid::mesh MeshType;
   typedef viennagrid::result_of::point<MeshType>::type     PointType;
 
 //   typedef viennagrid::line_1d_mesh                       Mesh1D;

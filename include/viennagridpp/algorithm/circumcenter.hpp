@@ -437,8 +437,7 @@ namespace viennagrid
    * @param element       The element for which the circumcenter should be computed
    */
   template<typename ElementT>
-  typename viennagrid::result_of::point< ElementT >::type
-  circumcenter(ElementT const & element)
+  typename viennagrid::result_of::point< ElementT >::type circumcenter(ElementT const & element)
   {
    return circumcenter( root_mesh_point_accessor(), element );
   }

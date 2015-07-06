@@ -105,7 +105,7 @@ int main(int argc, char *argv[])
   }
 
   // call the corresponding dump_info method using the correct mesh type and reader class
-  typedef viennagrid::mesh_t MeshType;
+  typedef viennagrid::mesh MeshType;
 
   if (type == "tet3d")
   {

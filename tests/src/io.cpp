@@ -30,20 +30,18 @@ inline void print(std::vector<std::string> const & vec)
 template<int dimension, typename CellTagT, typename ReaderType>
 void test(ReaderType & my_reader, std::string const & infile, std::string const & outfile)
 {
-  typedef viennagrid::mesh_t MeshType;
-//   typedef typename viennagrid::result_of::segmentation<MeshType>::type          SegmentationType;
+  typedef viennagrid::mesh                                                    MeshType;
 
-  typedef typename viennagrid::result_of::vertex<MeshType>::type                VertexType;
-  typedef typename viennagrid::result_of::cell<MeshType>::type                  CellType;
+  typedef typename viennagrid::result_of::vertex<MeshType>::type              VertexType;
+  typedef typename viennagrid::result_of::cell<MeshType>::type                CellType;
 
-  typedef typename viennagrid::result_of::vertex_range<MeshType>::type          VertexContainer;
-  typedef typename viennagrid::result_of::iterator<VertexContainer>::type         VertexIterator;
+  typedef typename viennagrid::result_of::vertex_range<MeshType>::type        VertexContainer;
+  typedef typename viennagrid::result_of::iterator<VertexContainer>::type     VertexIterator;
 
-  typedef typename viennagrid::result_of::cell_range<MeshType>::type            CellRange;
-  typedef typename viennagrid::result_of::iterator<CellRange>::type               CellIterator;
+  typedef typename viennagrid::result_of::cell_range<MeshType>::type          CellRange;
+  typedef typename viennagrid::result_of::iterator<CellRange>::type           CellIterator;
 
   MeshType mesh(dimension, CellTagT());
-//   SegmentationType segmentation(mesh);
 
   try
   {
@@ -127,21 +125,18 @@ void test(ReaderType & my_reader, std::string const & infile, std::string const 
 template<int dimension, typename CellTagT, typename ReaderType>
 void test_vtk(ReaderType & my_reader, std::string const & infile, std::string const & outfile)
 {
-  typedef viennagrid::mesh_t MeshType;
-//   typedef typename viennagrid::result_of::segmentation<MeshType>::type          SegmentationType;
+  typedef viennagrid::mesh                                                      MeshType;
 
   typedef typename viennagrid::result_of::vertex<MeshType>::type                VertexType;
   typedef typename viennagrid::result_of::cell<MeshType>::type                  CellType;
 
   typedef typename viennagrid::result_of::vertex_range<MeshType>::type          VertexContainer;
-  typedef typename viennagrid::result_of::iterator<VertexContainer>::type         VertexIterator;
+  typedef typename viennagrid::result_of::iterator<VertexContainer>::type       VertexIterator;
 
   typedef typename viennagrid::result_of::cell_range<MeshType>::type            CellRange;
-  typedef typename viennagrid::result_of::iterator<CellRange>::type               CellIterator;
+  typedef typename viennagrid::result_of::iterator<CellRange>::type             CellIterator;
 
   MeshType mesh(dimension, CellTagT());
-//   SegmentationType segmentation(mesh);
-
 
 
   std::vector<double> vtk_vertex_double_data;
@@ -247,7 +242,7 @@ int main()
   std::cout << "* Test started! *" << std::endl;
   std::cout << "*****************" << std::endl;
 
-  typedef viennagrid::mesh_t MeshType;
+  typedef viennagrid::mesh MeshType;
   std::string path = "../examples/data/";
 
   //Stage 1: Read from Netgen files, write to VTK

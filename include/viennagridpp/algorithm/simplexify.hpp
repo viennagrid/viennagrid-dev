@@ -15,8 +15,8 @@ namespace viennagrid
   {
     template<bool element_is_const, typename CopyMapT>
     void simplexify_impl(viennagrid::base_element<element_is_const> const & element,
-                    viennagrid::quadrilateral_tag,
-                    CopyMapT & copy_map)
+                         viennagrid::quadrilateral_tag,
+                         CopyMapT & copy_map)
     {
       typedef viennagrid::base_element<element_is_const> ElementType;
 
@@ -51,9 +51,9 @@ namespace viennagrid
 
 
 
-  void simplexify(viennagrid::mesh_t const & src_mesh, viennagrid::mesh_t const & dst_mesh)
+  void simplexify(viennagrid::mesh const & src_mesh, viennagrid::mesh const & dst_mesh)
   {
-    typedef viennagrid::mesh_t MeshType;
+    typedef viennagrid::mesh MeshType;
     typedef viennagrid::result_of::const_cell_range<MeshType>::type ConstCellRangeType;
     typedef viennagrid::result_of::iterator<ConstCellRangeType>::type ConstCellIterator;
 

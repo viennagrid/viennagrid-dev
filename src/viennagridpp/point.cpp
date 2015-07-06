@@ -6,9 +6,9 @@
 namespace viennagrid
 {
 
-  std::ostream& operator<< (std::ostream & os, point_t const & p)
+  std::ostream& operator<< (std::ostream & os, point const & p)
   {
-    typedef point_t::size_type      size_type;
+    typedef point::size_type      size_type;
     os << "(";
     for (size_type i=0; i< p.size(); ++i)
       os << p[i] << (i == p.size()-1 ? "" :" ");
@@ -16,7 +16,7 @@ namespace viennagrid
     return os;
   }
 
-  std::istream& operator>> (std::istream & is, point_t & pt)
+  std::istream& operator>> (std::istream & is, point & pt)
   {
     std::string tmp;
     char c;

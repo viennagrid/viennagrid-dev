@@ -64,11 +64,11 @@ void print_elements(RegionT & region, viennagrid_int topologic_dimension)
 //test for 3d tetrahedral case:
 inline void test_tetrahedral3d()
 {
-  typedef viennagrid::mesh_t                         MeshType;
-  typedef viennagrid::result_of::region<MeshType>::type    RegionType;
+  typedef viennagrid::mesh                                MeshType;
+  typedef viennagrid::result_of::region<MeshType>::type   RegionType;
 
-  typedef viennagrid::result_of::point<MeshType>::type            PointType;
-  typedef viennagrid::result_of::element<MeshType>::type    VertexType;
+  typedef viennagrid::result_of::point<MeshType>::type    PointType;
+  typedef viennagrid::result_of::element<MeshType>::type  VertexType;
 
   MeshType mesh;
 
@@ -136,11 +136,10 @@ inline void test_tetrahedral3d()
 //test for 3d hexahedral case:
 inline void test_hexahedral3d()
 {
-  typedef viennagrid::mesh_t                         MeshType;
-//   typedef viennagrid::result_of::cell_tag<MeshType>::type         CellTag;
-  typedef viennagrid::result_of::region<MeshType>::type    RegionType;
+  typedef viennagrid::mesh                                  MeshType;
+  typedef viennagrid::result_of::region<MeshType>::type     RegionType;
 
-  typedef viennagrid::result_of::point<MeshType>::type            PointType;
+  typedef viennagrid::result_of::point<MeshType>::type      PointType;
   typedef viennagrid::result_of::element<MeshType>::type    VertexType;
 
   MeshType mesh;
@@ -211,15 +210,13 @@ inline void test_hexahedral3d()
 //test for 2d triangular case:
 inline void test_triangle2d()
 {
-  typedef viennagrid::mesh_t                         MeshType;
-//   typedef viennagrid::result_of::cell_tag<MeshType>::type         CellTag;
-  typedef viennagrid::result_of::region<MeshType>::type    RegionType;
+  typedef viennagrid::mesh                                  MeshType;
+  typedef viennagrid::result_of::region<MeshType>::type     RegionType;
 
-  typedef viennagrid::result_of::point<MeshType>::type            PointType;
+  typedef viennagrid::result_of::point<MeshType>::type      PointType;
   typedef viennagrid::result_of::element<MeshType>::type    VertexType;
 
   MeshType mesh;
-
   PointType p[6];
 
   p[0] = viennagrid::make_point(0.0, 0.0);
@@ -282,14 +279,13 @@ inline void test_triangle2d()
 //test for 2d quadrilateral case:
 inline void test_quadrilateral2d()
 {
-  typedef viennagrid::mesh_t                         MeshType;
-  typedef viennagrid::result_of::region<MeshType>::type    RegionType;
+  typedef viennagrid::mesh                                  MeshType;
+  typedef viennagrid::result_of::region<MeshType>::type     RegionType;
 
-  typedef viennagrid::result_of::point<MeshType>::type            PointType;
+  typedef viennagrid::result_of::point<MeshType>::type      PointType;
   typedef viennagrid::result_of::element<MeshType>::type    VertexType;
 
   MeshType mesh;
-
   PointType p[6];
 
   p[0] = viennagrid::make_point(0.0, 0.0);

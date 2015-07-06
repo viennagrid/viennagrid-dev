@@ -10,7 +10,7 @@
 
 int main()
 {
-  typedef viennagrid::mesh_t MeshType;
+  typedef viennagrid::mesh                              MeshType;
   typedef viennagrid::result_of::region<MeshType>::type MeshRegionType;
 
   typedef viennagrid::result_of::point<MeshType>::type PointType;

@@ -18,8 +18,8 @@ namespace viennagrid
 
     typedef viennagrid_int id_type;
 
-    typedef typename result_of::const_nonconst<mesh_hierarchy_t, is_const>::type mesh_hierarchy_type;
-    typedef typename result_of::const_type<mesh_hierarchy_t>::type const_mesh_hierarchy_type;
+    typedef typename result_of::const_nonconst<mesh_hierarchy, is_const>::type mesh_hierarchy_type;
+    typedef typename result_of::const_type<mesh_hierarchy>::type const_mesh_hierarchy_type;
 
 
     base_region() {}
@@ -83,8 +83,8 @@ namespace viennagrid
   template<bool is_const>
   struct unpack_region_functor
   {
-    typedef typename result_of::const_nonconst<region_t, is_const>::type value_type;
-    typedef typename result_of::const_nonconst<region_t, true>::type const_value_type;
+    typedef typename result_of::const_nonconst<region, is_const>::type value_type;
+    typedef typename result_of::const_nonconst<region, true>::type const_value_type;
 
     typedef value_type reference;
     typedef value_type * pointer;
@@ -102,8 +102,8 @@ namespace viennagrid
   {
   public:
 
-    typedef typename result_of::const_nonconst<mesh_hierarchy_t, is_const>::type mesh_hierarchy_type;
-    typedef typename result_of::const_nonconst<element_t, is_const>::type element_type;
+    typedef typename result_of::const_nonconst<mesh_hierarchy, is_const>::type mesh_hierarchy_type;
+    typedef typename result_of::const_nonconst<element, is_const>::type element_type;
 
     typedef typename result_of::const_nonconst<viennagrid_region *, is_const>::type region_pointer_type;
     typedef typename result_of::const_nonconst<viennagrid_region *, true>::type const_region_pointer_type;
@@ -202,11 +202,11 @@ namespace viennagrid
 
     typedef typename base_region<is_const>::id_type id_type;
 
-    typedef typename result_of::const_nonconst<mesh_t, is_const>::type mesh_type;
-    typedef typename result_of::const_nonconst<mesh_t, true>::type const_mesh_type;
+    typedef typename result_of::const_nonconst<mesh, is_const>::type mesh_type;
+    typedef typename result_of::const_nonconst<mesh, true>::type const_mesh_type;
 
-    typedef typename result_of::const_nonconst<region_t, is_const>::type region_type;
-    typedef typename result_of::const_nonconst<region_t, true>::type const_region_type;
+    typedef typename result_of::const_nonconst<region, is_const>::type region_type;
+    typedef typename result_of::const_nonconst<region, true>::type const_region_type;
 
     base_mesh_region(viennagrid_mesh mesh_in, viennagrid_region region_in) : mesh_(mesh_in), region_(region_in) {}
 
@@ -252,10 +252,10 @@ namespace viennagrid
   template<bool is_const>
   struct unpack_mesh_region_functor
   {
-    typedef typename result_of::const_nonconst<mesh_t, is_const>::type mesh_type;
+    typedef typename result_of::const_nonconst<mesh, is_const>::type mesh_type;
 
-    typedef typename result_of::const_nonconst<mesh_region_t, is_const>::type value_type;
-    typedef typename result_of::const_nonconst<mesh_region_t, true>::type const_value_type;
+    typedef typename result_of::const_nonconst<mesh_region, is_const>::type value_type;
+    typedef typename result_of::const_nonconst<mesh_region, true>::type const_value_type;
 
     typedef value_type reference;
     typedef value_type * pointer;
@@ -274,7 +274,7 @@ namespace viennagrid
   {
   public:
 
-    typedef typename result_of::const_nonconst<mesh_t, is_const>::type mesh_type;
+    typedef typename result_of::const_nonconst<mesh, is_const>::type mesh_type;
     typedef typename result_of::const_nonconst<viennagrid_region *, is_const>::type region_pointer_type;
     typedef typename result_of::const_nonconst<viennagrid_region *, true>::type const_region_pointer_type;
 
@@ -285,7 +285,7 @@ namespace viennagrid
                                             const_cast<viennagrid_region **>(&end_));
     }
 
-    base_mesh_region_range(mesh_type const & mesh_in, element_t const & element_) : mesh_(mesh_in.internal())
+    base_mesh_region_range(mesh_type const & mesh_in, element const & element_) : mesh_(mesh_in.internal())
     {
       viennagrid_element_regions_get(internal_mesh_hierarchy(mesh_in),
                                      viennagrid::topologic_dimension(element_),
@@ -346,11 +346,11 @@ namespace viennagrid
 
 
 
-  template<bool is_const>
-  base_mesh_hierarchy<is_const> mesh_hierarchy( base_region<is_const> const & region )
-  {
-    return region.mesh_hierarchy();
-  }
+//   template<bool is_const>
+//   base_mesh_hierarchy<is_const> mesh_hierarchy( base_region<is_const> const & region )
+//   {
+//     return region.mesh_hierarchy();
+//   }
 
   template<bool is_const>
   viennagrid_mesh_hierarchy internal_mesh_hierarchy( base_region<is_const> const & region )
@@ -360,11 +360,11 @@ namespace viennagrid
 
 
 
-  template<bool is_const>
-  base_mesh_hierarchy<is_const> mesh_hierarchy( base_mesh_region<is_const> const & region )
-  {
-    return mesh_hierarchy( region.mesh() );
-  }
+//   template<bool is_const>
+//   base_mesh_hierarchy<is_const> mesh_hierarchy( base_mesh_region<is_const> const & region )
+//   {
+//     return mesh_hierarchy( region.mesh() );
+//   }
 
   template<bool is_const>
   viennagrid_mesh_hierarchy internal_mesh_hierarchy( base_mesh_region<is_const> const & region )
@@ -423,32 +423,32 @@ namespace viennagrid
 
 
 
-  void add(viennagrid_region region, element_t const & element);
+  void add(viennagrid_region region, element const & e);
   template<bool element_is_const>
-  bool is_in_region( viennagrid_region region, base_element<element_is_const> const & element );
+  bool is_in_region( viennagrid_region region, base_element<element_is_const> const & e );
 
 
-  inline void add( region_t const & region, element_t const & element )
-  { add(region.internal(), element); }
+  inline void add( region const & region, element const & e )
+  { add(region.internal(), e); }
   template<bool region_is_const, bool element_is_const>
-  bool is_in_region( base_region<region_is_const> const & region, base_element<element_is_const> const & element )
-  { return is_in_region( region.internal(), element ); }
+  bool is_in_region( base_region<region_is_const> const & region, base_element<element_is_const> const & e )
+  { return is_in_region( region.internal(), e ); }
 
 
-  inline void add( mesh_region_t const & mr, element_t const & element )
-  { add(mr.internal_region(), element); }
+  inline void add( mesh_region const & mr, element const & e )
+  { add(mr.internal_region(), e); }
   template<bool region_is_const, bool element_is_const>
-  bool is_in_region( base_mesh_region<region_is_const> const & mesh_region, base_element<element_is_const> const & element )
-  { return is_in_region(mesh_region.region(), element); }
+  bool is_in_region( base_mesh_region<region_is_const> const & mesh_region, base_element<element_is_const> const & e )
+  { return is_in_region(mesh_region.region(), e); }
 
 
   template<bool element_is_const, bool region_is_const>
-  bool is_boundary( base_mesh_region<region_is_const> const & region, base_element<element_is_const> const & element );
+  bool is_boundary( base_mesh_region<region_is_const> const & region, base_element<element_is_const> const & e );
 
 
 
   template<bool element_is_const>
-  void copy_region_information(base_element<element_is_const> const & src_element, element_t const & dst_element)
+  void copy_region_information(base_element<element_is_const> const & src_element, element const & dst_element)
   {
     typedef base_element<element_is_const> SrcElementType;
     typedef typename viennagrid::result_of::mesh_hierarchy<SrcElementType>::type SrcMeshHierarchyType;

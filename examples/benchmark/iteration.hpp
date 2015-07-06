@@ -195,9 +195,9 @@ viennagrid_numeric volume(viennagrid_mesh_hierarchy mesh_hierarchy,
 
 
 
-viennagrid_numeric volume_CPP(viennagrid::mesh_t const & mesh)
+viennagrid_numeric volume_CPP(viennagrid::mesh const & mesh)
 {
-  typedef viennagrid::mesh_t MeshType;
+  typedef viennagrid::mesh MeshType;
   typedef viennagrid::result_of::element<MeshType>::type ElementType;
 
   typedef viennagrid::result_of::const_element_range<MeshType>::type ConstElementRangeType;
@@ -215,7 +215,7 @@ viennagrid_numeric volume_CPP(viennagrid::mesh_t const & mesh)
   return sum;
 }
 
-viennagrid_numeric volume_C(viennagrid::mesh_t const & mesh_)
+viennagrid_numeric volume_C(viennagrid::mesh const & mesh_)
 {
   viennagrid_mesh mesh = mesh_.internal();
 
@@ -239,7 +239,7 @@ viennagrid_numeric volume_C(viennagrid::mesh_t const & mesh_)
   return sum;
 }
 
-viennagrid_numeric volume_C_pure(viennagrid::mesh_t const & mesh_)
+viennagrid_numeric volume_C_pure(viennagrid::mesh const & mesh_)
 {
   viennagrid_mesh mesh = mesh_.internal();
 
@@ -277,13 +277,13 @@ viennagrid_numeric volume_C_pure(viennagrid::mesh_t const & mesh_)
   return sum;
 }
 
-viennagrid_numeric volume_mixed_CPP_C(viennagrid::mesh_t const & mesh)
+viennagrid_numeric volume_mixed_CPP_C(viennagrid::mesh const & mesh)
 {
-  typedef viennagrid::mesh_t MeshType;
-  typedef viennagrid::result_of::element<MeshType>::type ElementType;
+  typedef viennagrid::mesh                                                  MeshType;
+  typedef viennagrid::result_of::element<MeshType>::type                    ElementType;
 
-  typedef viennagrid::result_of::const_element_range<MeshType>::type ConstElementRangeType;
-  typedef viennagrid::result_of::iterator<ConstElementRangeType>::type ConstElementIteratorType;
+  typedef viennagrid::result_of::const_element_range<MeshType>::type        ConstElementRangeType;
+  typedef viennagrid::result_of::iterator<ConstElementRangeType>::type      ConstElementIteratorType;
 
   viennagrid_mesh_hierarchy mesh_hierarchy = viennagrid::internal_mesh_hierarchy(mesh);
 
@@ -325,13 +325,13 @@ viennagrid_numeric volume_mixed_CPP_C(viennagrid::mesh_t const & mesh)
 
 
 
-viennagrid_int iteration_CPP(viennagrid::mesh_t const & mesh)
+viennagrid_int iteration_CPP(viennagrid::mesh const & mesh)
 {
-  typedef viennagrid::mesh_t MeshType;
-  typedef viennagrid::result_of::element<MeshType>::type ElementType;
+  typedef viennagrid::mesh                                                MeshType;
+  typedef viennagrid::result_of::element<MeshType>::type                  ElementType;
 
-  typedef viennagrid::result_of::const_element_range<MeshType>::type ConstElementRangeType;
-  typedef viennagrid::result_of::iterator<ConstElementRangeType>::type ConstElementIteratorType;
+  typedef viennagrid::result_of::const_element_range<MeshType>::type      ConstElementRangeType;
+  typedef viennagrid::result_of::iterator<ConstElementRangeType>::type    ConstElementIteratorType;
 
   static viennagrid_int sum = 0;
 
@@ -345,7 +345,7 @@ viennagrid_int iteration_CPP(viennagrid::mesh_t const & mesh)
   return sum;
 }
 
-viennagrid_int iteration_C(viennagrid::mesh_t const & mesh_)
+viennagrid_int iteration_C(viennagrid::mesh const & mesh_)
 {
   viennagrid_mesh mesh = mesh_.internal();
 
@@ -377,16 +377,16 @@ viennagrid_int iteration_C(viennagrid::mesh_t const & mesh_)
 
 
 
-viennagrid_int boundary_iteration_CPP(viennagrid::mesh_t const & mesh, int boundary_dimension)
+viennagrid_int boundary_iteration_CPP(viennagrid::mesh const & mesh, int boundary_dimension)
 {
-  typedef viennagrid::mesh_t MeshType;
-  typedef viennagrid::result_of::element<MeshType>::type ElementType;
+  typedef viennagrid::mesh                                                  MeshType;
+  typedef viennagrid::result_of::element<MeshType>::type                    ElementType;
 
-  typedef viennagrid::result_of::const_element_range<MeshType>::type ConstElementRangeType;
-  typedef viennagrid::result_of::iterator<ConstElementRangeType>::type ConstElementIteratorType;
+  typedef viennagrid::result_of::const_element_range<MeshType>::type        ConstElementRangeType;
+  typedef viennagrid::result_of::iterator<ConstElementRangeType>::type      ConstElementIteratorType;
 
-  typedef viennagrid::result_of::const_element_range<ElementType>::type ConstBoundaryRangeType;
-  typedef viennagrid::result_of::iterator<ConstBoundaryRangeType>::type ConstBoundaryIteratorType;
+  typedef viennagrid::result_of::const_element_range<ElementType>::type     ConstBoundaryRangeType;
+  typedef viennagrid::result_of::iterator<ConstBoundaryRangeType>::type     ConstBoundaryIteratorType;
 
   static viennagrid_int sum = 0;
 
@@ -402,7 +402,7 @@ viennagrid_int boundary_iteration_CPP(viennagrid::mesh_t const & mesh, int bound
   return sum;
 }
 
-viennagrid_int boundary_iteration_C(viennagrid::mesh_t const & mesh_, int boundary_dimension)
+viennagrid_int boundary_iteration_C(viennagrid::mesh const & mesh_, int boundary_dimension)
 {
   viennagrid_mesh mesh = mesh_.internal();
 
@@ -432,7 +432,7 @@ viennagrid_int boundary_iteration_C(viennagrid::mesh_t const & mesh_, int bounda
   return sum;
 }
 
-viennagrid_int boundary_iteration_C_pure(viennagrid::mesh_t const & mesh_, int boundary_dimension)
+viennagrid_int boundary_iteration_C_pure(viennagrid::mesh const & mesh_, int boundary_dimension)
 {
   viennagrid_mesh mesh = mesh_.internal();
 

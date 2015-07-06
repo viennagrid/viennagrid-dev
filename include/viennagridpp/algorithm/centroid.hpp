@@ -66,9 +66,9 @@ namespace viennagrid
     centroid_mesh(PointAccessorT const point_accessor, MeshSegmentHandleType const & mesh_obj,
                   viennagrid_int topologic_dimension)
     {
-      typedef typename viennagrid::result_of::point<MeshSegmentHandleType>::type          PointType;
-      typedef typename viennagrid::result_of::const_element_range<MeshSegmentHandleType>::type         CellRange;
-      typedef typename viennagrid::result_of::iterator<CellRange>::type                   CellIterator;
+      typedef typename viennagrid::result_of::point<MeshSegmentHandleType>::type                    PointType;
+      typedef typename viennagrid::result_of::const_element_range<MeshSegmentHandleType>::type      CellRange;
+      typedef typename viennagrid::result_of::iterator<CellRange>::type                             CellIterator;
 
       PointType result( viennagrid::geometric_dimension(mesh_obj) );
       double volume = 0;
@@ -94,8 +94,8 @@ namespace viennagrid
    * @param accessor   The point accessor providing point information for geometric calculation
    */
   template <typename PointAccessorT, bool element_is_const>
-  typename viennagrid::result_of::point< PointAccessorT, base_element<element_is_const> >::type
-  centroid(PointAccessorT const accessor, base_element<element_is_const> const & element)
+  typename viennagrid::result_of::point< PointAccessorT, base_element<element_is_const> >::type centroid(PointAccessorT const accessor,
+                                                                                                         base_element<element_is_const> const & element)
   {
     return detail::centroid( accessor, element );
   }
@@ -105,8 +105,7 @@ namespace viennagrid
    * @param element    The element for which the centroid should be computed
    */
   template <bool element_is_const>
-  typename viennagrid::result_of::point< base_element<element_is_const> >::type
-  centroid(base_element<element_is_const> const & element)
+  typename viennagrid::result_of::point< base_element<element_is_const> >::type centroid(base_element<element_is_const> const & element)
   {
     return centroid( root_mesh_point_accessor(), element );
   }
@@ -130,10 +129,9 @@ namespace viennagrid
    * @param  mesh_obj          The mesh which centroid is to be calculated
    */
   template<bool mesh_is_const>
-  typename viennagrid::result_of::point< base_mesh<mesh_is_const> >::type
-  centroid(base_mesh<mesh_is_const> const & mesh_obj)
+  typename viennagrid::result_of::point< base_mesh<mesh_is_const> >::type centroid(base_mesh<mesh_is_const> const & mesh_obj)
   {
-    return detail::centroid_mesh(point_accessor(mesh_obj), mesh_obj, viennagrid::cell_dimension(mesh_obj));
+    return detail::centroid_mesh(mesh_point_accessor(mesh_obj), mesh_obj, viennagrid::cell_dimension(mesh_obj));
   }
 
   /** @brief The public interface function for the computation of a centroid of a region with explicit point accessor. Cells are used for centroid calculation, will fail if there is more than one cell type.
@@ -156,7 +154,7 @@ namespace viennagrid
   typename viennagrid::result_of::point< base_mesh_region<mesh_region_is_const> >::type
   centroid(base_mesh_region<mesh_region_is_const> const & region)
   {
-    return detail::centroid_mesh(root_mesh_point_accessor(region), region, viennagrid::cell_dimension(region));
+    return detail::centroid_mesh(mesh_point_accessor(region), region, viennagrid::cell_dimension(region));
   }
 } //namespace viennagrid
 #endif

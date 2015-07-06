@@ -95,7 +95,7 @@ namespace viennagrid
     }
 
     template<typename NumericConfigT>
-    bool is_equal( NumericConfigT nc, point_t const & first, point_t const & second )
+    bool is_equal( NumericConfigT nc, point const & first, point const & second )
     {
       return is_equal_point(nc, first, second);
     }

@@ -33,7 +33,7 @@ int main()
   // typedefing and setting up the mesh
   //
 
-  typedef viennagrid::mesh_t MeshType;
+  typedef viennagrid::mesh MeshType;
   MeshType mesh;
 
 

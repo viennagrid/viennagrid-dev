@@ -13,17 +13,17 @@
 namespace viennagrid
 {
 
-  class point_t : public std::vector<viennagrid_numeric>
+  class point : public std::vector<viennagrid_numeric>
   {
   public:
 
-    point_t() {}
-    point_t(std::vector<viennagrid_numeric> const & pt) : std::vector<viennagrid_numeric>(pt) {}
-    point_t(size_type size_in) : std::vector<viennagrid_numeric>(size_in, 0) {}
-    point_t(size_type size_in, viennagrid_numeric init_value) : std::vector<viennagrid_numeric>(size_in, init_value) {}
+    point() {}
+    point(std::vector<viennagrid_numeric> const & pt) : std::vector<viennagrid_numeric>(pt) {}
+    point(size_type size_in) : std::vector<viennagrid_numeric>(size_in, 0) {}
+    point(size_type size_in, viennagrid_numeric init_value) : std::vector<viennagrid_numeric>(size_in, init_value) {}
 
     template<typename PointT>
-    point_t & operator+=(PointT const & other)
+    point & operator+=(PointT const & other)
     {
       assert( size() == other.size() );
       iterator it = begin();
@@ -34,7 +34,7 @@ namespace viennagrid
     }
 
     template<typename PointT>
-    point_t & operator-=(PointT const & other)
+    point & operator-=(PointT const & other)
     {
       assert( size() == other.size() );
       iterator it = begin();
@@ -47,16 +47,16 @@ namespace viennagrid
 
 
 
-    point_t operator-() const
+    point operator-() const
     {
-      point_t tmp(*this);
+      point tmp(*this);
       for (iterator it = tmp.begin(); it != tmp.end(); ++it)
         *it = -*it;
       return tmp;
     }
 
 
-    point_t & operator*=(value_type scalar)
+    point & operator*=(value_type scalar)
     {
       iterator it = begin();
       for (; it != end(); ++it)
@@ -64,12 +64,12 @@ namespace viennagrid
       return *this;
     }
 
-    point_t & operator/=(value_type scalar)
+    point & operator/=(value_type scalar)
     {
       return (*this *= (value_type(1)/scalar));
     }
 
-    point_t & normalize()
+    point & normalize()
     {
       viennagrid_numeric tmp = 0.0;
       for (iterator it = begin(); it != end(); ++it)
@@ -82,24 +82,24 @@ namespace viennagrid
   private:
   };
 
-  inline point_t make_point( point_t::value_type x )
+  inline point make_point( point::value_type x )
   {
-    point_t p(1);
+    point p(1);
     p[0] = x;
     return p;
   }
 
-  inline point_t make_point( point_t::value_type x, point_t::value_type y )
+  inline point make_point( point::value_type x, point::value_type y )
   {
-    point_t p(2);
+    point p(2);
     p[0] = x;
     p[1] = y;
     return p;
   }
 
-  inline point_t make_point( point_t::value_type x, point_t::value_type y, point_t::value_type z )
+  inline point make_point( point::value_type x, point::value_type y, point::value_type z )
   {
-    point_t p(3);
+    point p(3);
     p[0] = x;
     p[1] = y;
     p[2] = z;
@@ -109,44 +109,44 @@ namespace viennagrid
 
 
 
-  inline point_t operator+(point_t const & lhs, point_t const & rhs)
+  inline point operator+(point const & lhs, point const & rhs)
   {
-    point_t result(lhs);
+    point result(lhs);
     result += rhs;
     return result;
   }
 
-  inline point_t operator-(point_t const & lhs, point_t const & rhs)
+  inline point operator-(point const & lhs, point const & rhs)
   {
-    point_t result(lhs);
+    point result(lhs);
     result -= rhs;
     return result;
   }
 
-  inline point_t operator*(point_t const & vector, point_t::value_type scalar)
+  inline point operator*(point const & vector, point::value_type scalar)
   {
-    point_t result(vector);
+    point result(vector);
     result *= scalar;
     return result;
   }
 
-  inline point_t operator*(point_t::value_type scalar, point_t const & vector)
+  inline point operator*(point::value_type scalar, point const & vector)
   {
-    point_t result(vector);
+    point result(vector);
     result *= scalar;
     return result;
   }
 
-  inline point_t operator/(point_t const & vector, point_t::value_type scalar)
+  inline point operator/(point const & vector, point::value_type scalar)
   {
-    point_t result(vector);
+    point result(vector);
     result /= scalar;
     return result;
   }
 
-  inline point_t operator/(point_t::value_type scalar, point_t const & vector)
+  inline point operator/(point::value_type scalar, point const & vector)
   {
-    point_t result(vector);
+    point result(vector);
     result /= scalar;
     return result;
   }
@@ -154,7 +154,7 @@ namespace viennagrid
 
 
 
-  inline bool operator<(point_t const & p1, point_t const & p2)
+  inline bool operator<(point const & p1, point const & p2)
   {
     for (std::size_t i = 0; i < p1.size(); ++i)
       if (p1[i] >= p2[i])
@@ -163,7 +163,7 @@ namespace viennagrid
     return true;
   }
 
-  inline bool operator<=(point_t const & p1, point_t const & p2)
+  inline bool operator<=(point const & p1, point const & p2)
   {
     for (std::size_t i = 0; i < p1.size(); ++i)
       if (p1[i] > p2[i])
@@ -174,20 +174,20 @@ namespace viennagrid
 
 
   /** @brief Returns the pointwise minimum point of two points, i.e. result[i] = min(x[i], y[i]) for all i. */
-  inline point_t min(point_t const & p1, point_t const & p2)
+  inline point min(point const & p1, point const & p2)
   {
     assert( p1.size() == p2.size() );
-    point_t tmp(p1.size());
+    point tmp(p1.size());
     for (std::size_t i = 0; i < p1.size(); ++i)
       tmp[i] = std::min(p1[i], p2[i]);
     return tmp;
   }
 
   /** @brief Returns the pointwise maximum point of two points, i.e. result[i] = max(x[i], y[i]) for all i. */
-  inline point_t max(point_t const & p1, point_t const & p2)
+  inline point max(point const & p1, point const & p2)
   {
     assert( p1.size() == p2.size() );
-    point_t tmp(p1.size());
+    point tmp(p1.size());
     for (std::size_t i = 0; i < p1.size(); ++i)
       tmp[i] = std::max(p1[i], p2[i]);
     return tmp;
@@ -196,8 +196,8 @@ namespace viennagrid
 
 
 
-  std::ostream& operator<< (std::ostream & os, point_t const & p);
-  std::istream& operator>> (std::istream & is, point_t & pt);
+  std::ostream& operator<< (std::ostream & os, point const & p);
+  std::istream& operator>> (std::istream & is, point & pt);
 
 
 
@@ -221,15 +221,15 @@ namespace viennagrid
   namespace result_of
   {
     template<>
-    struct point< point_t >
+    struct point< viennagrid::point >
     {
-      typedef point_t type;
+      typedef viennagrid::point type;
     };
 
     template<>
-    struct coord< point_t >
+    struct coord< viennagrid::point >
     {
-      typedef point_t::value_type type;
+      typedef viennagrid::point::value_type type;
     };
   }
 

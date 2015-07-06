@@ -23,22 +23,22 @@
 
 int main()
 {
-  typedef viennagrid::mesh_t MeshType;
-  typedef viennagrid::result_of::region<MeshType>::type RegionType;
+  typedef viennagrid::mesh                                              MeshType;
+  typedef viennagrid::result_of::region<MeshType>::type                 RegionType;
 
-  typedef viennagrid::result_of::const_element<MeshType>::type               ConstVertexType;
+  typedef viennagrid::result_of::const_element<MeshType>::type          ConstVertexType;
   typedef viennagrid::result_of::element<MeshType>::type                FacetType;
 
-  typedef viennagrid::result_of::facet_range<MeshType>::type          FacetRange;
+  typedef viennagrid::result_of::facet_range<MeshType>::type            FacetRange;
   typedef viennagrid::result_of::iterator<FacetRange>::type             FacetIterator;
 
-  typedef viennagrid::result_of::coboundary_range<RegionType>::type                 CellOnFacetRange;
-  typedef viennagrid::result_of::iterator<CellOnFacetRange>::type                                       CellOnFacetIterator;
+  typedef viennagrid::result_of::coboundary_range<RegionType>::type     CellOnFacetRange;
+  typedef viennagrid::result_of::iterator<CellOnFacetRange>::type       CellOnFacetIterator;
 
-  typedef viennagrid::result_of::neighbor_range<RegionType>::type    NeighborCellRange;
-  typedef viennagrid::result_of::iterator<NeighborCellRange>::type   NeighborCellIterator;
+  typedef viennagrid::result_of::neighbor_range<RegionType>::type       NeighborCellRange;
+  typedef viennagrid::result_of::iterator<NeighborCellRange>::type      NeighborCellIterator;
 
-  typedef viennagrid::result_of::vertex_range<RegionType>::type        VertexOnSegmentRange;
+  typedef viennagrid::result_of::vertex_range<RegionType>::type         VertexOnSegmentRange;
   typedef viennagrid::result_of::iterator<VertexOnSegmentRange>::type   VertexOnSegmentIterator;
 
   std::cout << "------------------------------------------------" << std::endl;

@@ -64,7 +64,7 @@ namespace viennagrid
 //   };
 
 
-  class quantity_value : public point_t
+  class quantity_value : public point
   {
   public:
 
@@ -78,7 +78,7 @@ namespace viennagrid
       }
     }
 
-    quantity_value(point_t const & pt) : point_t(pt) {}
+    quantity_value(point const & pt) : point(pt) {}
 
     operator value_type() const
     {

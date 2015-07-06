@@ -28,7 +28,7 @@
 
 int main()
 {
-  typedef viennagrid::mesh_t MeshType;
+  typedef viennagrid::mesh MeshType;
 
   typedef viennagrid::result_of::point<MeshType>::type point_type;
   typedef viennagrid::result_of::vertex<MeshType>::type VertexHandleType;

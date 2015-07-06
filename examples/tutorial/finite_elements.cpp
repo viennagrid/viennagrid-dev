@@ -149,14 +149,14 @@ int main()
   // Define the necessary types:
   //
 
-  typedef viennagrid::mesh_hierarchy_t MeshHierarchyType;
-  typedef viennagrid::result_of::mesh<MeshHierarchyType>::type MeshType;
+  typedef viennagrid::mesh_hierarchy                              MeshHierarchyType;
+  typedef viennagrid::result_of::mesh<MeshHierarchyType>::type    MeshType;
 
   typedef viennagrid::result_of::point<MeshType>::type            PointType;
-  typedef viennagrid::result_of::element<MeshType>::type           ElementType;
+  typedef viennagrid::result_of::element<MeshType>::type          ElementType;
 
-  typedef viennagrid::result_of::element_range<MeshType>::type      ElementRange;
-  typedef viennagrid::result_of::iterator<ElementRange>::type          ElementIterator;
+  typedef viennagrid::result_of::element_range<MeshType>::type    ElementRange;
+  typedef viennagrid::result_of::iterator<ElementRange>::type     ElementIterator;
 
   std::cout << "-------------------------------------------------------------- " << std::endl;
   std::cout << "-- ViennaGrid tutorial: Setup of a mesh with two segments -- " << std::endl;

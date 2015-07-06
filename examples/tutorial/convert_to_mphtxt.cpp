@@ -21,7 +21,7 @@
 
 int main()
 {
-  typedef viennagrid::mesh_t     Mesh;
+  typedef viennagrid::mesh     Mesh;
 
   std::cout << "--------------------------------------------" << std::endl;
   std::cout << "-- ViennaGrid tutorial: Convert to MPHTXT --" << std::endl;

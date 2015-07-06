@@ -3,11 +3,11 @@
 namespace viennagrid
 {
 
- void add(viennagrid_region region, element_t const & element)
+ void add(viennagrid_region region, element const & e)
   {
-    viennagrid_element_add_to_region(internal_mesh_hierarchy(element),
-                                     viennagrid::topologic_dimension(element),
-                                     element.id(),
+    viennagrid_element_add_to_region(internal_mesh_hierarchy(e),
+                                     viennagrid::topologic_dimension(e),
+                                     e.id(),
                                      region);
   }
 

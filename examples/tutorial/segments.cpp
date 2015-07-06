@@ -22,7 +22,7 @@
 
 int main()
 {
-  typedef viennagrid::mesh_t                        MeshType;
+  typedef viennagrid::mesh                                          MeshType;
 
   typedef viennagrid::result_of::element< MeshType >::type          VertexType;
   typedef viennagrid::result_of::element< MeshType >::type          TriangleType;

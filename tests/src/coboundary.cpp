@@ -21,23 +21,16 @@
 
 void test(std::string infile)
 {
-  typedef viennagrid::mesh_t MeshType;
-//   typedef typename viennagrid::result_of::element_tag<CellTypeOrTag>::type CellTag;
+  typedef viennagrid::mesh                                          MeshType;
 
-  //typedef typename viennagrid::result_of::mesh<ConfigType>::type        Mesh;
-  //typedef typename ConfigType::cell_tag                                   CellTag;
-//   typedef typename viennagrid::result_of::segmentation<MeshType>::type       SegmentationType;
-
-  typedef viennagrid::result_of::element<MeshType>::type       VertexType;
-  typedef viennagrid::result_of::element<MeshType>::type FacetType;
+  typedef viennagrid::result_of::element<MeshType>::type            VertexType;
+  typedef viennagrid::result_of::element<MeshType>::type            FacetType;
 
   typedef viennagrid::result_of::vertex_range<MeshType>::type       VertexContainer;
   typedef viennagrid::result_of::iterator<VertexContainer>::type    VertexIterator;
-//   typedef typename viennagrid::result_of::iterator<VertexContainer>::type    VertexHandleIterator;
 
-  typedef viennagrid::result_of::facet_range<MeshType>::type   FacetContainer;
-  typedef viennagrid::result_of::iterator<FacetContainer>::type                         FacetIterator;
-//   typedef typename viennagrid::result_of::hook_iterator<FacetContainer>::type                         FacetHandleIterator;
+  typedef viennagrid::result_of::facet_range<MeshType>::type        FacetContainer;
+  typedef viennagrid::result_of::iterator<FacetContainer>::type     FacetIterator;
 
   MeshType mesh;
 

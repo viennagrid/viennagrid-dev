@@ -22,17 +22,17 @@ namespace viennagrid
 
   public:
 
-    typedef typename result_of::const_nonconst<mesh_hierarchy_t, is_const>::type mesh_hierarchy_type;
-    typedef typename result_of::const_nonconst<mesh_hierarchy_t, true>::type const_mesh_hierarchy_type;
+    typedef typename result_of::const_nonconst<mesh_hierarchy, is_const>::type mesh_hierarchy_type;
+    typedef typename result_of::const_nonconst<mesh_hierarchy, true>::type const_mesh_hierarchy_type;
 
-    typedef typename result_of::const_nonconst<mesh_region_t, is_const>::type region_type;
-    typedef typename result_of::const_nonconst<mesh_region_t, true>::type const_region_type;
+    typedef typename result_of::const_nonconst<mesh_region, is_const>::type region_type;
+    typedef typename result_of::const_nonconst<mesh_region, true>::type const_region_type;
     typedef typename mesh_hierarchy_type::region_id_type region_id_type;
 
-    typedef point_t point_type;
+    typedef point point_type;
 
-    typedef typename result_of::const_nonconst<element_t, is_const>::type element_type;
-    typedef typename result_of::const_nonconst<element_t, true>::type const_element_type;
+    typedef typename result_of::const_nonconst<element, is_const>::type element_type;
+    typedef typename result_of::const_nonconst<element, true>::type const_element_type;
 
 
     base_mesh(viennagrid_mesh internal_mesh_in) : internal_mesh_(internal_mesh_in)
@@ -87,11 +87,11 @@ namespace viennagrid
       return tmp;
     }
 
-    mesh_t make_child()
+    mesh make_child()
     {
       viennagrid_mesh tmp;
       viennagrid_mesh_create( internal(), &tmp );
-      return mesh_t(tmp);
+      return mesh(tmp);
     }
 
     viennagrid_mesh internal() const { return const_cast<viennagrid_mesh>(internal_mesh_); }
@@ -148,11 +148,11 @@ namespace viennagrid
 
 
 
-  template<bool is_const>
-  base_mesh_hierarchy<is_const> mesh_hierarchy( base_mesh<is_const> const & mesh )
-  {
-    return mesh.mesh_hierarchy();
-  }
+//   template<bool is_const>
+//   base_mesh_hierarchy<is_const> mesh_hierarchy( base_mesh<is_const> const & mesh )
+//   {
+//     return mesh.mesh_hierarchy();
+//   }
 
   inline viennagrid_mesh_hierarchy internal_mesh_hierarchy(viennagrid_mesh mesh)
   {
@@ -189,8 +189,8 @@ namespace viennagrid
 
 
 
-  void non_recursive_add(mesh_t const & mesh, element_t const & element);
-  void add(mesh_t const & mesh, element_t const & element);
+  void non_recursive_add(mesh const & mesh, element const & element);
+  void add(mesh const & mesh, element const & element);
 
 
 }

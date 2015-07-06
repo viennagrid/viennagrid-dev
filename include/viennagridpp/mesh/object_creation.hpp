@@ -7,12 +7,12 @@
 namespace viennagrid
 {
 
-  void make_aa_cube_hull(viennagrid::mesh_t const & mesh,
-                         viennagrid::point_t const & ll, viennagrid::point_t const & ur,
+  void make_aa_cube_hull(viennagrid::mesh const & mesh,
+                         viennagrid::point const & ll, viennagrid::point const & ur,
                          viennagrid::element_tag element_tag = viennagrid::triangle_tag())
   {
-    typedef viennagrid::mesh_t MeshType;
-    typedef viennagrid::point_t PointType;
+    typedef viennagrid::mesh      MeshType;
+    typedef viennagrid::point     PointType;
 
     assert( element_tag.is_triangle() || element_tag.is_quadrilateral() );
 
@@ -67,8 +67,8 @@ namespace viennagrid
   }
 
 
-  void make_aa_cube_hull(viennagrid::mesh_t const & mesh,
-                         viennagrid::point_t const & position,
+  void make_aa_cube_hull(viennagrid::mesh const & mesh,
+                         viennagrid::point const & position,
                          viennagrid_numeric size_x, viennagrid_numeric size_y, viennagrid_numeric size_z,
                          viennagrid::element_tag element_tag = viennagrid::triangle_tag())
   {
@@ -87,13 +87,13 @@ namespace viennagrid
 
 
   // http://en.wikipedia.org/wiki/Regular_icosahedron#Cartesian_coordinates
-  void make_icosahedron_hull(viennagrid::mesh_t const & mesh,
-                             viennagrid::point_t const & center,
+  void make_icosahedron_hull(viennagrid::mesh const & mesh,
+                             viennagrid::point const & center,
                              viennagrid_numeric radius)
   {
-    typedef viennagrid::mesh_t MeshType;
-    typedef viennagrid::result_of::point<MeshType>::type PointType;
-    typedef viennagrid::result_of::element<MeshType>::type ElementType;
+    typedef viennagrid::mesh                                    MeshType;
+    typedef viennagrid::result_of::point<MeshType>::type        PointType;
+    typedef viennagrid::result_of::element<MeshType>::type      ElementType;
 
     double phi = 1.0/2.0 * (1.0 + std::sqrt(5.0));
     PointType pts[12];
@@ -146,15 +146,15 @@ namespace viennagrid
   }
 
 
-  void make_sphere_hull(viennagrid::mesh_t const & mesh,
-                        viennagrid::point_t const & center,
+  void make_sphere_hull(viennagrid::mesh const & mesh,
+                        viennagrid::point const & center,
                         viennagrid_numeric radius,
                         int refinement_level)
   {
-    typedef viennagrid::mesh_t MeshType;
-    typedef viennagrid::result_of::point<MeshType>::type PointType;
-    typedef viennagrid::result_of::vertex_range<MeshType>::type MeshRangeType;
-    typedef viennagrid::result_of::iterator<MeshRangeType>::type MeshRangeIterator;
+    typedef viennagrid::mesh                                        MeshType;
+    typedef viennagrid::result_of::point<MeshType>::type            PointType;
+    typedef viennagrid::result_of::vertex_range<MeshType>::type     MeshRangeType;
+    typedef viennagrid::result_of::iterator<MeshRangeType>::type    MeshRangeIterator;
 
     MeshType sphere;
     viennagrid::make_icosahedron_hull( sphere, center, radius );

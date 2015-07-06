@@ -18,11 +18,11 @@ namespace viennagrid
 
   public:
 
-    typedef typename result_of::const_nonconst<mesh_t, is_const>::type mesh_type;
-    typedef typename result_of::const_nonconst<mesh_t, true>::type const_mesh_type;
+    typedef typename result_of::const_nonconst<mesh, is_const>::type mesh_type;
+    typedef typename result_of::const_nonconst<mesh, true>::type const_mesh_type;
 
-    typedef typename result_of::const_nonconst<region_t, is_const>::type region_type;
-    typedef typename result_of::const_nonconst<region_t, true>::type const_region_type;
+    typedef typename result_of::const_nonconst<region, is_const>::type region_type;
+    typedef typename result_of::const_nonconst<region, true>::type const_region_type;
 
     typedef viennagrid_int region_id_type;
 
@@ -168,11 +168,11 @@ namespace viennagrid
   }
 
 
-  template<bool is_const>
-  base_mesh_hierarchy<is_const> mesh_hierarchy( base_mesh_hierarchy<is_const> const & mesh_hierarchy )
-  {
-    return mesh_hierarchy;
-  }
+//   template<bool is_const>
+//   base_mesh_hierarchy<is_const> mesh_hierarchy( base_mesh_hierarchy<is_const> const & mesh_hierarchy )
+//   {
+//     return mesh_hierarchy;
+//   }
 
   template<bool is_const>
   viennagrid_mesh_hierarchy internal_mesh_hierarchy( base_mesh_hierarchy<is_const> const & mesh_hierarchy )
@@ -240,34 +240,34 @@ namespace viennagrid
 
 
   template<bool element_is_const>
-  point_t get_point(viennagrid_mesh_hierarchy mesh_hierarchy, base_element<element_is_const> const & vertex);
+  point get_point(viennagrid_mesh_hierarchy mesh_hierarchy, base_element<element_is_const> const & vertex);
 
   template<typename SomethingT, bool element_is_const>
-  point_t get_point(SomethingT const & something, base_element<element_is_const> const & vertex)
+  point get_point(SomethingT const & something, base_element<element_is_const> const & vertex)
   {
     return get_point( internal_mesh_hierarchy(something), vertex );
   }
 
   template<bool element_is_const>
-  point_t get_point(base_element<element_is_const> const & vertex)
+  point get_point(base_element<element_is_const> const & vertex)
   {
     return get_point( internal_mesh_hierarchy(vertex), vertex );
   }
 
   template<bool element_is_const>
-  point_t get_point(base_element<element_is_const> const & element, viennagrid_int index);
+  point get_point(base_element<element_is_const> const & element, viennagrid_int index);
 
-  void set_point(viennagrid_mesh_hierarchy mesh_hierarchy, base_element<false> const & vertex, point_t const & point);
+  void set_point(viennagrid_mesh_hierarchy mesh_hierarchy, base_element<false> const & vertex, point const & p);
 
   template<typename SomethingT>
-  void set_point(SomethingT const & something, base_element<false> const & vertex, point_t const & point)
+  void set_point(SomethingT const & something, base_element<false> const & vertex, point const & p)
   {
-    set_point( internal_mesh_hierarchy(something), vertex, point);
+    set_point( internal_mesh_hierarchy(something), vertex, p);
   }
 
-  inline void set_point(base_element<false> const & vertex, point_t const & point)
+  inline void set_point(base_element<false> const & vertex, point const & p)
   {
-    set_point( internal_mesh_hierarchy(vertex), vertex, point );
+    set_point( internal_mesh_hierarchy(vertex), vertex, p );
   }
 
 }

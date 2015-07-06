@@ -6,17 +6,17 @@
 
 int main()
 {
-  typedef viennagrid::mesh_t MeshType;
+  typedef viennagrid::mesh                                             MeshType;
 
   MeshType mesh;
 
   viennagrid::io::netgen_reader reader;
   reader(mesh, "../data/square32.mesh");    //use this for a 3d example
 
-  typedef viennagrid::result_of::point<MeshType>::type PointType;
-  typedef viennagrid::result_of::element<MeshType>::type ElementType;
-  typedef viennagrid::result_of::const_vertex_range<MeshType>::type ConstVertexRangeType;
-  typedef viennagrid::result_of::iterator<ConstVertexRangeType>::type ConstVertexIteratorType;
+  typedef viennagrid::result_of::point<MeshType>::type                  PointType;
+  typedef viennagrid::result_of::element<MeshType>::type                ElementType;
+  typedef viennagrid::result_of::const_vertex_range<MeshType>::type     ConstVertexRangeType;
+  typedef viennagrid::result_of::iterator<ConstVertexRangeType>::type   ConstVertexIteratorType;
 
 
   PointType min( viennagrid::geometric_dimension(mesh) );

@@ -22,7 +22,7 @@
 template <typename ReaderType>
 void test(ReaderType & my_reader, std::string const & infile, double reference_surface)
 {
-  typedef viennagrid::mesh_t MeshType;
+  typedef viennagrid::mesh MeshType;
 
   typedef viennagrid::result_of::vertex_range<MeshType>::type       VertexContainer;
   typedef viennagrid::result_of::iterator<VertexContainer>::type    VertexIterator;
@@ -112,11 +112,11 @@ int main()
 
 
   std::cout << "*********** quadrilateral, 2d ***********" << std::endl;
-  viennagrid::io::vtk_reader<viennagrid::mesh_t>  quadrilateral_2d_reader;
+  viennagrid::io::vtk_reader<viennagrid::mesh>  quadrilateral_2d_reader;
   test(quadrilateral_2d_reader, path + "quadrilateral2.vtu", 6);
 
   std::cout << "*********** hexahedral, 3d ***********" << std::endl;
-  viennagrid::io::vtk_reader<viennagrid::mesh_t>  hexahedron_3d_reader;
+  viennagrid::io::vtk_reader<viennagrid::mesh>  hexahedron_3d_reader;
   test(hexahedron_3d_reader, path + "hexahedron2.vtu", 10);
 
   std::cout << "*******************************" << std::endl;

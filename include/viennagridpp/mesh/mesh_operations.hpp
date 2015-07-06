@@ -37,8 +37,8 @@ namespace viennagrid
   {
   public:
 
-    typedef viennagrid::const_mesh_hierarchy_t SrcMeshHierarchyType;
-    typedef viennagrid::mesh_t DstMeshType;
+    typedef viennagrid::const_mesh_hierarchy SrcMeshHierarchyType;
+    typedef viennagrid::mesh DstMeshType;
 
     typedef typename viennagrid::result_of::coord<DstMeshType>::type DstNumericType;
     typedef typename viennagrid::result_of::element<DstMeshType>::type DstElementType;
@@ -150,7 +150,7 @@ namespace viennagrid
     */
   template<typename SrcMeshType, typename NumericConfigT, typename ToCopyFunctorT>
   void copy(element_copy_map<NumericConfigT> & copy_map,
-            SrcMeshType const & src_mesh, viennagrid::mesh_t const & dst_mesh,
+            SrcMeshType const & src_mesh, viennagrid::mesh const & dst_mesh,
             ToCopyFunctorT functor)
   {
     clear(dst_mesh);
@@ -173,9 +173,9 @@ namespace viennagrid
     * @param  functor                 Boolean functor, if functor(cell) returns true, the cell is copied.
     */
   template<typename SrcMeshType, typename ToCopyFunctorT>
-  void copy(SrcMeshType const & src_mesh, viennagrid::mesh_t const & dst_mesh, ToCopyFunctorT functor)
+  void copy(SrcMeshType const & src_mesh, viennagrid::mesh const & dst_mesh, ToCopyFunctorT functor)
   {
-    typedef viennagrid::result_of::coord<viennagrid::const_mesh_t>::type NumericType;
+    typedef viennagrid::result_of::coord<viennagrid::const_mesh>::type NumericType;
     viennagrid::result_of::element_copy_map<NumericType>::type copy_map(dst_mesh);
     copy(copy_map, src_mesh, dst_mesh, functor);
   }
@@ -186,10 +186,10 @@ namespace viennagrid
     * @param  dst_mesh                The destination mesh
     */
   template<typename SrcMeshType>
-  void copy(SrcMeshType const & src_mesh, viennagrid::mesh_t const & dst_mesh)
+  void copy(SrcMeshType const & src_mesh, viennagrid::mesh const & dst_mesh)
   {
     clear(dst_mesh);
-    typedef viennagrid::result_of::coord<viennagrid::const_mesh_t>::type NumericType;
+    typedef viennagrid::result_of::coord<viennagrid::const_mesh>::type NumericType;
     viennagrid::result_of::element_copy_map<NumericType>::type copy_map(dst_mesh);
 
     typedef typename viennagrid::result_of::const_vertex_range<SrcMeshType>::type ConstVertexRangeType;
@@ -225,10 +225,10 @@ namespace viennagrid
 
   // doxygen doku in forwards.hpp
   template<typename ElementT>
-  viennagrid::result_of::element<mesh_t>::type copy_element(ElementT const & element, mesh_t mesh)
+  viennagrid::result_of::element<mesh>::type copy_element(ElementT const & element, mesh m)
   {
-    typedef viennagrid::result_of::coord<viennagrid::const_mesh_t>::type NumericType;
-    viennagrid::result_of::element_copy_map<NumericType>::type copy_map(mesh);
+    typedef viennagrid::result_of::coord<viennagrid::const_mesh>::type NumericType;
+    viennagrid::result_of::element_copy_map<NumericType>::type copy_map(m);
     return copy_element(element, copy_map);
   }
 
@@ -241,11 +241,11 @@ namespace viennagrid
   }
 
   template<typename IteratorT>
-  void copy_elements(IteratorT it, IteratorT end, mesh_t mesh)
+  void copy_elements(IteratorT it, IteratorT end, mesh m)
   {
     typedef typename std::iterator_traits<IteratorT>::value_type ElementType;
     typedef typename viennagrid::result_of::coord<ElementType>::type NumericType;
-    typename viennagrid::result_of::element_copy_map<NumericType>::type copy_map(mesh);
+    typename viennagrid::result_of::element_copy_map<NumericType>::type copy_map(m);
 
     copy_elements(it, end, copy_map);
   }
@@ -261,11 +261,11 @@ namespace viennagrid
   }
 
   template<typename SomethingT>
-  void copy_elements(element_tag et, SomethingT something, mesh_t mesh)
+  void copy_elements(element_tag et, SomethingT something, mesh m)
   {
     typedef typename viennagrid::result_of::element<SomethingT>::type ElementType;
     typedef typename viennagrid::result_of::coord<ElementType>::type NumericType;
-    typename viennagrid::result_of::element_copy_map<NumericType>::type copy_map(mesh);
+    typename viennagrid::result_of::element_copy_map<NumericType>::type copy_map(m);
 
     copy_elements(et, something, copy_map);
   }

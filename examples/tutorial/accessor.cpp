@@ -24,9 +24,7 @@
 
 int main()
 {
-  typedef viennagrid::mesh_t                                      MeshType;
-//   typedef viennagrid::result_of::segmentation<MeshType>::type     SegmentationType;
-
+  typedef viennagrid::mesh                                        MeshType;
   typedef viennagrid::result_of::point<MeshType>::type            PointType;
 
   typedef viennagrid::result_of::element<MeshType>::type          CellType;
@@ -114,7 +112,7 @@ int main()
   //
   // Accessing points are also possible using accessor
   //
-  viennagrid::result_of::point_accessor<MeshType>::type mesh_point_accessor = viennagrid::point_accessor(mesh);
+  viennagrid::mesh_point_accessor mesh_point_accessor(mesh);
   std::cout << mesh_point_accessor.get( viennagrid::vertices(mesh)[0] ) << std::endl;
 
 

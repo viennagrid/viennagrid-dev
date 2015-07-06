@@ -87,7 +87,7 @@ namespace viennagrid
           getline( reader, tmp );
           std::istringstream line(tmp);
 
-          viennagrid::point_t p;
+          viennagrid::point p;
           std::copy( std::istream_iterator<CoordType>(line),
                      std::istream_iterator<CoordType>(),
                      std::back_inserter(p) );

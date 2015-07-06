@@ -27,7 +27,7 @@ int main()
   //
   // Define the mesh and segmentation types
   //
-  typedef viennagrid::mesh_t                                        MeshType;
+  typedef viennagrid::mesh                                             MeshType;
 
   //
   // Define the types of the elements in the mesh (derived from MeshType):

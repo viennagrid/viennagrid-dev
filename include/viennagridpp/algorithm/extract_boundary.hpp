@@ -30,19 +30,19 @@ namespace viennagrid
    */
   template<bool mesh_is_const>
   void extract_boundary(viennagrid::base_mesh<mesh_is_const> const & volume_mesh,
-                        viennagrid::mesh_t const & hull_mesh,
+                        viennagrid::mesh const & hull_mesh,
                         viennagrid_dimension hull_dimension)
   {
     viennagrid::clear(hull_mesh);
 
-    typedef viennagrid::base_mesh<mesh_is_const> VolumeMeshType;
-    typedef viennagrid::mesh_t HullMeshType;
+    typedef viennagrid::base_mesh<mesh_is_const>                                          VolumeMeshType;
+    typedef viennagrid::mesh                                                              HullMeshType;
 
-    typedef typename viennagrid::result_of::const_element_range<VolumeMeshType>::type    HullRangeType;
-    typedef typename viennagrid::result_of::iterator<HullRangeType>::type                                   HullRangeIterator;
+    typedef typename viennagrid::result_of::const_element_range<VolumeMeshType>::type     HullRangeType;
+    typedef typename viennagrid::result_of::iterator<HullRangeType>::type                 HullRangeIterator;
 
-    typedef typename viennagrid::result_of::element<VolumeMeshType>::type    VolumeElement;
-    typedef typename viennagrid::result_of::element<HullMeshType>::type      HullElement;
+    typedef typename viennagrid::result_of::element<VolumeMeshType>::type                 VolumeElement;
+    typedef typename viennagrid::result_of::element<HullMeshType>::type                   HullElement;
 
     viennagrid::result_of::element_copy_map<>::type element_map(hull_mesh);
 
@@ -72,7 +72,7 @@ namespace viennagrid
    */
   template<bool mesh_is_const>
   void extract_boundary(viennagrid::base_mesh<mesh_is_const> const & volume_mesh,
-                        viennagrid::mesh_t const & hull_mesh)
+                        viennagrid::mesh const & hull_mesh)
   {
     extract_boundary(volume_mesh, hull_mesh, viennagrid::facet_dimension(volume_mesh));
   }

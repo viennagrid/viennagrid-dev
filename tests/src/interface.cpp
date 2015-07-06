@@ -22,15 +22,14 @@
 template <int dimension, typename CellTagT, typename ReaderType>
 void test(ReaderType & my_reader, std::string const & infile)
 {
-  typedef viennagrid::mesh_t MeshType;
+  typedef viennagrid::mesh                                            MeshType;
   typedef typename viennagrid::result_of::region<MeshType>::type      RegionType;
-//   typedef typename viennagrid::result_of::segment_handle<SegmentationType>::type     SegmentHandleType;
 
-  typedef viennagrid::result_of::vertex_range<MeshType>::type        VertexContainer;
-  typedef viennagrid::result_of::iterator<VertexContainer>::type       VertexIterator;
+  typedef viennagrid::result_of::vertex_range<MeshType>::type         VertexContainer;
+  typedef viennagrid::result_of::iterator<VertexContainer>::type      VertexIterator;
 
-  typedef viennagrid::result_of::facet_range<MeshType>::type         FacetContainer;
-  typedef viennagrid::result_of::iterator<FacetContainer>::type        FacetIterator;
+  typedef viennagrid::result_of::facet_range<MeshType>::type          FacetContainer;
+  typedef viennagrid::result_of::iterator<FacetContainer>::type       FacetIterator;
 
   MeshType mesh;
 
@@ -112,7 +111,7 @@ void test(ReaderType & my_reader, std::string const & infile)
 
 int main()
 {
-  typedef viennagrid::mesh_t MeshType;
+  typedef viennagrid::mesh MeshType;
 
   std::cout << "*****************" << std::endl;
   std::cout << "* Test started! *" << std::endl;

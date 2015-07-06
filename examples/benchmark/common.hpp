@@ -21,7 +21,7 @@ void make_triangle(viennagrid_mesh_hierarchy mesh_hierarchy,
 }
 
 template<typename ElementT>
-void make_triangle(viennagrid::mesh_t const & mesh,
+void make_triangle(viennagrid::mesh const & mesh,
                    ElementT * indices,
                    ElementT * cells)
 {
@@ -73,7 +73,7 @@ void make_tetrahedron(viennagrid_mesh_hierarchy mesh_hierarchy,
 }
 
 template<typename ElementT>
-void make_tetrahedron(viennagrid::mesh_t const & mesh,
+void make_tetrahedron(viennagrid::mesh const & mesh,
                       ElementT * indices,
                       ElementT * cells)
 {
@@ -166,7 +166,7 @@ void make_aabb_triangles_C_full(viennagrid_mesh mesh,
     }
 }
 
-void make_aabb_triangles_C(viennagrid::mesh_t const & mesh, int cell_count)
+void make_aabb_triangles_C(viennagrid::mesh const & mesh, int cell_count)
 {
   int point_count = std::sqrt(cell_count/2)+1.5;
   make_aabb_triangles_C_full(mesh.internal(), -1.0, -1.0, 1.0, 1.0, point_count, point_count);
@@ -174,14 +174,14 @@ void make_aabb_triangles_C(viennagrid::mesh_t const & mesh, int cell_count)
 
 
 
-void make_aabb_triangles_CPP_full(viennagrid::mesh_t const & mesh,
-                             viennagrid_numeric ll_x, viennagrid_numeric ll_y,
-                             viennagrid_numeric ur_x, viennagrid_numeric ur_y,
-                             int point_count_x, int point_count_y)
+void make_aabb_triangles_CPP_full(viennagrid::mesh const & mesh,
+                                  viennagrid_numeric ll_x, viennagrid_numeric ll_y,
+                                  viennagrid_numeric ur_x, viennagrid_numeric ur_y,
+                                  int point_count_x, int point_count_y)
 {
-  typedef viennagrid::mesh_t MeshType;
-  typedef viennagrid::result_of::point<MeshType>::type PointType;
-  typedef viennagrid::result_of::element<MeshType>::type ElementType;
+  typedef viennagrid::mesh                                  MeshType;
+  typedef viennagrid::result_of::point<MeshType>::type      PointType;
+  typedef viennagrid::result_of::element<MeshType>::type    ElementType;
 
   viennagrid_numeric step_x = (ur_x-ll_x) / (point_count_x-1);
   viennagrid_numeric step_y = (ur_y-ll_y) / (point_count_y-1);
@@ -213,7 +213,7 @@ void make_aabb_triangles_CPP_full(viennagrid::mesh_t const & mesh,
       make_triangle(mesh, indices, cells);    }
 }
 
-void make_aabb_triangles_CPP(viennagrid::mesh_t const & mesh, int cell_count)
+void make_aabb_triangles_CPP(viennagrid::mesh const & mesh, int cell_count)
 {
   int point_count = std::sqrt(cell_count/2)+1.5;
   make_aabb_triangles_CPP_full(mesh, -1.0, -1.0, 1.0, 1.0, point_count, point_count);
@@ -223,9 +223,9 @@ void make_aabb_triangles_CPP(viennagrid::mesh_t const & mesh, int cell_count)
 
 
 void make_aabb_tetrahedrons_C_full(viennagrid_mesh mesh,
-                           viennagrid_numeric ll_x, viennagrid_numeric ll_y, viennagrid_numeric ll_z,
-                           viennagrid_numeric ur_x, viennagrid_numeric ur_y, viennagrid_numeric ur_z,
-                           int point_count_x, int point_count_y, int point_count_z)
+                                   viennagrid_numeric ll_x, viennagrid_numeric ll_y, viennagrid_numeric ll_z,
+                                   viennagrid_numeric ur_x, viennagrid_numeric ur_y, viennagrid_numeric ur_z,
+                                   int point_count_x, int point_count_y, int point_count_z)
 {
   viennagrid_mesh_hierarchy mesh_hierarchy;
   viennagrid_mesh_mesh_hierarchy_get(mesh, &mesh_hierarchy);
@@ -272,7 +272,7 @@ void make_aabb_tetrahedrons_C_full(viennagrid_mesh mesh,
       }
 }
 
-void make_aabb_tetrahedrons_C(viennagrid::mesh_t const & mesh, int cell_count)
+void make_aabb_tetrahedrons_C(viennagrid::mesh const & mesh, int cell_count)
 {
   int point_count = std::pow(cell_count/6, 1.0/3.0)+1.5;
   make_aabb_tetrahedrons_C_full(mesh.internal(), -1.0, -1.0, -1.0, 1.0, 1.0, 1.0, point_count, point_count, point_count);
@@ -282,14 +282,14 @@ void make_aabb_tetrahedrons_C(viennagrid::mesh_t const & mesh, int cell_count)
 
 
 
-void make_aabb_tetrahedrons_CPP_full(viennagrid::mesh_t const & mesh,
-                           viennagrid_numeric ll_x, viennagrid_numeric ll_y, viennagrid_numeric ll_z,
-                           viennagrid_numeric ur_x, viennagrid_numeric ur_y, viennagrid_numeric ur_z,
-                           int point_count_x, int point_count_y, int point_count_z)
+void make_aabb_tetrahedrons_CPP_full(viennagrid::mesh const & mesh,
+                                     viennagrid_numeric ll_x, viennagrid_numeric ll_y, viennagrid_numeric ll_z,
+                                     viennagrid_numeric ur_x, viennagrid_numeric ur_y, viennagrid_numeric ur_z,
+                                     int point_count_x, int point_count_y, int point_count_z)
 {
-  typedef viennagrid::mesh_t MeshType;
-  typedef viennagrid::result_of::point<MeshType>::type PointType;
-  typedef viennagrid::result_of::element<MeshType>::type ElementType;
+  typedef viennagrid::mesh                                  MeshType;
+  typedef viennagrid::result_of::point<MeshType>::type      PointType;
+  typedef viennagrid::result_of::element<MeshType>::type    ElementType;
 
   viennagrid_numeric step_x = (ur_x-ll_x) / (point_count_x-1);
   viennagrid_numeric step_y = (ur_y-ll_y) / (point_count_y-1);
@@ -332,7 +332,7 @@ void make_aabb_tetrahedrons_CPP_full(viennagrid::mesh_t const & mesh,
       }
 }
 
-void make_aabb_tetrahedrons_CPP(viennagrid::mesh_t const & mesh, int cell_count)
+void make_aabb_tetrahedrons_CPP(viennagrid::mesh const & mesh, int cell_count)
 {
   int point_count = std::pow(cell_count/6, 1.0/3.0)+1.5;
   make_aabb_tetrahedrons_CPP_full(mesh.internal(), -1.0, -1.0, -1.0, 1.0, 1.0, 1.0, point_count, point_count, point_count);
@@ -415,7 +415,7 @@ void make_aabb_triangles_region_C_full(viennagrid_mesh mesh,
     }
 }
 
-void make_aabb_triangles_region_C(viennagrid::mesh_t const & mesh, int cell_count, int region_count)
+void make_aabb_triangles_region_C(viennagrid::mesh const & mesh, int cell_count, int region_count)
 {
   int point_count = std::sqrt(cell_count/2)+1.5;
   make_aabb_triangles_region_C_full(mesh.internal(), -1.0, -1.0, 1.0, 1.0, point_count, point_count, region_count);
@@ -423,17 +423,17 @@ void make_aabb_triangles_region_C(viennagrid::mesh_t const & mesh, int cell_coun
 
 
 
-void make_aabb_triangles_region_CPP_full(viennagrid::mesh_t const & mesh,
-                             viennagrid_numeric ll_x, viennagrid_numeric ll_y,
-                             viennagrid_numeric ur_x, viennagrid_numeric ur_y,
-                             int point_count_x, int point_count_y,
-                             int region_count)
+void make_aabb_triangles_region_CPP_full(viennagrid::mesh const & mesh,
+                                         viennagrid_numeric ll_x, viennagrid_numeric ll_y,
+                                         viennagrid_numeric ur_x, viennagrid_numeric ur_y,
+                                         int point_count_x, int point_count_y,
+                                         int region_count)
 {
-  typedef viennagrid::mesh_t MeshType;
-  typedef viennagrid::result_of::region<MeshType>::type RegionType;
+  typedef viennagrid::mesh                                  MeshType;
+  typedef viennagrid::result_of::region<MeshType>::type     RegionType;
 
-  typedef viennagrid::result_of::point<MeshType>::type PointType;
-  typedef viennagrid::result_of::element<MeshType>::type ElementType;
+  typedef viennagrid::result_of::point<MeshType>::type      PointType;
+  typedef viennagrid::result_of::element<MeshType>::type    ElementType;
 
   viennagrid_numeric step_x = (ur_x-ll_x) / (point_count_x-1);
   viennagrid_numeric step_y = (ur_y-ll_y) / (point_count_y-1);
@@ -474,7 +474,7 @@ void make_aabb_triangles_region_CPP_full(viennagrid::mesh_t const & mesh,
     }
 }
 
-void make_aabb_triangles_region_CPP(viennagrid::mesh_t const & mesh, int cell_count, int region_count)
+void make_aabb_triangles_region_CPP(viennagrid::mesh const & mesh, int cell_count, int region_count)
 {
   int point_count = std::sqrt(cell_count/2)+1.5;
   make_aabb_triangles_region_CPP_full(mesh, -1.0, -1.0, 1.0, 1.0, point_count, point_count, region_count);
@@ -484,10 +484,10 @@ void make_aabb_triangles_region_CPP(viennagrid::mesh_t const & mesh, int cell_co
 
 
 void make_aabb_tetrahedrons_region_C_full(viennagrid_mesh mesh,
-                           viennagrid_numeric ll_x, viennagrid_numeric ll_y, viennagrid_numeric ll_z,
-                           viennagrid_numeric ur_x, viennagrid_numeric ur_y, viennagrid_numeric ur_z,
-                           int point_count_x, int point_count_y, int point_count_z,
-                           int region_count)
+                                          viennagrid_numeric ll_x, viennagrid_numeric ll_y, viennagrid_numeric ll_z,
+                                          viennagrid_numeric ur_x, viennagrid_numeric ur_y, viennagrid_numeric ur_z,
+                                          int point_count_x, int point_count_y, int point_count_z,
+                                          int region_count)
 {
   viennagrid_mesh_hierarchy mesh_hierarchy;
   viennagrid_mesh_mesh_hierarchy_get(mesh, &mesh_hierarchy);
@@ -545,7 +545,7 @@ void make_aabb_tetrahedrons_region_C_full(viennagrid_mesh mesh,
       }
 }
 
-void make_aabb_tetrahedrons_region_C(viennagrid::mesh_t const & mesh, int cell_count, int region_count)
+void make_aabb_tetrahedrons_region_C(viennagrid::mesh const & mesh, int cell_count, int region_count)
 {
   int point_count = std::pow(cell_count/6, 1.0/3.0)+1.5;
   make_aabb_tetrahedrons_region_C_full(mesh.internal(), -1.0, -1.0, -1.0, 1.0, 1.0, 1.0, point_count, point_count, point_count, region_count);
@@ -555,17 +555,17 @@ void make_aabb_tetrahedrons_region_C(viennagrid::mesh_t const & mesh, int cell_c
 
 
 
-void make_aabb_tetrahedrons_region_CPP_full(viennagrid::mesh_t const & mesh,
-                           viennagrid_numeric ll_x, viennagrid_numeric ll_y, viennagrid_numeric ll_z,
-                           viennagrid_numeric ur_x, viennagrid_numeric ur_y, viennagrid_numeric ur_z,
-                           int point_count_x, int point_count_y, int point_count_z,
-                           int region_count)
+void make_aabb_tetrahedrons_region_CPP_full(viennagrid::mesh const & mesh,
+                                            viennagrid_numeric ll_x, viennagrid_numeric ll_y, viennagrid_numeric ll_z,
+                                            viennagrid_numeric ur_x, viennagrid_numeric ur_y, viennagrid_numeric ur_z,
+                                            int point_count_x, int point_count_y, int point_count_z,
+                                            int region_count)
 {
-  typedef viennagrid::mesh_t MeshType;
-  typedef viennagrid::result_of::region<MeshType>::type RegionType;
+  typedef viennagrid::mesh                                    MeshType;
+  typedef viennagrid::result_of::region<MeshType>::type       RegionType;
 
-  typedef viennagrid::result_of::point<MeshType>::type PointType;
-  typedef viennagrid::result_of::element<MeshType>::type ElementType;
+  typedef viennagrid::result_of::point<MeshType>::type        PointType;
+  typedef viennagrid::result_of::element<MeshType>::type      ElementType;
 
   viennagrid_numeric step_x = (ur_x-ll_x) / (point_count_x-1);
   viennagrid_numeric step_y = (ur_y-ll_y) / (point_count_y-1);
@@ -619,7 +619,7 @@ void make_aabb_tetrahedrons_region_CPP_full(viennagrid::mesh_t const & mesh,
       }
 }
 
-void make_aabb_tetrahedrons_region_CPP(viennagrid::mesh_t const & mesh, int cell_count, int region_count)
+void make_aabb_tetrahedrons_region_CPP(viennagrid::mesh const & mesh, int cell_count, int region_count)
 {
   int point_count = std::pow(cell_count/6, 1.0/3.0)+1.5;
   make_aabb_tetrahedrons_region_CPP_full(mesh.internal(), -1.0, -1.0, -1.0, 1.0, 1.0, 1.0, point_count, point_count, point_count, region_count);

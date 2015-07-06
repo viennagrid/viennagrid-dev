@@ -30,7 +30,7 @@ void bench_creation(int cell_count_end, int bench_count, F f)
     int actual_cell_count = 0;
     for (int i = 0; i != bench_count; ++i)
     {
-      viennagrid::mesh_t mesh;
+      viennagrid::mesh mesh;
       timer.start();
       f(mesh, cell_count);
       time += timer.get();
@@ -51,7 +51,7 @@ void bench_iteration(int cell_count_end, int bench_count, MCF mcf, F f)
 
   for (int cell_count = 100; cell_count <= cell_count_end; cell_count *= 10)
   {
-    viennagrid::mesh_t mesh;
+    viennagrid::mesh mesh;
     mcf(mesh, cell_count);
 
     double time = 0.0;

@@ -29,24 +29,24 @@
 template<int dimension, typename CellTagT>
 void test(std::string & infile, std::string & outfile)
 {
-  typedef viennagrid::mesh_t MeshType;
-  typedef viennagrid::result_of::region<MeshType>::type RegionType;
-  typedef viennagrid::result_of::id<RegionType>::type RegionIDType;
+  typedef viennagrid::mesh                                                            MeshType;
+  typedef viennagrid::result_of::region<MeshType>::type                               RegionType;
+  typedef viennagrid::result_of::id<RegionType>::type                                 RegionIDType;
 
-  typedef typename viennagrid::result_of::element<MeshType>::type       VertexType;
-  typedef typename viennagrid::result_of::element<MeshType>::type   CellType;
+  typedef typename viennagrid::result_of::element<MeshType>::type                     VertexType;
+  typedef typename viennagrid::result_of::element<MeshType>::type                     CellType;
 
-  typedef typename viennagrid::result_of::vertex_range<MeshType>::type           VertexContainer;
-  typedef typename viennagrid::result_of::iterator<VertexContainer>::type        VertexIterator;
+  typedef typename viennagrid::result_of::vertex_range<MeshType>::type                VertexContainer;
+  typedef typename viennagrid::result_of::iterator<VertexContainer>::type             VertexIterator;
 
-  typedef typename viennagrid::result_of::cell_range<MeshType>::type     CellContainer;
-  typedef typename viennagrid::result_of::iterator<CellContainer>::type                          CellIterator;
+  typedef typename viennagrid::result_of::cell_range<MeshType>::type                  CellContainer;
+  typedef typename viennagrid::result_of::iterator<CellContainer>::type               CellIterator;
 
-  typedef typename viennagrid::result_of::vertex_range<RegionType>::type                 RegionVertexContainer;
-  typedef typename viennagrid::result_of::iterator<RegionVertexContainer>::type        RegionVertexIterator;
+  typedef typename viennagrid::result_of::vertex_range<RegionType>::type              RegionVertexContainer;
+  typedef typename viennagrid::result_of::iterator<RegionVertexContainer>::type       RegionVertexIterator;
 
-  typedef typename viennagrid::result_of::cell_range<RegionType>::type     RegionCellContainer;
-  typedef typename viennagrid::result_of::iterator<RegionCellContainer>::type                    RegionCellIterator;
+  typedef typename viennagrid::result_of::cell_range<RegionType>::type                RegionCellContainer;
+  typedef typename viennagrid::result_of::iterator<RegionCellContainer>::type         RegionCellIterator;
 
 
   MeshType mesh;

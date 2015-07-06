@@ -50,12 +50,12 @@ void print_elements(SegmentT & seg)
 }
 
 
-inline void setup_triangular2d_mesh(viennagrid::mesh_t & mesh)
+inline void setup_triangular2d_mesh(viennagrid::mesh & mesh)
 {
-  typedef viennagrid::mesh_t MeshType;
+  typedef viennagrid::mesh                                          MeshType;
 
-  typedef viennagrid::result_of::point<MeshType>::type          PointType;
-  typedef viennagrid::result_of::vertex_handle<MeshType>::type       VertexHandleType;
+  typedef viennagrid::result_of::point<MeshType>::type              PointType;
+  typedef viennagrid::result_of::vertex_handle<MeshType>::type      VertexHandleType;
 
   PointType p[4];
 
@@ -75,12 +75,12 @@ inline void setup_triangular2d_mesh(viennagrid::mesh_t & mesh)
   viennagrid::make_triangle( mesh, vh[1], vh[3], vh[2] );
 }
 
-inline void setup_triangular3d_mesh(viennagrid::mesh_t & mesh)
+inline void setup_triangular3d_mesh(viennagrid::mesh & mesh)
 {
-  typedef viennagrid::mesh_t MeshType;
+  typedef viennagrid::mesh                                          MeshType;
 
-  typedef viennagrid::result_of::point<MeshType>::type          PointType;
-  typedef viennagrid::result_of::vertex_handle<MeshType>::type       VertexHandleType;
+  typedef viennagrid::result_of::point<MeshType>::type              PointType;
+  typedef viennagrid::result_of::vertex_handle<MeshType>::type      VertexHandleType;
 
   PointType p[4];
 
