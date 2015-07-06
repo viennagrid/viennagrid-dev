@@ -591,7 +591,7 @@ namespace viennagrid
     template<>
     struct cell_range<viennagrid::const_mesh>
     {
-      typedef typename const_cell_range<const_mesh>::type type;
+      typedef const_cell_range<const_mesh>::type type;
     };
 
 
@@ -610,7 +610,7 @@ namespace viennagrid
     template<>
     struct facet_range<viennagrid::const_mesh>
     {
-      typedef typename const_facet_range<const_mesh>::type type;
+      typedef const_facet_range<const_mesh>::type type;
     };
 
 
@@ -651,7 +651,7 @@ namespace viennagrid
     template<>
     struct element_range<viennagrid::const_element, -1>
     {
-      typedef typename const_element_range<viennagrid::const_element>::type type;
+      typedef const_element_range<viennagrid::const_element>::type type;
     };
 
     template<int topologic_dimension>
@@ -677,7 +677,7 @@ namespace viennagrid
     template<>
     struct facet_range<viennagrid::const_element>
     {
-      typedef typename const_facet_range<viennagrid::const_element>::type type;
+      typedef const_facet_range<viennagrid::const_element>::type type;
     };
 
 
@@ -716,7 +716,7 @@ namespace viennagrid
     template<>
     struct element_range<const_mesh_region, -1>
     {
-      typedef typename const_element_range<mesh_region>::type type;
+      typedef const_element_range<mesh_region>::type type;
     };
 
     template<int topologic_dimension>
@@ -742,7 +742,7 @@ namespace viennagrid
     template<>
     struct cell_range<const_mesh_region>
     {
-      typedef typename const_cell_range<const_mesh_region>::type type;
+      typedef const_cell_range<const_mesh_region>::type type;
     };
 
 
@@ -761,7 +761,7 @@ namespace viennagrid
     template<>
     struct facet_range<const_mesh_region>
     {
-      typedef typename const_facet_range<const_mesh_region>::type type;
+      typedef const_facet_range<const_mesh_region>::type type;
     };
 
 
@@ -845,7 +845,7 @@ namespace viennagrid
     template<>
     struct neighbor_range<viennagrid::const_mesh, -1, -1>
     {
-      typedef typename const_neighbor_range<const_mesh>::type type;
+      typedef const_neighbor_range<const_mesh>::type type;
     };
 
 
@@ -884,7 +884,7 @@ namespace viennagrid
     template<>
     struct neighbor_range<const_mesh_region, -1>
     {
-      typedef typename const_neighbor_range<const_mesh_region>::type type;
+      typedef const_neighbor_range<const_mesh_region>::type type;
     };
 
 
