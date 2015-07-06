@@ -88,8 +88,8 @@ inline void setup_meshs(viennagrid::mesh & mesh0,
     VertexType vertices[3];
 
 
-    RegionType region0 = mesh0.make_region();
-    RegionType region1 = mesh0.make_region();
+    RegionType region0 = mesh0.create_region();
+    RegionType region1 = mesh0.create_region();
 
     //segment 0:
     vertices[0] = v[0];
@@ -183,7 +183,7 @@ inline void setup_meshs(viennagrid::mesh & mesh0,
     std::cout << "Adding cells to mesh..." << std::endl;
     VertexType vertices[3];
 
-    RegionType region0 = mesh1.make_region();
+    RegionType region0 = mesh1.create_region();
 
     //segment 0:
 

@@ -228,11 +228,11 @@ namespace viennagrid
       return tmp;
     }
 
-    id_type id() const { return region().id(); }
-    std::string name() const { return region().name(); }
-    void set_name(std::string const & name_) { region().set_name(name_); }
-    std::size_t geometric_dimension() const { return region().geometric_dimension(); }
-    element_tag cell_tag() const { return region().cell_tag(); }
+    id_type id() const { return get_region().id(); }
+    std::string name() const { return get_region().name(); }
+    void set_name(std::string const & name_) { get_region().set_name(name_); }
+    std::size_t geometric_dimension() const { return get_region().geometric_dimension(); }
+    element_tag cell_tag() const { return get_region().cell_tag(); }
 
   private:
 
@@ -363,7 +363,7 @@ namespace viennagrid
 //   template<bool is_const>
 //   base_mesh_hierarchy<is_const> mesh_hierarchy( base_mesh_region<is_const> const & region )
 //   {
-//     return mesh_hierarchy( region.mesh() );
+//     return mesh_hierarchy( region.get_mesh() );
 //   }
 
   template<bool is_const>
@@ -458,7 +458,7 @@ namespace viennagrid
 
     ElementRegionType regions(src_element);
     for (ElementRegionIterator rit = regions.begin(); rit != regions.end(); ++rit)
-      viennagrid::add( dst_element.get_mesh_hierarchy().get_make_region((*rit).id()), dst_element );
+      viennagrid::add( dst_element.get_mesh_hierarchy().get_or_create_region((*rit).id()), dst_element );
   }
 
 

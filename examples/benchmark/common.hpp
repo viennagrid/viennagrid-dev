@@ -440,7 +440,7 @@ void make_aabb_triangles_region_CPP_full(viennagrid::mesh const & mesh,
 
   std::vector<RegionType> regions;
   for (int i = 0; i != region_count; ++i)
-    regions.push_back( mesh.make_region() );
+    regions.push_back( mesh.create_region() );
 
   std::vector<ElementType> vertex_indices(point_count_x*point_count_y);
   int i = 0;
@@ -573,7 +573,7 @@ void make_aabb_tetrahedrons_region_CPP_full(viennagrid::mesh const & mesh,
 
   std::vector<RegionType> regions;
   for (int i = 0; i != region_count; ++i)
-    regions.push_back( mesh.make_region() );
+    regions.push_back( mesh.create_region() );
 
   std::vector<ElementType> vertex_indices(point_count_x*point_count_y*point_count_z);
   int i = 0;

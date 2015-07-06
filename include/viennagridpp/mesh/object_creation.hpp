@@ -161,7 +161,7 @@ namespace viennagrid
 
     for (int i = 0; i != refinement_level; ++i)
     {
-      MeshType tmp = sphere.make_child();
+      MeshType tmp = sphere.create_child();
       viennagrid::cell_refine_uniformly(sphere, tmp);
       sphere = tmp;
     }

@@ -165,7 +165,7 @@ bool dfise_text_reader::to_viennagrid(MeshT const & mesh, std::vector<viennagrid
         cell_vertices[1] = vertices[e.vertex_indices_[1]];
         cell_vertices[2] = vertices[e.vertex_indices_[2]];
 
-        viennagrid::make_element( mesh.get_make_region(region_name),
+        viennagrid::make_element( mesh.get_or_create_region(region_name),
                                 viennagrid::element_tag::from_internal(VIENNAGRID_ELEMENT_TYPE_TRIANGLE),
                                 cell_vertices.begin(), cell_vertices.end() );
 
@@ -173,7 +173,7 @@ bool dfise_text_reader::to_viennagrid(MeshT const & mesh, std::vector<viennagrid
         cell_vertices[1] = vertices[e.vertex_indices_[3]];
         cell_vertices[2] = vertices[e.vertex_indices_[0]];
 
-        viennagrid::make_element( mesh.get_make_region(region_name),
+        viennagrid::make_element( mesh.get_or_create_region(region_name),
                                 viennagrid::element_tag::from_internal(VIENNAGRID_ELEMENT_TYPE_TRIANGLE),
                                 cell_vertices.begin(), cell_vertices.end() );
       }
@@ -187,7 +187,7 @@ bool dfise_text_reader::to_viennagrid(MeshT const & mesh, std::vector<viennagrid
 
         if (viennagrid_topological_dimension(to_viennagrid_element_type(e.tag_)) == cell_dimension)
         {
-          viennagrid::make_element( mesh.get_make_region(region_name),
+          viennagrid::make_element( mesh.get_or_create_region(region_name),
                                     viennagrid::element_tag::from_internal(to_viennagrid_element_type(e.tag_)),
                                     cell_vertices.begin(), cell_vertices.end() );
         }
@@ -263,7 +263,7 @@ bool dfise_text_reader::to_viennagrid(MeshT const & mesh, std::vector<viennagrid
         new_vertices.insert(std::pair<grid_reader::VertexIndex, VertexType>(e.vertex_indices_[0], new_vertex));
         cell_vertices.push_back( new_vertex );
 
-        viennagrid::make_element( mesh.get_make_region(rc_it->second.region_name_),
+        viennagrid::make_element( mesh.get_or_create_region(rc_it->second.region_name_),
                                   viennagrid::element_tag::from_internal(contact_type),
                                   cell_vertices.begin(), cell_vertices.end() );
         }

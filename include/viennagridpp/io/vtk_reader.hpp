@@ -495,7 +495,7 @@ namespace viennagrid
 
 //           std::cout << cell << std::endl;
 
-          viennagrid::add( mesh_obj.get_make_region(region_id), cell );
+          viennagrid::add( mesh_obj.get_or_create_region(region_id), cell );
           local_cells[region_id].push_back( cell );
         }
       }
@@ -582,7 +582,7 @@ namespace viennagrid
             std::cout << "* vtk_reader::operator(): Reading vector quantity "
                       << container.first << " to vertices." << std::endl;
             #endif
-            assert( 3 * viennagrid::vertices(mesh_obj.get_make_region(region_id)).size() == container.second.size());
+            assert( 3 * viennagrid::vertices(mesh_obj.get_or_create_region(region_id)).size() == container.second.size());
             for (std::size_t i=0; i<container.second.size() / 3; ++i)
             {
               std::size_t global_vertex_id = local_to_global_map[region_id][i];
@@ -702,7 +702,7 @@ namespace viennagrid
       /** @brief Writes all data read from files to the mesh */
       void setupData(mesh_type const & mesh_obj, region_id_type region_id)
       {
-        RegionType region = mesh_obj.get_make_region(region_id);
+        RegionType region = mesh_obj.get_or_create_region(region_id);
 
         for (size_t i=0; i<local_scalar_vertex_data[region_id].size(); ++i)
         {
@@ -960,7 +960,7 @@ namespace viennagrid
 //         for (size_t region_id = 0; region_id < local_cell_num.size(); ++region_id)
         for (std::map<int, std::size_t>::iterator it = local_cell_num.begin(); it != local_cell_num.end(); ++it)
         {
-          mesh_obj.get_make_region( it->first );
+          mesh_obj.get_or_create_region( it->first );
         }
 
 //         for (size_t region_id = 0; region_id < local_cell_num.size(); ++region_id)

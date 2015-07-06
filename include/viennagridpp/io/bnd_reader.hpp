@@ -848,7 +848,7 @@ namespace viennagrid
 
         for (std::size_t segment_id = 0; segment_id != bnd.segment_size(); ++segment_id)
         {
-          RegionType region = mesh.get_make_region( segment_id );
+          RegionType region = mesh.get_or_create_region( segment_id );
           BNDPolygonContainerType & polygons = bnd.segment( segment_id );
 
 

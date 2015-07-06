@@ -142,15 +142,15 @@ namespace viennagrid
             cell_vertex_handles[j] = vertices[ vertex_indices[j]-1];
 
           if (vertex_indices.size() == 2)
-            viennagrid::make_element<viennagrid::line_tag>(mesh_obj.get_make_region(segment_index),
+            viennagrid::make_element<viennagrid::line_tag>(mesh_obj.get_or_create_region(segment_index),
                                                            cell_vertex_handles.begin(),
                                                            cell_vertex_handles.end());
           else if (vertex_indices.size() == 3)
-            viennagrid::make_element<viennagrid::triangle_tag>(mesh_obj.get_make_region(segment_index),
+            viennagrid::make_element<viennagrid::triangle_tag>(mesh_obj.get_or_create_region(segment_index),
                                                                cell_vertex_handles.begin(),
                                                                cell_vertex_handles.end());
           else if (vertex_indices.size() == 4)
-            viennagrid::make_element<viennagrid::tetrahedron_tag>(mesh_obj.get_make_region(segment_index),
+            viennagrid::make_element<viennagrid::tetrahedron_tag>(mesh_obj.get_or_create_region(segment_index),
                                                                   cell_vertex_handles.begin(),
                                                                   cell_vertex_handles.end());
         }

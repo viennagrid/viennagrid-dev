@@ -56,8 +56,8 @@ int main()
 //   SegmentationType segmentation(mesh);
 
   // using names to create names
-  RegionType region0 = mesh.make_region();
-  RegionType region1 = mesh.make_region();
+  RegionType region0 = mesh.create_region();
+  RegionType region1 = mesh.create_region();
 
   region0.set_name("region0");
   region1.set_name("region1");

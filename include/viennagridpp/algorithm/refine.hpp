@@ -106,7 +106,7 @@ namespace viennagrid
 
           ElementRegionType regions(*cit);
           for (ElementRegionIterator rit = regions.begin(); rit != regions.end(); ++rit)
-            viennagrid::add( mesh_out.get_make_region((*rit).id()), new_element );
+            viennagrid::add( mesh_out.get_or_create_region((*rit).id()), new_element );
         }
       }
       else

@@ -511,7 +511,7 @@ viennagrid_error viennagrid_element_parent_set(viennagrid_mesh_hierarchy mesh_hi
 viennagrid_error viennagrid_region_create(viennagrid_mesh_hierarchy hierarchy,
                                           viennagrid_region * region)
 {
-  viennagrid_region tmp = hierarchy->make_region();
+  viennagrid_region tmp = hierarchy->create_region();
 
   if (region)
     *region = tmp;
@@ -523,7 +523,7 @@ viennagrid_error viennagrid_region_get_or_create(viennagrid_mesh_hierarchy hiera
                                                  viennagrid_int region_id,
                                                  viennagrid_region * region)
 {
-  viennagrid_region tmp = hierarchy->get_make_region(region_id);;
+  viennagrid_region tmp = hierarchy->get_or_create_region(region_id);;
 
   if (region)
     *region = tmp;

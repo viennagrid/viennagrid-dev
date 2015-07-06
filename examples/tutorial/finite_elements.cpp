@@ -182,22 +182,22 @@ int main()
 
 
 
-  MeshType refined1 = mesh.make_child();
+  MeshType refined1 = mesh.create_child();
   viennagrid::cell_refine_uniformly(mesh, refined1);
 
-  MeshType refined2 = refined1.make_child();
+  MeshType refined2 = refined1.create_child();
   viennagrid::cell_refine_uniformly(refined1, refined2);
 
-  MeshType refined3 = refined2.make_child();
+  MeshType refined3 = refined2.create_child();
   viennagrid::cell_refine_uniformly(refined2, refined3);
 
-  MeshType refined4 = refined3.make_child();
+  MeshType refined4 = refined3.create_child();
   viennagrid::cell_refine_uniformly(refined3, refined4);
 
-  MeshType refined5 = refined4.make_child();
+  MeshType refined5 = refined4.create_child();
   viennagrid::cell_refine_uniformly(refined4, refined5);
 
-  MeshType refined6 = refined5.make_child();
+  MeshType refined6 = refined5.create_child();
   viennagrid::cell_refine_uniformly(refined5, refined6);
 
   MeshType fem_mesh = refined6;

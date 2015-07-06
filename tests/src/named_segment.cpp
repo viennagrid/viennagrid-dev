@@ -51,7 +51,7 @@ void test(int region_count, int test_count)
     for (std::map<std::string, int>::const_iterator sit = segment_names.begin(); sit != segment_names.end(); ++sit)
     {
       for (int j = 0; j < sit->second; ++j)
-        viennagrid::make_vertex( mesh.get_make_region(sit->first) );
+        viennagrid::make_vertex( mesh.get_or_create_region(sit->first) );
     }
 
 

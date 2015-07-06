@@ -215,36 +215,36 @@ viennagrid_error viennagrid_mesh_hierarchy_::set_boundary_layout(viennagrid_int 
   if ((boundary_layout_in != VIENNAGRID_BOUNDARY_LAYOUT_FULL) && (boundary_layout_in != VIENNAGRID_BOUNDARY_LAYOUT_SPARSE))
     return VIENNAGRID_ERROR_UNSUPPORTED_BOUNDARY_LAYOUT;
 
-
   if ((boundary_layout() == VIENNAGRID_BOUNDARY_LAYOUT_SPARSE) &&
       (boundary_layout_in == VIENNAGRID_BOUNDARY_LAYOUT_FULL))
   {
-    viennagrid_element_buffer & cell_buffer = element_buffer( cell_dimension() );
-
-    for (viennagrid_int cell_id = 0; cell_id != cell_buffer.size(); ++cell_id)
+    if (cell_dimension() > 0)
     {
-      cell_buffer.reserve_boundary(cell_id);
-      cell_buffer.make_boundary(cell_id, root());
+      viennagrid_element_buffer & cell_buffer = element_buffer( cell_dimension() );
 
-      viennagrid_region * regions_begin = cell_buffer.regions_begin(cell_id);
-      viennagrid_region * regions_end = cell_buffer.regions_end(cell_id);
-
-      for (viennagrid_region * region_it = regions_begin; region_it != regions_end; ++region_it)
+      for (viennagrid_int cell_id = 0; cell_id != cell_buffer.size(); ++cell_id)
       {
-        for (viennagrid_dimension boundary_dim = 1; boundary_dim != cell_dimension(); ++boundary_dim)
-        {
-          viennagrid_int * boundary_begin = cell_buffer.boundary_begin(boundary_dim, cell_id);
-          viennagrid_int * boundary_end = cell_buffer.boundary_end(boundary_dim, cell_id);
+        cell_buffer.reserve_boundary(cell_id);
+        cell_buffer.make_boundary(cell_id, root());
 
-          for (viennagrid_int * boundary_it = boundary_begin; boundary_it != boundary_end; ++boundary_it)
-            element_buffer(boundary_dim).add_to_region(*boundary_it, *region_it);
+        viennagrid_region * regions_begin = cell_buffer.regions_begin(cell_id);
+        viennagrid_region * regions_end = cell_buffer.regions_end(cell_id);
+
+        for (viennagrid_region * region_it = regions_begin; region_it != regions_end; ++region_it)
+        {
+          for (viennagrid_dimension boundary_dim = 1; boundary_dim != cell_dimension(); ++boundary_dim)
+          {
+            viennagrid_int * boundary_begin = cell_buffer.boundary_begin(boundary_dim, cell_id);
+            viennagrid_int * boundary_end = cell_buffer.boundary_end(boundary_dim, cell_id);
+
+            for (viennagrid_int * boundary_it = boundary_begin; boundary_it != boundary_end; ++boundary_it)
+              element_buffer(boundary_dim).add_to_region(*boundary_it, *region_it);
+          }
         }
       }
+
+      boundary_layout_ = boundary_layout_in;
     }
-
-//     std::cout << "Switching boundary layout of " << this << ": SPARSE -> FULL" << std::endl;
-
-    boundary_layout_ = boundary_layout_in;
   }
 
 

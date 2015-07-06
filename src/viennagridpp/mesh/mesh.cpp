@@ -18,7 +18,7 @@ namespace viennagrid
 
 
   template<>
-  typename base_mesh<false>::region_type base_mesh<false>::get_make_region(region_id_type region_id) const
+  typename base_mesh<false>::region_type base_mesh<false>::get_or_create_region(region_id_type region_id) const
   {
     viennagrid_region region;
     viennagrid_region_get_or_create( internal_mesh_hierarchy(), region_id, &region );
@@ -26,7 +26,7 @@ namespace viennagrid
   }
 
   template<>
-  typename base_mesh<false>::region_type base_mesh<false>::make_region() const
+  typename base_mesh<false>::region_type base_mesh<false>::create_region() const
   {
     viennagrid_region region;
     viennagrid_region_create( internal_mesh_hierarchy(), &region );
@@ -58,19 +58,19 @@ namespace viennagrid
 
 
   template<>
-  typename base_mesh<false>::region_type base_mesh<false>::get_make_region(std::string const & name) const
-  { return region_type(internal(), mesh_hierarchy().get_make_region(name).internal()); }
+  typename base_mesh<false>::region_type base_mesh<false>::get_or_create_region(std::string const & name) const
+  { return region_type(internal(), get_mesh_hierarchy().get_or_create_region(name).internal()); }
 
   template<bool is_const>
   typename base_mesh<is_const>::const_region_type base_mesh<is_const>::get_region(std::string const & name) const
-  { return region_type(internal(), mesh_hierarchy().get_region(name).internal()); }
+  { return region_type(internal(), get_mesh_hierarchy().get_region(name).internal()); }
 
   template base_mesh<false>::const_region_type base_mesh<false>::get_region(std::string const & name) const;
   template base_mesh<true>::const_region_type base_mesh<true>::get_region(std::string const & name) const;
 
   template<bool is_const>
   bool base_mesh<is_const>::region_exists(std::string const & name) const
-  { return mesh_hierarchy().region_exists(name); }
+  { return get_mesh_hierarchy().region_exists(name); }
 
   template bool base_mesh<false>::region_exists(std::string const & name) const;
   template bool base_mesh<true>::region_exists(std::string const & name) const;

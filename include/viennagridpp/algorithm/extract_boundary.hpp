@@ -59,7 +59,7 @@ namespace viennagrid
         RegionRangeType regions(volume_mesh, *hit);
         for (RegionRangeIterator rit = regions.begin(); rit != regions.end(); ++rit)
         {
-          viennagrid::add( hull_mesh.get_make_region((*rit).id()), hull_element );
+          viennagrid::add( hull_mesh.get_or_create_region((*rit).id()), hull_element );
         }
       }
     }

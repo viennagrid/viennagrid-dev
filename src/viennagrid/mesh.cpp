@@ -24,6 +24,7 @@ viennagrid_mesh viennagrid_mesh_::make_child()
   children.push_back( mesh );
   element_children.push_back( viennagrid_element_children_() );
   mesh_children_map[ children.back() ] = children.size()-1;
+
   return mesh;
 }
 

@@ -43,7 +43,7 @@ int main()
   //
   MeshHierarchyType hierarchy;
   MeshType mesh = hierarchy.root();
-  MeshType refined_mesh = mesh.make_child();
+  MeshType refined_mesh = mesh.create_child();
 
   //
   // Step 2: Add vertices to the mesh.

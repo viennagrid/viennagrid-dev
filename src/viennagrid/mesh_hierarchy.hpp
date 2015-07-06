@@ -322,7 +322,7 @@ public:
     return NULL;
   }
 
-  viennagrid_region get_make_region(viennagrid_int region_id)
+  viennagrid_region get_or_create_region(viennagrid_int region_id)
   {
     std::map<viennagrid_int, viennagrid_int>::iterator it = region_id_map.find(region_id);
     if (it != region_id_map.end())
@@ -340,9 +340,9 @@ public:
     return regions.back();
   }
 
-  viennagrid_region make_region()
+  viennagrid_region create_region()
   {
-    return get_make_region(highest_region_id++);
+    return get_or_create_region(highest_region_id++);
   }
 
   viennagrid_region * regions_begin() { return &regions[0]; }
@@ -371,7 +371,6 @@ public:
 
   void clear()
   {
-//     boundary_layout_ = VIENNAGRID_BOUNDARY_LAYOUT_SPARSE;
     boundary_layout_ = VIENNAGRID_BOUNDARY_LAYOUT_FULL;
 
     for (int i = 0; i != VIENNAGRID_TOPOLOGIC_DIMENSION_END; ++i)
@@ -397,8 +396,6 @@ public:
     region_id_map.clear();
 
     change_counter_ = 0;
-//     use_count_ = 1;
-//     retain_release_count = 0;
   }
 
 

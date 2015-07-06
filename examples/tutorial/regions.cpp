@@ -27,7 +27,7 @@ int main()
   typedef viennagrid::result_of::element< MeshType >::type          VertexType;
   typedef viennagrid::result_of::element< MeshType >::type          TriangleType;
 
-  // defining the segment type and segment id type
+  // defining the region type and region id type
   typedef   viennagrid::result_of::region<MeshType>::type RegionType;
 
 
@@ -49,21 +49,22 @@ int main()
 
 
 
-  // create a segment, segment id will be 0 because of first segment
-  RegionType region0 = mesh.make_region();
+  // create a region, region id will be 0 because of first region
+  RegionType region0 = mesh.create_region();
 
-  // create a segment, segment id will be 4 because explicit segment_id
-  RegionType region1 = mesh.get_make_region(4);
+  // create a region, region id will be 4 because explicit region_id
+  RegionType region1 = mesh.get_or_create_region(4);
 
-  // create a segment, segment id will be 5 because highest segment id was 4
-  RegionType region2 = mesh.make_region();
+  // create a region, region id will be 5 because highest region id was 4
+  RegionType region2 = mesh.create_region();
 
-  // create some other segments (ID would be 6, 7, 8)
-  RegionType region3 = mesh.make_region();
-  RegionType region4 = mesh.make_region();
-  RegionType region5 = mesh.make_region();
+  // create some other regions (ID would be 6, 7, 8)
+  RegionType region3 = mesh.create_region();
+  RegionType region4 = mesh.create_region();
+  RegionType region5 = mesh.create_region();
 
-  // print the segments
+
+  // print the regions
   std::cout << "Regions in Mesh" << std::endl;
   typedef viennagrid::result_of::region_range<MeshType>::type RegionRangeType;
   typedef viennagrid::result_of::iterator<RegionRangeType>::type RegionRangeIterator;
@@ -81,23 +82,23 @@ int main()
   std::cout << "Adding element tri0 to region1" << std::endl;
   viennagrid::add( region1, tri0 );
 
-  std::cout << "Triangle 0 in Segment 0: " << viennagrid::is_in_region( region0, tri0 ) << std::endl;
-  std::cout << "Vertex 0 in Segment 0: " << viennagrid::is_in_region( region0, v0 ) << std::endl;
-  std::cout << "Number of cells in segmentation: " << viennagrid::cells(mesh).size() << std::endl;
+  std::cout << "Triangle 0 in Region 0: " << viennagrid::is_in_region( region0, tri0 ) << std::endl;
+  std::cout << "Vertex 0 in Region 0: " << viennagrid::is_in_region( region0, v0 ) << std::endl;
+  std::cout << "Number of cells in regionation: " << viennagrid::cells(mesh).size() << std::endl;
 
   std::cout << "Erasing element tri0 from region0" << std::endl;
   // erase triangle tr0 from region0
 //   viennagrid::erase( region0, tri0 );
-//   std::cout << "Triangle 0 in Segment 0: " <<  viennagrid::is_in_region( region0, tri0 ) << std::endl;
-//   std::cout << "Vertex 0 in Segment 0: " << viennagrid::is_in_region( region0, v0 ) << std::endl;
-//   std::cout << "Number of cells in segmentation: " << viennagrid::cells(mesh).size() << std::endl;
+//   std::cout << "Triangle 0 in Region 0: " <<  viennagrid::is_in_region( region0, tri0 ) << std::endl;
+//   std::cout << "Vertex 0 in Region 0: " << viennagrid::is_in_region( region0, v0 ) << std::endl;
+//   std::cout << "Number of cells in regionation: " << viennagrid::cells(mesh).size() << std::endl;
 
   std::cout << "Erasing element tri0 from region1" << std::endl;
   // erase triangle tr0 from region0
 //   viennagrid::erase( region1, tri0 );
-//   std::cout << "Triangle 0 in Segment 0: " <<  viennagrid::is_in_region( region0, tri0 ) << std::endl;
-//   std::cout << "Vertex 0 in Segment 0: " << viennagrid::is_in_region( region0, v0 ) << std::endl;
-//   std::cout << "Number of cells in segmentation: " << viennagrid::cells(mesh).size() << std::endl;
+//   std::cout << "Triangle 0 in Region 0: " <<  viennagrid::is_in_region( region0, tri0 ) << std::endl;
+//   std::cout << "Vertex 0 in Region 0: " << viennagrid::is_in_region( region0, v0 ) << std::endl;
+//   std::cout << "Number of cells in regionation: " << viennagrid::cells(mesh).size() << std::endl;
 
 
   // add triangle tr0 to region0, tri1 to region1, tri2 to region2
@@ -122,14 +123,14 @@ int main()
     std::cout << *cit << std::endl;
   std::cout << std::endl;
 
-  // print all cells of the segmentation (should be three)
-  typedef viennagrid::result_of::cell_range<MeshType>::type SegmentationCellRange;
-  typedef viennagrid::result_of::iterator<SegmentationCellRange>::type SegmentationCellIterator;
+  // print all cells of the mesh (should be three)
+  typedef viennagrid::result_of::cell_range<MeshType>::type RegionCellRange;
+  typedef viennagrid::result_of::iterator<RegionCellRange>::type RegionCellIterator;
 
   std::cout << std::endl;
-  std::cout << "All cells in the segmentation:" << std::endl;
-  SegmentationCellRange segmentation_cells(mesh);
-  for (SegmentationCellIterator cit = segmentation_cells.begin(); cit != segmentation_cells.end(); ++cit)
+  std::cout << "All cells in the regionation:" << std::endl;
+  RegionCellRange region_cells(mesh);
+  for (RegionCellIterator cit = region_cells.begin(); cit != region_cells.end(); ++cit)
     std::cout << *cit << std::endl;
   std::cout << std::endl;
 
@@ -140,31 +141,31 @@ int main()
   typedef viennagrid::result_of::iterator<ElementRegionRange>::type ElementRegionIterator;
 
   ElementRegionRange element_regions(mesh, tri0);
-  std::cout << "Segments for tr0:" << std::endl;
+  std::cout << "Regions for tr0:" << std::endl;
   for (ElementRegionIterator rit = element_regions.begin(); rit != element_regions.end(); ++rit)
     std::cout << (*rit).id() << std::endl;
 
 
-//   // setting and querying additional segment information for tri0
-//   std::cout << "Triangle 0 in Segment 0: " <<  *viennagrid::segment_element_info( region0, tri0 ) << std::endl;
-//   *viennagrid::segment_element_info( region0, tri0 ) = true;
-//   std::cout << "Triangle 0 in Segment 0: " <<  *viennagrid::segment_element_info( region0, tri0 ) << std::endl;
+//   // setting and querying additional region information for tri0
+//   std::cout << "Triangle 0 in Region 0: " <<  *viennagrid::region_element_info( region0, tri0 ) << std::endl;
+//   *viennagrid::region_element_info( region0, tri0 ) = true;
+//   std::cout << "Triangle 0 in Region 0: " <<  *viennagrid::region_element_info( region0, tri0 ) << std::endl;
 //   std::cout << std::endl;
 
-  // printing all triangles from all segments
+  // printing all triangles from all regions
   typedef viennagrid::result_of::cell_range<RegionType>::type RangeType;
 
-  std::cout << "Triangles of Segment 0" << std::endl;
+  std::cout << "Triangles of Region 0" << std::endl;
   RangeType range( region0 );
   for (RangeType::iterator it = range.begin(); it != range.end(); ++it)
     std::cout << *it << std::endl;
 
-  std::cout << "Triangles of Segment 1" << std::endl;
+  std::cout << "Triangles of Region 1" << std::endl;
   range = RangeType( region1 );
   for (RangeType::iterator it = range.begin(); it != range.end(); ++it)
     std::cout << *it << std::endl;
 
-  std::cout << "Triangles of Segment 2" << std::endl;
+  std::cout << "Triangles of Region 2" << std::endl;
   range = RangeType( region2 );
   for (RangeType::iterator it = range.begin(); it != range.end(); ++it)
     std::cout << *it << std::endl;
@@ -175,7 +176,7 @@ int main()
   viennagrid::make_triangle( region2, v1, v4, v5 );
   viennagrid::make_triangle( region2, v2, v4, v5 );
 
-  std::cout << "Triangles of Segment 2, added 2 additional" << std::endl;
+  std::cout << "Triangles of Region 2, added 2 additional" << std::endl;
   range = RangeType( region2 );
   for (RangeType::iterator it = range.begin(); it != range.end(); ++it)
     std::cout << *it << std::endl;
@@ -183,7 +184,7 @@ int main()
 
   // Printing vertices from region2, each vertex should only be printed once
   typedef viennagrid::result_of::vertex_range<RegionType>::type VertexRange;
-  std::cout << "Vertices of Segment 2" << std::endl;
+  std::cout << "Vertices of Region 2" << std::endl;
   VertexRange vertices( region2 );
   for (VertexRange::iterator it = vertices.begin(); it != vertices.end(); ++it)
     std::cout << *it << std::endl;

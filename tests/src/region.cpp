@@ -91,8 +91,8 @@ inline void test_tetrahedral3d()
 
 
   std::cout << "Creating segments..." << std::endl;
-  RegionType region0 = mesh.make_region();
-  RegionType region1 = mesh.make_region();
+  RegionType region0 = mesh.create_region();
+  RegionType region1 = mesh.create_region();
 
   std::cout << "Adding cells to segments..." << std::endl;
 
@@ -167,8 +167,8 @@ inline void test_hexahedral3d()
     vh[i] = viennagrid::make_vertex( mesh, p[i] );
 
   std::cout << "Creating segments..." << std::endl;
-  RegionType seg0 = mesh.make_region();
-  RegionType seg1 = mesh.make_region();
+  RegionType seg0 = mesh.create_region();
+  RegionType seg1 = mesh.create_region();
 
   std::cout << "Adding cells to segments..." << std::endl;
 
@@ -234,8 +234,8 @@ inline void test_triangle2d()
     vh[i] = viennagrid::make_vertex( mesh, p[i] );
 
   std::cout << "Creating segments..." << std::endl;
-  RegionType region0 = mesh.make_region();
-  RegionType region1 = mesh.make_region();
+  RegionType region0 = mesh.create_region();
+  RegionType region1 = mesh.create_region();
 
   std::cout << "Adding cells to segments..." << std::endl;
 
@@ -303,8 +303,8 @@ inline void test_quadrilateral2d()
     vh[i] = viennagrid::make_vertex( mesh, p[i] );
 
   std::cout << "Creating segments..." << std::endl;
-  RegionType region0 = mesh.make_region();
-  RegionType region1 = mesh.make_region();
+  RegionType region0 = mesh.create_region();
+  RegionType region1 = mesh.create_region();
 
   std::cout << "Adding cells to segments..." << std::endl;
 

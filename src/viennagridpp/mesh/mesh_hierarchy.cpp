@@ -31,28 +31,28 @@ namespace viennagrid
 
 
   template<bool is_const>
-  typename base_mesh_hierarchy<is_const>::region_type base_mesh_hierarchy<is_const>::get_make_region(region_id_type region_id)
+  typename base_mesh_hierarchy<is_const>::region_type base_mesh_hierarchy<is_const>::get_or_create_region(region_id_type region_id)
   {
     viennagrid_region region;
     viennagrid_region_get_or_create( internal(), region_id, &region );
     return region_type(region);
   }
 
-  template base_mesh_hierarchy<false>::region_type base_mesh_hierarchy<false>::get_make_region(region_id_type region_id);
-  template base_mesh_hierarchy<true>::region_type base_mesh_hierarchy<true>::get_make_region(region_id_type region_id);
+  template base_mesh_hierarchy<false>::region_type base_mesh_hierarchy<false>::get_or_create_region(region_id_type region_id);
+  template base_mesh_hierarchy<true>::region_type base_mesh_hierarchy<true>::get_or_create_region(region_id_type region_id);
 
 
 
   template<bool is_const>
-  typename base_mesh_hierarchy<is_const>::region_type base_mesh_hierarchy<is_const>::make_region()
+  typename base_mesh_hierarchy<is_const>::region_type base_mesh_hierarchy<is_const>::create_region()
   {
     viennagrid_region region;
     viennagrid_region_create( internal(), &region );
     return region_type(region);
   }
 
-  template base_mesh_hierarchy<false>::region_type base_mesh_hierarchy<false>::make_region();
-  template base_mesh_hierarchy<true>::region_type base_mesh_hierarchy<true>::make_region();
+  template base_mesh_hierarchy<false>::region_type base_mesh_hierarchy<false>::create_region();
+  template base_mesh_hierarchy<true>::region_type base_mesh_hierarchy<true>::create_region();
 
 
   template<bool is_const>
@@ -115,7 +115,7 @@ namespace viennagrid
 
 
   template<bool is_const>
-  typename base_mesh_hierarchy<is_const>::region_type base_mesh_hierarchy<is_const>::get_make_region(std::string const & name)
+  typename base_mesh_hierarchy<is_const>::region_type base_mesh_hierarchy<is_const>::get_or_create_region(std::string const & name)
   {
     typedef base_mesh_hierarchy<is_const> MeshHierarchyType;
     typedef typename viennagrid::result_of::region_range<MeshHierarchyType>::type RegionRangeType;
@@ -128,14 +128,14 @@ namespace viennagrid
         return *rit;
     }
 
-    region_type region = make_region();
+    region_type region = create_region();
     region.set_name(name);
 
     return region;
   }
 
-  template base_mesh_hierarchy<false>::region_type base_mesh_hierarchy<false>::get_make_region(std::string const & name);
-  template base_mesh_hierarchy<true>::region_type base_mesh_hierarchy<true>::get_make_region(std::string const & name);
+  template base_mesh_hierarchy<false>::region_type base_mesh_hierarchy<false>::get_or_create_region(std::string const & name);
+  template base_mesh_hierarchy<true>::region_type base_mesh_hierarchy<true>::get_or_create_region(std::string const & name);
 
 
   template<bool is_const>

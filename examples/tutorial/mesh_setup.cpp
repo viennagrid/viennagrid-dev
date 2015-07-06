@@ -54,8 +54,8 @@ int main()
   //
   MeshType mesh;
 
-  RegionType region0 = mesh.make_region();
-  RegionType region1 = mesh.make_region();
+  RegionType region0 = mesh.create_region();
+  RegionType region1 = mesh.create_region();
 
   //
   // Step 2: Add vertices to the mesh.

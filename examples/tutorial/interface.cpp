@@ -42,8 +42,8 @@ int main()
   TriangleType t3 = viennagrid::make_triangle( mesh, v0, v4, v1 );
 
 
-  RegionType region0 = mesh.make_region();
-  RegionType region1 = mesh.make_region();
+  RegionType region0 = mesh.create_region();
+  RegionType region1 = mesh.create_region();
 
   viennagrid::add( region0, t0 );
   viennagrid::add( region0, t1 );

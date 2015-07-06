@@ -381,7 +381,7 @@ namespace viennagrid
 //             = stringtools::split_string( intern->text, "," );
 
             typedef typename viennagrid::result_of::region<MeshT>::type RegionType;
-            RegionType current_region = mesh.make_region();
+            RegionType current_region = mesh.create_region();
 
             for (std::list<std::string>::iterator it = values.begin(); it != values.end(); ++it)
             {
