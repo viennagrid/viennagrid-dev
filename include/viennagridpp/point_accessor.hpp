@@ -46,7 +46,7 @@ namespace viennagrid
     mesh_point_accessor(MeshType const & mesh_in) : mesh_(mesh_in) {}
 
     template<bool mesh_is_const>
-    mesh_point_accessor(base_mesh_region<mesh_is_const> const & region) : mesh_(region.mesh()) {}
+    mesh_point_accessor(base_mesh_region<mesh_is_const> const & region) : mesh_(region.get_mesh()) {}
 
     template<typename ElementT>
     point_type get(ElementT const & element) const { return viennagrid::get_point(mesh_, element); }
