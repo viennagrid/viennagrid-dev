@@ -34,20 +34,20 @@ target_link_libraries(io     viennagridpp)
 ADD_EXECUTABLE(iterators            iterators.cpp)
 target_link_libraries(iterators     viennagridpp)
 
-ADD_EXECUTABLE(multi_segment        multi_segment.cpp)
-target_link_libraries(multi_segment viennagridpp)
+ADD_EXECUTABLE(multi_region        multi_region.cpp)
+target_link_libraries(multi_region viennagridpp)
 
 add_executable(neighbor_iteration   neighbor_iteration.cpp)
 target_link_libraries(neighbor_iteration viennagridpp)
 
-add_executable(named_segments       named_segments.cpp)
-target_link_libraries(named_segments viennagridpp)
+add_executable(named_regions       named_regions.cpp)
+target_link_libraries(named_regions viennagridpp)
 
 add_executable(polygon              polygon.cpp)
 target_link_libraries(polygon viennagridpp)
 
-add_executable(segments             segments.cpp)
-target_link_libraries(segments viennagridpp)
+add_executable(regions             regions.cpp)
+target_link_libraries(regions viennagridpp)
 
 add_executable(interface            interface.cpp)
 target_link_libraries(interface viennagridpp)
