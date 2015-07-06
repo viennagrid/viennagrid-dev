@@ -201,7 +201,7 @@ namespace viennagrid
                                            &intersects_indices[0], &intersects_dimensions[0],
                                            &id);
 
-    return element(m.mesh_hierarchy(), et.topologic_dimension(), id);
+    return element(m.get_mesh_hierarchy(), et.topologic_dimension(), id);
   }
 
 

@@ -43,8 +43,8 @@ namespace viennagrid
   bool is_boundary( base_mesh_region<region_is_const> const & region, base_element<element_is_const> const & element )
   {
     viennagrid_bool result;
-    viennagrid_element_is_region_boundary(region.region().internal(),
-                                          region.mesh().internal(),
+    viennagrid_element_is_region_boundary(region.get_region().internal(),
+                                          region.get_mesh().internal(),
                                           viennagrid::topologic_dimension(element),
                                           element.id(),
                                           &result);

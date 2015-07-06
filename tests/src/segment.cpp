@@ -29,8 +29,8 @@ void print_elements(RegionT & region, viennagrid_int topologic_dimension)
 //   typedef typename viennagrid::result_of::mesh<SegmentationType>::type   MeshType2;  //to check that one can deduce {mesh type} <-> {segmentation type}
 //   typedef typename viennagrid::result_of::mesh<RegionT>::type           MeshType3;  //to check that one can deduce {mesh type} <-> {segment handle}
 
-  MeshType mesh2 = region.mesh(); (void)mesh2;
-  MeshType mesh3 = region.mesh(); (void)mesh3;
+  MeshType mesh2 = region.get_mesh(); (void)mesh2;
+  MeshType mesh3 = region.get_mesh(); (void)mesh3;
   RegionT const_seg = region;
 
   std::cout << "-- non-const --" << std::endl;

@@ -190,12 +190,12 @@ namespace viennagrid
 //     { return const_element_type(tag(), mesh_hierarchy(), element_index_begin[pos]); }
 
 
-    mesh_hierarchy_type mesh_hierarchy()
+    mesh_hierarchy_type get_mesh_hierarchy()
     {
       return mesh_hierarchy_type(mesh_hierarchy_);
 //       return mesh_hierarchy_;
     }
-    const_mesh_hierarchy_type mesh_hierarchy() const
+    const_mesh_hierarchy_type get_mesh_hierarchy() const
     {
       return const_mesh_hierarchy_type(mesh_hierarchy_);
 //       return mesh_hierarchy_;
@@ -391,7 +391,7 @@ namespace viennagrid
 
   struct region_view_functor
   {
-    region_view_functor(const_mesh_region const & mesh_region_) : region(mesh_region_.region().internal()) {}
+    region_view_functor(const_mesh_region const & mesh_region_) : region(mesh_region_.get_region().internal()) {}
 
     bool operator()(element const & element) const
     { return is_in_region(region, element); }

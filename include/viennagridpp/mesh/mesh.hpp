@@ -70,12 +70,12 @@ namespace viennagrid
       release();
     }
 
-    mesh_hierarchy_type mesh_hierarchy()
+    mesh_hierarchy_type get_mesh_hierarchy()
     {
       return mesh_hierarchy_type(internal_mesh_hierarchy());
     }
 
-    const_mesh_hierarchy_type mesh_hierarchy() const
+    const_mesh_hierarchy_type get_mesh_hierarchy() const
     {
       return const_mesh_hierarchy_type(internal_mesh_hierarchy());
     }

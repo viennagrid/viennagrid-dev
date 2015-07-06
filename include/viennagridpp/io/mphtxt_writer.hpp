@@ -69,7 +69,7 @@ namespace viennagrid
         if (!viennagrid::is_boundary(region, *ntit))
           continue;
 
-        if (!viennagrid::equal_regions( region_range, viennagrid::regions(region.mesh(),*ntit) ))
+        if (!viennagrid::equal_regions( region_range, viennagrid::regions(region.get_mesh(),*ntit) ))
           continue;
 
         PointType neighbor_normal = viennagrid::normal_vector(*ntit);

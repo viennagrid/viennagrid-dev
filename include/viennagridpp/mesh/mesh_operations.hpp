@@ -58,7 +58,7 @@ namespace viennagrid
     template<bool element_is_const>
     DstElementType operator()( base_element<element_is_const> const & src )
     {
-      if (src.mesh_hierarchy() == dst_mesh().mesh_hierarchy())
+      if (src.get_mesh_hierarchy() == dst_mesh().get_mesh_hierarchy())
       {
         viennagrid::add( dst_mesh(), src );
         return src;

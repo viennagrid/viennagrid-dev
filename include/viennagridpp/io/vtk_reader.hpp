@@ -514,7 +514,7 @@ namespace viennagrid
             for (std::size_t i=0; i<container.second.size(); ++i)
             {
               std::size_t global_vertex_id = local_to_global_map[region_id][i];
-              ElementType vertex(mesh_obj.mesh_hierarchy(), 0, global_vertex_id);
+              ElementType vertex(mesh_obj.get_mesh_hierarchy(), 0, global_vertex_id);
 
               (*registered_vertex_scalar_data[name]).set(vertex, (container.second)[i]);
             }
@@ -524,7 +524,7 @@ namespace viennagrid
             for (std::size_t i=0; i<container.second.size(); ++i)
             {
               std::size_t global_vertex_id = local_to_global_map[region_id][i];
-              ElementType vertex(mesh_obj.mesh_hierarchy(), 0, global_vertex_id);
+              ElementType vertex(mesh_obj.get_mesh_hierarchy(), 0, global_vertex_id);
 
               (*current_registered_region_vertex_scalar_data[name]).set(vertex, (container.second)[i]);
             }
@@ -553,7 +553,7 @@ namespace viennagrid
             for (std::size_t i=0; i<container.second.size()/3; ++i)
             {
               std::size_t global_vertex_id = local_to_global_map[region_id][i];
-              ElementType vertex(mesh_obj.mesh_hierarchy(), 0, global_vertex_id);
+              ElementType vertex(mesh_obj.get_mesh_hierarchy(), 0, global_vertex_id);
 
               std::vector<viennagrid_numeric> tmp(3);
               for (std::size_t j = 0; j != 3; ++j)
@@ -567,7 +567,7 @@ namespace viennagrid
             for (std::size_t i=0; i<container.second.size(); ++i)
             {
               std::size_t global_vertex_id = local_to_global_map[region_id][i];
-              ElementType vertex(mesh_obj.mesh_hierarchy(), 0, global_vertex_id);
+              ElementType vertex(mesh_obj.get_mesh_hierarchy(), 0, global_vertex_id);
 
               std::vector<viennagrid_numeric> tmp(3);
               for (std::size_t j = 0; j != 3; ++j)

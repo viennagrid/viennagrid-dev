@@ -93,7 +93,7 @@ namespace viennagrid
 
 
 
-      if (mesh_in.mesh_hierarchy() != mesh_out.mesh_hierarchy())
+      if (mesh_in.get_mesh_hierarchy() != mesh_out.get_mesh_hierarchy())
       {
         for (typename ElementsContainerType::iterator it = elements_vertices.begin();
               it != elements_vertices.end();
