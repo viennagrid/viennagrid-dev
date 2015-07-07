@@ -49,9 +49,6 @@ void viennagrid_element_buffer::make_boundary(viennagrid_int element_id, viennag
   viennagrid_element_type type = element_type(element_id);
 
   viennagrid_int * vertex_ids = boundary_ids[0].begin(element_id);
-  viennagrid_int * vertex_end = boundary_ids[0].end(element_id);
-
-  viennagrid_int count = vertex_end - vertex_ids;
 
   switch (type)
   {
@@ -63,7 +60,7 @@ void viennagrid_element_buffer::make_boundary(viennagrid_int element_id, viennag
 
     case VIENNAGRID_ELEMENT_TYPE_TRIANGLE:
     {
-      assert(count == 3);
+      assert(boundary_ids[0].end(element_id) - vertex_ids == 3);
       viennagrid_int * line_ids = boundary_begin(1, element_id);
 
       line_ids[0] = mesh_hierarchy->get_make_line(vertex_ids, 0, 1, mesh);
@@ -75,6 +72,7 @@ void viennagrid_element_buffer::make_boundary(viennagrid_int element_id, viennag
 
     case VIENNAGRID_ELEMENT_TYPE_QUADRILATERAL:
     {
+      assert(boundary_ids[0].end(element_id) - vertex_ids == 4);
       viennagrid_int * line_ids = boundary_begin(1, element_id);
 
       line_ids[0] = mesh_hierarchy->get_make_line(vertex_ids, 0, 1, mesh);
@@ -87,6 +85,7 @@ void viennagrid_element_buffer::make_boundary(viennagrid_int element_id, viennag
 
     case VIENNAGRID_ELEMENT_TYPE_TETRAHEDRON:
     {
+      assert(boundary_ids[0].end(element_id) - vertex_ids == 4);
       viennagrid_int * line_ids = boundary_begin(1, element_id);
       viennagrid_int * triangle_ids = boundary_begin(2, element_id);
 
@@ -107,6 +106,7 @@ void viennagrid_element_buffer::make_boundary(viennagrid_int element_id, viennag
 
     case VIENNAGRID_ELEMENT_TYPE_HEXAHEDRON:
     {
+      assert(boundary_ids[0].end(element_id) - vertex_ids == 6);
       viennagrid_int * line_ptr = boundary_begin(1, element_id);
       viennagrid_int * quad_ptr = boundary_begin(2, element_id);
 

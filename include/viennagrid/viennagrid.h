@@ -119,7 +119,7 @@ typedef struct viennagrid_mesh_io_ * viennagrid_mesh_io;
 /* VIENNAGRID MAGIC VALUE FOR SERIALIZATION */
 #define VIENNAGRID_MAGIC_VALUE                      0x42F42F42
 
-// TODO move to cmake??
+/* TODO move to cmake?? */
 #define VIENNAGRID_VERSION_MAJOR                    _VERSION_MAJOR_
 #define VIENNAGRID_VERSION_MINOR                    _VERSION_MINOR_
 #define VIENNAGRID_VERSION_PATCH                    _VERSION_PATCH_
