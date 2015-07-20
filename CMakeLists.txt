@@ -29,6 +29,12 @@ find_package(ViennaCL QUIET)
 if (VIENNA_BUILD_IS_MAIN_PROJECT)
   set(BUILD_SHARED_LIBS 1)
   include(ViennaGridCommon)
+
+  option(ENABLE_PEDANTIC_FLAGS "Enable pedantic compiler flags" ON)
+  if(ENABLE_PEDANTIC_FLAGS)
+    SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -Wextra -pedantic")
+    SET(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -Wall -Wextra -pedantic")
+  endif()
 endif ()
 
 vienna_build_add_subprojects()
