@@ -463,7 +463,7 @@ struct viennagrid_mesh_hierarchy_
   friend struct viennautils::detail::dynamic_sizeof_impl;
 public:
 
-  viennagrid_mesh_hierarchy_() : geometric_dimension_(0), cell_dimension_(-1),
+  viennagrid_mesh_hierarchy_() : geometric_dimension_(0), cell_dimension_(VIENNAGRID_INVALID_TOPOLOGIC_DIMENSION),
   root_( new viennagrid_mesh_(this) ), /*highest_region_id(0),*/ change_counter_(0), retain_release_count(0), reference_counter(1)
   {
     clear();
@@ -502,6 +502,13 @@ public:
 
   viennagrid_dimension cell_dimension() const { return cell_dimension_; }
   viennagrid_dimension facet_dimension() const { return cell_dimension()-1; }
+  void update_cell_dimension(viennagrid_dimension topologic_dimension)
+  {
+    if (cell_dimension() == VIENNAGRID_INVALID_TOPOLOGIC_DIMENSION)
+      cell_dimension_ = topologic_dimension;
+
+    cell_dimension_ = std::max( cell_dimension_, topologic_dimension );
+  }
 
 
   viennagrid_element_buffer & element_buffer(viennagrid_int topo_dim)
@@ -668,7 +675,7 @@ public:
     }
 
     geometric_dimension_ = 0;
-    cell_dimension_ = -1;
+    cell_dimension_ = VIENNAGRID_INVALID_TOPOLOGIC_DIMENSION;
 
     root_->clear();
     meshes_.clear();

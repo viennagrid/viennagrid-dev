@@ -127,7 +127,9 @@ typedef struct viennagrid_mesh_io_ * viennagrid_mesh_io;
 #define VIENNAGRID_VERSION_PATCH                    _VERSION_PATCH_
 
 
+#define VIENNAGRID_INVALID_TOPOLOGIC_DIMENSION      255
 #define VIENNAGRID_INVALID_REGION_ID                255
+
 
 /**********************************************************************************************
  *

@@ -267,7 +267,7 @@ viennagrid_error viennagrid_mesh_hierarchy_::set_boundary_layout(viennagrid_int 
   {
 //     std::cout << "SWITCHED TO FULL LAYOUT" << std::endl;
 
-    if (cell_dimension() > 0)
+    if (cell_dimension() != VIENNAGRID_INVALID_TOPOLOGIC_DIMENSION)
     {
       viennagrid_element_buffer & cell_buffer = element_buffer( cell_dimension() );
 
@@ -302,7 +302,7 @@ viennagrid_error viennagrid_mesh_hierarchy_::set_boundary_layout(viennagrid_int 
       (boundary_layout_in == VIENNAGRID_BOUNDARY_LAYOUT_SPARSE) &&
       (mesh_count() == 1))
   {
-    if (cell_dimension() > 0)
+    if (cell_dimension() != VIENNAGRID_INVALID_TOPOLOGIC_DIMENSION)
     {
       for (viennagrid_dimension i = 1; i != cell_dimension(); ++i)
       {
@@ -361,7 +361,7 @@ viennagrid_int viennagrid_mesh_hierarchy_::make_elements(viennagrid_int element_
   increment_change_counter();
   viennagrid_int start_id = element_buffer(topologic_dimension).make_elements( element_count_, element_types_, element_vertex_index_offsets_, element_vertex_indices_ );
 
-  cell_dimension_ = std::max( cell_dimension_, topologic_dimension );
+  update_cell_dimension(topologic_dimension);
   for (int i = 0; i != element_count_; ++i)
    ++element_counts[ element_types_[i] ];
 
@@ -394,7 +394,7 @@ std::pair<viennagrid_int, bool> viennagrid_mesh_hierarchy_::get_make_element(vie
   increment_change_counter();
   id = element_buffer(element_topologic_dimension).make_element(element_type, vertex_ids, vertex_count, full_boundary_layout());
 
-  cell_dimension_ = std::max( cell_dimension_, element_topologic_dimension );
+  update_cell_dimension(element_topologic_dimension);
   ++element_counts[element_type];
 
   if (mesh)
