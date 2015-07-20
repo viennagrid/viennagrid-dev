@@ -468,33 +468,33 @@ namespace viennautils
       {
         long size = 0;
 
-        std::cout << "  eb " << (int)eb.topologic_dimension << std::endl;
+//         std::cout << "  eb " << (int)eb.topologic_dimension << std::endl;
 
         size += dynamic_sizeof( eb.topologic_dimension );
 
         size += dynamic_sizeof( eb.element_types );
-        std::cout << "    [element_types] " << dynamic_sizeof( eb.element_types ) << std::endl;
+//         std::cout << "    [element_types] " << dynamic_sizeof( eb.element_types ) << std::endl;
 
         size += dynamic_sizeof( eb.parents );
-        std::cout << "    [parents] " << dynamic_sizeof( eb.parents ) << std::endl;
+//         std::cout << "    [parents] " << dynamic_sizeof( eb.parents ) << std::endl;
 
         size += dynamic_sizeof( eb.region_buffer );
-        std::cout << "    [region_buffer] " << dynamic_sizeof( eb.region_buffer ) << std::endl;
+//         std::cout << "    [region_buffer] " << dynamic_sizeof( eb.region_buffer ) << std::endl;
         size += dynamic_sizeof( eb.packed_region_buffer );
-        std::cout << "    [packed_region_buffer] " << dynamic_sizeof( eb.packed_region_buffer ) << std::endl;
+//         std::cout << "    [packed_region_buffer] " << dynamic_sizeof( eb.packed_region_buffer ) << std::endl;
 
 
 
         size += dynamic_sizeof( eb.boundary_ids );
-        std::cout << "    [boundary_ids size() = " << eb.boundary_ids.size() <<  "] " << dynamic_sizeof( eb.boundary_ids ) << std::endl;
+//         std::cout << "    [boundary_ids size() = " << eb.boundary_ids.size() <<  "] " << dynamic_sizeof( eb.boundary_ids ) << std::endl;
         for (std::size_t i = 0; i != eb.boundary_ids.size(); ++i)
         {
-          std::cout << "      [boundary_ids[" << i << "] ] " << dynamic_sizeof( eb.boundary_ids[i] ) << "  " <<
-              eb.boundary_ids[i].get_values().capacity() << " " << eb.boundary_ids[i].get_offsets().capacity() << std::endl;
+//           std::cout << "      [boundary_ids[" << i << "] ] " << dynamic_sizeof( eb.boundary_ids[i] ) << "  " <<
+//               eb.boundary_ids[i].get_values().capacity() << " " << eb.boundary_ids[i].get_offsets().capacity() << std::endl;
         }
 
         size += dynamic_sizeof( eb.element_map );
-        std::cout << "    [element_map] " << dynamic_sizeof( eb.element_map ) << std::endl;
+//         std::cout << "    [element_map] " << dynamic_sizeof( eb.element_map ) << std::endl;
 
         size += dynamic_sizeof( eb.mesh_hierarchy );
 
@@ -512,13 +512,13 @@ namespace viennautils
         long size = 0;
 
         size += dynamic_sizeof( ehb.ids_ );
-        std::cout << "    [ids_] " << dynamic_sizeof( ehb.ids_ ) << std::endl;
+//         std::cout << "    [ids_] " << dynamic_sizeof( ehb.ids_ ) << std::endl;
 
         size += dynamic_sizeof( ehb.coboundary_ids );
-        std::cout << "    [coboundary_ids] " << dynamic_sizeof( ehb.coboundary_ids ) << std::endl;
+//         std::cout << "    [coboundary_ids] " << dynamic_sizeof( ehb.coboundary_ids ) << std::endl;
 
         size += dynamic_sizeof( ehb.neighbor_ids );
-        std::cout << "    [neighbor_ids] " << dynamic_sizeof( ehb.neighbor_ids ) << std::endl;
+//         std::cout << "    [neighbor_ids] " << dynamic_sizeof( ehb.neighbor_ids ) << std::endl;
 
         return size;
       }
@@ -564,7 +564,7 @@ namespace viennautils
         size += dynamic_sizeof( m.children );
 
         size += dynamic_sizeof( m.element_children );
-        std::cout << "  [element_children] " << dynamic_sizeof( m.element_children ) << std::endl;
+//         std::cout << "  [element_children] " << dynamic_sizeof( m.element_children ) << std::endl;
 
         size += dynamic_sizeof( m.mesh_children_map );
         size += dynamic_sizeof( m.name_ );
@@ -600,7 +600,7 @@ namespace viennautils
       {
         long size = 0;
 
-        std::cout << "sizeof(short_vector<viennagrid_region, viennagrid_region_id>) = " << sizeof(short_vector<viennagrid_region, viennagrid_region_id>) << std::endl;
+//         std::cout << "sizeof(short_vector<viennagrid_region, viennagrid_region_id>) = " << sizeof(short_vector<viennagrid_region, viennagrid_region_id>) << std::endl;
 
 
 
@@ -608,7 +608,7 @@ namespace viennautils
 
         long element_buffers_size = dynamic_sizeof( mh.element_buffers );
         size += element_buffers_size;
-        std::cout << "[element_buffers] " << element_buffers_size << std::endl;
+//         std::cout << "[element_buffers] " << element_buffers_size << std::endl;
 
         size += dynamic_sizeof( mh.element_counts );
         size += dynamic_sizeof( mh.geometric_dimension_ );
@@ -619,20 +619,20 @@ namespace viennautils
         for (std::size_t i = 0; i != mh.meshes_.size(); ++i)
           mesh_size += dynamic_sizeof( *(mh.meshes_[i]) );
         size += mesh_size;
-        std::cout << "[meshes] " << mesh_size << std::endl;
+//         std::cout << "[meshes] " << mesh_size << std::endl;
 
         size += dynamic_sizeof( mh.root_ );
 
         long vertex_buffer_size = dynamic_sizeof( mh.vertex_buffer );
         size += vertex_buffer_size;
-        std::cout << "[vertex_buffer] " << vertex_buffer_size << std::endl;
+//         std::cout << "[vertex_buffer] " << vertex_buffer_size << std::endl;
 
         size += dynamic_sizeof( mh.regions );
         long region_size = 0;
         for (std::size_t i = 0; i != mh.regions.size(); ++i)
           region_size += dynamic_sizeof( *(mh.regions[i]) );
         size += region_size;
-        std::cout << "[regions] " << region_size << std::endl;
+//         std::cout << "[regions] " << region_size << std::endl;
 
 
 //         size += dynamic_sizeof( mh.highest_region_id );

@@ -51,6 +51,7 @@ int main(int argc, char *argv[])
   std::cout << "sizeof(viennagrid_mesh_io) = " << sizeof(viennagrid_mesh_io) << std::endl;
 
 
+  std::cout << std::endl << std::endl << std::endl;
 
   {
     MeshHierarchyType mesh_hierarchy;
@@ -78,7 +79,7 @@ int main(int argc, char *argv[])
     MeshHierarchyType mesh_hierarchy;
     MeshType mesh = mesh_hierarchy.root();
 
-    batch_make_aabb_triangles_region_C(mesh, atoi(argv[1]), 4, false);
+    batch_make_aabb_triangles_region_C(mesh, atoi(argv[1]), 4, true);
   //   batch_make_aabb_tetrahedrons_region_C(mesh, atoi(argv[1]), 4);
 
 
