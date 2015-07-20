@@ -92,6 +92,18 @@ namespace viennagrid
       viennagrid_mesh_hierarchy_deserialize( internal(), buffer, size );
     }
 
+    void optimize_memory()
+    {
+      viennagrid_mesh_hierarchy_memory_optimize( internal() );
+    }
+
+    long memory_size() const
+    {
+      long size;
+      viennagrid_mesh_hierarchy_memory_size( internal(), &size );
+      return size;
+    }
+
   private:
 
     void retain() const { viennagrid_mesh_hierarchy_retain(internal()); }

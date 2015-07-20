@@ -132,7 +132,7 @@ namespace viennagrid
               viennagrid_dimension values_dimension,
               viennagrid_int storage_type = VIENNAGRID_QUANTITY_FIELD_STORAGE_DENSE)
     {
-      viennagrid_quantity_field_init(internal(), topologic_dimension, values_dimension, storage_type);
+      viennagrid_quantity_field_init(internal(), topologic_dimension, sizeof(viennagrid_numeric)*values_dimension, storage_type);
     }
 
 
@@ -238,9 +238,9 @@ namespace viennagrid
 
     viennagrid_dimension values_dimension() const
     {
-      viennagrid_dimension values_dimension_;
-      viennagrid_quantity_field_size_of_value_get(internal(), &values_dimension_);
-      return values_dimension_ / sizeof(viennagrid_numeric);
+      viennagrid_int values_size_;
+      viennagrid_quantity_field_size_of_value_get(internal(), &values_size_);
+      return values_size_ / sizeof(viennagrid_numeric);
     }
 
     viennagrid_int storage_layout() const
@@ -250,7 +250,7 @@ namespace viennagrid
       return storage_layout_;
     }
 
-    std::string name() const
+    std::string get_name() const
     {
       assert(valid());
 

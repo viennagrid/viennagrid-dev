@@ -7,8 +7,8 @@ namespace viennagrid
   template<bool is_const>
   std::size_t base_mesh<is_const>::region_count() const
   {
-    viennagrid_region * begin;
-    viennagrid_region * end;
+    viennagrid_region_id * begin;
+    viennagrid_region_id * end;
     viennagrid_mesh_hierarchy_regions_get(internal_mesh_hierarchy(), &begin, &end);
     return end-begin;
   }
@@ -21,7 +21,7 @@ namespace viennagrid
   typename base_mesh<false>::region_type base_mesh<false>::get_or_create_region(region_id_type region_id) const
   {
     viennagrid_region region;
-    viennagrid_region_get_or_create( internal_mesh_hierarchy(), region_id, &region );
+    viennagrid_mesh_region_get_or_create( internal(), region_id, &region );
     return region_type(internal(), region);
   }
 
@@ -29,7 +29,7 @@ namespace viennagrid
   typename base_mesh<false>::region_type base_mesh<false>::create_region() const
   {
     viennagrid_region region;
-    viennagrid_region_create( internal_mesh_hierarchy(), &region );
+    viennagrid_mesh_region_create( internal(), &region );
     return region_type(internal(), region);
   }
 
@@ -37,7 +37,7 @@ namespace viennagrid
   typename base_mesh<is_const>::const_region_type base_mesh<is_const>::get_region(region_id_type region_id) const
   {
     viennagrid_region region;
-    viennagrid_region_get( internal_mesh_hierarchy(), region_id, &region );
+    viennagrid_mesh_region_get( internal(), region_id, &region );
     return const_region_type(internal(), region);
   }
 
@@ -49,7 +49,7 @@ namespace viennagrid
   bool base_mesh<is_const>::region_exists(region_id_type region_id) const
   {
     viennagrid_region region;
-    viennagrid_region_get( internal_mesh_hierarchy(), region_id, &region );
+    viennagrid_mesh_region_get( internal(), region_id, &region );
     return region != NULL;
   }
 

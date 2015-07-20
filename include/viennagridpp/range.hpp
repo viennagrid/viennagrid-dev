@@ -66,7 +66,7 @@ namespace viennagrid
       topologic_dimension_ = topologic_dimension_in;
       mesh_hierarchy_ = viennagrid::internal_mesh_hierarchy(mesh);
 
-      if ( !((topologic_dimension() == 0) || (topologic_dimension() == cell_dimension(mesh_hierarchy()))) )
+      if ( !((topologic_dimension() == 0) || (topologic_dimension() == cell_dimension(get_mesh_hierarchy()))) )
         viennagrid_mesh_hierarchy_property_set(mesh_hierarchy_, VIENNAGRID_PROPERTY_BOUNDARY_LAYOUT, VIENNAGRID_BOUNDARY_LAYOUT_FULL);
 
       viennagrid_mesh_elements_get(mesh,
@@ -99,7 +99,7 @@ namespace viennagrid
       mesh_hierarchy_ = element.internal_mesh_hierarchy();
 
 
-      if ( !((viennagrid::topologic_dimension(element) == 0) && (coboundary_topo_dim_in == cell_dimension(mesh_hierarchy()))) )
+      if ( !((viennagrid::topologic_dimension(element) == 0) && (coboundary_topo_dim_in == cell_dimension(get_mesh_hierarchy()))) )
         viennagrid_mesh_hierarchy_property_set(mesh_hierarchy_, VIENNAGRID_PROPERTY_BOUNDARY_LAYOUT, VIENNAGRID_BOUNDARY_LAYOUT_FULL);
 
       viennagrid_element_coboundary_elements(mesh,
@@ -204,6 +204,10 @@ namespace viennagrid
     viennagrid_mesh_hierarchy internal_mesh_hierarchy() const { return const_cast<viennagrid_mesh_hierarchy>(mesh_hierarchy_); }
 
     viennagrid_int topologic_dimension() const { return topologic_dimension_; }
+
+
+    index_pointer_type begin_ptr() { return element_index_begin; }
+    index_pointer_type end_ptr() { return element_index_end; }
 
   protected:
     viennagrid_int topologic_dimension_;

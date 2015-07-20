@@ -557,7 +557,7 @@ namespace viennagrid
 
               std::vector<viennagrid_numeric> tmp(3);
               for (std::size_t j = 0; j != 3; ++j)
-                tmp[i] = (container.second)[3*i+j];
+                tmp[j] = (container.second)[3*i+j];
 
               (*registered_vertex_vector_data[name]).set(vertex, tmp);
             }
@@ -571,7 +571,7 @@ namespace viennagrid
 
               std::vector<viennagrid_numeric> tmp(3);
               for (std::size_t j = 0; j != 3; ++j)
-                tmp[i] = (container.second)[3*i+j];
+                tmp[j] = (container.second)[3*i+j];
 
               (*current_registered_region_vertex_vector_data[name]).set(vertex, tmp);
             }
@@ -659,7 +659,7 @@ namespace viennagrid
 
               std::vector<viennagrid_numeric> tmp(3);
               for (std::size_t j = 0; j != 3; ++j)
-                tmp[i] = (container.second)[3*i+j];
+                tmp[j] = (container.second)[3*i+j];
 
               (*registered_cell_vector_data[name]).set(cell, tmp);
             }
@@ -672,7 +672,7 @@ namespace viennagrid
 
               std::vector<viennagrid_numeric> tmp(3);
               for (std::size_t j = 0; j != 3; ++j)
-                tmp[i] = (container.second)[3*i+j];
+                tmp[j] = (container.second)[3*i+j];
 
               (*current_registered_region_cell_vector_data[name]).set(cell, tmp);
             }

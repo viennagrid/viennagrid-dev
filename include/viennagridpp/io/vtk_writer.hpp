@@ -356,7 +356,7 @@ namespace viennagrid
       void writePointData(RegionT const &, std::ofstream & writer, std::string const & name, IOAccessorType const & accessor, region_id_type region_id)
       {
         typedef typename IOAccessorType::value_type ValueType;
-        
+
         std::map< VertexIDType, ElementType > & current_used_vertex_map = used_vertex_map[region_id];
         for (typename std::map< VertexIDType, ElementType >::iterator it = current_used_vertex_map.begin(); it != current_used_vertex_map.end(); ++it)
         {
@@ -516,7 +516,7 @@ namespace viennagrid
           RegionRangeType regions(mesh_obj);
           for (typename RegionRangeType::iterator rit = regions.begin(); rit != regions.end(); ++rit)
           {
-            writer << "    <DataSet part=\"" << (*rit).id() << "\" file=\"" << short_filename << "_" << (*rit).id() << ".vtu\" name=\"" << (*rit).id() << "\"/>" << std::endl;
+            writer << "    <DataSet part=\"" << (int)(*rit).id() << "\" file=\"" << short_filename << "_" << (int)(*rit).id() << ".vtu\" name=\"" << (int)(*rit).id() << "\"/>" << std::endl;
           }
 
           writer << "  </Collection>" << std::endl;
@@ -534,7 +534,7 @@ namespace viennagrid
           RegionType region = *rit;
 
           std::stringstream ss;
-          ss << filename << "_" << region.id() << ".vtu";
+          ss << filename << "_" << (int)region.id() << ".vtu";
           std::ofstream writer(ss.str().c_str());
           writeHeader(writer);
 

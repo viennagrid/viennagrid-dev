@@ -5,18 +5,24 @@ namespace viennagrid
 
  void add(viennagrid_region region, element const & e)
   {
+    viennagrid_region_id region_id;
+    viennagrid_region_id_get(region, &region_id);
+
     viennagrid_element_add_to_region(internal_mesh_hierarchy(e),
                                      viennagrid::topologic_dimension(e),
                                      e.id(),
-                                     region);
+                                     region_id);
   }
 
 
   template<bool element_is_const>
   bool is_in_region( viennagrid_region region, base_element<element_is_const> const & element )
   {
-    viennagrid_region * it;
-    viennagrid_region * end;
+    viennagrid_region_id region_id;
+    viennagrid_region_id_get(region, &region_id);
+
+    viennagrid_region_id * it;
+    viennagrid_region_id * end;
 
     viennagrid_element_regions_get(internal_mesh_hierarchy(element),
                                    viennagrid::topologic_dimension(element),
@@ -26,7 +32,7 @@ namespace viennagrid
 
     for (; it != end; ++it)
     {
-      if (*it == region)
+      if (*it == region_id)
         return true;
     }
 
