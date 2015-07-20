@@ -5,11 +5,14 @@
 #include <string>
 
 #include "viennagrid/viennagrid.h"
+#include "dynamic_sizeof.hpp"
 
 struct viennagrid_region_
 {
   friend struct viennagrid_mesh_hierarchy_;
 
+  template<typename T>
+  friend struct viennautils::detail::dynamic_sizeof_impl;
 public:
 
   viennagrid_region_(viennagrid_int id_in, viennagrid_mesh_hierarchy hierarchy_in) : id_(id_in), boundary_elements_change_counter(0), hierarchy_(hierarchy_in) {}

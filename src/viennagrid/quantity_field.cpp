@@ -68,7 +68,6 @@ viennagrid_error viennagrid_quantity_field_release(viennagrid_quantity_field qua
   return VIENNAGRID_SUCCESS;
 }
 
-
 viennagrid_error viennagrid_quantity_field_init(viennagrid_quantity_field quantity_field,
                                                 viennagrid_dimension topologic_dimension,
                                                 viennagrid_int size_of_value,
@@ -169,7 +168,7 @@ viennagrid_error viennagrid_quantity_field_resize(viennagrid_quantity_field quan
   {
     case VIENNAGRID_QUANTITY_FIELD_STORAGE_DENSE:
     {
-      quantity_field->dense_values.resize( quantity_field->size_of_value / value_count );
+      quantity_field->dense_values.resize( quantity_field->size_of_value * value_count );
       quantity_field->dense_valid_flags.resize( value_count, false );
       break;
     }

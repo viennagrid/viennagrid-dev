@@ -43,7 +43,7 @@ public:
 
 
   viennagrid_int get_make_line(viennagrid_int vertex_id0, viennagrid_int vertex_id1);
-  viennagrid_int get_make_facet(viennagrid_int * line_ids, viennagrid_int line_count);
+  viennagrid_int get_make_facet(viennagrid_int line_count, viennagrid_int * line_ids);
 
 
   viennagrid_int * boundary_begin(viennagrid_dimension topologic_dimension,

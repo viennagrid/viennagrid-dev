@@ -57,7 +57,7 @@ viennagrid_int viennagrid_plc_::get_make_line(viennagrid_int vertex_id0, viennag
 }
 
 
-viennagrid_int viennagrid_plc_::get_make_facet(viennagrid_int * line_ids, viennagrid_int line_count)
+viennagrid_int viennagrid_plc_::get_make_facet(viennagrid_int line_count, viennagrid_int * line_ids)
 {
   std::vector<viennagrid_int> sorted_line_ids(line_count);
   std::copy(line_ids, line_ids+line_count, sorted_line_ids.begin());
@@ -378,7 +378,7 @@ viennagrid_int viennagrid_plc_::read_tetgen_poly(std::string const & filename)
     }
 
 
-    int plc = get_make_facet( &lines[0], lines.size() );
+    int plc = get_make_facet( lines.size(), &lines[0] );
     for (std::vector<PointType>::const_iterator hpit = facet_hole_points.begin();
                                                 hpit != facet_hole_points.end();
                                               ++hpit)

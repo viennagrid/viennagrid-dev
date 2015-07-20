@@ -6,7 +6,10 @@
 #include <algorithm>
 
 #include "viennagrid/viennagrid.h"
+
+#include "common.hpp"
 #include "buffer.hpp"
+#include "dynamic_sizeof.hpp"
 
 
 typedef sparse_packed_multibuffer<viennagrid_int, viennagrid_int> ViennaGridCoBoundaryBufferType;
@@ -16,6 +19,8 @@ typedef sparse_packed_multibuffer<viennagrid_int, viennagrid_int> ViennaGridElem
 
 struct viennagrid_element_handle_buffer
 {
+  template<typename T>
+  friend struct viennautils::detail::dynamic_sizeof_impl;
 public:
 
   viennagrid_element_handle_buffer() { clear(); }
@@ -28,6 +33,22 @@ public:
   void add_element(viennagrid_int element_id)
   {
     insert( element_id );
+  }
+
+  void add_elements(viennagrid_int start_id, viennagrid_int count)
+  {
+    if (ids_.empty() || (start_id > ids_.back()))
+    {
+      viennagrid_int old_size = ids_.size();
+      ids_.resize( ids_.size() + count );
+      for (viennagrid_int i = 0; i != count; ++i)
+        ids_[ old_size+i ] = start_id+i;
+    }
+    else
+    {
+      // TODO implement
+      assert(false);
+    }
   }
 
   viennagrid_int * ids()
@@ -50,6 +71,11 @@ public:
     for (int i = 0; i != VIENNAGRID_TOPOLOGIC_DIMENSION_END; ++i)
       for (int j = 0; j != VIENNAGRID_TOPOLOGIC_DIMENSION_END; ++j)
         neighbor_ids[i][j].clear();
+  }
+
+  void optimize_memory()
+  {
+    shrink_to_fit( ids_ );
   }
 
 private:
@@ -116,6 +142,8 @@ public:
 
   ViennaGridElementChildrenBufferType & children_ids_buffer(viennagrid_int element_topo_dim) { return children_ids_buffers[element_topo_dim]; }
 
+  ViennaGridElementChildrenBufferType const & get_children_ids_buffer(int i) const { return children_ids_buffers[i]; }
+
 private:
   ViennaGridElementChildrenBufferType children_ids_buffers[VIENNAGRID_TOPOLOGIC_DIMENSION_END];
   viennagrid_int change_counters[VIENNAGRID_TOPOLOGIC_DIMENSION_END];
@@ -127,6 +155,9 @@ private:
 
 struct viennagrid_mesh_
 {
+  template<typename T>
+  friend struct viennautils::detail::dynamic_sizeof_impl;
+
 public:
   viennagrid_mesh_(viennagrid_mesh_hierarchy hierarchy_in);
   viennagrid_mesh_(viennagrid_mesh_hierarchy hierarchy_in, viennagrid_mesh parent_in);
@@ -218,6 +249,9 @@ public:
   }
 
 
+  void add_elements(viennagrid_dimension element_topo_dim,
+                    viennagrid_int first_id, viennagrid_int count);
+
   void add_element(viennagrid_dimension element_topo_dim,
                    viennagrid_int element_id);
 
@@ -305,6 +339,12 @@ public:
   std::string name() const
   {
     return name_;
+  }
+
+  void optimize_memory()
+  {
+    for (int i = 0; i != VIENNAGRID_TOPOLOGIC_DIMENSION_END; ++i)
+      element_handle_buffers[i].optimize_memory();
   }
 
 

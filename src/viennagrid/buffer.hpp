@@ -102,11 +102,11 @@ public:
   dense_packed_multibuffer() : offsets(1,0) {}
   ~dense_packed_multibuffer() {}
 
-  iterator begin(size_type index) { return values.empty() ? 0 : &values[0] + offsets[index]; }
-  iterator end(size_type index) { return values.empty() ? 0 : &values[0] + offsets[index+1]; }
+  iterator begin(size_type index) { return (values.empty() || index >= size()) ? 0 : &values[0] + offsets[index]; }
+  iterator end(size_type index) { return (values.empty() || index >= size()) ? 0 : &values[0] + offsets[index+1]; }
 
-  const_iterator cbegin(size_type index) const { return values.empty() ? 0 : &values[0] + offsets[index]; }
-  const_iterator cend(size_type index) const { return values.empty() ? 0 : &values[0] + offsets[index+1]; }
+  const_iterator cbegin(size_type index) const { return (values.empty() || index >= size()) ? 0 : &values[0] + offsets[index]; }
+  const_iterator cend(size_type index) const { return (values.empty() || index >= size()) ? 0 : &values[0] + offsets[index+1]; }
 
   const_iterator begin(size_type index) const { return cbegin(index); }
   const_iterator end(size_type index) const { return cend(index); }
@@ -122,12 +122,33 @@ public:
   }
 
 
+  void push_back( viennagrid_int count, size_type const * new_offsets_, value_type const * new_values_ )
+  {
+    viennagrid_int old_count = offsets.size()-1;
+    offsets.resize( old_count+count+1 );
+    std::copy( new_offsets_, new_offsets_+count+1, offsets.begin()+old_count );
+
+    viennagrid_int base = offsets[offsets.size()-count-1];
+    for (std::size_t i = offsets.size()-count; i != offsets.size(); ++i)
+      offsets[i] += base;
+
+    viennagrid_int old_values_count = values.size();
+    values.resize( values.size()+new_offsets_[count] );
+    std::copy( new_values_, new_values_+new_offsets_[count], values.begin()+old_values_count );
+  }
+
   pointer push_back(size_type count)
   {
     std::size_t start_index = values.size();
     values.resize( values.size()+count );
     offsets.push_back(values.size());
     return &values[0] + start_index;
+  }
+
+  void reserve(size_type offsets_count, size_type values_count)
+  {
+    values.reserve( offsets_count );
+    offsets.reserve( values_count );
   }
 
   pointer resize(size_type index, size_type count)
@@ -195,6 +216,16 @@ public:
 
   size_type * offset_pointer() { return &offsets[0]; }
   value_type * values_pointer() { return &values[0]; }
+
+
+  void shrink_to_fit()
+  {
+    std::vector<value_type>(values).swap(values);
+    std::vector<size_type>(offsets).swap(offsets);
+  }
+
+  std::vector<value_type> const & get_values() const { return values; }
+  std::vector<size_type> const & get_offsets() const { return offsets; }
 
 private:
   std::vector<value_type> values;
@@ -344,6 +375,10 @@ public:
     offsets.clear();
     values.clear();
   }
+
+
+  ValueContainer const & get_values() const { return values; }
+  OffsetMap const & get_offsets() const { return offsets; }
 
 //   void print() const
 //   {

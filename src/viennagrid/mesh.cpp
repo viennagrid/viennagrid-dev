@@ -29,6 +29,17 @@ viennagrid_mesh viennagrid_mesh_::make_child()
 }
 
 
+void viennagrid_mesh_::add_elements(viennagrid_dimension element_topo_dim,
+                                    viennagrid_int first_id, viennagrid_int count)
+{
+  assert( (element_topo_dim >= 0) && (element_topo_dim < VIENNAGRID_TOPOLOGIC_DIMENSION_END) );
+  assert( first_id >= 0 );
+
+  element_handle_buffer(element_topo_dim).add_elements( first_id, count );
+}
+
+
+
 void viennagrid_mesh_::add_element(viennagrid_dimension element_topo_dim,
                                    viennagrid_int element_id)
 {
@@ -244,7 +255,7 @@ void viennagrid_mesh_::make_element_children(viennagrid_mesh child, viennagrid_i
 
 
 
-void viennagrid_mesh_::make_coboundary(viennagrid_int element_topo_dim, viennagrid_int coboundary_topo_dim)
+void viennagrid_mesh_::make_coboundary(viennagrid_dimension element_topo_dim, viennagrid_dimension coboundary_topo_dim)
 {
   if (!is_coboundary_obsolete(element_topo_dim, coboundary_topo_dim))
     return;
@@ -280,7 +291,7 @@ void viennagrid_mesh_::make_coboundary(viennagrid_int element_topo_dim, viennagr
 
 
 
-void viennagrid_mesh_::make_neighbor(viennagrid_int element_topo_dim, viennagrid_int connector_topo_dim, viennagrid_int neighbor_topo_dim)
+void viennagrid_mesh_::make_neighbor(viennagrid_dimension element_topo_dim, viennagrid_dimension connector_topo_dim, viennagrid_dimension neighbor_topo_dim)
 {
   if (!is_neighbor_obsolete(element_topo_dim, connector_topo_dim, neighbor_topo_dim))
     return;
@@ -431,11 +442,6 @@ void viennagrid_mesh_::make_boundary_flags()
 
   set_boundary_flags_uptodate();
 }
-
-
-
-
-
 
 
 

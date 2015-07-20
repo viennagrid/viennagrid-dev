@@ -1,6 +1,8 @@
 #ifndef VIENNAGRID_COMMON_HPP
 #define VIENNAGRID_COMMON_HPP
 
+#include <vector>
+
 template<typename T>
 void retain(T * ptr)
 {
@@ -18,6 +20,12 @@ bool release(T * ptr)
   }
 
   return true;
+}
+
+template<typename T, typename Alloc>
+void shrink_to_fit( std::vector<T, Alloc> & v )
+{
+  std::vector<T, Alloc>(v).swap(v);
 }
 
 #endif

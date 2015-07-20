@@ -84,9 +84,9 @@ viennagrid_error viennagrid_mesh_hierarchy_serialize(viennagrid_mesh_hierarchy m
   cell_region_offsets[0] = 0;
   for (viennagrid_int i = 0; i != cell_count; ++i)
   {
-    viennagrid_region * regions_begin = mesh_hierarchy->element_buffer(cell_dimension).regions_begin(i);
-    viennagrid_region * regions_end = mesh_hierarchy->element_buffer(cell_dimension).regions_end(i);
-    viennagrid_int count = regions_end-regions_begin;
+    viennagrid_region_id * region_ids_begin = mesh_hierarchy->element_buffer(cell_dimension).regions_begin(i);
+    viennagrid_region_id * region_ids_end = mesh_hierarchy->element_buffer(cell_dimension).regions_end(i);
+    viennagrid_int count = region_ids_end-region_ids_begin;
 
     cell_region_offsets[i+1] = cell_region_offsets[i] + count;
   }
@@ -95,10 +95,10 @@ viennagrid_error viennagrid_mesh_hierarchy_serialize(viennagrid_mesh_hierarchy m
   int index = 0;
   for (viennagrid_int i = 0; i != cell_region_offsets[cell_count]; ++i)
   {
-    for (viennagrid_region * region = mesh_hierarchy->element_buffer(cell_dimension).regions_begin(i);
-                             region != mesh_hierarchy->element_buffer(cell_dimension).regions_end(i);
-                           ++region, ++index)
-         cell_regions[index] = (*region)->id();
+    for (viennagrid_region_id * region_id = mesh_hierarchy->element_buffer(cell_dimension).regions_begin(i);
+                                region_id != mesh_hierarchy->element_buffer(cell_dimension).regions_end(i);
+                              ++region_id, ++index)
+         cell_regions[index] = *region_id;
   }
 
   s.serialize< viennagrid_int >( &cell_region_offsets[0], cell_count+1 );
@@ -155,12 +155,12 @@ viennagrid_error viennagrid_mesh_hierarchy_serialize(viennagrid_mesh_hierarchy m
   s.serialize< viennagrid_int >( region_count );
 
   index = 0;
-  for (viennagrid_region * region = mesh_hierarchy->regions_begin();
-                           region != mesh_hierarchy->regions_end();
-                         ++region, ++index)
+  for (viennagrid_region_id * region_id = mesh_hierarchy->region_ids_begin();
+                              region_id != mesh_hierarchy->region_ids_end();
+                            ++region_id, ++index)
   {
-    s.serialize< viennagrid_int >( (*region)->id() );
-    s.serialize( (*region)->name() );
+    s.serialize< viennagrid_int >( *region_id );
+    s.serialize( mesh_hierarchy->get_region(*region_id)->name() );
   }
 
 
@@ -340,7 +340,7 @@ viennagrid_error viennagrid_mesh_hierarchy_deserialize(viennagrid_mesh_hierarchy
     d.deserialize< viennagrid_int >(region_id);
 
     viennagrid_region region;
-    viennagrid_region_get_or_create( mesh_hierarchy, region_id, &region );
+    viennagrid_mesh_hierarchy_region_get_or_create( mesh_hierarchy, region_id, &region );
     id_region_map[ region_id ] = region;
 
     std::string name;
@@ -371,7 +371,7 @@ viennagrid_error viennagrid_mesh_hierarchy_deserialize(viennagrid_mesh_hierarchy
       viennagrid_element_add_to_region(mesh_hierarchy,
                                        cell_dimension,
                                        cell_id,
-                                       id_region_map[region_id]);
+                                       region_id);
     }
   }
 
