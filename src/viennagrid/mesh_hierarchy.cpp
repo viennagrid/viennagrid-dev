@@ -1,7 +1,5 @@
 #include "mesh_hierarchy.hpp"
 
-#include "boost/container/static_vector.hpp"
-
 void viennagrid_element_buffer::reserve_boundary(viennagrid_int element_id)
 {
   viennagrid_element_type type = element_type(element_id);
