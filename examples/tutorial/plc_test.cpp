@@ -85,7 +85,7 @@ int main()
 
 
   viennagrid_int facet;
-  viennagrid_plc_facet_create(plc, lines, 11, &facet);
+  viennagrid_plc_facet_create(plc, 11, lines, &facet);
 
   point[0] = 10.5;
   point[1] = 10.5;

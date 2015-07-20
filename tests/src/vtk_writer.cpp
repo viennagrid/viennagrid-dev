@@ -126,7 +126,7 @@ void test(std::string & infile, std::string & outfile)
   RegionRangeType regions(mesh);
   for (RegionRangeIterator rit = regions.begin(); rit != regions.end(); ++rit, ++index)
   {
-    std::cout << "Writing region " << (*rit).id() << std::endl;
+    std::cout << "Writing region " << (int)(*rit).id() << std::endl;
 
     typename viennagrid::result_of::accessor< std::deque<double>, VertexType >::type            region_vertex_double_data_accessor( region_vertex_double_data[(*rit).id()] );
     typename viennagrid::result_of::accessor< std::deque< std::vector<double> >, VertexType >::type    region_vertex_vector_data_accessor( region_vertex_vector_data[(*rit).id()] );

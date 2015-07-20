@@ -30,28 +30,28 @@ int main()
 
 
   std::cout << "C pure triangles" << std::endl;
-  bench_iteration(cell_count, bench_count, make_aabb_triangles_CPP, boost::bind(boundary_iteration_C_pure, _1, 0));
+  bench_iteration(cell_count, bench_count, boost::bind(make_aabb_triangles_CPP, _1, _2, false), boost::bind(boundary_iteration_C_pure, _1, 0));
   std::cout << std::endl;
 
   std::cout << "C triangles" << std::endl;
-  bench_iteration(cell_count, bench_count, make_aabb_triangles_CPP, boost::bind(boundary_iteration_C, _1, 0));
+  bench_iteration(cell_count, bench_count, boost::bind(make_aabb_triangles_CPP, _1, _2, false), boost::bind(boundary_iteration_C, _1, 0));
   std::cout << std::endl;
 
   std::cout << "CPP triangles" << std::endl;
-  bench_iteration(cell_count, bench_count, make_aabb_triangles_CPP, boost::bind(boundary_iteration_CPP, _1, 0));
+  bench_iteration(cell_count, bench_count, boost::bind(make_aabb_triangles_CPP, _1, _2, false), boost::bind(boundary_iteration_CPP, _1, 0));
   std::cout << std::endl;
 
 
   std::cout << "C pure tetrahedrons" << std::endl;
-  bench_iteration(cell_count, bench_count, make_aabb_tetrahedrons_CPP, boost::bind(boundary_iteration_C_pure, _1, 0));
+  bench_iteration(cell_count, bench_count, boost::bind(make_aabb_tetrahedrons_CPP, _1, _2, false), boost::bind(boundary_iteration_C_pure, _1, 0));
   std::cout << std::endl;
 
   std::cout << "C tetrahedrons" << std::endl;
-  bench_iteration(cell_count, bench_count, make_aabb_tetrahedrons_CPP, boost::bind(boundary_iteration_C, _1, 0));
+  bench_iteration(cell_count, bench_count, boost::bind(make_aabb_tetrahedrons_CPP, _1, _2, false), boost::bind(boundary_iteration_C, _1, 0));
   std::cout << std::endl;
 
   std::cout << "CPP tetrahedrons" << std::endl;
-  bench_iteration(cell_count, bench_count, make_aabb_tetrahedrons_CPP, boost::bind(boundary_iteration_CPP, _1, 0));
+  bench_iteration(cell_count, bench_count, boost::bind(make_aabb_tetrahedrons_CPP, _1, _2, false), boost::bind(boundary_iteration_CPP, _1, 0));
   std::cout << std::endl;
 
 

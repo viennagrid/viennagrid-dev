@@ -66,6 +66,7 @@ int main()
   /*ElementType tri1 =*/ viennagrid::make_triangle(mesh, v1, v2, v3);  //use the shortcut function
 
 
+  std::cout << "MH size = " << hierarchy.memory_size() << std::endl;
 
 
 

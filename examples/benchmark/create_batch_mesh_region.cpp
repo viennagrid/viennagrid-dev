@@ -24,25 +24,42 @@
 int main()
 {
   int bench_count = 10;
-  int cell_count = 1000000;
+  int cell_count = 100000;
   int region_count = 4;
 
+
+
+  std::cout << "C batch triangles" << std::endl;
+  bench_creation(cell_count, bench_count, boost::bind(batch_make_aabb_triangles_region_C, _1, _2, region_count, false) );
+  std::cout << std::endl;
 
   std::cout << "C triangles" << std::endl;
   bench_creation(cell_count, bench_count, boost::bind(make_aabb_triangles_region_C, _1, _2, region_count, false) );
   std::cout << std::endl;
 
-  std::cout << "CPP triangles" << std::endl;
-  bench_creation(cell_count, bench_count, boost::bind(make_aabb_triangles_region_CPP, _1, _2, region_count, false) );
+
+
+  std::cout << "C batch tetrahedrons" << std::endl;
+  bench_creation(cell_count, bench_count, boost::bind(batch_make_aabb_tetrahedrons_region_C, _1, _2, region_count, false) );
   std::cout << std::endl;
 
   std::cout << "C tetrahedrons" << std::endl;
   bench_creation(cell_count, bench_count, boost::bind(make_aabb_tetrahedrons_region_C, _1, _2, region_count, false) );
   std::cout << std::endl;
 
-  std::cout << "CPP tetrahedrons" << std::endl;
-  bench_creation(cell_count, bench_count, boost::bind(make_aabb_tetrahedrons_region_CPP, _1, _2, region_count, false) );
-  std::cout << std::endl;
+
+
+//   std::cout << "CPP triangles" << std::endl;
+//   bench_creation(cell_count, bench_count, boost::bind(make_aabb_triangles_region_CPP, _1, _2, region_count) );
+//   std::cout << std::endl;
+//
+//   std::cout << "C tetrahedrons" << std::endl;
+//   bench_creation(cell_count, bench_count, boost::bind(make_aabb_tetrahedrons_region_C, _1, _2, region_count) );
+//   std::cout << std::endl;
+//
+//   std::cout << "CPP tetrahedrons" << std::endl;
+//   bench_creation(cell_count, bench_count, boost::bind(make_aabb_tetrahedrons_region_CPP, _1, _2, region_count) );
+//   std::cout << std::endl;
 
 
   return EXIT_SUCCESS;

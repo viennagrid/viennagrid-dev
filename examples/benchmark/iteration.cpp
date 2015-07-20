@@ -29,20 +29,20 @@ int main()
   int cell_count = 1000000;
 
   std::cout << "C triangles" << std::endl;
-  bench_iteration(cell_count, bench_count, make_aabb_triangles_CPP, iteration_C);
+  bench_iteration(cell_count, bench_count, boost::bind(make_aabb_triangles_CPP, _1, _2, false), iteration_C);
   std::cout << std::endl;
 
   std::cout << "CPP triangles" << std::endl;
-  bench_iteration(cell_count, bench_count, make_aabb_triangles_CPP, iteration_CPP);
+  bench_iteration(cell_count, bench_count, boost::bind(make_aabb_triangles_CPP, _1, _2, false), iteration_CPP);
   std::cout << std::endl;
 
 
   std::cout << "C tetrahedrons" << std::endl;
-  bench_iteration(cell_count, bench_count, make_aabb_tetrahedrons_CPP, iteration_C);
+  bench_iteration(cell_count, bench_count, boost::bind(make_aabb_tetrahedrons_CPP, _1, _2, false), iteration_C);
   std::cout << std::endl;
 
   std::cout << "CPP tetrahedrons" << std::endl;
-  bench_iteration(cell_count, bench_count, make_aabb_tetrahedrons_CPP, iteration_CPP);
+  bench_iteration(cell_count, bench_count, boost::bind(make_aabb_tetrahedrons_CPP, _1, _2, false), iteration_CPP);
   std::cout << std::endl;
 
   return EXIT_SUCCESS;

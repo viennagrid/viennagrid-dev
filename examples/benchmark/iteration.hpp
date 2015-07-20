@@ -1,6 +1,7 @@
 #ifndef VIENNAGRID_BENCHMARK_ITERATION_HPP
 #define VIENNAGRID_BENCHMARK_ITERATION_HPP
 
+#include "viennagridpp/algorithm/volume.hpp"
 
 template<typename PointT1, typename PointT2>
 viennagrid_numeric signed_spanned_volume(PointT1 const & p1,
@@ -130,7 +131,7 @@ viennagrid_numeric volume(viennagrid_mesh_hierarchy mesh_hierarchy,
                           viennagrid_dimension geometry_dimension,
                           viennagrid_element_type element_type,
                           viennagrid_int * vertices_start,
-                          viennagrid_int * vertices_end)
+                          viennagrid_int * /*vertices_end*/)
 {
   viennagrid_numeric * coords;
   viennagrid_mesh_hierarchy_vertex_coords_pointer(mesh_hierarchy, &coords);

@@ -30,36 +30,36 @@ int main()
 
 
   std::cout << "C pure triangles" << std::endl;
-  bench_iteration(cell_count, bench_count, make_aabb_triangles_CPP, volume_C_pure);
+  bench_iteration(cell_count, bench_count, boost::bind(make_aabb_triangles_CPP, _1, _2, false), volume_C_pure);
   std::cout << std::endl;
 
   std::cout << "C triangles" << std::endl;
-  bench_iteration(cell_count, bench_count, make_aabb_triangles_CPP, volume_C);
+  bench_iteration(cell_count, bench_count, boost::bind(make_aabb_triangles_CPP, _1, _2, false), volume_C);
   std::cout << std::endl;
 
   std::cout << "CPP C mixed triangles" << std::endl;
-  bench_iteration(cell_count, bench_count, make_aabb_triangles_CPP, volume_mixed_CPP_C);
+  bench_iteration(cell_count, bench_count, boost::bind(make_aabb_triangles_CPP, _1, _2, false), volume_mixed_CPP_C);
   std::cout << std::endl;
 
   std::cout << "CPP triangles" << std::endl;
-  bench_iteration(cell_count, bench_count, make_aabb_triangles_CPP, volume_CPP);
+  bench_iteration(cell_count, bench_count, boost::bind(make_aabb_triangles_CPP, _1, _2, false), volume_CPP);
   std::cout << std::endl;
 
 
   std::cout << "C pure tetrahedrons" << std::endl;
-  bench_iteration(cell_count, bench_count, make_aabb_tetrahedrons_CPP, volume_C_pure);
+  bench_iteration(cell_count, bench_count, boost::bind(make_aabb_tetrahedrons_CPP, _1, _2, false), volume_C_pure);
   std::cout << std::endl;
 
   std::cout << "C tetrahedrons" << std::endl;
-  bench_iteration(cell_count, bench_count, make_aabb_tetrahedrons_CPP, volume_C);
+  bench_iteration(cell_count, bench_count, boost::bind(make_aabb_tetrahedrons_CPP, _1, _2, false), volume_C);
   std::cout << std::endl;
 
   std::cout << "CPP C mixed tetrahedrons" << std::endl;
-  bench_iteration(cell_count, bench_count, make_aabb_tetrahedrons_CPP, volume_mixed_CPP_C);
+  bench_iteration(cell_count, bench_count, boost::bind(make_aabb_tetrahedrons_CPP, _1, _2, false), volume_mixed_CPP_C);
   std::cout << std::endl;
 
   std::cout << "CPP tetrahedrons" << std::endl;
-  bench_iteration(cell_count, bench_count, make_aabb_tetrahedrons_CPP, volume_CPP);
+  bench_iteration(cell_count, bench_count, boost::bind(make_aabb_tetrahedrons_CPP, _1, _2, false), volume_CPP);
   std::cout << std::endl;
 
 

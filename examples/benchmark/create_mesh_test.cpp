@@ -22,21 +22,51 @@
 
 int main()
 {
-  int cell_count = 10000;
+  int cell_count = 100;
+  int region_count = 4;
+
+
+//   {
+//     viennagrid::mesh mesh;
+//     make_aabb_triangles_C(mesh, cell_count);
+//     viennagrid::io::vtk_writer<viennagrid::mesh> writer;
+//     writer(mesh, "triangles");
+//   }
+//
+//   {
+//     viennagrid::mesh mesh;
+//     make_aabb_tetrahedrons_C(mesh, cell_count);
+//     viennagrid::io::vtk_writer<viennagrid::mesh> writer;
+//     writer(mesh, "tetrahedrons");
+//   }
+//
+//
+//
+//   {
+//     viennagrid::mesh mesh;
+//     make_aabb_triangles_region_C(mesh, cell_count, region_count);
+//     viennagrid::io::vtk_writer<viennagrid::mesh> writer;
+//     writer(mesh, "triangles_region");
+//   }
+//
+//   {
+//     viennagrid::mesh mesh;
+//     make_aabb_tetrahedrons_region_C(mesh, cell_count, region_count);
+//     viennagrid::io::vtk_writer<viennagrid::mesh> writer;
+//     writer(mesh, "tetrahedrons_region");
+//   }
+
 
 
   {
     viennagrid::mesh mesh;
-    make_aabb_triangles_C(mesh, cell_count);
-    viennagrid::io::vtk_writer<viennagrid::mesh> writer;
-    writer(mesh, "triangles");
-  }
+    batch_make_aabb_triangles_region_C(mesh, cell_count, region_count, false);
 
-  {
-    viennagrid::mesh mesh;
-    make_aabb_tetrahedrons_C(mesh, cell_count);
+    typedef viennagrid::result_of::const_element_range<viennagrid::mesh>::type ConstElementRangeType;
+    typedef viennagrid::result_of::iterator<ConstElementRangeType>::type ConstElementIteratorType;
+
     viennagrid::io::vtk_writer<viennagrid::mesh> writer;
-    writer(mesh, "tetrahedrons");
+    writer(mesh, "batch_triangles_region");
   }
 
   return EXIT_SUCCESS;
