@@ -36,7 +36,7 @@ namespace viennagrid
       return id_;
     }
 
-    std::string name() const
+    std::string get_name() const
     {
       const char * name_;
       viennagrid_region_name_get(internal(), &name_);
@@ -149,6 +149,7 @@ namespace viennagrid
     const_iterator end() const { return cend(); }
 
     std::size_t size() const { return end() - begin(); }
+    bool empty() const { return size() == 0; }
 
   private:
     viennagrid_mesh_hierarchy mesh_hierarchy_;
@@ -242,7 +243,7 @@ namespace viennagrid
     }
 
     id_type id() const { return get_region().id(); }
-    std::string name() const { return get_region().name(); }
+    std::string get_name() const { return get_region().get_name(); }
     void set_name(std::string const & name_) { get_region().set_name(name_); }
     std::size_t geometric_dimension() const { return get_region().geometric_dimension(); }
     element_tag cell_tag() const { return get_region().cell_tag(); }
@@ -330,6 +331,7 @@ namespace viennagrid
     const_iterator end() const { return cend(); }
 
     std::size_t size() const { return end() - begin(); }
+    bool empty() const { return size() == 0; }
 
   private:
     viennagrid_mesh mesh_;
