@@ -646,6 +646,9 @@ VIENNAGRID_DYNAMIC_EXPORT viennagrid_error viennagrid_plc_retain(viennagrid_plc 
 /* decreases the reference counter of a PLC, if the reference counter is less or equal to zero, the object is deleted */
 VIENNAGRID_DYNAMIC_EXPORT viennagrid_error viennagrid_plc_release(viennagrid_plc plc);
 
+VIENNAGRID_DYNAMIC_EXPORT viennagrid_error viennagrid_plc_copy(viennagrid_plc src_plc,
+                                                               viennagrid_plc dst_plc);
+
 /* clears a PLC (removes all elements, meshes, regions, ... but does not touch reference counter) */
 VIENNAGRID_DYNAMIC_EXPORT viennagrid_error viennagrid_plc_clear(viennagrid_plc plc);
 

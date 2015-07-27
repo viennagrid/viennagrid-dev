@@ -803,6 +803,12 @@ viennagrid_error viennagrid_plc_release(viennagrid_plc plc)
   return VIENNAGRID_SUCCESS;
 }
 
+viennagrid_error viennagrid_plc_copy(viennagrid_plc src_plc,
+                                     viennagrid_plc dst_plc)
+{
+  *dst_plc = *src_plc;
+  return VIENNAGRID_SUCCESS;
+}
 
 
 
