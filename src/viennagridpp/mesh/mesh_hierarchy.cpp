@@ -124,7 +124,7 @@ namespace viennagrid
     RegionRangeType regions(*this);
     for (RegionRangeIterator rit = regions.begin(); rit != regions.end(); ++rit)
     {
-      if ( (*rit).name() == name )
+      if ( (*rit).get_name() == name )
         return *rit;
     }
 
@@ -148,7 +148,7 @@ namespace viennagrid
     RegionRangeType regions(*this);
     for (RegionRangeIterator rit = regions.begin(); rit != regions.end(); ++rit)
     {
-      if ( (*rit).name() == name )
+      if ( (*rit).get_name() == name )
         return *rit;
     }
 
@@ -170,7 +170,7 @@ namespace viennagrid
     RegionRangeType regions(*this);
     for (RegionRangeIterator rit = regions.begin(); rit != regions.end(); ++rit)
     {
-      if ( (*rit).name() == name )
+      if ( (*rit).get_name() == name )
         return true;
     }
 
