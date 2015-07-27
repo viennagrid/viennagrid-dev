@@ -34,13 +34,14 @@ int main()
   PointType middle = (max+min)/2;
   PointType size = max-min;
 
-  typedef viennagrid::ntree_node<ElementType> NodeType;
+  typedef viennagrid::vertex_with_distance_wrapper<ElementType> WrapperType;
+  typedef viennagrid::ntree_node<WrapperType> NodeType;
 
   NodeType * root = new NodeType( middle-size/2*1.1 , middle+size/2*1.1 );
   for (ConstVertexIteratorType vit = vertices.begin(); vit != vertices.end(); ++vit)
   {
 //     root->add( viennagrid::element_wrapper<ElementType>(*vit), 5, 5);
-    root->add( viennagrid::vertex_with_distance_wrapper<ElementType>(*vit, 0.1), 5, 5);
+    root->add( WrapperType(*vit, 0.1), 5, 5);
   }
 
   root->print();

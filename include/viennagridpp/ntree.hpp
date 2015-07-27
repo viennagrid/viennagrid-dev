@@ -1,8 +1,38 @@
 #ifndef VIENNAGRID_NTREE_HPP
 #define VIENNAGRID_NTREE_HPP
 
+#include "viennagridpp/point.hpp"
+
 namespace viennagrid
 {
+  class point_id_wrapper
+  {
+  public:
+    typedef viennagrid::point point_type;
+    typedef viennagrid_int id_type;
+
+    point_id_wrapper(point_type const & point_in, id_type id_in) : point_(point_in), id_(id_in) {}
+
+    id_type id() const { return id_; }
+    point_type const & point() const { return point_; }
+
+    template<typename BoxT>
+    bool intersect(BoxT const & box) const
+    {
+      return (box.min() <= point_) && (point_ < box.max());
+    }
+
+    template<typename StreamT>
+    void print(StreamT & s) const
+    {
+      s << point() << " (id = " << id() << ")";
+    }
+
+  private:
+
+    point_type point_;
+    id_type id_;
+  };
 
 
   template<typename ElementT>
@@ -10,23 +40,29 @@ namespace viennagrid
   {
   public:
     typedef ElementT element_type;
-    typedef typename viennagrid::result_of::point<ElementT>::type PointType;
+    typedef typename viennagrid::result_of::point<ElementT>::type point_type;
 
     element_wrapper(ElementT const & element_) : element(element_) {}
 
-    ElementT const & unpack() const { return element; }
+    ElementT const & operator()() const { return element; }
 
     template<typename BoxT>
     bool intersect(BoxT const & box) const
     {
       if (element.is_vertex())
       {
-        PointType point = viennagrid::get_point(element);
+        point_type point = viennagrid::get_point(element);
         return (box.min() <= point) && (point < box.max());
       }
 
       assert(false);
       return false;
+    }
+
+    template<typename StreamT>
+    void print(StreamT & s) const
+    {
+      s << element;
     }
 
   private:
@@ -40,20 +76,20 @@ namespace viennagrid
   public:
     typedef ElementT element_type;
 
-    typedef typename viennagrid::result_of::point<ElementT>::type PointType;
+    typedef typename viennagrid::result_of::point<ElementT>::type point_type;
     typedef typename viennagrid::result_of::coord<ElementT>::type CoordType;
 
     vertex_with_distance_wrapper(ElementT const & element_, CoordType distance_) : element(element_), distance(distance_) {}
 
-    ElementT const & unpack() const { return element; }
+    ElementT const & operator()() const { return element; }
 
     template<typename BoxT>
     bool intersect(BoxT const & box) const
     {
       assert( element.is_vertex() );
-      PointType point = viennagrid::get_point(element);
-      PointType p_min = point - PointType( point.size(), distance );
-      PointType p_max = point + PointType( point.size(), distance );
+      point_type point = viennagrid::get_point(element);
+      point_type p_min = point - point_type( point.size(), distance );
+      point_type p_max = point + point_type( point.size(), distance );
 
       for (std::size_t dim = 0; dim != point.size(); ++dim)
       {
@@ -67,6 +103,12 @@ namespace viennagrid
       return true;
     }
 
+    template<typename StreamT>
+    void print(StreamT & s) const
+    {
+      s << element << " (distance = " << distance << ")";
+    }
+
   private:
     ElementT element;
     CoordType distance;
@@ -76,31 +118,12 @@ namespace viennagrid
 
 
 
-
-
   template<typename WrapperT>
-  typename WrapperT::element_type const & unpack(WrapperT const & wrapper)
-  {
-    return wrapper.unpack();
-  }
-
-  template<typename WrapperT, typename BoxT>
-  bool intersect(WrapperT const & wrapper, BoxT const & box)
-  {
-    return wrapper.intersect(box);
-  }
-
-
-
-
-
-
-  template<typename ElementT>
   class ntree_node
   {
   public:
-    typedef ntree_node<ElementT> node_type;
-    typedef typename viennagrid::result_of::point<ElementT>::type point_type;
+    typedef ntree_node<WrapperT> node_type;
+    typedef typename WrapperT::point_type point_type;
 
     ntree_node(point_type min_in, point_type max_in, int depth_in = 0) : min_(min_in), max_(max_in), depth_(depth_in) {}
     ~ntree_node()
@@ -131,17 +154,16 @@ namespace viennagrid
       return 0;
     }
 
-    std::vector<ElementT> const & elements() const { return elements_; }
+    std::vector<WrapperT> const & elements() const { return elements_; }
 
     bool is_inside(point_type const & point) const
     {
       return (min() <= point) && (point < max());
     }
 
-    template<typename WrapperT>
     bool intersect(WrapperT const & wrapper) const
     {
-      return viennagrid::intersect(wrapper, *this);
+      return wrapper.intersect(*this);
     }
 
 //     bool intersect(ElementT const & element) const
@@ -196,15 +218,14 @@ namespace viennagrid
       {
         for (std::size_t j = 0; j != children.size(); ++j)
         {
-          if (children[j]->intersect( element_wrapper<ElementT>(elements_[i]) ))
-            children[j]->add_element_impl( element_wrapper<ElementT>(elements_[i]) );
+          if (children[j]->intersect( elements_[i]) )
+            children[j]->add_element_impl( elements_[i] );
         }
       }
       elements_.clear();
     }
 
 
-    template<typename WrapperT>
     void add(WrapperT const & wrapper, std::size_t max_elements_per_node, int max_depth)
     {
       // if node has children: pass to children
@@ -248,7 +269,9 @@ namespace viennagrid
       indent(); std::cout << " max = " << max() << std::endl;
       for (std::size_t i = 0; i != elements().size(); ++i)
       {
-        indent(); std::cout << elements()[i] << std::endl;
+        indent();
+        elements()[i].print(std::cout);
+        std::cout << std::endl;
       }
 
       for (std::size_t i = 0; i != children.size(); ++i)
@@ -274,7 +297,7 @@ namespace viennagrid
       return d;
     }
 
-    bool erase(ElementT const & to_erase)
+    bool erase(WrapperT const & to_erase)
     {
       for (std::size_t i = 0; i != elements_.size(); ++i)
       {
@@ -303,11 +326,10 @@ namespace viennagrid
 
   private:
 
-    template<typename WrapperT>
     void add_element_impl(WrapperT const & wrapper)
     {
-      assert( viennagrid::intersect(wrapper, *this) );
-      elements_.push_back( unpack(wrapper) );
+      assert( wrapper.intersect(*this) );
+      elements_.push_back( wrapper );
     }
 
     void indent() const
@@ -321,7 +343,7 @@ namespace viennagrid
     int depth_;
 
     std::vector<node_type*> children;
-    std::vector<ElementT> elements_;
+    std::vector<WrapperT> elements_;
   };
 
 }
