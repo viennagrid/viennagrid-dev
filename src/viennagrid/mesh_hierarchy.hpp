@@ -595,14 +595,18 @@ public:
 
   viennagrid_region get_region(viennagrid_region_id region_id)
   {
-    if ( (region_id >= (viennagrid_int)region_id_mapping.size()) || (region_id < 0) )
+    if ( (region_id >= (viennagrid_region_id)region_id_mapping.size()) ||
+         (region_id == VIENNAGRID_INVALID_REGION_ID) ||
+         (region_id_mapping[region_id] == VIENNAGRID_INVALID_REGION_ID) )
+    {
       return NULL;
+    }
     return regions[ region_id_mapping[region_id] ];
   }
 
   viennagrid_region get_or_create_region(viennagrid_region_id region_id)
   {
-    if (region_id < 0)
+    if (region_id == VIENNAGRID_INVALID_REGION_ID)
       return NULL;
 
     viennagrid_region tmp = get_region(region_id);
@@ -613,14 +617,13 @@ public:
     regions.push_back( new viennagrid_region_(region_id, this) );
 
     if (region_id >= region_id_mapping.size())
-      region_id_mapping.resize( region_id+1 );
+      region_id_mapping.resize( region_id+1, VIENNAGRID_INVALID_REGION_ID );
 
     region_id_mapping[region_id] = regions.size()-1;
 
     std::stringstream ss;
-    ss << region_id;
+    ss << (int)region_id;
     regions.back()->set_name(ss.str());
-
 
     return regions.back();
   }
@@ -686,6 +689,7 @@ public:
     for (std::vector<viennagrid_region>::iterator it = regions.begin(); it != regions.end(); ++it)
       delete *it;
     regions.clear();
+    region_ids.clear();
     region_id_mapping.clear();
 
     change_counter_ = 0;
