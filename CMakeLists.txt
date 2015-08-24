@@ -30,11 +30,27 @@ if (VIENNA_BUILD_IS_MAIN_PROJECT)
   set(BUILD_SHARED_LIBS 1)
   include(ViennaGridCommon)
 
+  if ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "Clang")
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wno-variadic-macros -Wno-long-long -Wno-c99-extensions")
+  elseif ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "GNU")
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wno-variadic-macros")
+  elseif ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "Intel")
+    # using Intel C++
+  elseif ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "MSVC")
+    # using Visual Studio C++
+  endif()
+
   option(ENABLE_PEDANTIC_FLAGS "Enable pedantic compiler flags" ON)
   if(ENABLE_PEDANTIC_FLAGS)
     SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -Wextra -pedantic")
     SET(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -Wall -Wextra -pedantic")
   endif()
+
+  message( STATUS "BUILD TYPE = ${CMAKE_BUILD_TYPE}" )
+  message( STATUS "CXX FLAGS = ${CMAKE_CXX_FLAGS}" )
+  message( STATUS "C FLAGS = ${CMAKE_C_FLAGS}" )
+  message( STATUS "RELEASE FLAGS = ${CMAKE_CXX_FLAGS_RELEASE}" )
+  message( STATUS "DEBUG FLAGS = ${CMAKE_CXX_FLAGS_DEBUG}" )
 endif ()
 
 vienna_build_add_subprojects()
