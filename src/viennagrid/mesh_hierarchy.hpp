@@ -614,6 +614,7 @@ public:
       return tmp;
 
     region_ids.push_back(region_id);
+    std::sort( region_ids.begin(), region_ids.end() );
     regions.push_back( new viennagrid_region_(region_id, this) );
 
     if (region_id >= region_id_mapping.size())
