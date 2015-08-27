@@ -78,7 +78,17 @@ viennagrid_error viennagrid_mesh_hierarchy_serialize(viennagrid_mesh_hierarchy m
   s.serialize<viennagrid_element_type>( mesh_hierarchy->element_buffer(cell_dimension).element_types_pointer(), cell_count );
   s.serialize<viennagrid_int>( mesh_hierarchy->element_buffer(cell_dimension).vertex_offsets_pointer(), cell_count+1 );
   s.serialize<viennagrid_int>( mesh_hierarchy->element_buffer(cell_dimension).vertex_ids_pointer(), mesh_hierarchy->element_buffer(cell_dimension).vertex_offsets_pointer()[cell_count] );
-  s.serialize<viennagrid_int>( mesh_hierarchy->element_buffer(cell_dimension).parent_id_pointer(), cell_count );
+  if ( mesh_hierarchy->element_buffer(cell_dimension).parent_id_pointer() )
+  {
+    s.serialize<bool>( true );
+    s.serialize<viennagrid_int>( mesh_hierarchy->element_buffer(cell_dimension).parent_id_pointer(), cell_count );
+  }
+  else
+  {
+    s.serialize<bool>( false );
+  }
+
+
 
   std::vector<viennagrid_int> cell_region_offsets(cell_count+1);
   cell_region_offsets[0] = 0;
@@ -116,6 +126,7 @@ viennagrid_error viennagrid_mesh_hierarchy_serialize(viennagrid_mesh_hierarchy m
   s.serialize< viennagrid_int >( mesh_count );
 
   std::vector<viennagrid_int> mesh_parents(mesh_count);
+  std::vector<viennagrid_int> mesh_vertex_count(mesh_count);
   std::vector<viennagrid_int> mesh_cell_count(mesh_count);
 
   for (viennagrid_int i = 0; i != mesh_count; ++i)
@@ -135,16 +146,19 @@ viennagrid_error viennagrid_mesh_hierarchy_serialize(viennagrid_mesh_hierarchy m
     else
       mesh_parents[i] = mesh_to_index_map[mesh];
 
+    mesh_vertex_count[i] = mesh->element_count(0);
     mesh_cell_count[i] = mesh->element_count(cell_dimension);
   }
 
   s.serialize< viennagrid_int >( &mesh_parents[0], mesh_count );
+  s.serialize< viennagrid_int >( &mesh_vertex_count[0], mesh_count );
   s.serialize< viennagrid_int >( &mesh_cell_count[0], mesh_count );
 
   for (viennagrid_int i = 0; i != mesh_count; ++i)
   {
     viennagrid_mesh mesh = mesh_hierarchy->mesh(i);
     s.serialize( mesh->name() );
+    s.serialize< viennagrid_int >( mesh->elements_begin(0), mesh_vertex_count[i] );
     s.serialize< viennagrid_int >( mesh->elements_begin(cell_dimension), mesh_cell_count[i] );
   }
 
@@ -283,8 +297,15 @@ viennagrid_error viennagrid_mesh_hierarchy_deserialize(viennagrid_mesh_hierarchy
   std::vector<viennagrid_int> cell_vertex_ids(cell_vertex_offsets[cell_count]);
   d.deserialize< viennagrid_int >( &cell_vertex_ids[0], cell_vertex_offsets[cell_count] );
 
-  std::vector<viennagrid_int> cell_parent_ids(cell_count);
-  d.deserialize< viennagrid_int >( &cell_parent_ids[0], cell_count );
+
+  std::vector<viennagrid_int> cell_parent_ids;
+  bool cell_parents_available;
+  d.deserialize< bool >( cell_parents_available );
+  if (cell_parents_available)
+  {
+    cell_parent_ids.resize(cell_count);
+    d.deserialize< viennagrid_int >( &cell_parent_ids[0], cell_count );
+  }
 
 
   std::vector<viennagrid_int> cell_region_offsets(cell_count+1);
@@ -300,9 +321,13 @@ viennagrid_error viennagrid_mesh_hierarchy_deserialize(viennagrid_mesh_hierarchy
   std::vector<viennagrid_int> mesh_parents(mesh_count);
   d.deserialize< viennagrid_int >( &mesh_parents[0], mesh_count );
 
+  std::vector<viennagrid_int> mesh_vertex_count(mesh_count);
+  d.deserialize< viennagrid_int >( &mesh_vertex_count[0], mesh_count );
+
   std::vector<viennagrid_int> mesh_cell_count(mesh_count);
   d.deserialize< viennagrid_int >( &mesh_cell_count[0], mesh_count );
 
+  std::vector< std::vector<viennagrid_int> > mesh_vertices(mesh_count);
   std::vector< std::vector<viennagrid_int> > mesh_cells(mesh_count);
 
 
@@ -325,6 +350,9 @@ viennagrid_error viennagrid_mesh_hierarchy_deserialize(viennagrid_mesh_hierarchy
     std::string name;
     d.deserialize(name);
     viennagrid_mesh_name_set( index_mesh_map[i], name.c_str() );
+
+    mesh_vertices[i].resize( mesh_vertex_count[i] );
+    d.deserialize< viennagrid_int >( &mesh_vertices[i][0], mesh_vertex_count[i] );
 
     mesh_cells[i].resize( mesh_cell_count[i] );
     d.deserialize< viennagrid_int >( &mesh_cells[i][0], mesh_cell_count[i] );
@@ -360,10 +388,13 @@ viennagrid_error viennagrid_mesh_hierarchy_deserialize(viennagrid_mesh_hierarchy
                                              &cell_vertex_ids[0] + cell_vertex_offsets[i],
                                              &cell_id);
 
-    viennagrid_element_parent_set(mesh_hierarchy,
-                                  cell_dimension,
-                                  cell_id,
-                                  cell_parent_ids[i]);
+    if (cell_parents_available)
+    {
+      viennagrid_element_parent_set(mesh_hierarchy,
+                                    cell_dimension,
+                                    cell_id,
+                                    cell_parent_ids[i]);
+    }
 
     for (viennagrid_int j = cell_region_offsets[i]; j != cell_region_offsets[i+1]; ++j)
     {
@@ -377,11 +408,18 @@ viennagrid_error viennagrid_mesh_hierarchy_deserialize(viennagrid_mesh_hierarchy
 
   for (viennagrid_int i = 0; i != mesh_count; ++i)
   {
+    for (viennagrid_int j = 0; j != mesh_vertex_count[i]; ++j)
+    {
+      viennagrid_mesh_element_add(index_mesh_map[i], 0, mesh_vertices[i][j]);
+    }
+
     for (viennagrid_int j = 0; j != mesh_cell_count[i]; ++j)
     {
       viennagrid_mesh_element_add(index_mesh_map[i], cell_dimension, mesh_cells[i][j]);
     }
   }
+
+  mesh_hierarchy->increment_change_counter();
 
   return VIENNAGRID_SUCCESS;
 }
