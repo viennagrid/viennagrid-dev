@@ -105,6 +105,64 @@ viennagrid_int viennagrid_plc_::get_make_facet(viennagrid_int line_count, vienna
 
 
 
+
+viennagrid_int * viennagrid_plc_::boundary_ptr(viennagrid_dimension topologic_dimension,
+                                               viennagrid_dimension boundary_topologic_dimension)
+{
+  switch (topologic_dimension)
+  {
+    case 1:
+    {
+      return line_vertices_.values_pointer();
+    }
+
+    case 2:
+    {
+      switch (boundary_topologic_dimension)
+      {
+        case 0:
+          return facet_vertices_.values_pointer();
+        case 1:
+          return facet_lines_.values_pointer();
+      }
+    }
+  }
+
+  assert(false);
+  return 0;
+}
+
+viennagrid_int * viennagrid_plc_::boundary_offsets(viennagrid_dimension topologic_dimension,
+                                  viennagrid_dimension boundary_topologic_dimension)
+{
+  switch (topologic_dimension)
+  {
+    case 1:
+    {
+      return line_vertices_.offset_pointer();
+    }
+
+    case 2:
+    {
+      switch (boundary_topologic_dimension)
+      {
+        case 0:
+          return facet_vertices_.offset_pointer();
+        case 1:
+          return facet_lines_.offset_pointer();
+      }
+    }
+  }
+
+  assert(false);
+  return 0;
+}
+
+
+
+
+
+
 viennagrid_int * viennagrid_plc_::boundary_begin(viennagrid_dimension topologic_dimension,
                                   viennagrid_int id,
                                   viennagrid_dimension boundary_topologic_dimension)

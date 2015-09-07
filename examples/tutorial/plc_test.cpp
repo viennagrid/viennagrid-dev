@@ -128,7 +128,7 @@ int main()
   printf("All hole points of the facet\n");
   viennagrid_numeric * hole_points;
   viennagrid_int hole_point_count;
-  viennagrid_plc_facet_hole_points_get(plc, facet, &hole_points, &hole_point_count);
+  viennagrid_plc_facet_hole_points_get(plc, facet, &hole_point_count, &hole_points);
 
   for (viennagrid_int i = 0; i != hole_point_count; ++i)
   {

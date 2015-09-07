@@ -62,7 +62,7 @@ int main()
     printf("  All hole points of the facet\n");
     viennagrid_numeric * hole_points;
     viennagrid_int hole_point_count;
-    viennagrid_plc_facet_hole_points_get(plc, facet, &hole_points, &hole_point_count);
+    viennagrid_plc_facet_hole_points_get(plc, facet, &hole_point_count, &hole_points);
 
     for (viennagrid_int i = 0; i != hole_point_count; ++i)
     {
@@ -72,7 +72,7 @@ int main()
 
   viennagrid_numeric * hole_points;
   viennagrid_int hole_point_count;
-  viennagrid_plc_volumetric_hole_points_get(plc, &hole_points, &hole_point_count);
+  viennagrid_plc_volumetric_hole_points_get(plc, &hole_point_count, &hole_points);
   printf("All hole points of the PLC\n");
   for (viennagrid_int i = 0; i != hole_point_count; ++i)
   {
@@ -82,7 +82,7 @@ int main()
   viennagrid_numeric * seed_points;
   viennagrid_int * seed_point_regions;
   viennagrid_int seed_point_count;
-  viennagrid_plc_seed_points_get(plc, &seed_points, &seed_point_regions, &seed_point_count);
+  viennagrid_plc_seed_points_get(plc, &seed_point_count, &seed_points, &seed_point_regions);
   printf("All seed points of the PLC\n");
   for (viennagrid_int i = 0; i != seed_point_count; ++i)
   {

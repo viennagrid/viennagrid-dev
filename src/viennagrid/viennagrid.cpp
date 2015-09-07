@@ -833,7 +833,7 @@ viennagrid_error viennagrid_plc_init_from_plc(viennagrid_plc src_plc,
   {
     viennagrid_numeric * hole_points;
     viennagrid_int hole_point_count;
-    viennagrid_plc_volumetric_hole_points_get(src_plc, &hole_points, &hole_point_count);
+    viennagrid_plc_volumetric_hole_points_get(src_plc, &hole_point_count, &hole_points);
     for (viennagrid_int i = 0; i != hole_point_count; ++i)
       viennagrid_plc_volumetric_hole_point_add(dst_plc, hole_points + i*geometric_dimension);
   }
@@ -843,7 +843,7 @@ viennagrid_error viennagrid_plc_init_from_plc(viennagrid_plc src_plc,
     viennagrid_numeric * seed_points;
     viennagrid_int * seed_point_regions;
     viennagrid_int seed_point_count;
-    viennagrid_plc_seed_points_get(src_plc, &seed_points, &seed_point_regions, &seed_point_count);
+    viennagrid_plc_seed_points_get(src_plc, &seed_point_count, &seed_points, &seed_point_regions);
     for (viennagrid_int i = 0; i != seed_point_count; ++i)
       viennagrid_plc_seed_point_add(dst_plc, seed_points + i*geometric_dimension, seed_point_regions[i]);
   }
@@ -922,6 +922,23 @@ viennagrid_error viennagrid_plc_facet_create(viennagrid_plc plc,
   return VIENNAGRID_SUCCESS;
 }
 
+
+viennagrid_error viennagrid_plc_boundary_element_pointer(viennagrid_plc plc,
+                                                         viennagrid_dimension element_topo_dim,
+                                                         viennagrid_dimension boundary_topo_dim,
+                                                         viennagrid_int ** boundary_offsets,
+                                                         viennagrid_int ** boundary_element_ptr)
+{
+  if (boundary_offsets)
+    *boundary_offsets = plc->boundary_offsets(element_topo_dim, boundary_topo_dim);
+
+  if (boundary_element_ptr)
+    *boundary_element_ptr = plc->boundary_ptr(element_topo_dim, boundary_topo_dim);
+
+  return VIENNAGRID_SUCCESS;
+}
+
+
 viennagrid_error viennagrid_plc_boundary_elements(viennagrid_plc plc,
                                                   viennagrid_dimension element_topo_dim,
                                                   viennagrid_int element_id,
@@ -934,6 +951,7 @@ viennagrid_error viennagrid_plc_boundary_elements(viennagrid_plc plc,
 
   if (boundary_element_ids_end)
     *boundary_element_ids_end = plc->boundary_end(element_topo_dim, element_id, boundary_topo_dim);
+
   return VIENNAGRID_SUCCESS;
 }
 
@@ -955,8 +973,8 @@ viennagrid_error viennagrid_plc_facet_hole_point_delete(viennagrid_plc plc,
 
 viennagrid_error viennagrid_plc_facet_hole_points_get(viennagrid_plc plc,
                                                       viennagrid_int facet_id,
-                                                      viennagrid_numeric ** coords,
-                                                      viennagrid_int * hole_point_count)
+                                                      viennagrid_int * hole_point_count,
+                                                      viennagrid_numeric ** coords)
 {
   *coords = plc->facet_hole_points(facet_id);
   *hole_point_count = plc->facet_hole_point_count(facet_id);
@@ -972,8 +990,8 @@ viennagrid_error viennagrid_plc_volumetric_hole_point_add(viennagrid_plc plc,
 }
 
 viennagrid_error viennagrid_plc_volumetric_hole_points_get(viennagrid_plc plc,
-                                                           viennagrid_numeric ** coords,
-                                                           viennagrid_int * count)
+                                                           viennagrid_int * count,
+                                                           viennagrid_numeric ** coords)
 {
   *coords = plc->get_hole_points();
   *count = plc->hole_point_count();
@@ -991,9 +1009,9 @@ viennagrid_error viennagrid_plc_seed_point_add(viennagrid_plc plc,
 }
 
 viennagrid_error viennagrid_plc_seed_points_get(viennagrid_plc plc,
+                                                viennagrid_int * count,
                                                 viennagrid_numeric ** coords,
-                                                viennagrid_int ** region_ids,
-                                                viennagrid_int * count)
+                                                viennagrid_int ** region_ids)
 {
   *coords = plc->get_seed_points();
   *region_ids = plc->get_seed_point_regions();
@@ -1132,7 +1150,7 @@ viennagrid_error viennagrid_plc_line_refine(viennagrid_plc plc,
 
     viennagrid_numeric * facet_hole_points;
     viennagrid_int facet_hole_point_count;
-    viennagrid_plc_facet_hole_points_get(plc, facet_id, &facet_hole_points, &facet_hole_point_count);
+    viennagrid_plc_facet_hole_points_get(plc, facet_id, &facet_hole_point_count, &facet_hole_points);
     for (viennagrid_int i = 0; i != facet_hole_point_count; ++i)
       viennagrid_plc_facet_hole_point_add(plc, new_facet_id, facet_hole_points + i*geometric_dimension);
   }

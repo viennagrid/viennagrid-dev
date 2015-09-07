@@ -694,6 +694,14 @@ VIENNAGRID_DYNAMIC_EXPORT viennagrid_error viennagrid_plc_facet_create(viennagri
                                                                        viennagrid_int * line_ids,
                                                                        viennagrid_int * facet_id);
 
+
+/* gets the boundary element pointers of a specific topological dimension for a given boundary topological dimension */
+VIENNAGRID_DYNAMIC_EXPORT viennagrid_error viennagrid_plc_boundary_element_pointer(viennagrid_plc plc,
+                                                                                   viennagrid_dimension element_topo_dim,
+                                                                                   viennagrid_dimension boundary_topo_dim,
+                                                                                   viennagrid_int ** boundary_element_offsets,
+                                                                                   viennagrid_int ** boundary_element_ptr);
+
 /* get the boundary elements of a specific element given a boundary topological dimension */
 VIENNAGRID_DYNAMIC_EXPORT viennagrid_error viennagrid_plc_boundary_elements(viennagrid_plc plc,
                                                                             viennagrid_dimension element_topo_dim,
@@ -713,8 +721,8 @@ VIENNAGRID_DYNAMIC_EXPORT viennagrid_error viennagrid_plc_facet_hole_point_delet
 /* gets the coordinates and the count of a all hole points on a facet */
 VIENNAGRID_DYNAMIC_EXPORT viennagrid_error viennagrid_plc_facet_hole_points_get(viennagrid_plc plc,
                                                                                 viennagrid_int facet_id,
-                                                                                viennagrid_numeric ** coords,
-                                                                                viennagrid_int * hole_point_count);
+                                                                                viennagrid_int * hole_point_count,
+                                                                                viennagrid_numeric ** coords);
 
 /* adds a volumetric hole point to a PLC */
 VIENNAGRID_DYNAMIC_EXPORT viennagrid_error viennagrid_plc_volumetric_hole_point_add(viennagrid_plc plc,
@@ -724,8 +732,8 @@ VIENNAGRID_DYNAMIC_EXPORT viennagrid_error viennagrid_plc_volumetric_hole_point_
                                                                                        viennagrid_int point_id);
 /* gets the coordinates and the count of a all volumetric hole points of a PLC */
 VIENNAGRID_DYNAMIC_EXPORT viennagrid_error viennagrid_plc_volumetric_hole_points_get(viennagrid_plc plc,
-                                                                                     viennagrid_numeric ** coords,
-                                                                                     viennagrid_int * count);
+                                                                                     viennagrid_int * count,
+                                                                                     viennagrid_numeric ** coords);
 
 /* adds a seed hole point to a PLC */
 VIENNAGRID_DYNAMIC_EXPORT viennagrid_error viennagrid_plc_seed_point_add(viennagrid_plc plc,
@@ -736,9 +744,9 @@ VIENNAGRID_DYNAMIC_EXPORT viennagrid_error viennagrid_plc_seed_point_delete(vien
                                                                             viennagrid_int point_id);
 /* gets the coordinates, the region_ids and the count of a all seed hole points of a PLC */
 VIENNAGRID_DYNAMIC_EXPORT viennagrid_error viennagrid_plc_seed_points_get(viennagrid_plc plc,
+                                                                          viennagrid_int * count,
                                                                           viennagrid_numeric ** coords,
-                                                                          viennagrid_int ** region_ids,
-                                                                          viennagrid_int * count);
+                                                                          viennagrid_int ** region_ids);
 
 /* refines the lines of a PLC that no line in output_plc is greater than line_size */
 VIENNAGRID_DYNAMIC_EXPORT viennagrid_error viennagrid_plc_line_refine(viennagrid_plc plc,

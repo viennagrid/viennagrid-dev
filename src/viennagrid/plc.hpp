@@ -46,6 +46,12 @@ public:
   viennagrid_int get_make_facet(viennagrid_int line_count, viennagrid_int * line_ids);
 
 
+  viennagrid_int * boundary_ptr(viennagrid_dimension topologic_dimension,
+                                viennagrid_dimension boundary_topologic_dimension);
+  viennagrid_int * boundary_offsets(viennagrid_dimension topologic_dimension,
+                                    viennagrid_dimension boundary_topologic_dimension);
+
+
   viennagrid_int * boundary_begin(viennagrid_dimension topologic_dimension,
                                     viennagrid_int id,
                                     viennagrid_dimension boundary_topologic_dimension);
