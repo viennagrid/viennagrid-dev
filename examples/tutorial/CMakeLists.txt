@@ -15,6 +15,9 @@ target_link_libraries(coboundary_iteration    viennagridpp)
 ADD_EXECUTABLE(mesh_setup           mesh_setup.cpp)
 target_link_libraries(mesh_setup    viennagridpp)
 
+ADD_EXECUTABLE(mesh_setup_c         mesh_setup.c)
+target_link_libraries(mesh_setup_c  viennagrid)
+
 # add_executable(element_erase        element_erase.cpp)
 # target_link_libraries(element_erase    viennagrid)
 
