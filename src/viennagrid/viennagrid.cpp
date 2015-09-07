@@ -755,11 +755,15 @@ viennagrid_error viennagrid_element_regions_get(viennagrid_mesh_hierarchy hierar
   return VIENNAGRID_SUCCESS;
 }
 
-viennagrid_error viennagrid_element_add_to_region(viennagrid_mesh_hierarchy hierarchy,
-                                                  viennagrid_dimension element_topo_dim,
-                                                  viennagrid_int element_id,
-                                                  viennagrid_region_id region_id)
+
+
+viennagrid_error viennagrid_region_element_add(viennagrid_region region,
+                                               viennagrid_dimension element_topo_dim,
+                                               viennagrid_int element_id)
 {
+  viennagrid_region_id region_id = region->id();
+  viennagrid_mesh_hierarchy hierarchy = region->mesh_hierarchy();
+
   hierarchy->element_buffer(element_topo_dim).add_to_region(element_id, region_id);
 
   for (viennagrid_dimension boundary_topo_dim = 0; boundary_topo_dim != element_topo_dim; ++boundary_topo_dim)
@@ -774,6 +778,34 @@ viennagrid_error viennagrid_element_add_to_region(viennagrid_mesh_hierarchy hier
   return VIENNAGRID_SUCCESS;
 }
 
+
+viennagrid_error viennagrid_region_contains_element(viennagrid_region region,
+                                                    viennagrid_dimension _element_topo_dim,
+                                                    viennagrid_int element_id,
+                                                    viennagrid_bool * value)
+{
+  if (!value)
+    return VIENNAGRID_SUCCESS;
+
+  viennagrid_region_id region_id = region->id();
+  viennagrid_mesh_hierarchy hierarchy = region->mesh_hierarchy();
+
+  viennagrid_region_id * region_ids_begin;
+  viennagrid_region_id * region_ids_end;
+  viennagrid_element_regions_get(hierarchy, _element_topo_dim, element_id, &region_ids_begin, &region_ids_end);
+
+  for (viennagrid_region_id * it = region_ids_begin; it != region_ids_end; ++it)
+  {
+    if ( *it == region_id )
+    {
+      *value = VIENNAGRID_TRUE;
+      return VIENNAGRID_SUCCESS;
+    }
+  }
+
+  *value = VIENNAGRID_FALSE;
+  return VIENNAGRID_SUCCESS;
+}
 
 
 

@@ -5,13 +5,7 @@ namespace viennagrid
 
  void add(viennagrid_region region, element const & e)
   {
-    viennagrid_region_id region_id;
-    viennagrid_region_id_get(region, &region_id);
-
-    viennagrid_element_add_to_region(internal_mesh_hierarchy(e),
-                                     viennagrid::topologic_dimension(e),
-                                     e.id(),
-                                     region_id);
+    viennagrid_region_element_add( region, viennagrid::topologic_dimension(e), e.id());
   }
 
 

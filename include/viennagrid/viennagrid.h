@@ -3,6 +3,21 @@
 
 
 
+/**********************************************************************************************
+ *
+ *                ViennaGrid - A mesh data structure and mesh algorithm library
+ *
+ * ViennaGrid is a mesh data structure library which also offers a set of mesh algorithms. The
+ * library backend is written in C++, providing a standard C interface which is expose in this
+ * header.
+ *
+ **********************************************************************************************/
+
+
+
+
+
+
 #if defined(_MSC_VER)
   #if defined(viennagrid_EXPORTS)
     #define  VIENNAGRID_DYNAMIC_EXPORT __declspec(dllexport)
@@ -126,8 +141,8 @@ typedef struct viennagrid_mesh_io_ * viennagrid_mesh_io;
 #define VIENNAGRID_VERSION_PATCH                    _VERSION_PATCH_
 
 
-#define VIENNAGRID_INVALID_TOPOLOGIC_DIMENSION      -1
-#define VIENNAGRID_INVALID_REGION_ID                -1
+#define VIENNAGRID_INVALID_TOPOLOGIC_DIMENSION     -1
+#define VIENNAGRID_INVALID_REGION_ID               -1
 
 
 /**********************************************************************************************
@@ -625,10 +640,14 @@ VIENNAGRID_DYNAMIC_EXPORT viennagrid_error viennagrid_element_regions_get(vienna
                                                                           viennagrid_region_id ** region_ids_begin,
                                                                           viennagrid_region_id ** region_ids_end);
 /* adds an element to a region */
-VIENNAGRID_DYNAMIC_EXPORT viennagrid_error viennagrid_element_add_to_region(viennagrid_mesh_hierarchy mesh_hierarchy,
-                                                                            viennagrid_dimension element_topo_dim,
-                                                                            viennagrid_int element_id,
-                                                                            viennagrid_region_id region_id);
+VIENNAGRID_DYNAMIC_EXPORT viennagrid_error viennagrid_region_element_add(viennagrid_region region,
+                                                                         viennagrid_dimension element_topo_dim,
+                                                                         viennagrid_int element_id);
+
+VIENNAGRID_DYNAMIC_EXPORT viennagrid_error viennagrid_region_contains_element(viennagrid_region region,
+                                                                              viennagrid_dimension _element_topo_dim,
+                                                                              viennagrid_int element_id,
+                                                                              viennagrid_bool * value);
 
 
 /**********************************************************************************************

@@ -399,10 +399,8 @@ viennagrid_error viennagrid_mesh_hierarchy_deserialize(viennagrid_mesh_hierarchy
     for (viennagrid_int j = cell_region_offsets[i]; j != cell_region_offsets[i+1]; ++j)
     {
       viennagrid_int region_id = cell_regions[j];
-      viennagrid_element_add_to_region(mesh_hierarchy,
-                                       cell_dimension,
-                                       cell_id,
-                                       region_id);
+
+      viennagrid_region_element_add( id_region_map[region_id], cell_dimension, cell_id );
     }
   }
 

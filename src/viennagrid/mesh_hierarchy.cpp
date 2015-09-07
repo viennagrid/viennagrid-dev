@@ -367,7 +367,7 @@ viennagrid_int viennagrid_mesh_hierarchy_::make_elements(viennagrid_int element_
   {
     for (viennagrid_int i = 0; i != element_count_; ++i)
     {
-      viennagrid_element_add_to_region( this, topologic_dimension, start_id+i, region_ids[i] );
+      viennagrid_region_element_add( get_region(region_ids[i]), topologic_dimension, start_id+i );
     }
     optimize_memory();
   }
