@@ -40,7 +40,6 @@ int main(int argc, char *argv[])
   std::cout << "sizeof(viennagrid_numeric) = " << sizeof(viennagrid_numeric) << std::endl;
   std::cout << "sizeof(viennagrid_element_type) = " << sizeof(viennagrid_element_type) << std::endl;
   std::cout << "sizeof(viennagrid_dimension) = " << sizeof(viennagrid_dimension) << std::endl;
-  std::cout << "sizeof(viennagrid_flag) = " << sizeof(viennagrid_flag) << std::endl;
   std::cout << "sizeof(std::vector<viennagrid_region>) = " << sizeof(std::vector<viennagrid_region>) << std::endl;
 
   std::cout << "sizeof(viennagrid_mesh_hierarchy) = " << sizeof(viennagrid_mesh_hierarchy) << std::endl;
