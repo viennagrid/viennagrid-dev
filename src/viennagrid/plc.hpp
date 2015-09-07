@@ -66,7 +66,7 @@ public:
   void add_facet_hole_point(viennagrid_int id, const viennagrid_numeric * coords)
   {
     for (viennagrid_dimension i = 0; i != geometric_dimension(); ++i)
-      facet_hole_points_.add(id, coords[i]);
+      facet_hole_points_.add(id, coords[+i]);
   }
 
   void delete_facet_hole_point(viennagrid_int id, viennagrid_int point_id)

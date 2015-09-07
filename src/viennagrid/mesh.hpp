@@ -56,10 +56,10 @@ public:
   viennagrid_int count() const { return ids_.size(); }
 
   ViennaGridCoBoundaryBufferType & coboundary_buffer(viennagrid_dimension coboundary_topo_dim)
-  { return coboundary_ids[coboundary_topo_dim]; }
+  { return coboundary_ids[+coboundary_topo_dim]; }
   ViennaGridNeighborBufferType & neighbor_buffer(viennagrid_dimension connector_topo_dim,
                                                viennagrid_dimension neighbor_topo_dim)
-  { return neighbor_ids[connector_topo_dim][neighbor_topo_dim]; }
+  { return neighbor_ids[+connector_topo_dim][+neighbor_topo_dim]; }
 
   void clear()
   {
@@ -272,7 +272,7 @@ public:
 
 
   viennagrid_element_handle_buffer & element_handle_buffer(viennagrid_dimension topo_dim)
-  { return element_handle_buffers[topo_dim]; }
+  { return element_handle_buffers[+topo_dim]; }
 
 
 
@@ -389,19 +389,19 @@ private:
 
   viennagrid_int & coboundary_change_counter(viennagrid_dimension element_topo_dim,
                                              viennagrid_dimension coboundary_topo_dim)
-  { return coboundary_change_counters[element_topo_dim][coboundary_topo_dim]; }
+  { return coboundary_change_counters[+element_topo_dim][+coboundary_topo_dim]; }
   viennagrid_int coboundary_change_counters[VIENNAGRID_TOPOLOGIC_DIMENSION_END][VIENNAGRID_TOPOLOGIC_DIMENSION_END];
 
 
   viennagrid_int & neighbor_change_counter(viennagrid_dimension element_topo_dim,
                                            viennagrid_dimension connector_topo_dim,
                                            viennagrid_dimension neighbor_topo_dim)
-  { return neighbor_change_counters[element_topo_dim][connector_topo_dim][neighbor_topo_dim]; }
+  { return neighbor_change_counters[+element_topo_dim][+connector_topo_dim][+neighbor_topo_dim]; }
   viennagrid_int neighbor_change_counters[VIENNAGRID_TOPOLOGIC_DIMENSION_END][VIENNAGRID_TOPOLOGIC_DIMENSION_END][VIENNAGRID_TOPOLOGIC_DIMENSION_END];
 
 
 
-  std::set<viennagrid_int> & boundary_elements(viennagrid_dimension element_topo_dim) { return boundary_elements_[element_topo_dim]; }
+  std::set<viennagrid_int> & boundary_elements(viennagrid_dimension element_topo_dim) { return boundary_elements_[+element_topo_dim]; }
 
   std::set<viennagrid_int> boundary_elements_[VIENNAGRID_TOPOLOGIC_DIMENSION_END];
   viennagrid_int boundary_elements_change_counter;

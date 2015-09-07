@@ -617,7 +617,7 @@ public:
     std::sort( region_ids.begin(), region_ids.end() );
     regions.push_back( new viennagrid_region_(region_id, this) );
 
-    if (region_id >= region_id_mapping.size())
+    if (region_id >= viennagrid_region_id(region_id_mapping.size()))
       region_id_mapping.resize( region_id+1, VIENNAGRID_INVALID_REGION_ID );
 
     region_id_mapping[region_id] = regions.size()-1;
@@ -664,7 +664,7 @@ public:
   void increment_change_counter() { ++change_counter_; }
 
 
-  viennagrid_int element_count( viennagrid_element_type element_type ) const { return element_counts[element_type]; }
+  viennagrid_int element_count( viennagrid_element_type element_type ) const { return element_counts[+element_type]; }
 
 
   void clear()

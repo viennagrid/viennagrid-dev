@@ -93,6 +93,18 @@ namespace viennautils
     };
 
     template<>
+    struct dynamic_sizeof_impl<short>
+    {
+      static long size(short) { return 0; }
+    };
+
+    template<>
+    struct dynamic_sizeof_impl<unsigned short>
+    {
+      static long size(unsigned short) { return 0; }
+    };
+
+    template<>
     struct dynamic_sizeof_impl<int>
     {
       static long size(int) { return 0; }

@@ -40,7 +40,7 @@ public:
 
 private:
 
-  std::set<viennagrid_int> & boundary_elements(viennagrid_dimension element_topo_dim) { return boundary_elements_[element_topo_dim]; }
+  std::set<viennagrid_int> & boundary_elements(viennagrid_dimension element_topo_dim) { return boundary_elements_[+element_topo_dim]; }
 
   std::string name_;
   viennagrid_int id_;

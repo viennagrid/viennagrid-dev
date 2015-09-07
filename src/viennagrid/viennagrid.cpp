@@ -1085,7 +1085,7 @@ viennagrid_error viennagrid_plc_line_refine(viennagrid_plc plc,
 
     double current_line_size = 0.0;
     for (viennagrid_dimension i = 0; i != geometric_dimension; ++i)
-      current_line_size += (p0[i]-p1[i])*(p0[i]-p1[i]);
+      current_line_size += (p0[+i]-p1[+i])*(p0[+i]-p1[+i]);
     current_line_size = std::sqrt(current_line_size);
 
     if (current_line_size <= line_size)
@@ -1101,7 +1101,7 @@ viennagrid_error viennagrid_plc_line_refine(viennagrid_plc plc,
 
       std::vector<viennagrid_numeric> offset(geometric_dimension);
       for (viennagrid_dimension i = 0; i != geometric_dimension; ++i)
-        offset[i] = (p1[i]-p0[i]) / number_of_new_lines;
+        offset[+i] = (p1[+i]-p0[+i]) / number_of_new_lines;
 
 
       std::vector<viennagrid_int> vertices;
@@ -1110,7 +1110,7 @@ viennagrid_error viennagrid_plc_line_refine(viennagrid_plc plc,
       {
         std::vector<viennagrid_numeric> tmp(geometric_dimension);
         for (viennagrid_dimension j = 0; j != geometric_dimension; ++j)
-          tmp[j] = p0[j] + i*offset[j];
+          tmp[+j] = p0[+j] + i*offset[+j];
 
         viennagrid_int vertex_id;
         viennagrid_plc_vertex_create( output_plc, &tmp[0], &vertex_id);

@@ -26,14 +26,13 @@
  **********************************************************************************************/
 
 
-typedef char viennagrid_bool;
-typedef int viennagrid_int;
-typedef viennagrid_int viennagrid_error;
-typedef double viennagrid_numeric;
-typedef unsigned char viennagrid_element_type;
-typedef unsigned char viennagrid_dimension;
-typedef unsigned char viennagrid_flag;
-typedef unsigned char viennagrid_region_id;
+typedef char            viennagrid_bool;
+typedef int             viennagrid_int;
+typedef viennagrid_int  viennagrid_error;
+typedef double          viennagrid_numeric;
+typedef char            viennagrid_element_type;
+typedef char            viennagrid_dimension;
+typedef short           viennagrid_region_id;
 
 
 typedef struct viennagrid_mesh_hierarchy_ * viennagrid_mesh_hierarchy;
@@ -95,7 +94,7 @@ typedef struct viennagrid_mesh_io_ * viennagrid_mesh_io;
 #define VIENNAGRID_BOUNDARY_LAYOUT_SPARSE           1
 
 /* VIENNAGRID ELEMENT TYPES */
-#define VIENNAGRID_ELEMENT_TYPE_NO_ELEMENT        255 /* -1 */
+#define VIENNAGRID_ELEMENT_TYPE_NO_ELEMENT         -1
 #define VIENNAGRID_ELEMENT_TYPE_START               0
 #define VIENNAGRID_ELEMENT_TYPE_VERTEX              0
 #define VIENNAGRID_ELEMENT_TYPE_LINE                1
@@ -127,8 +126,8 @@ typedef struct viennagrid_mesh_io_ * viennagrid_mesh_io;
 #define VIENNAGRID_VERSION_PATCH                    _VERSION_PATCH_
 
 
-#define VIENNAGRID_INVALID_TOPOLOGIC_DIMENSION      255
-#define VIENNAGRID_INVALID_REGION_ID                255
+#define VIENNAGRID_INVALID_TOPOLOGIC_DIMENSION      -1
+#define VIENNAGRID_INVALID_REGION_ID                -1
 
 
 /**********************************************************************************************
