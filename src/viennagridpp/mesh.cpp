@@ -117,27 +117,4 @@ namespace viennagrid
   template bool is_any_boundary(base_mesh<true> const & mesh, base_element<false> const & element);
   template bool is_any_boundary(base_mesh<true> const & mesh, base_element<true> const & element);
 
-
-  void non_recursive_add(mesh const & m, element const & e)
-  {
-    viennagrid_mesh_element_add(m.internal(),
-                           viennagrid::topologic_dimension(e),
-                           e.id());
-  }
-
-  void add(mesh const & m, element const & e)
-  {
-    non_recursive_add(m, e);
-
-    for (viennagrid_int i = 0; i < viennagrid::topologic_dimension(e); ++i)
-    {
-      typedef viennagrid::result_of::element_range<element>::type ElementRangeType;
-      ElementRangeType elements(e, i);
-      for (ElementRangeType::iterator it = elements.begin(); it != elements.end(); ++it)
-        non_recursive_add(m, *it);
-    }
-  }
-
-
-
 }

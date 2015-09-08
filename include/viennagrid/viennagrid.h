@@ -11,6 +11,20 @@
  * library backend is written in C++, providing a standard C interface which is expose in this
  * header.
  *
+ * The ViennaGrid library can be split into the following main feature sets:
+ *  - Mesh and mesh hierarchy data structures with iteration support
+ *  - Piecewise linear complexes (PLC)
+ *  - Quantity fields
+ *  - Serialization and IO
+ *  - Algorithms
+ *  -
+ *
+ *
+ * ViennaGrid is based on the following main concepts/aspects:
+ *  - Hierarchical mesh architecture
+ *  - Topological connectivity
+ *  - Regions
+ *
  **********************************************************************************************/
 
 
@@ -457,7 +471,7 @@ VIENNAGRID_DYNAMIC_EXPORT viennagrid_error viennagrid_mesh_vertex_batch_create(v
                                                                                viennagrid_numeric * vertex_coords,
                                                                                viennagrid_int * first_id);
 
-/* creates multiple element, returns the ID of the first element, the ID of the second element will be first_id+1 and so on. element_types is an array which indicates the element types, one entry for each element to create. element_vertex_index_offsets and element_vertex_indices are arrays for the vertex id for each element to create. The size of element_vertex_index_offsets should be element_count+1, the vertex indices for the i-th element are stored in the array ranging from element_vertex_indices+element_vertex_index_offsets[i] to element_vertex_indices+element_vertex_index_offsets[i+1]. region_ids is an optional array indicating the region in which each element is. */
+/* creates multiple elements, returns the ID of the first element, the ID of the second element will be first_id+1 and so on. element_types is an array which indicates the element types, one entry for each element to create. element_vertex_index_offsets and element_vertex_indices are arrays for the vertex id for each element to create. The size of element_vertex_index_offsets should be element_count+1, the vertex indices for the i-th element are stored in the array ranging from element_vertex_indices+element_vertex_index_offsets[i] to element_vertex_indices+element_vertex_index_offsets[i+1]. region_ids is an optional array indicating the region in which each element is. */
 VIENNAGRID_DYNAMIC_EXPORT viennagrid_error viennagrid_mesh_hierarchy_element_batch_create(viennagrid_mesh_hierarchy mesh_hierarchy,
                                                                                           viennagrid_int element_count,
                                                                                           viennagrid_element_type * element_types,
@@ -548,11 +562,6 @@ VIENNAGRID_DYNAMIC_EXPORT viennagrid_error viennagrid_mesh_elements_get(viennagr
                                                                    viennagrid_dimension element_topo_dim,
                                                                    viennagrid_int ** element_ids_begin,
                                                                    viennagrid_int ** element_ids_end);
-
-/* adds a given element to a mesh */
-VIENNAGRID_DYNAMIC_EXPORT viennagrid_error viennagrid_mesh_element_add(viennagrid_mesh mesh,
-                                                                       viennagrid_dimension element_topo_dim,
-                                                                       viennagrid_int element_id);
 
 /* queries the parent element of a given element */
 VIENNAGRID_DYNAMIC_EXPORT viennagrid_error viennagrid_element_parent_get(viennagrid_mesh_hierarchy mesh_hierarchy,

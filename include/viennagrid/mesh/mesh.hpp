@@ -187,12 +187,6 @@ namespace viennagrid
     return is_boundary(first, element) && is_boundary(second, element);
   }
 
-
-
-  void non_recursive_add(mesh const & mesh, element const & element);
-  void add(mesh const & mesh, element const & element);
-
-
 }
 
 

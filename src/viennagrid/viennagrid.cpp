@@ -286,7 +286,7 @@ viennagrid_error viennagrid_mesh_vertex_create(viennagrid_mesh mesh,
 
   viennagrid_int vid = mesh_hierarchy->make_vertex(coords);;
 
-  viennagrid_mesh_element_add(mesh, 0, vid);
+  mesh->add_element(0, vid);
 
   if (vertex_id)
     *vertex_id = vid;
@@ -352,7 +352,7 @@ viennagrid_error viennagrid_mesh_element_create(viennagrid_mesh mesh,
   if (!tmp.second)
     return VIENNAGRID_ERROR_ELEMENT_ALREADY_PRESENT;
 
-  viennagrid_mesh_element_add(mesh, viennagrid_topological_dimension(element_type), tmp.first);
+  mesh->add_element(viennagrid_topological_dimension(element_type), tmp.first);
 
   if (element_id)
     *element_id = tmp.first;
@@ -581,15 +581,6 @@ viennagrid_error viennagrid_mesh_elements_get(viennagrid_mesh mesh,
   if (element_ids_end)
     *element_ids_end = mesh->elements_end(element_topo_dim);
 
-  return VIENNAGRID_SUCCESS;
-}
-
-
-viennagrid_error viennagrid_mesh_element_add(viennagrid_mesh mesh,
-                                             viennagrid_dimension element_topo_dim,
-                                             viennagrid_int element_id)
-{
-  mesh->add_element(element_topo_dim, element_id);
   return VIENNAGRID_SUCCESS;
 }
 

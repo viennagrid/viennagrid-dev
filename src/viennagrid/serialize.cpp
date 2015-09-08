@@ -408,12 +408,12 @@ viennagrid_error viennagrid_mesh_hierarchy_deserialize(viennagrid_mesh_hierarchy
   {
     for (viennagrid_int j = 0; j != mesh_vertex_count[i]; ++j)
     {
-      viennagrid_mesh_element_add(index_mesh_map[i], 0, mesh_vertices[i][j]);
+      index_mesh_map[i]->add_element(0, mesh_vertices[i][j]);
     }
 
     for (viennagrid_int j = 0; j != mesh_cell_count[i]; ++j)
     {
-      viennagrid_mesh_element_add(index_mesh_map[i], cell_dimension, mesh_cells[i][j]);
+      index_mesh_map[i]->add_element(cell_dimension, mesh_cells[i][j]);
     }
   }
 
