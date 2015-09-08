@@ -17,7 +17,7 @@
 #include <iostream>
 #include <typeinfo>
 
-#include "viennagridpp/core.hpp"
+#include "viennagrid/viennagrid.hpp"
 
 
 

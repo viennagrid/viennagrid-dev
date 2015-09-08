@@ -14,8 +14,8 @@
   #pragma warning( disable : 4503 )     //truncated name decoration
 #endif
 
-#include "viennagridpp/core.hpp"
-#include "viennagridpp/io/vtk_writer.hpp"
+#include "viennagrid/viennagrid.hpp"
+#include "viennagrid/io/vtk_writer.hpp"
 
 template <typename MeshType>
 void setup(MeshType & mesh, viennagrid::element_tag et)

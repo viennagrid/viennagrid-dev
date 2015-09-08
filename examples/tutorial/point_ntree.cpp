@@ -1,7 +1,6 @@
-#include "viennagridpp/core.hpp"
-#include "viennagridpp/io/vtk_reader.hpp"
-#include "viennagridpp/io/netgen_reader.hpp"
-#include "viennagridpp/ntree.hpp"
+#include "viennagrid/viennagrid.hpp"
+#include "viennagrid/io/vtk_reader.hpp"
+#include "viennagrid/io/netgen_reader.hpp"
 
 
 int main()

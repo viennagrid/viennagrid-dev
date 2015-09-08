@@ -1,4 +1,4 @@
-#include "viennagridpp/point.hpp"
+#include "viennagrid/core/point.hpp"
 #include "boost/algorithm/string.hpp"
 #include "boost/lexical_cast.hpp"
 

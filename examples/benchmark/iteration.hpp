@@ -1,7 +1,7 @@
 #ifndef VIENNAGRID_BENCHMARK_ITERATION_HPP
 #define VIENNAGRID_BENCHMARK_ITERATION_HPP
 
-#include "viennagridpp/algorithm/volume.hpp"
+#include "viennagrid/algorithm/volume.hpp"
 
 template<typename PointT1, typename PointT2>
 viennagrid_numeric signed_spanned_volume(PointT1 const & p1,

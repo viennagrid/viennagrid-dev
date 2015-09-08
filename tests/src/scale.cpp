@@ -16,8 +16,8 @@
 
 #include <cmath>
 
-#include "viennagridpp/core.hpp"
-#include "viennagridpp/algorithm/geometric_transform.hpp"
+#include "viennagrid/viennagrid.hpp"
+#include "viennagrid/algorithm/geometric_transform.hpp"
 
 inline void fuzzy_check(double a, double b)
 {

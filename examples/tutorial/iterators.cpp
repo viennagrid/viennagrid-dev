@@ -18,8 +18,8 @@
 #include <fstream>
 #include <vector>
 
-#include "viennagridpp/core.hpp"
-#include "viennagridpp/io/netgen_reader.hpp"
+#include "viennagrid/viennagrid.hpp"
+#include "viennagrid/io/netgen_reader.hpp"
 
 
 int main()

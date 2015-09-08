@@ -18,8 +18,8 @@
 // Define the input-file format
 //***********************************************
 
-#include "viennagridpp/core.hpp"
-#include "viennagridpp/io/vtk_writer.hpp"
+#include "viennagrid/viennagrid.hpp"
+#include "viennagrid/io/vtk_writer.hpp"
 
 
 template<typename RegionT>
