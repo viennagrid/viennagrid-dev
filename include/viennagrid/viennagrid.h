@@ -73,9 +73,11 @@ typedef struct viennagrid_mesh_io_ * viennagrid_mesh_io;
 #define VIENNAGRID_ERROR_UNKNOWN_FLAG                                   4
 #define VIENNAGRID_ERROR_UNSUPPORTED_BOUNDARY_LAYOUT                    5
 #define VIENNAGRID_ERROR_MESH_IS_NOT_ROOT                               6
-#define VIENNAGRID_ERROR_DESERIALIZE_MAGIC_VALUE_MISSMATCH              7
-#define VIENNAGRID_ERROR_DESERIALIZE_VERSION_MISSMATCH                  8
-#define VIENNAGRID_ERROR_PLC_MESH_TYPE_NOT_SUPPORTED_FOR_CONVERSION     9
+#define VIENNAGRID_ERROR_MESH_HAS_CHILD_MESHES                          7
+#define VIENNAGRID_ERROR_ELEMENT_ALREADY_PRESENT                        8
+#define VIENNAGRID_ERROR_DESERIALIZE_MAGIC_VALUE_MISSMATCH              9
+#define VIENNAGRID_ERROR_DESERIALIZE_VERSION_MISSMATCH                 10
+#define VIENNAGRID_ERROR_PLC_MESH_TYPE_NOT_SUPPORTED_FOR_CONVERSION    11
 #define VIENNAGRID_ERROR_IO_CANNOT_OPEN_FILE                          100
 #define VIENNAGRID_ERROR_IO_FILE_EMPTY                                101
 #define VIENNAGRID_ERROR_IO_MESH_IS_NOT_ROOT                          102
@@ -370,6 +372,11 @@ VIENNAGRID_DYNAMIC_EXPORT viennagrid_error viennagrid_mesh_hierarchy_clear(vienn
 /* get the root mesh of the mesh hierarchy */
 VIENNAGRID_DYNAMIC_EXPORT viennagrid_error viennagrid_mesh_hierarchy_root_mesh_get(viennagrid_mesh_hierarchy mesh_hierarchy,
                                                                                    viennagrid_mesh * mesh);
+
+/* queries if a mesh is the root mesh */
+VIENNAGRID_DYNAMIC_EXPORT viennagrid_error viennagrid_mesh_is_root(viennagrid_mesh mesh,
+                                                                   viennagrid_bool * value);
+
 /* get the mesh_hierarchy of a mesh */
 VIENNAGRID_DYNAMIC_EXPORT viennagrid_error viennagrid_mesh_mesh_hierarchy_get(viennagrid_mesh mesh,
                                                                               viennagrid_mesh_hierarchy * mesh_hierarchy);
@@ -466,32 +473,6 @@ VIENNAGRID_DYNAMIC_EXPORT viennagrid_error viennagrid_mesh_element_batch_create(
                                                                                 viennagrid_int * element_vertex_indices,
                                                                                 viennagrid_region_id * region_ids,
                                                                                 viennagrid_int * first_id);
-
-
-
-/*
- * create one refined element
- *
- * parent element: element_topo_dim/element_id
- * new element type: refined_element_type
- * vertices of new element: refined_element_vertex_count & refined_element_vertex_ids
- * intersection elements (e.g. a line is intersected by a vertex): intersects_topo_dims[i]/intersects_ids[i]
- * vertex, which intersect the elements: intersect_vertices_ids[i]
- * return value, new element id: id
-*/
-VIENNAGRID_DYNAMIC_EXPORT viennagrid_error viennagrid_mesh_refined_element_create(
-                                                            viennagrid_mesh mesh,
-                                                            viennagrid_dimension element_topo_dim,
-                                                            viennagrid_int element_id,
-                                                            viennagrid_element_type    refined_element_type,
-                                                            viennagrid_int            refined_element_vertex_count,
-                                                            viennagrid_int *        refined_element_vertex_ids,
-                                                            viennagrid_int            intersects_count,
-                                                            viennagrid_int *        intersect_vertices_ids,
-                                                            viennagrid_int *        intersects_ids,
-                                                            viennagrid_dimension *    intersects_topo_dims,
-                                                            viennagrid_int *        id);
-
 
 /* queries the type of an element */
 VIENNAGRID_DYNAMIC_EXPORT viennagrid_error viennagrid_element_type_get(viennagrid_mesh_hierarchy mesh_hierarchy,

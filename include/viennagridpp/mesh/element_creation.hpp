@@ -190,16 +190,17 @@ namespace viennagrid
 
 
     viennagrid_int id;
-    viennagrid_mesh_refined_element_create(m.internal(),
-                                           viennagrid::topologic_dimension(parent),
-                                           parent.id(),
-                                           et.internal(),
-                                           internal_vertices_indices.size(),
-                                           &internal_vertices_indices[0],
-                                           vertex_indices.size(),
-                                           &vertex_indices[0],
-                                           &intersects_indices[0], &intersects_dimensions[0],
-                                           &id);
+//    TODO: C API function not longer available, refine implementation should be included in C-layer so that this function is obsolete
+//     viennagrid_mesh_refined_element_create(m.internal(),
+//                                            viennagrid::topologic_dimension(parent),
+//                                            parent.id(),
+//                                            et.internal(),
+//                                            internal_vertices_indices.size(),
+//                                            &internal_vertices_indices[0],
+//                                            vertex_indices.size(),
+//                                            &vertex_indices[0],
+//                                            &intersects_indices[0], &intersects_dimensions[0],
+//                                            &id);
 
     return element(m.get_mesh_hierarchy(), et.topologic_dimension(), id);
   }

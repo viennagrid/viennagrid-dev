@@ -160,6 +160,16 @@ viennagrid_error viennagrid_mesh_hierarchy_root_mesh_get(viennagrid_mesh_hierarc
   return VIENNAGRID_SUCCESS;
 }
 
+viennagrid_error viennagrid_mesh_is_root(viennagrid_mesh mesh,
+                                         viennagrid_bool * value)
+{
+  if (value)
+    *value = mesh->is_root() ? VIENNAGRID_TRUE : VIENNAGRID_FALSE;
+
+  return VIENNAGRID_SUCCESS;
+}
+
+
 viennagrid_error viennagrid_mesh_mesh_hierarchy_get(viennagrid_mesh mesh,
                                                     viennagrid_mesh_hierarchy * mesh_hierarchy)
 {
@@ -250,10 +260,13 @@ viennagrid_error viennagrid_mesh_hierarchy_vertex_create(viennagrid_mesh_hierarc
                                                          const viennagrid_numeric * coords,
                                                          viennagrid_int * vertex_id)
 {
-  viennagrid_int tmp = hierarchy->make_vertex(coords);
+  viennagrid_int vid;
+  viennagrid_error err = viennagrid_mesh_vertex_create(hierarchy->root(), coords, &vid);
+  if (err != VIENNAGRID_SUCCESS)
+    return err;
 
   if (vertex_id)
-    *vertex_id = tmp;
+    *vertex_id = vid;
 
   return VIENNAGRID_SUCCESS;
 }
@@ -262,11 +275,16 @@ viennagrid_error viennagrid_mesh_vertex_create(viennagrid_mesh mesh,
                                                const viennagrid_numeric * coords,
                                                viennagrid_int * vertex_id)
 {
+  if (!mesh->is_root())
+    return VIENNAGRID_ERROR_MESH_IS_NOT_ROOT;
+
+  if (mesh->children_count() != 0)
+    return VIENNAGRID_ERROR_MESH_HAS_CHILD_MESHES;
+
   viennagrid_mesh_hierarchy mesh_hierarchy;
   viennagrid_mesh_mesh_hierarchy_get(mesh, &mesh_hierarchy);
 
-  viennagrid_int vid;
-  viennagrid_mesh_hierarchy_vertex_create(mesh_hierarchy, coords, &vid);
+  viennagrid_int vid = mesh_hierarchy->make_vertex(coords);;
 
   viennagrid_mesh_element_add(mesh, 0, vid);
 
@@ -303,12 +321,13 @@ viennagrid_error viennagrid_mesh_hierarchy_element_create(viennagrid_mesh_hierar
                                                           viennagrid_int * vertex_ids,
                                                           viennagrid_int * element_id)
 {
-  viennagrid_mesh root = hierarchy->root();
-
-  std::pair<viennagrid_int, bool> tmp = hierarchy->get_make_element(element_type, vertex_ids, vertex_count, root);
+  viennagrid_int eid;
+  viennagrid_error err = viennagrid_mesh_element_create(hierarchy->root(), element_type, vertex_count, vertex_ids, &eid);
+  if (err != VIENNAGRID_SUCCESS)
+    return err;
 
   if (element_id)
-    *element_id = tmp.first;
+    *element_id = eid;
 
   return VIENNAGRID_SUCCESS;
 }
@@ -319,43 +338,27 @@ viennagrid_error viennagrid_mesh_element_create(viennagrid_mesh mesh,
                                                 viennagrid_int * vertex_ids,
                                                 viennagrid_int * element_id)
 {
+  if (!mesh->is_root())
+    return VIENNAGRID_ERROR_MESH_IS_NOT_ROOT;
+
+  if (mesh->children_count() != 0)
+    return VIENNAGRID_ERROR_MESH_HAS_CHILD_MESHES;
+
   viennagrid_mesh_hierarchy mesh_hierarchy;
   viennagrid_mesh_mesh_hierarchy_get(mesh, &mesh_hierarchy);
 
-  viennagrid_int eid;
-  viennagrid_mesh_hierarchy_element_create(mesh_hierarchy, element_type, vertex_count, vertex_ids, &eid);
 
-  viennagrid_mesh_element_add(mesh, viennagrid_topological_dimension(element_type), eid);
+  std::pair<viennagrid_int, bool> tmp = mesh_hierarchy->get_make_element(element_type, vertex_ids, vertex_count, mesh);
+  if (!tmp.second)
+    return VIENNAGRID_ERROR_ELEMENT_ALREADY_PRESENT;
+
+  viennagrid_mesh_element_add(mesh, viennagrid_topological_dimension(element_type), tmp.first);
 
   if (element_id)
-    *element_id = eid;
+    *element_id = tmp.first;
 
   return VIENNAGRID_SUCCESS;
 }
-
-
-
-
-viennagrid_error viennagrid_mesh_refined_element_create(viennagrid_mesh mesh,
-                                                        viennagrid_dimension element_topo_dim,
-                                                        viennagrid_int element_id,
-                                                        viennagrid_element_type    refined_element_type,
-                                                        viennagrid_int            refined_element_vertex_count,
-                                                        viennagrid_int *        refined_element_vertex_ids,
-                                                        viennagrid_int            intersects_count,
-                                                        viennagrid_int *        intersect_vertices_ids,
-                                                        viennagrid_int *        intersects_ids,
-                                                        viennagrid_dimension *    intersects_topo_dims,
-                                                        viennagrid_int *        id)
-{
-  *id = mesh->make_refined_element(element_topo_dim, element_id,
-                                   refined_element_type, refined_element_vertex_count,
-                                   refined_element_vertex_ids,
-                                   intersects_count, intersect_vertices_ids,
-                                   intersects_ids, intersects_topo_dims);
-  return VIENNAGRID_SUCCESS;
-}
-
 
 
 
@@ -364,10 +367,13 @@ viennagrid_error viennagrid_mesh_hierarchy_vertex_batch_create(viennagrid_mesh_h
                                                                viennagrid_numeric * vertex_coords,
                                                                viennagrid_int * first_id)
 {
-  viennagrid_int tmp = mesh_hierarchy->make_vertices( vertex_coords, vertex_count );
+  viennagrid_int vid;
+  viennagrid_error err = viennagrid_mesh_vertex_batch_create(mesh_hierarchy->root(), vertex_count, vertex_coords, &vid);
+  if (err != VIENNAGRID_SUCCESS)
+    return err;
 
   if (first_id)
-    *first_id = tmp;
+    *first_id = vid;
 
   return VIENNAGRID_SUCCESS;
 }
@@ -380,14 +386,13 @@ viennagrid_error viennagrid_mesh_vertex_batch_create(viennagrid_mesh mesh,
   if (!mesh->is_root())
     return VIENNAGRID_ERROR_MESH_IS_NOT_ROOT;
 
+  if (mesh->children_count() != 0)
+    return VIENNAGRID_ERROR_MESH_HAS_CHILD_MESHES;
+
   viennagrid_mesh_hierarchy mesh_hierarchy;
   viennagrid_mesh_mesh_hierarchy_get(mesh, &mesh_hierarchy);
 
-  viennagrid_int tmp;
-  viennagrid_error error = viennagrid_mesh_hierarchy_vertex_batch_create(mesh_hierarchy, vertex_count, vertex_coords, &tmp);
-  if (error != VIENNAGRID_SUCCESS)
-    return error;
-
+  viennagrid_int tmp = mesh_hierarchy->make_vertices( vertex_coords, vertex_count );
   mesh->add_elements( 0, tmp, vertex_count );
 
   if (first_id)
@@ -405,10 +410,13 @@ viennagrid_error viennagrid_mesh_hierarchy_element_batch_create(viennagrid_mesh_
                                                                 viennagrid_region_id * region_ids,
                                                                 viennagrid_int * first_id)
 {
-  viennagrid_int tmp = mesh_hierarchy->make_elements( element_count, element_types, element_vertex_index_offsets, element_vertex_indices, region_ids );
+  viennagrid_int eid;
+  viennagrid_error err = viennagrid_mesh_element_batch_create(mesh_hierarchy->root(), element_count, element_types, element_vertex_index_offsets, element_vertex_indices, region_ids, &eid);
+  if (err != VIENNAGRID_SUCCESS)
+    return err;
 
   if (first_id)
-    *first_id = tmp;
+    *first_id = eid;
 
   return VIENNAGRID_SUCCESS;
 }
@@ -424,6 +432,9 @@ viennagrid_error viennagrid_mesh_element_batch_create(viennagrid_mesh mesh,
   if (!mesh->is_root())
     return VIENNAGRID_ERROR_MESH_IS_NOT_ROOT;
 
+  if (mesh->children_count() != 0)
+    return VIENNAGRID_ERROR_MESH_HAS_CHILD_MESHES;
+
   if (!element_types || !element_vertex_index_offsets || !element_vertex_indices)
     return VIENNAGRID_ERROR_INVALID_ARGUMENTS;
 
@@ -433,15 +444,7 @@ viennagrid_error viennagrid_mesh_element_batch_create(viennagrid_mesh mesh,
   viennagrid_mesh_hierarchy mesh_hierarchy;
   viennagrid_mesh_mesh_hierarchy_get(mesh, &mesh_hierarchy);
 
-  viennagrid_int tmp;
-  viennagrid_error error = viennagrid_mesh_hierarchy_element_batch_create(mesh_hierarchy,
-                                                                          element_count, element_types,
-                                                                          element_vertex_index_offsets, element_vertex_indices,
-                                                                          region_ids,
-                                                                          &tmp);
-  if (error != VIENNAGRID_SUCCESS)
-    return error;
-
+  viennagrid_int tmp = mesh_hierarchy->make_elements( element_count, element_types, element_vertex_index_offsets, element_vertex_indices, region_ids );
   mesh->add_elements( topologic_dimension, tmp, element_count );
 
   if (first_id)
