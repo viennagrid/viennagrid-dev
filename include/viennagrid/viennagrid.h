@@ -581,18 +581,18 @@ VIENNAGRID_DYNAMIC_EXPORT viennagrid_error viennagrid_mesh_region_create(viennag
 
 /* queries the region with a given ID, if the region is not present, a new region with that ID is created */
 VIENNAGRID_DYNAMIC_EXPORT viennagrid_error viennagrid_mesh_hierarchy_region_get_or_create(viennagrid_mesh_hierarchy mesh_hierarchy,
-                                                                                          viennagrid_int region_id,
+                                                                                          viennagrid_region_id region_id,
                                                                                           viennagrid_region * region);
 VIENNAGRID_DYNAMIC_EXPORT viennagrid_error viennagrid_mesh_region_get_or_create(viennagrid_mesh mesh,
-                                                                                viennagrid_int region_id,
+                                                                                viennagrid_region_id region_id,
                                                                                 viennagrid_region * region);
 
 /* queries the region with a given ID, if the region is not present, NULL is returned */
 VIENNAGRID_DYNAMIC_EXPORT viennagrid_error viennagrid_mesh_hierarchy_region_get(viennagrid_mesh_hierarchy mesh_hierarchy,
-                                                                                viennagrid_int region_id,
+                                                                                viennagrid_region_id region_id,
                                                                                 viennagrid_region * region);
 VIENNAGRID_DYNAMIC_EXPORT viennagrid_error viennagrid_mesh_region_get(viennagrid_mesh mesh,
-                                                                      viennagrid_int region_id,
+                                                                      viennagrid_region_id region_id,
                                                                       viennagrid_region * region);
 /* queries the mesh hierarchy of a given region */
 VIENNAGRID_DYNAMIC_EXPORT viennagrid_error viennagrid_region_mesh_hierarchy_get(viennagrid_region region,

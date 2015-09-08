@@ -623,7 +623,7 @@ viennagrid_error viennagrid_mesh_region_create(viennagrid_mesh mesh,
 
 
 viennagrid_error viennagrid_mesh_hierarchy_region_get_or_create(viennagrid_mesh_hierarchy mesh_hierarchy,
-                                                                viennagrid_int region_id,
+                                                                viennagrid_region_id region_id,
                                                                 viennagrid_region * region)
 {
   viennagrid_region tmp = mesh_hierarchy->get_or_create_region(region_id);;
@@ -635,7 +635,7 @@ viennagrid_error viennagrid_mesh_hierarchy_region_get_or_create(viennagrid_mesh_
 }
 
 viennagrid_error viennagrid_mesh_region_get_or_create(viennagrid_mesh mesh,
-                                                      viennagrid_int region_id,
+                                                      viennagrid_region_id region_id,
                                                       viennagrid_region * region)
 {
   viennagrid_region tmp = mesh->mesh_hierarchy()->get_or_create_region(region_id);;
@@ -649,7 +649,7 @@ viennagrid_error viennagrid_mesh_region_get_or_create(viennagrid_mesh mesh,
 
 
 viennagrid_error viennagrid_mesh_hierarchy_region_get(viennagrid_mesh_hierarchy mesh_hierarchy,
-                                                      viennagrid_int region_id,
+                                                      viennagrid_region_id region_id,
                                                       viennagrid_region * region)
 {
   if (region)
@@ -659,7 +659,7 @@ viennagrid_error viennagrid_mesh_hierarchy_region_get(viennagrid_mesh_hierarchy 
 }
 
 viennagrid_error viennagrid_mesh_region_get(viennagrid_mesh mesh,
-                                            viennagrid_int region_id,
+                                            viennagrid_region_id region_id,
                                             viennagrid_region * region)
 {
   if (region)
