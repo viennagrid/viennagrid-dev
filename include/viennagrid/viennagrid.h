@@ -569,13 +569,6 @@ VIENNAGRID_DYNAMIC_EXPORT viennagrid_error viennagrid_element_parent_get(viennag
                                                                          viennagrid_int element_id,
                                                                          viennagrid_int * element_parent_id);
 
-/* sets the parent element for a given element */
-VIENNAGRID_DYNAMIC_EXPORT viennagrid_error viennagrid_element_parent_set(viennagrid_mesh_hierarchy mesh_hierarchy,
-                                                                         viennagrid_dimension element_topo_dim,
-                                                                         viennagrid_int element_id,
-                                                                         viennagrid_int element_parent_id);
-
-
 
 
 

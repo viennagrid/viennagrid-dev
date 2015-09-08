@@ -595,17 +595,6 @@ viennagrid_error viennagrid_element_parent_get(viennagrid_mesh_hierarchy mesh_hi
   return VIENNAGRID_SUCCESS;
 }
 
-viennagrid_error viennagrid_element_parent_set(viennagrid_mesh_hierarchy mesh_hierarchy,
-                                               viennagrid_dimension element_topo_dim,
-                                               viennagrid_int element_id,
-                                               viennagrid_int element_parent_id)
-{
-  mesh_hierarchy->element_buffer(element_topo_dim).set_parent_id(element_id, element_parent_id);
-  return VIENNAGRID_SUCCESS;
-}
-
-
-
 
 
 

@@ -390,10 +390,7 @@ viennagrid_error viennagrid_mesh_hierarchy_deserialize(viennagrid_mesh_hierarchy
 
     if (cell_parents_available)
     {
-      viennagrid_element_parent_set(mesh_hierarchy,
-                                    cell_dimension,
-                                    cell_id,
-                                    cell_parent_ids[i]);
+      mesh_hierarchy->element_buffer(cell_dimension).set_parent_id(cell_id, cell_parent_ids[i]);
     }
 
     for (viennagrid_int j = cell_region_offsets[i]; j != cell_region_offsets[i+1]; ++j)
