@@ -276,10 +276,10 @@ namespace viennagrid
 
   /** @brief Returns the Euclidian distance between the boundary of a segment and a line */
   template<bool element_is_const, bool mesh_region_is_const>
-  typename result_of::coord< base_mesh_region<mesh_region_is_const> >::type distance(base_element<element_is_const> const & line,
-                                                                                     base_mesh_region<mesh_region_is_const> const & region)
+  typename result_of::coord< base_region<mesh_region_is_const> >::type distance(base_element<element_is_const> const & line,
+                                                                                base_region<mesh_region_is_const> const & region)
   {
-    typedef base_mesh_region<mesh_region_is_const> RegionType;
+    typedef base_region<mesh_region_is_const> RegionType;
     typedef typename result_of::const_element_range<RegionType>::type ConstLineRangeType;
     typedef typename result_of::iterator<ConstLineRangeType>::type ConstLineIteratorType;
 
@@ -303,8 +303,8 @@ namespace viennagrid
   }
 
   template<bool mesh_region_is_const, bool element_is_const>
-  typename result_of::coord< base_mesh_region<mesh_region_is_const> >::type distance(base_mesh_region<mesh_region_is_const> const & region,
-                                                                                     base_element<element_is_const> const & line)
+  typename result_of::coord< base_region<mesh_region_is_const> >::type distance(base_region<mesh_region_is_const> const & region,
+                                                                                base_element<element_is_const> const & line)
   {
     return distance( line, region );
   }

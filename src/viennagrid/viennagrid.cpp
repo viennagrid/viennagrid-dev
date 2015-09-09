@@ -3,6 +3,7 @@
 
 #include "viennagrid/viennagrid.h"
 #include "mesh_hierarchy.hpp"
+#include "mesh.hpp"
 #include "plc.hpp"
 #include "common.hpp"
 
@@ -26,40 +27,40 @@ viennagrid_error viennagrid_delete(void ** ptr)
 
 
 
-viennagrid_error viennagrid_mesh_hierarchy_create(viennagrid_mesh_hierarchy * mesh_hierarchy)
+viennagrid_error viennagrid_mesh_create(viennagrid_mesh * mesh)
 {
-  *mesh_hierarchy = new viennagrid_mesh_hierarchy_();
+  *mesh = new viennagrid_mesh_();
   return VIENNAGRID_SUCCESS;
 }
 
-viennagrid_error viennagrid_mesh_hierarchy_retain(viennagrid_mesh_hierarchy mesh_hierarchy)
+viennagrid_error viennagrid_mesh_retain(viennagrid_mesh mesh)
 {
-  if (mesh_hierarchy)
-    retain(mesh_hierarchy);
-
-  return VIENNAGRID_SUCCESS;
-}
-
-viennagrid_error viennagrid_mesh_hierarchy_release(viennagrid_mesh_hierarchy mesh_hierarchy)
-{
-  if (mesh_hierarchy)
-    release(mesh_hierarchy);
+  if (mesh)
+    retain(mesh);
 
   return VIENNAGRID_SUCCESS;
 }
 
-
-viennagrid_error viennagrid_mesh_hierarchy_memory_optimize(viennagrid_mesh_hierarchy mesh_hierarchy)
+viennagrid_error viennagrid_mesh_release(viennagrid_mesh mesh)
 {
-  mesh_hierarchy->optimize_memory();
+  if (mesh)
+    release(mesh);
+
   return VIENNAGRID_SUCCESS;
 }
 
-viennagrid_error viennagrid_mesh_hierarchy_memory_size(viennagrid_mesh_hierarchy mesh_hierarchy,
-                                                       long * size)
+
+viennagrid_error viennagrid_mesh_memory_optimize(viennagrid_mesh mesh)
+{
+  mesh->mesh_hierarchy()->optimize_memory();
+  return VIENNAGRID_SUCCESS;
+}
+
+viennagrid_error viennagrid_mesh_memory_size(viennagrid_mesh mesh,
+                                             long * size)
 {
   if (size)
-    *size = mesh_hierarchy->memory_size();
+    *size = mesh->mesh_hierarchy()->memory_size();
   return VIENNAGRID_SUCCESS;
 }
 
@@ -68,14 +69,14 @@ viennagrid_error viennagrid_mesh_hierarchy_memory_size(viennagrid_mesh_hierarchy
 
 
 
-viennagrid_error viennagrid_mesh_hierarchy_property_set(viennagrid_mesh_hierarchy mesh_hierarchy,
-                                                        viennagrid_int property,
-                                                        viennagrid_int value)
+viennagrid_error viennagrid_mesh_property_set(viennagrid_mesh mesh,
+                                              viennagrid_int property,
+                                              viennagrid_int value)
 {
   switch (property)
   {
     case VIENNAGRID_PROPERTY_BOUNDARY_LAYOUT:
-      mesh_hierarchy->set_boundary_layout(value);
+      mesh->mesh_hierarchy()->set_boundary_layout(value);
 
     default:
       return VIENNAGRID_ERROR_UNKNOWN_FLAG;
@@ -84,15 +85,15 @@ viennagrid_error viennagrid_mesh_hierarchy_property_set(viennagrid_mesh_hierarch
   return VIENNAGRID_SUCCESS;
 }
 
-viennagrid_error viennagrid_mesh_hierarchy_property_get(viennagrid_mesh_hierarchy mesh_hierarchy,
-                                                        viennagrid_int property,
-                                                        viennagrid_int * value)
+viennagrid_error viennagrid_mesh_property_get(viennagrid_mesh mesh,
+                                              viennagrid_int property,
+                                              viennagrid_int * value)
 {
   switch (property)
   {
     case VIENNAGRID_PROPERTY_BOUNDARY_LAYOUT:
       if (value)
-        *value = mesh_hierarchy->boundary_layout();
+        *value = mesh->mesh_hierarchy()->boundary_layout();
       break;
 
     default:
@@ -104,58 +105,44 @@ viennagrid_error viennagrid_mesh_hierarchy_property_get(viennagrid_mesh_hierarch
 
 
 
-viennagrid_error viennagrid_mesh_hierarchy_cell_dimension_get(viennagrid_mesh_hierarchy mesh_hierarchy,
-                                                              viennagrid_dimension * cell_dimension)
+viennagrid_error viennagrid_mesh_cell_dimension_get(viennagrid_mesh mesh,
+                                                    viennagrid_dimension * cell_dimension)
 {
   if (cell_dimension)
-    *cell_dimension = mesh_hierarchy->cell_dimension();
+    *cell_dimension = mesh->mesh_hierarchy()->cell_dimension();
   return VIENNAGRID_SUCCESS;
 }
 
-viennagrid_error viennagrid_mesh_hierarchy_geometric_dimension_get(viennagrid_mesh_hierarchy mesh_hierarchy,
-                                                                   viennagrid_dimension * geometric_dimension)
-{
-  *geometric_dimension = mesh_hierarchy->geometric_dimension();
-  return VIENNAGRID_SUCCESS;
-}
 viennagrid_error viennagrid_mesh_geometric_dimension_get(viennagrid_mesh mesh,
                                                          viennagrid_dimension * geometric_dimension)
 {
-  viennagrid_mesh_hierarchy mesh_hierarchy;
-  viennagrid_mesh_mesh_hierarchy_get(mesh, &mesh_hierarchy);
-  viennagrid_mesh_hierarchy_geometric_dimension_get(mesh_hierarchy, geometric_dimension);
+  *geometric_dimension = mesh->mesh_hierarchy()->geometric_dimension();
   return VIENNAGRID_SUCCESS;
 }
 
-
-viennagrid_error viennagrid_mesh_hierarchy_geometric_dimension_set(viennagrid_mesh_hierarchy mesh_hierarchy,
-                                                                   viennagrid_int geometric_dimension)
-{
-  mesh_hierarchy->set_geometric_dimension(geometric_dimension);
-  return VIENNAGRID_SUCCESS;
-}
 viennagrid_error viennagrid_mesh_geometric_dimension_set(viennagrid_mesh mesh,
                                                          viennagrid_int geometric_dimension)
 {
-  viennagrid_mesh_hierarchy mesh_hierarchy;
-  viennagrid_mesh_mesh_hierarchy_get(mesh, &mesh_hierarchy);
-  viennagrid_mesh_hierarchy_geometric_dimension_set(mesh_hierarchy, geometric_dimension);
+  if (!mesh->is_root())
+    return VIENNAGRID_ERROR_MESH_IS_NOT_ROOT;
+
+  mesh->mesh_hierarchy()->set_geometric_dimension(geometric_dimension);
   return VIENNAGRID_SUCCESS;
 }
 
-viennagrid_error viennagrid_mesh_hierarchy_clear(viennagrid_mesh_hierarchy mesh_hierarchy)
+viennagrid_error viennagrid_mesh_clear(viennagrid_mesh mesh)
 {
-  mesh_hierarchy->clear();
+  mesh->clear();
   return VIENNAGRID_SUCCESS;
 }
 
 
 
-viennagrid_error viennagrid_mesh_hierarchy_root_mesh_get(viennagrid_mesh_hierarchy mesh_hierarchy,
-                                                         viennagrid_mesh * mesh)
+viennagrid_error viennagrid_mesh_root_mesh_get(viennagrid_mesh mesh,
+                                               viennagrid_mesh * root)
 {
-  if (mesh)
-    *mesh = mesh_hierarchy->root();
+  if (root)
+    *root = mesh->mesh_hierarchy()->root();
 
   return VIENNAGRID_SUCCESS;
 }
@@ -169,25 +156,6 @@ viennagrid_error viennagrid_mesh_is_root(viennagrid_mesh mesh,
   return VIENNAGRID_SUCCESS;
 }
 
-
-viennagrid_error viennagrid_mesh_mesh_hierarchy_get(viennagrid_mesh mesh,
-                                                    viennagrid_mesh_hierarchy * mesh_hierarchy)
-{
-  if (mesh_hierarchy)
-    *mesh_hierarchy = mesh->mesh_hierarchy();
-
-  return VIENNAGRID_SUCCESS;
-}
-
-
-viennagrid_error viennagrid_mesh_create(viennagrid_mesh parent,
-                                        viennagrid_mesh * mesh)
-{
-  if (mesh)
-    *mesh = parent->make_child();
-
-  return VIENNAGRID_SUCCESS;
-}
 
 viennagrid_error viennagrid_mesh_children_count(viennagrid_mesh mesh,
                                                 viennagrid_int * children_count)
@@ -246,27 +214,14 @@ viennagrid_error viennagrid_mesh_name_set(viennagrid_mesh mesh,
 
 
 
-viennagrid_error viennagrid_mesh_hierarchy_element_count(viennagrid_mesh_hierarchy mesh_hierarchy,
-                                                         viennagrid_element_type element_type,
-                                                         viennagrid_int * count)
+viennagrid_error viennagrid_mesh_element_count(viennagrid_mesh mesh,
+                                               viennagrid_element_type element_type,
+                                               viennagrid_int * count)
 {
-  if (count)
-    *count = mesh_hierarchy->element_count(element_type);
+  abort();
 
-  return VIENNAGRID_SUCCESS;
-}
-
-viennagrid_error viennagrid_mesh_hierarchy_vertex_create(viennagrid_mesh_hierarchy hierarchy,
-                                                         const viennagrid_numeric * coords,
-                                                         viennagrid_int * vertex_id)
-{
-  viennagrid_int vid;
-  viennagrid_error err = viennagrid_mesh_vertex_create(hierarchy->root(), coords, &vid);
-  if (err != VIENNAGRID_SUCCESS)
-    return err;
-
-  if (vertex_id)
-    *vertex_id = vid;
+//   if (count)
+//     *count = mesh_hierarchy->element_count(element_type);
 
   return VIENNAGRID_SUCCESS;
 }
@@ -281,11 +236,7 @@ viennagrid_error viennagrid_mesh_vertex_create(viennagrid_mesh mesh,
   if (mesh->children_count() != 0)
     return VIENNAGRID_ERROR_MESH_HAS_CHILD_MESHES;
 
-  viennagrid_mesh_hierarchy mesh_hierarchy;
-  viennagrid_mesh_mesh_hierarchy_get(mesh, &mesh_hierarchy);
-
-  viennagrid_int vid = mesh_hierarchy->make_vertex(coords);;
-
+  viennagrid_int vid = mesh->mesh_hierarchy()->make_vertex(coords);;
   mesh->add_element(0, vid);
 
   if (vertex_id)
@@ -294,43 +245,26 @@ viennagrid_error viennagrid_mesh_vertex_create(viennagrid_mesh mesh,
   return VIENNAGRID_SUCCESS;
 }
 
-viennagrid_error viennagrid_mesh_hierarchy_vertex_coords_pointer(viennagrid_mesh_hierarchy mesh_hierarchy,
-                                                                 viennagrid_numeric ** coords)
+viennagrid_error viennagrid_mesh_vertex_coords_pointer(viennagrid_mesh mesh,
+                                                       viennagrid_numeric ** coords)
 {
   if (coords)
-    *coords = mesh_hierarchy->get_vertex_pointer();
+    *coords = mesh->mesh_hierarchy()->get_vertex_pointer();
 
   return VIENNAGRID_SUCCESS;
 }
 
 
-viennagrid_error viennagrid_mesh_hierarchy_vertex_coords_get(viennagrid_mesh_hierarchy mesh_hierarchy,
-                                                             viennagrid_int id,
-                                                             viennagrid_numeric ** coords)
+viennagrid_error viennagrid_mesh_vertex_coords_get(viennagrid_mesh mesh,
+                                                   viennagrid_int id,
+                                                   viennagrid_numeric ** coords)
 {
   if (coords)
-    *coords = mesh_hierarchy->get_vertex(id);
+    *coords = mesh->mesh_hierarchy()->get_vertex(id);
 
   return VIENNAGRID_SUCCESS;
 }
 
-
-viennagrid_error viennagrid_mesh_hierarchy_element_create(viennagrid_mesh_hierarchy hierarchy,
-                                                          viennagrid_element_type element_type,
-                                                          viennagrid_int vertex_count,
-                                                          viennagrid_int * vertex_ids,
-                                                          viennagrid_int * element_id)
-{
-  viennagrid_int eid;
-  viennagrid_error err = viennagrid_mesh_element_create(hierarchy->root(), element_type, vertex_count, vertex_ids, &eid);
-  if (err != VIENNAGRID_SUCCESS)
-    return err;
-
-  if (element_id)
-    *element_id = eid;
-
-  return VIENNAGRID_SUCCESS;
-}
 
 viennagrid_error viennagrid_mesh_element_create(viennagrid_mesh mesh,
                                                 viennagrid_element_type element_type,
@@ -344,11 +278,7 @@ viennagrid_error viennagrid_mesh_element_create(viennagrid_mesh mesh,
   if (mesh->children_count() != 0)
     return VIENNAGRID_ERROR_MESH_HAS_CHILD_MESHES;
 
-  viennagrid_mesh_hierarchy mesh_hierarchy;
-  viennagrid_mesh_mesh_hierarchy_get(mesh, &mesh_hierarchy);
-
-
-  std::pair<viennagrid_int, bool> tmp = mesh_hierarchy->get_make_element(element_type, vertex_ids, vertex_count, mesh);
+  std::pair<viennagrid_int, bool> tmp = mesh->mesh_hierarchy()->get_make_element(element_type, vertex_ids, vertex_count, mesh);
   if (!tmp.second)
     return VIENNAGRID_ERROR_ELEMENT_ALREADY_PRESENT;
 
@@ -362,22 +292,6 @@ viennagrid_error viennagrid_mesh_element_create(viennagrid_mesh mesh,
 
 
 
-viennagrid_error viennagrid_mesh_hierarchy_vertex_batch_create(viennagrid_mesh_hierarchy mesh_hierarchy,
-                                                               viennagrid_int vertex_count,
-                                                               viennagrid_numeric * vertex_coords,
-                                                               viennagrid_int * first_id)
-{
-  viennagrid_int vid;
-  viennagrid_error err = viennagrid_mesh_vertex_batch_create(mesh_hierarchy->root(), vertex_count, vertex_coords, &vid);
-  if (err != VIENNAGRID_SUCCESS)
-    return err;
-
-  if (first_id)
-    *first_id = vid;
-
-  return VIENNAGRID_SUCCESS;
-}
-
 viennagrid_error viennagrid_mesh_vertex_batch_create(viennagrid_mesh mesh,
                                                      viennagrid_int vertex_count,
                                                      viennagrid_numeric * vertex_coords,
@@ -389,10 +303,7 @@ viennagrid_error viennagrid_mesh_vertex_batch_create(viennagrid_mesh mesh,
   if (mesh->children_count() != 0)
     return VIENNAGRID_ERROR_MESH_HAS_CHILD_MESHES;
 
-  viennagrid_mesh_hierarchy mesh_hierarchy;
-  viennagrid_mesh_mesh_hierarchy_get(mesh, &mesh_hierarchy);
-
-  viennagrid_int tmp = mesh_hierarchy->make_vertices( vertex_coords, vertex_count );
+  viennagrid_int tmp = mesh->mesh_hierarchy()->make_vertices( vertex_coords, vertex_count );
   mesh->add_elements( 0, tmp, vertex_count );
 
   if (first_id)
@@ -401,25 +312,6 @@ viennagrid_error viennagrid_mesh_vertex_batch_create(viennagrid_mesh mesh,
   return VIENNAGRID_SUCCESS;
 }
 
-
-viennagrid_error viennagrid_mesh_hierarchy_element_batch_create(viennagrid_mesh_hierarchy mesh_hierarchy,
-                                                                viennagrid_int element_count,
-                                                                viennagrid_element_type * element_types,
-                                                                viennagrid_int * element_vertex_index_offsets,
-                                                                viennagrid_int * element_vertex_indices,
-                                                                viennagrid_region_id * region_ids,
-                                                                viennagrid_int * first_id)
-{
-  viennagrid_int eid;
-  viennagrid_error err = viennagrid_mesh_element_batch_create(mesh_hierarchy->root(), element_count, element_types, element_vertex_index_offsets, element_vertex_indices, region_ids, &eid);
-  if (err != VIENNAGRID_SUCCESS)
-    return err;
-
-  if (first_id)
-    *first_id = eid;
-
-  return VIENNAGRID_SUCCESS;
-}
 
 viennagrid_error viennagrid_mesh_element_batch_create(viennagrid_mesh mesh,
                                                       viennagrid_int element_count,
@@ -441,10 +333,7 @@ viennagrid_error viennagrid_mesh_element_batch_create(viennagrid_mesh mesh,
   viennagrid_dimension topologic_dimension = viennagrid_topological_dimension( element_types[0] );
   // TODO check if all elements have same topologic dimension
 
-  viennagrid_mesh_hierarchy mesh_hierarchy;
-  viennagrid_mesh_mesh_hierarchy_get(mesh, &mesh_hierarchy);
-
-  viennagrid_int tmp = mesh_hierarchy->make_elements( element_count, element_types, element_vertex_index_offsets, element_vertex_indices, region_ids );
+  viennagrid_int tmp = mesh->mesh_hierarchy()->make_elements( element_count, element_types, element_vertex_index_offsets, element_vertex_indices, region_ids );
   mesh->add_elements( topologic_dimension, tmp, element_count );
 
   if (first_id)
@@ -456,13 +345,13 @@ viennagrid_error viennagrid_mesh_element_batch_create(viennagrid_mesh mesh,
 
 
 
-viennagrid_error viennagrid_element_type_get(viennagrid_mesh_hierarchy mesh_hierarchy,
+viennagrid_error viennagrid_element_type_get(viennagrid_mesh mesh,
                                              viennagrid_dimension element_topo_dim,
                                              viennagrid_int element_id,
                                              viennagrid_element_type * element_type)
 {
   if (element_type)
-    *element_type = mesh_hierarchy->element_buffer(element_topo_dim).element_type(element_id);
+    *element_type = mesh->mesh_hierarchy()->element_buffer(element_topo_dim).element_type(element_id);
 
   return VIENNAGRID_SUCCESS;
 }
@@ -470,23 +359,23 @@ viennagrid_error viennagrid_element_type_get(viennagrid_mesh_hierarchy mesh_hier
 
 
 
-viennagrid_error viennagrid_element_boundary_element_pointers(viennagrid_mesh_hierarchy hierarchy,
-                                                      viennagrid_dimension element_topo_dim,
-                                                      viennagrid_dimension boundary_topo_dim,
-                                                      viennagrid_int ** boundary_offsets,
-                                                      viennagrid_int ** boundary_ids)
+viennagrid_error viennagrid_element_boundary_element_pointers(viennagrid_mesh mesh,
+                                                              viennagrid_dimension element_topo_dim,
+                                                              viennagrid_dimension boundary_topo_dim,
+                                                              viennagrid_int ** boundary_offsets,
+                                                              viennagrid_int ** boundary_ids)
 {
   if (boundary_offsets)
-    *boundary_offsets = hierarchy->element_buffer(element_topo_dim).boundary_buffer(boundary_topo_dim).offset_pointer();
+    *boundary_offsets = mesh->mesh_hierarchy()->element_buffer(element_topo_dim).boundary_buffer(boundary_topo_dim).offset_pointer();
 
   if (boundary_ids)
-    *boundary_ids = hierarchy->element_buffer(element_topo_dim).boundary_buffer(boundary_topo_dim).values_pointer();
+    *boundary_ids = mesh->mesh_hierarchy()->element_buffer(element_topo_dim).boundary_buffer(boundary_topo_dim).values_pointer();
   return VIENNAGRID_SUCCESS;
 }
 
 
 
-viennagrid_error viennagrid_element_boundary_elements(viennagrid_mesh_hierarchy hierarchy,
+viennagrid_error viennagrid_element_boundary_elements(viennagrid_mesh mesh,
                                                       viennagrid_dimension element_topo_dim,
                                                       viennagrid_int element_id,
                                                       viennagrid_dimension boundary_topo_dim,
@@ -494,10 +383,10 @@ viennagrid_error viennagrid_element_boundary_elements(viennagrid_mesh_hierarchy 
                                                       viennagrid_int ** boundary_element_ids_end)
 {
   if (boundary_element_ids_begin)
-    *boundary_element_ids_begin = hierarchy->boundary_begin(element_topo_dim, element_id, boundary_topo_dim);
+    *boundary_element_ids_begin = mesh->mesh_hierarchy()->boundary_begin(element_topo_dim, element_id, boundary_topo_dim);
 
   if (boundary_element_ids_end)
-    *boundary_element_ids_end = hierarchy->boundary_end(element_topo_dim, element_id, boundary_topo_dim);
+    *boundary_element_ids_end = mesh->mesh_hierarchy()->boundary_end(element_topo_dim, element_id, boundary_topo_dim);
 
   return VIENNAGRID_SUCCESS;
 }
@@ -584,30 +473,19 @@ viennagrid_error viennagrid_mesh_elements_get(viennagrid_mesh mesh,
   return VIENNAGRID_SUCCESS;
 }
 
-viennagrid_error viennagrid_element_parent_get(viennagrid_mesh_hierarchy mesh_hierarchy,
+viennagrid_error viennagrid_element_parent_get(viennagrid_mesh mesh,
                                                viennagrid_dimension element_topo_dim,
                                                viennagrid_int element_id,
                                                viennagrid_int * element_parent_id)
 {
   if (element_parent_id)
-    *element_parent_id = mesh_hierarchy->element_buffer(element_topo_dim).parent_id(element_id);
+    *element_parent_id = mesh->mesh_hierarchy()->element_buffer(element_topo_dim).parent_id(element_id);
 
   return VIENNAGRID_SUCCESS;
 }
 
 
 
-
-viennagrid_error viennagrid_mesh_hierarchy_region_create(viennagrid_mesh_hierarchy mesh_hierarchy,
-                                                         viennagrid_region * region)
-{
-  viennagrid_region tmp = mesh_hierarchy->create_region();
-
-  if (region)
-    *region = tmp;
-
-  return VIENNAGRID_SUCCESS;
-}
 
 viennagrid_error viennagrid_mesh_region_create(viennagrid_mesh mesh,
                                                viennagrid_region * region)
@@ -622,18 +500,6 @@ viennagrid_error viennagrid_mesh_region_create(viennagrid_mesh mesh,
 
 
 
-viennagrid_error viennagrid_mesh_hierarchy_region_get_or_create(viennagrid_mesh_hierarchy mesh_hierarchy,
-                                                                viennagrid_region_id region_id,
-                                                                viennagrid_region * region)
-{
-  viennagrid_region tmp = mesh_hierarchy->get_or_create_region(region_id);;
-
-  if (region)
-    *region = tmp;
-
-  return VIENNAGRID_SUCCESS;
-}
-
 viennagrid_error viennagrid_mesh_region_get_or_create(viennagrid_mesh mesh,
                                                       viennagrid_region_id region_id,
                                                       viennagrid_region * region)
@@ -646,17 +512,6 @@ viennagrid_error viennagrid_mesh_region_get_or_create(viennagrid_mesh mesh,
   return VIENNAGRID_SUCCESS;
 }
 
-
-
-viennagrid_error viennagrid_mesh_hierarchy_region_get(viennagrid_mesh_hierarchy mesh_hierarchy,
-                                                      viennagrid_region_id region_id,
-                                                      viennagrid_region * region)
-{
-  if (region)
-    *region = mesh_hierarchy->get_region(region_id);
-
-  return VIENNAGRID_SUCCESS;
-}
 
 viennagrid_error viennagrid_mesh_region_get(viennagrid_mesh mesh,
                                             viennagrid_region_id region_id,
@@ -671,11 +526,11 @@ viennagrid_error viennagrid_mesh_region_get(viennagrid_mesh mesh,
 
 
 
-viennagrid_error viennagrid_region_mesh_hierarchy_get(viennagrid_region region,
-                                                      viennagrid_mesh_hierarchy * hierarchy)
+viennagrid_error viennagrid_region_root_mesh_get(viennagrid_region region,
+                                                 viennagrid_mesh * root)
 {
-  if (hierarchy)
-    *hierarchy = region->mesh_hierarchy();
+  if (root)
+    *root = region->mesh_hierarchy()->root();
 
   return VIENNAGRID_SUCCESS;
 }
@@ -706,15 +561,15 @@ viennagrid_error viennagrid_region_id_get(viennagrid_region region,
   return VIENNAGRID_SUCCESS;
 }
 
-viennagrid_error viennagrid_mesh_hierarchy_regions_get(viennagrid_mesh_hierarchy hierarchy,
-                                                       viennagrid_region_id ** region_ids_begin,
-                                                       viennagrid_region_id ** region_ids_end)
+viennagrid_error viennagrid_mesh_regions_get(viennagrid_mesh mesh,
+                                             viennagrid_region_id ** region_ids_begin,
+                                             viennagrid_region_id ** region_ids_end)
 {
   if (region_ids_begin)
-    *region_ids_begin = hierarchy->region_ids_begin();
+    *region_ids_begin = mesh->mesh_hierarchy()->region_ids_begin();
 
   if (region_ids_end)
-    *region_ids_end = hierarchy->region_ids_end();
+    *region_ids_end = mesh->mesh_hierarchy()->region_ids_end();
 
   return VIENNAGRID_SUCCESS;
 }
@@ -723,17 +578,17 @@ viennagrid_error viennagrid_mesh_hierarchy_regions_get(viennagrid_mesh_hierarchy
 
 
 
-viennagrid_error viennagrid_element_regions_get(viennagrid_mesh_hierarchy hierarchy,
+viennagrid_error viennagrid_element_regions_get(viennagrid_mesh mesh,
                                                 viennagrid_dimension element_topo_dim,
                                                 viennagrid_int element_id,
                                                 viennagrid_region_id ** region_id_begin,
                                                 viennagrid_region_id ** region_id_end)
 {
   if (region_id_begin)
-    *region_id_begin = hierarchy->element_buffer(element_topo_dim).regions_begin(element_id);
+    *region_id_begin = mesh->mesh_hierarchy()->element_buffer(element_topo_dim).regions_begin(element_id);
 
   if (region_id_end)
-    *region_id_end = hierarchy->element_buffer(element_topo_dim).regions_end(element_id);
+    *region_id_end = mesh->mesh_hierarchy()->element_buffer(element_topo_dim).regions_end(element_id);
 
   return VIENNAGRID_SUCCESS;
 }
@@ -745,7 +600,7 @@ viennagrid_error viennagrid_region_element_add(viennagrid_region region,
                                                viennagrid_int element_id)
 {
   viennagrid_region_id region_id = region->id();
-  viennagrid_mesh_hierarchy hierarchy = region->mesh_hierarchy();
+  viennagrid_mesh_hierarchy_ * hierarchy = region->mesh_hierarchy();
 
   hierarchy->element_buffer(element_topo_dim).add_to_region(element_id, region_id);
 
@@ -763,7 +618,7 @@ viennagrid_error viennagrid_region_element_add(viennagrid_region region,
 
 
 viennagrid_error viennagrid_region_contains_element(viennagrid_region region,
-                                                    viennagrid_dimension _element_topo_dim,
+                                                    viennagrid_dimension element_topo_dim,
                                                     viennagrid_int element_id,
                                                     viennagrid_bool * value)
 {
@@ -771,11 +626,9 @@ viennagrid_error viennagrid_region_contains_element(viennagrid_region region,
     return VIENNAGRID_SUCCESS;
 
   viennagrid_region_id region_id = region->id();
-  viennagrid_mesh_hierarchy hierarchy = region->mesh_hierarchy();
 
-  viennagrid_region_id * region_ids_begin;
-  viennagrid_region_id * region_ids_end;
-  viennagrid_element_regions_get(hierarchy, _element_topo_dim, element_id, &region_ids_begin, &region_ids_end);
+  viennagrid_region_id * region_ids_begin = region->mesh_hierarchy()->element_buffer(element_topo_dim).regions_begin(element_id);
+  viennagrid_region_id * region_ids_end = region->mesh_hierarchy()->element_buffer(element_topo_dim).regions_end(element_id);
 
   for (viennagrid_region_id * it = region_ids_begin; it != region_ids_end; ++it)
   {

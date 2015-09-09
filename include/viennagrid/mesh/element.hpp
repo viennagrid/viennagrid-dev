@@ -22,41 +22,41 @@ namespace viennagrid
     typedef viennagrid_int id_type;
     typedef viennagrid_dimension dimension_type;
 
-    typedef typename result_of::const_nonconst<mesh_hierarchy, is_const>::type mesh_hierarchy_type;
-    typedef typename result_of::const_nonconst<mesh_hierarchy, true>::type const_mesh_hierarchy_type;
+    typedef typename result_of::const_nonconst<mesh, is_const>::type mesh_type;
+    typedef typename result_of::const_nonconst<mesh, true>::type const_mesh_type;
 
-    base_element() : mesh_hierarchy_(0), id_(-1) {}
-    base_element(viennagrid_mesh_hierarchy mesh_hierarchy_in,
+    base_element() : mesh_(0), id_(-1) {}
+    base_element(viennagrid_mesh mesh_in,
                  dimension_type topologic_dimension_in,
                  id_type id_in) :
-                 mesh_hierarchy_(mesh_hierarchy_in),
+                 mesh_(mesh_in),
                  topologic_dimension_(topologic_dimension_in),
                  id_(id_in) {}
-    base_element(mesh_hierarchy_type const & mesh_hierarchy_in,
+    base_element(mesh_type const & mesh_in,
                  dimension_type topologic_dimension_in,
                  id_type id_in) :
-                 mesh_hierarchy_(mesh_hierarchy_in.internal()),
+                 mesh_(mesh_in.internal()),
                  topologic_dimension_(topologic_dimension_in),
                  id_(id_in) {}
 
     template<bool other_is_const>
-    base_element(base_element<other_is_const> element) : mesh_hierarchy_(element.mesh_hierarchy_), topologic_dimension_(element.topologic_dimension_), id_(element.id_) {}
+    base_element(base_element<other_is_const> element) : mesh_(element.mesh_), topologic_dimension_(element.topologic_dimension_), id_(element.id_) {}
 
     id_type id() const { return id_; }
     bool valid() const { return id() >= 0; }
 
-    mesh_hierarchy_type get_mesh_hierarchy()
-    { return mesh_hierarchy_type(mesh_hierarchy_); }
+    mesh_type get_mesh()
+    { return mesh_type(mesh_); }
 
-    const_mesh_hierarchy_type get_mesh_hierarchy() const
-    { return const_mesh_hierarchy_type(mesh_hierarchy_); }
+    const_mesh_type get_mesh() const
+    { return const_mesh_type(mesh_); }
 
-    viennagrid_mesh_hierarchy internal_mesh_hierarchy() const { return const_cast<viennagrid_mesh_hierarchy>(mesh_hierarchy_); }
+    viennagrid_mesh internal_mesh() const { return const_cast<viennagrid_mesh>(mesh_); }
 
     element_tag tag() const
     {
       viennagrid_element_type type;
-      viennagrid_element_type_get( internal_mesh_hierarchy(), topologic_dimension(), id(), &type);
+      viennagrid_element_type_get( internal_mesh(), topologic_dimension(), id(), &type);
       return element_tag(type);
     }
 
@@ -75,7 +75,7 @@ namespace viennagrid
 
   private:
 
-    viennagrid_mesh_hierarchy mesh_hierarchy_;
+    viennagrid_mesh mesh_;
     dimension_type topologic_dimension_;
     id_type id_;
   };
@@ -110,14 +110,10 @@ namespace viennagrid
 
 
 
-//   template<bool is_const>
-//   base_mesh_hierarchy<is_const> mesh_hierarchy( base_element<is_const> const & element )
-//   { return element.mesh_hierarchy(); }
-
   template<bool is_const>
-  viennagrid_mesh_hierarchy internal_mesh_hierarchy( base_element<is_const> const & element )
+  viennagrid_mesh internal_mesh( base_element<is_const> const & element )
   {
-    return element.internal_mesh_hierarchy();
+    return element.internal_mesh();
   }
 
 
@@ -135,7 +131,7 @@ namespace viennagrid
   template<bool is_const>
   void set_parent(base_element<false> element, base_element<is_const> const & parent)
   {
-    viennagrid_element_parent_set(internal_mesh_hierarchy(element),
+    viennagrid_element_parent_set(internal_mesh(element),
                                   viennagrid::topologic_dimension(element),
                                   element.id(),
                                   parent.id());

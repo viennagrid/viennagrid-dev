@@ -6,6 +6,10 @@
 
 #include "viennagrid/viennagrid.h"
 #include "dynamic_sizeof.hpp"
+#include "mesh_hierarchy.hpp"
+
+
+struct viennagrid_mesh_hierarchy_;
 
 struct viennagrid_region_
 {
@@ -15,9 +19,9 @@ struct viennagrid_region_
   friend struct viennautils::detail::dynamic_sizeof_impl;
 public:
 
-  viennagrid_region_(viennagrid_int id_in, viennagrid_mesh_hierarchy hierarchy_in) : id_(id_in), boundary_elements_change_counter(0), hierarchy_(hierarchy_in) {}
+  viennagrid_region_(viennagrid_int id_in, viennagrid_mesh_hierarchy_ * hierarchy_in) : id_(id_in), boundary_elements_change_counter(0), hierarchy_(hierarchy_in) {}
 
-  viennagrid_mesh_hierarchy mesh_hierarchy() { return hierarchy_; }
+  viennagrid_mesh_hierarchy_ * mesh_hierarchy() { return hierarchy_; }
 
   void set_name(std::string const & name_in) { name_= name_in; }
   std::string const & name() const { return name_; }
@@ -48,7 +52,7 @@ private:
   std::set<viennagrid_int> boundary_elements_[VIENNAGRID_TOPOLOGIC_DIMENSION_END];
   viennagrid_int boundary_elements_change_counter;
 
-  viennagrid_mesh_hierarchy hierarchy_;
+  viennagrid_mesh_hierarchy_ * hierarchy_;
 };
 
 #endif

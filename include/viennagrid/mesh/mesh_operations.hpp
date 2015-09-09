@@ -17,7 +17,6 @@
 #include "viennagrid/core/utils.hpp"
 #include "viennagrid/mesh/mesh.hpp"
 #include "viennagrid/mesh/element_creation.hpp"
-// #include "viennagrid/mesh/coboundary_iteration.hpp"
 
 
 /** @file viennagrid/mesh/mesh_operations.hpp
@@ -37,12 +36,12 @@ namespace viennagrid
   {
   public:
 
-    typedef viennagrid::const_mesh_hierarchy SrcMeshHierarchyType;
+    typedef viennagrid::const_mesh SrcMeshType;
     typedef viennagrid::mesh DstMeshType;
 
     typedef typename viennagrid::result_of::coord<DstMeshType>::type DstNumericType;
     typedef typename viennagrid::result_of::element<DstMeshType>::type DstElementType;
-    typedef typename viennagrid::result_of::element_id<SrcMeshHierarchyType>::type SrcElementIDType;
+    typedef typename viennagrid::result_of::element_id<SrcMeshType>::type SrcElementIDType;
 
     /** @brief The constructor, requires the destination mesh where the elements are copied to.
       *
@@ -58,7 +57,7 @@ namespace viennagrid
     template<bool element_is_const>
     DstElementType operator()( base_element<element_is_const> const & src )
     {
-      assert( src.get_mesh_hierarchy() != dst_mesh().get_mesh_hierarchy() );
+      assert( src.get_mesh() != dst_mesh() );
 
       if (src.is_vertex())
         return copy_vertex(src);

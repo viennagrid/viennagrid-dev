@@ -30,34 +30,33 @@
 
 #define ERROR_CHECK(err) do { if (err != VIENNAGRID_SUCCESS) { printf("Return value invalid in line %ld \n", (long)__LINE__); return (int)err; } } while (0);
 
-int print_cells_in_region(viennagrid_mesh_hierarchy my_mesh_hierarchy, viennagrid_mesh my_mesh, viennagrid_region_id region_id)
+int print_cells_in_region(viennagrid_mesh my_mesh, viennagrid_region region)
 {
   viennagrid_error     err;
   viennagrid_int       *element_ptr_begin, *element_ptr_end;
-  viennagrid_region_id *regions_begin, *regions_end;
   viennagrid_int       *vertices_begin, *vertices_end;
   viennagrid_int       *it;
-  viennagrid_region_id *it2;
   viennagrid_int       *vertex_it;
+  viennagrid_bool      is_in_region;
 
   err = viennagrid_mesh_elements_get(my_mesh, 2, &element_ptr_begin, &element_ptr_end); ERROR_CHECK(err);
 
   for (it = element_ptr_begin; it != element_ptr_end; ++it)
   {
-    err = viennagrid_element_regions_get(my_mesh_hierarchy, 2, *it, &regions_begin, &regions_end); ERROR_CHECK(err);
-    for (it2 = regions_begin; it2 != regions_end; ++it2)
-      if (*it2 == region_id)
+    err = viennagrid_region_contains_element(region, 2, *it, &is_in_region);
+
+    if (is_in_region == VIENNAGRID_TRUE)
+    {
+      printf("--- Element %ld ---\n", (long)*it);
+      /* print vertices: */
+      viennagrid_element_boundary_elements(my_mesh, 2, *it, 0, &vertices_begin, &vertices_end); ERROR_CHECK(err);
+      for (vertex_it = vertices_begin; vertex_it != vertices_end; ++vertex_it)
       {
-        printf("--- Element %ld ---\n", (long)*it);
-        /* print vertices: */
-        viennagrid_element_boundary_elements(my_mesh_hierarchy, 2, *it, 0, &vertices_begin, &vertices_end); ERROR_CHECK(err);
-        for (vertex_it = vertices_begin; vertex_it != vertices_end; ++vertex_it)
-        {
-          viennagrid_numeric *vertex_coords;
-          err = viennagrid_mesh_hierarchy_vertex_coords_get(my_mesh_hierarchy, *vertex_it, &vertex_coords); ERROR_CHECK(err);
-          printf(" %ld: %g %g \n", (long)*vertex_it, vertex_coords[0], vertex_coords[1]);
-        }
+        viennagrid_numeric *vertex_coords;
+        err = viennagrid_mesh_vertex_coords_get(my_mesh, *vertex_it, &vertex_coords); ERROR_CHECK(err);
+        printf(" %ld: %g %g \n", (long)*vertex_it, vertex_coords[0], vertex_coords[1]);
       }
+    }
   }
 
   return VIENNAGRID_SUCCESS;
@@ -66,10 +65,9 @@ int print_cells_in_region(viennagrid_mesh_hierarchy my_mesh_hierarchy, viennagri
 int main()
 {
   viennagrid_error          err;
-  viennagrid_mesh_hierarchy my_mesh_hierarchy;
   viennagrid_mesh           my_mesh;
   viennagrid_region         my_region0, my_region1;
-  viennagrid_region_id      my_region_id0, my_region_id1;
+//   viennagrid_region_id      my_region_id0, my_region_id1;
   viennagrid_int            *element_ptr_begin, *element_ptr_end;
 
   viennagrid_numeric coords0[2] = {0, 0}; viennagrid_int vertex0;
@@ -96,16 +94,14 @@ int main()
   /*
    * Step 1: Instantiate the mesh hierarchy, extract the root mesh, and create 2 regions:
    */
-  err = viennagrid_mesh_hierarchy_create(&my_mesh_hierarchy); ERROR_CHECK(err);
-  err = viennagrid_mesh_hierarchy_geometric_dimension_set(my_mesh_hierarchy, 2); ERROR_CHECK(err);
+  err = viennagrid_mesh_create(&my_mesh); ERROR_CHECK(err);
+  err = viennagrid_mesh_geometric_dimension_set(my_mesh, 2); ERROR_CHECK(err);
 
-  err = viennagrid_mesh_hierarchy_root_mesh_get(my_mesh_hierarchy, &my_mesh); ERROR_CHECK(err);
+  err = viennagrid_mesh_region_create(my_mesh, &my_region0); ERROR_CHECK(err);
+  err = viennagrid_mesh_region_create(my_mesh, &my_region1); ERROR_CHECK(err);
 
-  err = viennagrid_mesh_hierarchy_region_create(my_mesh_hierarchy, &my_region0); ERROR_CHECK(err);
-  err = viennagrid_mesh_hierarchy_region_create(my_mesh_hierarchy, &my_region1); ERROR_CHECK(err);
-
-  err = viennagrid_region_id_get(my_region0, &my_region_id0); ERROR_CHECK(err);
-  err = viennagrid_region_id_get(my_region1, &my_region_id1); ERROR_CHECK(err);
+//   err = viennagrid_region_id_get(my_region0, &my_region_id0); ERROR_CHECK(err);
+//   err = viennagrid_region_id_get(my_region1, &my_region_id1); ERROR_CHECK(err);
 
   /*
    * Step 2: Add vertices to the mesh.
@@ -154,12 +150,12 @@ int main()
    */
 
   printf("\nCells in region 0:\n");
-  print_cells_in_region(my_mesh_hierarchy, my_mesh, my_region_id0);
+  print_cells_in_region(my_mesh, my_region0);
 
   printf("\nCells in region 1:\n");
-  print_cells_in_region(my_mesh_hierarchy, my_mesh, my_region_id1);
+  print_cells_in_region(my_mesh, my_region1);
 
-  err = viennagrid_mesh_hierarchy_release(my_mesh_hierarchy); ERROR_CHECK(err);
+  err = viennagrid_mesh_release(my_mesh); ERROR_CHECK(err);
 
 
   printf("\n");

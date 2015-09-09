@@ -18,7 +18,7 @@ namespace viennagrid
     viennagrid_region_id * it;
     viennagrid_region_id * end;
 
-    viennagrid_element_regions_get(internal_mesh_hierarchy(element),
+    viennagrid_element_regions_get(internal_mesh(element),
                                    viennagrid::topologic_dimension(element),
                                    element.id(),
                                    &it,
@@ -40,10 +40,10 @@ namespace viennagrid
 
 
   template<bool element_is_const, bool region_is_const>
-  bool is_boundary( base_mesh_region<region_is_const> const & region, base_element<element_is_const> const & element )
+  bool is_boundary( base_region<region_is_const> const & region, base_element<element_is_const> const & element )
   {
     viennagrid_bool result;
-    viennagrid_element_is_region_boundary(region.get_region().internal(),
+    viennagrid_element_is_region_boundary(region.internal(),
                                           region.get_mesh().internal(),
                                           viennagrid::topologic_dimension(element),
                                           element.id(),
@@ -51,10 +51,10 @@ namespace viennagrid
     return result == VIENNAGRID_TRUE;
   }
 
-  template bool is_boundary( base_mesh_region<false> const & region, base_element<false> const & element );
-  template bool is_boundary( base_mesh_region<false> const & region, base_element<true> const & element );
-  template bool is_boundary( base_mesh_region<true> const & region, base_element<false> const & element );
-  template bool is_boundary( base_mesh_region<true> const & region, base_element<true> const & element );
+  template bool is_boundary( base_region<false> const & region, base_element<false> const & element );
+  template bool is_boundary( base_region<false> const & region, base_element<true> const & element );
+  template bool is_boundary( base_region<true> const & region, base_element<false> const & element );
+  template bool is_boundary( base_region<true> const & region, base_element<true> const & element );
 
 
 }

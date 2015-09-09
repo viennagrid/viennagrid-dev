@@ -13,7 +13,6 @@
 #include "viennagrid/mesh/element.hpp"
 #include "viennagrid/mesh/region.hpp"
 #include "viennagrid/mesh/mesh.hpp"
-#include "viennagrid/mesh/mesh_hierarchy.hpp"
 #include "viennagrid/mesh/element_creation.hpp"
 #include "viennagrid/mesh/mesh_operations.hpp"
 #include "viennagrid/mesh/plc.hpp"

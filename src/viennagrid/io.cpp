@@ -159,25 +159,20 @@ viennagrid_error viennagrid_mesh_io_read_with_filetype(viennagrid_mesh_io mesh_i
 {
   viennagrid_mesh mesh;
   viennagrid_mesh_io_mesh_get(mesh_io, &mesh);
+
   if (!mesh)
   {
-    viennagrid_mesh_hierarchy mesh_hierarchy;
-    viennagrid_mesh_hierarchy_create(&mesh_hierarchy);
-
-    viennagrid_mesh_hierarchy_root_mesh_get(mesh_hierarchy, &mesh);
+    viennagrid_mesh_create(&mesh);
     viennagrid_mesh_io_mesh_set(mesh_io, mesh);
   }
   else
   {
-    viennagrid_mesh_hierarchy mesh_hierarchy;
-    viennagrid_mesh_mesh_hierarchy_get(mesh, &mesh_hierarchy);
-
-    viennagrid_mesh root;
-    viennagrid_mesh_hierarchy_root_mesh_get(mesh_hierarchy, &root);
-    if (mesh != root)
+    viennagrid_bool is_root;
+    viennagrid_mesh_is_root(mesh, &is_root);
+    if (is_root != VIENNAGRID_TRUE)
       return VIENNAGRID_ERROR_IO_MESH_IS_NOT_ROOT;
 
-    viennagrid_mesh_hierarchy_clear(mesh_hierarchy);
+    viennagrid_mesh_clear(mesh);
   }
 
   switch (filetype)

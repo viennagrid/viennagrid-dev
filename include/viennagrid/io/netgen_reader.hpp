@@ -40,7 +40,7 @@ namespace viennagrid
        * @param filename      Name of the file
        */
       template <typename MeshType>
-      void operator()(MeshType const & mesh_obj, std::string const & filename) const
+      void operator()(MeshType & mesh_obj, std::string const & filename) const
       {
         typedef typename viennagrid::result_of::coord<MeshType>::type     CoordType;
         typedef typename result_of::element<MeshType, vertex_tag>::type   VertexType;
@@ -125,9 +125,9 @@ namespace viennagrid
           getline( reader, tmp );
           std::istringstream line(tmp);
 
-          int segment_index;
+          int region_index;
           std::vector<viennagrid_int> vertex_indices;
-          line >> segment_index;
+          line >> region_index;
 
           while (line.good())
           {
@@ -142,15 +142,15 @@ namespace viennagrid
             cell_vertex_handles[j] = vertices[ vertex_indices[j]-1];
 
           if (vertex_indices.size() == 2)
-            viennagrid::make_element<viennagrid::line_tag>(mesh_obj.get_or_create_region(segment_index),
+            viennagrid::make_element<viennagrid::line_tag>(mesh_obj.get_or_create_region(region_index),
                                                            cell_vertex_handles.begin(),
                                                            cell_vertex_handles.end());
           else if (vertex_indices.size() == 3)
-            viennagrid::make_element<viennagrid::triangle_tag>(mesh_obj.get_or_create_region(segment_index),
+            viennagrid::make_element<viennagrid::triangle_tag>(mesh_obj.get_or_create_region(region_index),
                                                                cell_vertex_handles.begin(),
                                                                cell_vertex_handles.end());
           else if (vertex_indices.size() == 4)
-            viennagrid::make_element<viennagrid::tetrahedron_tag>(mesh_obj.get_or_create_region(segment_index),
+            viennagrid::make_element<viennagrid::tetrahedron_tag>(mesh_obj.get_or_create_region(region_index),
                                                                   cell_vertex_handles.begin(),
                                                                   cell_vertex_handles.end());
         }

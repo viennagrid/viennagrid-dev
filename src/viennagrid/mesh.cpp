@@ -4,15 +4,25 @@
 
 
 
-viennagrid_mesh_::viennagrid_mesh_(viennagrid_mesh_hierarchy hierarchy_in) : hierarchy_(hierarchy_in), parent_(0)
+viennagrid_mesh_::viennagrid_mesh_() : hierarchy_(new viennagrid_mesh_hierarchy_(this)), parent_(0)
+{
+  hierarchy_->add_mesh(this);
+  clear();
+}
+
+viennagrid_mesh_::viennagrid_mesh_(viennagrid_mesh_hierarchy_ * hierarchy_in, viennagrid_mesh parent_in) : hierarchy_(hierarchy_in), parent_(parent_in)
 {
   hierarchy_in->add_mesh(this);
   clear();
 }
-viennagrid_mesh_::viennagrid_mesh_(viennagrid_mesh_hierarchy hierarchy_in, viennagrid_mesh parent_in) : hierarchy_(hierarchy_in), parent_(parent_in)
+
+viennagrid_mesh_::~viennagrid_mesh_()
 {
-  hierarchy_in->add_mesh(this);
-  clear();
+  for (std::size_t i = 0; i != children.size(); ++i)
+    delete children[i];
+
+  if (is_root())
+    delete hierarchy_;
 }
 
 viennagrid_mesh viennagrid_mesh_::make_child()
@@ -443,7 +453,36 @@ void viennagrid_mesh_::make_boundary_flags()
   set_boundary_flags_uptodate();
 }
 
+void viennagrid_mesh_::clear()
+{
+  if (is_root())
+    mesh_hierarchy()->clear();
 
+  children.clear();
+  element_children.clear();
+  mesh_children_map.clear();
+
+  for (viennagrid_int i = 0; i != VIENNAGRID_TOPOLOGIC_DIMENSION_END; ++i)
+  {
+    element_handle_buffers[i].clear();
+  }
+
+  for (viennagrid_int i = 0; i != VIENNAGRID_TOPOLOGIC_DIMENSION_END; ++i)
+    for (viennagrid_int j = 0; j != VIENNAGRID_TOPOLOGIC_DIMENSION_END; ++j)
+      coboundary_change_counters[i][j] = 0;
+
+  for (viennagrid_int i = 0; i != VIENNAGRID_TOPOLOGIC_DIMENSION_END; ++i)
+    for (viennagrid_int j = 0; j != VIENNAGRID_TOPOLOGIC_DIMENSION_END; ++j)
+      for (viennagrid_int k = 0; k != VIENNAGRID_TOPOLOGIC_DIMENSION_END; ++k)
+        neighbor_change_counters[i][j][k] = 0;
+
+  for (viennagrid_int i = 0; i != VIENNAGRID_TOPOLOGIC_DIMENSION_END; ++i)
+  {
+    boundary_elements_[i].clear();
+  }
+
+  boundary_elements_change_counter = 0;
+}
 
 
 

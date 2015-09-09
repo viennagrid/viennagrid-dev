@@ -25,8 +25,7 @@ int main()
   // Define the necessary types:
   //
 
-  typedef viennagrid::mesh_hierarchy                              MeshHierarchyType;
-  typedef viennagrid::result_of::mesh<MeshHierarchyType>::type    MeshType;
+  typedef viennagrid::mesh                                        MeshType;
 
 
   std::cout << "-------------------------------------------------------------- " << std::endl;

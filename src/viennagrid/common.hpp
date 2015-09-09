@@ -3,6 +3,16 @@
 
 #include <vector>
 
+
+struct reference_counted
+{
+  reference_counted() : retain_release_count(0), reference_counter(1) {}
+
+  viennagrid_int retain_release_count;
+  viennagrid_int reference_counter;
+};
+
+
 template<typename T>
 void retain(T * ptr)
 {

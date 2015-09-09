@@ -25,8 +25,7 @@ int main()
   // Define the necessary types:
   //
 
-  typedef viennagrid::mesh_hierarchy                              MeshHierarchyType;
-  typedef viennagrid::result_of::mesh<MeshHierarchyType>::type    MeshType;
+  typedef viennagrid::mesh                                        MeshType;
 
 
   void * buffer;
@@ -35,18 +34,15 @@ int main()
 
   {
     viennagrid::io::vtk_reader<MeshType> reader;
-    MeshHierarchyType mesh_hierarchy;
-    MeshType mesh = mesh_hierarchy.root();
+    MeshType mesh;
     reader(mesh, "../data/tets_with_data_main.pvd");
 
-    mesh_hierarchy.serialize( &buffer, &size );
+    mesh.serialize( &buffer, &size );
   }
 
   {
-    MeshHierarchyType mesh_hierarchy;
-    mesh_hierarchy.deserialize( buffer, size );
-
-    MeshType mesh = mesh_hierarchy.root();
+    MeshType mesh;
+    mesh.deserialize( buffer, size );
 
     viennagrid::io::vtk_writer<MeshType> writer;
     writer(mesh, "deserialized");

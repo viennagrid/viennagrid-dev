@@ -93,7 +93,7 @@ int main()
   viennagrid::make_triangle(region1, v2, v3, v4 );
 
 
-  std::cout << "MH size = " << mesh.get_mesh_hierarchy().memory_size() << std::endl;
+  std::cout << "MH size = " << mesh.memory_size() << std::endl;
 
   //
   // That's it. The mesh consisting of two segments is now set up.

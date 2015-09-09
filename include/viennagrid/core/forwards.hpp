@@ -35,14 +35,6 @@ namespace viennagrid
   typedef base_region<true> const_region;
 
 
-  template<bool is_const = false>
-  class base_mesh_region;
-
-  typedef base_mesh_region<false> mesh_region;
-  typedef base_mesh_region<true> const_mesh_region;
-
-
-
 
 
   template<bool is_const = false>
@@ -58,14 +50,6 @@ namespace viennagrid
 
   typedef base_mesh<false>       mesh;
   typedef base_mesh<true>  const_mesh;
-
-
-  template<bool is_const = false>
-  class base_mesh_hierarchy;
-
-  typedef base_mesh_hierarchy<false> mesh_hierarchy;
-  typedef base_mesh_hierarchy<true> const_mesh_hierarchy;
-
 
 
 
@@ -84,42 +68,6 @@ namespace viennagrid
 
   typedef base_region_range<false> region_range_t;
   typedef base_region_range<true> const_region_range_t;
-
-
-  template<bool is_const>
-  class base_mesh_region_range;
-
-  typedef base_mesh_region_range<false> mesh_region_range_t;
-  typedef base_mesh_region_range<true> const_mesh_region_range_t;
-
-
-
-
-
-
-
-//   template<bool is_const>
-//   base_mesh_hierarchy<is_const> mesh_hierarchy( base_mesh<is_const> const & mesh );
-  template<bool is_const>
-  viennagrid_mesh_hierarchy internal_mesh_hierarchy( base_mesh<is_const> const & mesh );
-
-//   template<bool is_const>
-//   base_mesh_hierarchy<is_const> mesh_hierarchy( base_region<is_const> const & region );
-  template<bool is_const>
-  viennagrid_mesh_hierarchy internal_mesh_hierarchy( base_region<is_const> const & region );
-
-//   template<bool is_const>
-//   base_mesh_hierarchy<is_const> mesh_hierarchy( base_mesh_region<is_const> const & region );
-  template<bool is_const>
-  viennagrid_mesh_hierarchy internal_mesh_hierarchy( base_mesh_region<is_const> const & region );
-
-//   template<bool is_const>
-//   base_mesh_hierarchy<is_const> mesh_hierarchy( base_element<is_const> const & element );
-  template<bool is_const>
-  viennagrid_mesh_hierarchy internal_mesh_hierarchy( base_element<is_const> const & element );
-
-
-
 
   class null_type;
 
@@ -289,22 +237,10 @@ namespace viennagrid
       typedef SomethingT const & type;
     };
 
-//     template<bool is_const>
-//     struct const_type< base_point<is_const> >
-//     {
-//       typedef base_point<true> type;
-//     };
-
     template<bool is_const>
     struct const_type< base_region<is_const> >
     {
       typedef base_region<true> type;
-    };
-
-    template<bool is_const>
-    struct const_type< base_mesh_region<is_const> >
-    {
-      typedef base_mesh_region<true> type;
     };
 
     template<bool is_const>
@@ -323,12 +259,6 @@ namespace viennagrid
     struct const_type< base_mesh<is_const> >
     {
       typedef base_mesh<true> type;
-    };
-
-    template<bool is_const>
-    struct const_type< base_mesh_hierarchy<is_const> >
-    {
-      typedef base_mesh_hierarchy<true> type;
     };
 
 
@@ -365,22 +295,10 @@ namespace viennagrid
       typedef SomethingT & type;
     };
 
-//     template<bool is_const>
-//     struct nonconst_type< base_point<is_const> >
-//     {
-//       typedef base_point<false> type;
-//     };
-
     template<bool is_const>
     struct nonconst_type< base_region<is_const> >
     {
       typedef base_region<false> type;
-    };
-
-    template<bool is_const>
-    struct nonconst_type< base_mesh_region<is_const> >
-    {
-      typedef base_mesh_region<false> type;
     };
 
     template<bool is_const>
@@ -400,13 +318,6 @@ namespace viennagrid
     {
       typedef base_mesh<false> type;
     };
-
-    template<bool is_const>
-    struct nonconst_type< base_mesh_hierarchy<is_const> >
-    {
-      typedef base_mesh_hierarchy<false> type;
-    };
-
 
 
 
@@ -451,27 +362,15 @@ namespace viennagrid
     struct region;
 
     template<>
-    struct region<mesh_hierarchy>
-    {
-      typedef region type;
-    };
-
-    template<>
     struct region<mesh>
     {
-      typedef mesh_region type;
-    };
-
-    template<>
-    struct region<const_mesh_hierarchy>
-    {
-      typedef const_region type;
+      typedef viennagrid::region type;
     };
 
     template<>
     struct region<const_mesh>
     {
-      typedef const_mesh_region type;
+      typedef viennagrid::const_region type;
     };
 
     template<typename SomethingT>
@@ -485,25 +384,19 @@ namespace viennagrid
     struct const_region;
 
     template<bool is_const>
-    struct const_region< base_mesh_hierarchy<is_const> >
+    struct const_region< base_mesh<is_const> >
     {
       typedef const_region type;
     };
 
-    template<bool is_const>
-    struct const_region< base_mesh<is_const> >
-    {
-      typedef const_mesh_region type;
-    };
 
 
 
 
-
-    template<typename SomethingT, typename ElementT = null_type>
+    template<typename SomethingT>
     struct region_range;
 
-    template<typename SomethingT, typename ElementT = null_type>
+    template<typename SomethingT>
     struct const_region_range;
 
 
@@ -523,50 +416,25 @@ namespace viennagrid
     };
 
 
-    template<typename SomethingT>
-    struct mesh_hierarchy;
-
-    template<bool is_const>
-    struct mesh_hierarchy< base_mesh_hierarchy<is_const> >
-    {
-      typedef base_mesh_hierarchy<is_const> type;
-    };
-
-    template<bool is_const>
-    struct mesh_hierarchy< base_mesh<is_const> >
-    {
-      typedef base_mesh_hierarchy<is_const> type;
-    };
-
-    template<bool is_const>
-    struct mesh_hierarchy< base_region<is_const> >
-    {
-      typedef base_mesh_hierarchy<is_const> type;
-    };
-
-    template<bool is_const>
-    struct mesh_hierarchy< base_mesh_region<is_const> >
-    {
-      typedef base_mesh_hierarchy<is_const> type;
-    };
-
-    template<bool is_const>
-    struct mesh_hierarchy< base_element<is_const> >
-    {
-      typedef base_mesh_hierarchy<is_const> type;
-    };
-
-
 
 
     template<typename SomethingT>
-    struct mesh
+    struct mesh;
+
+    template<bool is_const>
+    struct mesh< base_mesh<is_const> >
     {
-      typedef typename mesh< typename mesh_hierarchy<SomethingT>::type >::type type;
+      typedef base_mesh<is_const> type;
     };
 
     template<bool is_const>
-    struct mesh< base_mesh_hierarchy<is_const> >
+    struct mesh< base_element<is_const> >
+    {
+      typedef base_mesh<is_const> type;
+    };
+
+    template<bool is_const>
+    struct mesh< base_region<is_const> >
     {
       typedef base_mesh<is_const> type;
     };
@@ -580,7 +448,7 @@ namespace viennagrid
     struct point
     {
       typedef typename point<
-        typename mesh_hierarchy<SomethingT>::type,
+        typename mesh<SomethingT>::type,
         typename element<ElementT>::type
       >::type type;
     };
@@ -588,7 +456,7 @@ namespace viennagrid
     template<typename SomethingT>
     struct point<SomethingT, null_type>
     {
-      typedef typename point< typename mesh_hierarchy<SomethingT>::type, null_type >::type type;
+      typedef typename point< typename mesh<SomethingT>::type, null_type >::type type;
     };
 
     template<typename SomethingT>
@@ -597,17 +465,11 @@ namespace viennagrid
       typedef viennagrid::point type;
     };
 
-//     template<typename SomethingT, typename ElementT = null_type>
-//     struct const_point
-//     {
-//       typedef typename const_type< typename point<SomethingT>::type, ElementT >::type type;
-//     };
-
 
 
 
     template<bool is_const>
-    struct point< base_mesh_hierarchy<is_const>, null_type >
+    struct point< base_mesh<is_const>, null_type >
     {
       typedef viennagrid::point type;
     };

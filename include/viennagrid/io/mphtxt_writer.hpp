@@ -17,6 +17,7 @@
 #include <sstream>
 #include <fstream>
 
+#include "viennagrid/viennagrid.hpp"
 #include "viennagrid/algorithm/centroid.hpp"
 #include "viennagrid/algorithm/geometry.hpp"
 
@@ -69,7 +70,7 @@ namespace viennagrid
         if (!viennagrid::is_boundary(region, *ntit))
           continue;
 
-        if (!viennagrid::equal_regions( region_range, viennagrid::regions(region.get_mesh(),*ntit) ))
+        if (!viennagrid::equal_regions( region_range, viennagrid::regions(*ntit) ))
           continue;
 
         PointType neighbor_normal = viennagrid::normal_vector(*ntit);
@@ -117,9 +118,9 @@ namespace viennagrid
             contact_index_accessor.set(*tsit, current_contact_index);
 
             typedef typename viennagrid::result_of::element<MeshT>::type TriangleType;
-            typedef typename viennagrid::result_of::const_region_range<MeshT, TriangleType>::type TriangleRegionRangeType;
+            typedef typename viennagrid::result_of::const_region_range<TriangleType>::type TriangleRegionRangeType;
 
-            TriangleRegionRangeType triangle_regions = viennagrid::regions(mesh, *tsit);
+            TriangleRegionRangeType triangle_regions = viennagrid::regions(*tsit);
             mark_planar_neighbors(*rit, contact_index_accessor, *tsit, current_contact_index, triangle_regions);
 
             ++current_contact_index;
@@ -390,9 +391,9 @@ namespace viennagrid
         for (ConstTetrahedronIteratorType tit = tetrahedrons.begin(); tit != tetrahedrons.end(); ++tit)
         {
           typedef typename viennagrid::result_of::element<MeshT>::type TetrahedronType;
-          typedef typename viennagrid::result_of::const_region_range<MeshT, TetrahedronType>::type TetrahedronRegionRangeType;
+          typedef typename viennagrid::result_of::const_region_range<TetrahedronType>::type TetrahedronRegionRangeType;
 
-          TetrahedronRegionRangeType tetrahedron_regions = viennagrid::regions(mesh, *tit);
+          TetrahedronRegionRangeType tetrahedron_regions = viennagrid::regions(*tit);
           writer << (*tetrahedron_regions.begin()).id()+1 << "\n";
         }
 

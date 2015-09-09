@@ -77,20 +77,12 @@ public:
   void set_mesh(viennagrid_mesh mesh_in)
   {
     if (mesh_)
-    {
-      viennagrid_mesh_hierarchy mh;
-      viennagrid_mesh_mesh_hierarchy_get(mesh_, &mh);
-      viennagrid_mesh_hierarchy_release(mh);
-    }
+      viennagrid_mesh_release(mesh_);
 
     mesh_ = mesh_in;
 
     if (mesh_)
-    {
-      viennagrid_mesh_hierarchy mh;
-      viennagrid_mesh_mesh_hierarchy_get(mesh_, &mh);
-      viennagrid_mesh_hierarchy_retain(mh);
-    }
+      viennagrid_mesh_retain(mesh_);
   }
 
   viennagrid_mesh get_mesh()

@@ -7,7 +7,7 @@
 #include <cassert>
 #include <cstring>
 
-#include "mesh_hierarchy.hpp"
+#include "mesh.hpp"
 
 
 class serializer
@@ -49,12 +49,17 @@ private:
 
 
 
-viennagrid_error viennagrid_mesh_hierarchy_serialize(viennagrid_mesh_hierarchy mesh_hierarchy,
-                                                     void ** blob,
-                                                     viennagrid_int * size)
+viennagrid_error viennagrid_mesh_serialize(viennagrid_mesh mesh,
+                                           void ** blob,
+                                           viennagrid_int * size)
 {
+  if (!mesh->is_root())
+    return VIENNAGRID_ERROR_MESH_IS_NOT_ROOT;
+
   if (!blob || !size)
     return VIENNAGRID_ERROR_INVALID_ARGUMENTS;
+
+  viennagrid_mesh_hierarchy_ * mesh_hierarchy = mesh->mesh_hierarchy();
 
   serializer s;
   s.serialize<viennagrid_int>( VIENNAGRID_MAGIC_VALUE );
@@ -64,7 +69,7 @@ viennagrid_error viennagrid_mesh_hierarchy_serialize(viennagrid_mesh_hierarchy m
   s.serialize<viennagrid_int>( VIENNAGRID_VERSION_PATCH );
 
   viennagrid_dimension geometric_dimension;
-  viennagrid_mesh_hierarchy_geometric_dimension_get(mesh_hierarchy, &geometric_dimension);
+  viennagrid_mesh_geometric_dimension_get(mesh, &geometric_dimension);
   s.serialize<viennagrid_dimension>( geometric_dimension );
 
   s.serialize<viennagrid_int>( mesh_hierarchy->vertex_count() );
@@ -234,10 +239,15 @@ private:
 
 
 
-viennagrid_error viennagrid_mesh_hierarchy_deserialize(viennagrid_mesh_hierarchy mesh_hierarchy,
-                                                       void * blob,
-                                                       viennagrid_int size)
+viennagrid_error viennagrid_mesh_deserialize(void * blob,
+                                                       viennagrid_int size,
+                                                       viennagrid_mesh mesh)
 {
+  if (!mesh->is_root())
+    return VIENNAGRID_ERROR_MESH_IS_NOT_ROOT;
+
+  viennagrid_mesh_hierarchy_ * mesh_hierarchy = mesh->mesh_hierarchy();
+
   deserializer d(blob, size);
 
   viennagrid_int magic_value;
@@ -265,8 +275,8 @@ viennagrid_error viennagrid_mesh_hierarchy_deserialize(viennagrid_mesh_hierarchy
   viennagrid_dimension geometric_dimension;
   d.deserialize< viennagrid_dimension >(geometric_dimension);
 
-  viennagrid_mesh_hierarchy_clear(mesh_hierarchy);
-  viennagrid_mesh_hierarchy_geometric_dimension_set(mesh_hierarchy, geometric_dimension);
+  viennagrid_mesh_clear(mesh);
+  viennagrid_mesh_geometric_dimension_set(mesh, geometric_dimension);
 
 
   viennagrid_int vertex_count;
@@ -279,7 +289,7 @@ viennagrid_error viennagrid_mesh_hierarchy_deserialize(viennagrid_mesh_hierarchy
   // deserialize points
   for (viennagrid_int i = 0; i != vertex_count; ++i)
   {
-    viennagrid_mesh_hierarchy_vertex_create(mesh_hierarchy, &vertex_coords[0] + geometric_dimension*i, NULL);
+    viennagrid_mesh_vertex_create(mesh, &vertex_coords[0] + geometric_dimension*i, NULL);
   }
 
 
@@ -333,16 +343,12 @@ viennagrid_error viennagrid_mesh_hierarchy_deserialize(viennagrid_mesh_hierarchy
 
   std::vector<viennagrid_mesh> index_mesh_map(mesh_count);
 
-  viennagrid_mesh_hierarchy_root_mesh_get( mesh_hierarchy, &index_mesh_map[0] );
+  index_mesh_map[0] = mesh;
   for (viennagrid_int i = 1; i != mesh_count; ++i)
   {
     assert( mesh_parents[i] < i );
     viennagrid_mesh parent = index_mesh_map[ mesh_parents[i] ];
-
-    viennagrid_mesh mesh;
-    viennagrid_mesh_create( parent, &mesh );
-
-    index_mesh_map[i] = mesh;
+    index_mesh_map[i] = parent->make_child();
   }
 
   for (viennagrid_int i = 0; i != mesh_count; ++i)
@@ -368,7 +374,7 @@ viennagrid_error viennagrid_mesh_hierarchy_deserialize(viennagrid_mesh_hierarchy
     d.deserialize< viennagrid_int >(region_id);
 
     viennagrid_region region;
-    viennagrid_mesh_hierarchy_region_get_or_create( mesh_hierarchy, region_id, &region );
+    viennagrid_mesh_region_get_or_create( mesh, region_id, &region );
     id_region_map[ region_id ] = region;
 
     std::string name;
@@ -382,11 +388,11 @@ viennagrid_error viennagrid_mesh_hierarchy_deserialize(viennagrid_mesh_hierarchy
     viennagrid_int cell_id;
     viennagrid_int cell_vertex_count = cell_vertex_offsets[i+1] - cell_vertex_offsets[i];
 
-    viennagrid_mesh_hierarchy_element_create(mesh_hierarchy,
-                                             cell_element_types[i],
-                                             cell_vertex_count,
-                                             &cell_vertex_ids[0] + cell_vertex_offsets[i],
-                                             &cell_id);
+    viennagrid_mesh_element_create(mesh,
+                                   cell_element_types[i],
+                                   cell_vertex_count,
+                                   &cell_vertex_ids[0] + cell_vertex_offsets[i],
+                                   &cell_id);
 
     if (cell_parents_available)
     {

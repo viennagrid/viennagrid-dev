@@ -46,8 +46,7 @@ namespace viennagrid
     {
     protected:
 
-      typedef typename result_of::mesh_hierarchy<SomethingT>::type mesh_hierarchy_type;
-      typedef typename result_of::mesh<mesh_hierarchy_type>::type mesh_type;
+      typedef typename result_of::mesh<SomethingT>::type mesh_type;
 
       typedef typename mesh_type::region_type RegionType;
       typedef typename viennagrid::result_of::id<RegionType>::type region_id_type;
@@ -512,7 +511,7 @@ namespace viennagrid
             for (std::size_t i=0; i<container.second.size(); ++i)
             {
               std::size_t global_vertex_id = local_to_global_map[region_id][i];
-              ElementType vertex(mesh_obj.get_mesh_hierarchy(), 0, global_vertex_id);
+              ElementType vertex(mesh_obj, 0, global_vertex_id);
 
               (*registered_vertex_scalar_data[name]).set(vertex, (container.second)[i]);
             }
@@ -522,7 +521,7 @@ namespace viennagrid
             for (std::size_t i=0; i<container.second.size(); ++i)
             {
               std::size_t global_vertex_id = local_to_global_map[region_id][i];
-              ElementType vertex(mesh_obj.get_mesh_hierarchy(), 0, global_vertex_id);
+              ElementType vertex(mesh_obj, 0, global_vertex_id);
 
               (*current_registered_region_vertex_scalar_data[name]).set(vertex, (container.second)[i]);
             }
@@ -551,7 +550,7 @@ namespace viennagrid
             for (std::size_t i=0; i<container.second.size()/3; ++i)
             {
               std::size_t global_vertex_id = local_to_global_map[region_id][i];
-              ElementType vertex(mesh_obj.get_mesh_hierarchy(), 0, global_vertex_id);
+              ElementType vertex(mesh_obj, 0, global_vertex_id);
 
               std::vector<viennagrid_numeric> tmp(3);
               for (std::size_t j = 0; j != 3; ++j)
@@ -565,7 +564,7 @@ namespace viennagrid
             for (std::size_t i=0; i<container.second.size(); ++i)
             {
               std::size_t global_vertex_id = local_to_global_map[region_id][i];
-              ElementType vertex(mesh_obj.get_mesh_hierarchy(), 0, global_vertex_id);
+              ElementType vertex(mesh_obj, 0, global_vertex_id);
 
               std::vector<viennagrid_numeric> tmp(3);
               for (std::size_t j = 0; j != 3; ++j)

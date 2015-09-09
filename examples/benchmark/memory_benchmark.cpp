@@ -31,7 +31,6 @@ int main(int argc, char *argv[])
 
 
 
-  typedef viennagrid::mesh_hierarchy MeshHierarchyType;
   typedef viennagrid::mesh MeshType;
 
   std::cout << "sizeof(viennagrid_bool) = " << sizeof(viennagrid_bool) << std::endl;
@@ -42,7 +41,6 @@ int main(int argc, char *argv[])
   std::cout << "sizeof(viennagrid_dimension) = " << sizeof(viennagrid_dimension) << std::endl;
   std::cout << "sizeof(std::vector<viennagrid_region>) = " << sizeof(std::vector<viennagrid_region>) << std::endl;
 
-  std::cout << "sizeof(viennagrid_mesh_hierarchy) = " << sizeof(viennagrid_mesh_hierarchy) << std::endl;
   std::cout << "sizeof(viennagrid_mesh) = " << sizeof(viennagrid_mesh) << std::endl;
   std::cout << "sizeof(viennagrid_region) = " << sizeof(viennagrid_region) << std::endl;
   std::cout << "sizeof(viennagrid_plc) = " << sizeof(viennagrid_plc) << std::endl;
@@ -53,14 +51,13 @@ int main(int argc, char *argv[])
   std::cout << std::endl << std::endl << std::endl;
 
   {
-    MeshHierarchyType mesh_hierarchy;
-    MeshType mesh = mesh_hierarchy.root();
+    MeshType mesh;
 
     batch_make_aabb_triangles_region_C(mesh, atoi(argv[1]), 4, false);
   //   batch_make_aabb_tetrahedrons_region_C(mesh, atoi(argv[1]), 4);
 
 
-    int total_size = mesh_hierarchy.memory_size();
+    int total_size = mesh.memory_size();
     std::cout << "memory =         " << total_size << std::endl;
 
     int vertex_count = viennagrid::elements(mesh, 0).size();
@@ -75,14 +72,13 @@ int main(int argc, char *argv[])
 
 
   {
-    MeshHierarchyType mesh_hierarchy;
-    MeshType mesh = mesh_hierarchy.root();
+    MeshType mesh;
 
     batch_make_aabb_triangles_region_C(mesh, atoi(argv[1]), 4, true);
   //   batch_make_aabb_tetrahedrons_region_C(mesh, atoi(argv[1]), 4);
 
 
-    int total_size = mesh_hierarchy.memory_size();
+    int total_size = mesh.memory_size();
     std::cout << "memory =         " << total_size << std::endl;
 
     int vertex_count = viennagrid::elements(mesh, 0).size();

@@ -137,10 +137,10 @@ int main()
 
 
 
-  typedef viennagrid::result_of::region_range<MeshType, TriangleType>::type ElementRegionRange;
+  typedef viennagrid::result_of::region_range<TriangleType>::type ElementRegionRange;
   typedef viennagrid::result_of::iterator<ElementRegionRange>::type ElementRegionIterator;
 
-  ElementRegionRange element_regions(mesh, tri0);
+  ElementRegionRange element_regions(tri0);
   std::cout << "Regions for tr0:" << std::endl;
   for (ElementRegionIterator rit = element_regions.begin(); rit != element_regions.end(); ++rit)
     std::cout << (*rit).id() << std::endl;

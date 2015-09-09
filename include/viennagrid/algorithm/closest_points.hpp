@@ -797,10 +797,10 @@ namespace viennagrid
     }
 
     template <typename PointAccessorT, bool mesh_region_is_const>
-    std::pair<point, typename viennagrid::result_of::point< base_mesh_region<mesh_region_is_const> >::type>
+    std::pair<point, typename viennagrid::result_of::point< base_region<mesh_region_is_const> >::type>
     closest_points_on_boundary_impl(PointAccessorT const point_accessor,
                                     point const & p,
-                                    base_mesh_region<mesh_region_is_const> const & region)
+                                    base_region<mesh_region_is_const> const & region)
     {
       return closest_points_on_boundary_point_to_any(point_accessor, viennagrid::facet_dimension(region), p, region);
     }
@@ -913,10 +913,10 @@ namespace viennagrid
               bool element_is_const,
               bool mesh_region_is_const>
     std::pair< typename viennagrid::result_of::point<PointAccessorT, base_element<element_is_const> >::type,
-               typename viennagrid::result_of::point<PointAccessorT, base_mesh_region<mesh_region_is_const> >::type >
+               typename viennagrid::result_of::point<PointAccessorT, base_region<mesh_region_is_const> >::type >
     closest_points_on_boundary_impl(PointAccessorT const & accessor,
                                     base_element<element_is_const> const & el1,
-                                    base_mesh_region<mesh_region_is_const> const & region)
+                                    base_region<mesh_region_is_const> const & region)
     {
       return closest_points_on_boundary_generic(accessor, region, el1);
     }
@@ -925,11 +925,11 @@ namespace viennagrid
     template <typename PointAccessorT,
               bool mesh_region1_is_const,
               bool mesh_region2_is_const>
-    std::pair< typename viennagrid::result_of::point<PointAccessorT, base_mesh_region<mesh_region1_is_const> >::type,
-               typename viennagrid::result_of::point<PointAccessorT, base_mesh_region<mesh_region2_is_const> >::type >
+    std::pair< typename viennagrid::result_of::point<PointAccessorT, base_region<mesh_region1_is_const> >::type,
+               typename viennagrid::result_of::point<PointAccessorT, base_region<mesh_region2_is_const> >::type >
     closest_points_on_boundary_impl(PointAccessorT const & accessor,
-                                    base_mesh_region<mesh_region1_is_const> const & region1,
-                                    base_mesh_region<mesh_region2_is_const> const & region2)
+                                    base_region<mesh_region1_is_const> const & region1,
+                                    base_region<mesh_region2_is_const> const & region2)
     {
       return closest_points_on_boundary_generic(accessor, region1, region2);
     }

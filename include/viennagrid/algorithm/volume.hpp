@@ -310,8 +310,8 @@ namespace viennagrid
   }
 
   template<bool mesh_region_is_const>
-  typename viennagrid::result_of::coord< base_mesh_region<mesh_region_is_const> >::type
-  volume(base_mesh_region<mesh_region_is_const> const & region)
+  typename viennagrid::result_of::coord< base_region<mesh_region_is_const> >::type
+  volume(base_region<mesh_region_is_const> const & region)
   {
       return detail::volume_mesh(region, viennagrid::topologic_dimension(region));
   }

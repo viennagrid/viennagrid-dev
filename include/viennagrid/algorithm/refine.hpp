@@ -64,14 +64,13 @@ namespace viennagrid
            typename VertexCopyMapT,
            typename EdgeRefinementFlagAccessorT, typename RefinementVertexAccessorT>
   void simple_refine(viennagrid::base_mesh<mesh_is_const> const & mesh_in,
-                     viennagrid::mesh const & mesh_out,
+                     viennagrid::mesh & mesh_out,
                      viennagrid_int topologic_dimension,
                      VertexCopyMapT & vertex_copy_map_,
                      EdgeRefinementFlagAccessorT const & edge_refinement_flag_accessor,
                      RefinementVertexAccessorT const & edge_to_vertex_handle_accessor)
   {
     typedef base_mesh<mesh_is_const>       InputMeshType;
-    typedef typename viennagrid::result_of::mesh_hierarchy<InputMeshType>::type InputMeshHierarchyType;
     typedef mesh      OutputMeshType;
 
     typedef typename viennagrid::result_of::element<InputMeshType>::type  ElementType;
@@ -93,7 +92,7 @@ namespace viennagrid
 
 
 
-      if (mesh_in.get_mesh_hierarchy() != mesh_out.get_mesh_hierarchy())
+      if (mesh_in.get_root() != mesh_out.get_root())
       {
         for (typename ElementsContainerType::iterator it = elements_vertices.begin();
               it != elements_vertices.end();
@@ -101,7 +100,7 @@ namespace viennagrid
         {
           ElementType new_element = viennagrid::make_element( mesh_out, (*cit).tag(), it->begin(), it->end() );
 
-          typedef typename viennagrid::result_of::region_range<InputMeshHierarchyType, ElementType>::type ElementRegionType;
+          typedef typename viennagrid::result_of::region_range<ElementType>::type ElementRegionType;
           typedef typename viennagrid::result_of::iterator<ElementRegionType>::type ElementRegionIterator;
 
           ElementRegionType regions(*cit);
@@ -135,7 +134,7 @@ namespace viennagrid
                                            intersects.begin(),
                                            intersects.end());
 
-          typedef typename viennagrid::result_of::region_range<InputMeshHierarchyType, ElementType>::type ElementRegionType;
+          typedef typename viennagrid::result_of::region_range<ElementType>::type ElementRegionType;
           typedef typename viennagrid::result_of::iterator<ElementRegionType>::type ElementRegionIterator;
 
           ElementRegionType regions(*cit);

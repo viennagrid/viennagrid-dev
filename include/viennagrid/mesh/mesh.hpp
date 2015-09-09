@@ -7,27 +7,17 @@
 #include "viennagrid/core/point.hpp"
 #include "viennagrid/core/iterators.hpp"
 
-#include "viennagrid/mesh/mesh_hierarchy.hpp"
-
 namespace viennagrid
 {
-
-
 
   template<bool is_const>
   class base_mesh
   {
-    template<bool other_is_const>
-    friend class base_mesh_hierarchy;
-
   public:
 
-    typedef typename result_of::const_nonconst<mesh_hierarchy, is_const>::type mesh_hierarchy_type;
-    typedef typename result_of::const_nonconst<mesh_hierarchy, true>::type const_mesh_hierarchy_type;
-
-    typedef typename result_of::const_nonconst<mesh_region, is_const>::type region_type;
-    typedef typename result_of::const_nonconst<mesh_region, true>::type const_region_type;
-    typedef typename mesh_hierarchy_type::region_id_type region_id_type;
+    typedef typename result_of::const_nonconst<region, is_const>::type region_type;
+    typedef typename result_of::const_nonconst<region, true>::type const_region_type;
+    typedef viennagrid_region_id region_id_type;
 
     typedef point point_type;
 
@@ -42,8 +32,8 @@ namespace viennagrid
 
     base_mesh() : internal_mesh_(0)
     {
-      base_mesh_hierarchy<is_const> mesh_hierarchy;
-      *this = mesh_hierarchy.root();
+      viennagrid_mesh_create(&internal_mesh_);
+      viennagrid_mesh_property_set(internal_mesh_, VIENNAGRID_PROPERTY_BOUNDARY_LAYOUT, VIENNAGRID_BOUNDARY_LAYOUT_SPARSE);
     }
 
     template<bool other_is_const>
@@ -70,37 +60,27 @@ namespace viennagrid
       release();
     }
 
-    mesh_hierarchy_type get_mesh_hierarchy()
-    {
-      return mesh_hierarchy_type(internal_mesh_hierarchy());
-    }
-
-    const_mesh_hierarchy_type get_mesh_hierarchy() const
-    {
-      return const_mesh_hierarchy_type(internal_mesh_hierarchy());
-    }
-
-    viennagrid_mesh_hierarchy internal_mesh_hierarchy() const
-    {
-      viennagrid_mesh_hierarchy tmp;
-      viennagrid_mesh_mesh_hierarchy_get(internal(), &tmp);
-      return tmp;
-    }
-
-    mesh create_child()
-    {
-      viennagrid_mesh tmp;
-      viennagrid_mesh_create( internal(), &tmp );
-      return mesh(tmp);
-    }
-
     viennagrid_mesh internal() const { return const_cast<viennagrid_mesh>(internal_mesh_); }
+
+    base_mesh<is_const> get_root()
+    {
+      viennagrid_mesh root;
+      viennagrid_mesh_root_mesh_get(internal(), &root);
+      return base_mesh<is_const>(root);
+    }
+
+    const_mesh get_root() const
+    {
+      viennagrid_mesh root;
+      viennagrid_mesh_root_mesh_get(internal(), &root);
+      return const_mesh(root);
+    }
 
     bool is_root() const
     {
-      viennagrid_mesh mesh;
-      viennagrid_mesh_hierarchy_root_mesh_get( internal_mesh_hierarchy(), &mesh);
-      return internal() == mesh;
+      viennagrid_bool value;
+      viennagrid_mesh_is_root(internal(), &value);
+      return value == VIENNAGRID_TRUE;
     }
 
     bool operator==(base_mesh<is_const> const & rhs) const { return internal() == rhs.internal(); }
@@ -112,9 +92,34 @@ namespace viennagrid
     const_region_type get_region(region_id_type region_id) const;
     bool region_exists(region_id_type region_id) const;
 
-    region_type get_or_create_region(std::string const & name) const;
+    region_type get_or_create_region(std::string const & name);
     const_region_type get_region(std::string const & name) const;
     bool region_exists(std::string const & name) const;
+
+
+    void serialize(void ** buffer, viennagrid_int * size)
+    {
+      viennagrid_mesh_serialize( internal(), buffer, size );;
+    }
+
+    void deserialize(void * buffer, viennagrid_int size)
+    {
+      viennagrid_mesh_deserialize( buffer, size, internal() );
+    }
+
+    void optimize_memory()
+    {
+      viennagrid_meshmemory_optimize( internal() );
+    }
+
+    long memory_size() const
+    {
+      long size;
+      viennagrid_mesh_memory_size( internal(), &size );
+      return size;
+    }
+
+
 
     std::string name() const
     {
@@ -133,13 +138,13 @@ namespace viennagrid
     void retain() const
     {
       if (internal())
-        viennagrid_mesh_hierarchy_retain( internal_mesh_hierarchy() );
+        viennagrid_mesh_retain( internal() );
     }
 
     void release() const
     {
       if (internal())
-        viennagrid_mesh_hierarchy_release( internal_mesh_hierarchy() );
+        viennagrid_mesh_release( internal() );
     }
 
     viennagrid_mesh internal_mesh_;
@@ -148,26 +153,159 @@ namespace viennagrid
 
 
 
-//   template<bool is_const>
-//   base_mesh_hierarchy<is_const> mesh_hierarchy( base_mesh<is_const> const & mesh )
-//   {
-//     return mesh.mesh_hierarchy();
-//   }
-
-  inline viennagrid_mesh_hierarchy internal_mesh_hierarchy(viennagrid_mesh mesh)
+  inline viennagrid_mesh internal_mesh(viennagrid_mesh mesh)
   {
-    viennagrid_mesh_hierarchy tmp;
-    viennagrid_mesh_mesh_hierarchy_get(mesh, &tmp);
-    return tmp;
+    return mesh;
   }
 
   template<bool is_const>
-  viennagrid_mesh_hierarchy internal_mesh_hierarchy( base_mesh<is_const> const & mesh )
+  viennagrid_mesh internal_mesh( base_mesh<is_const> const & mesh )
   {
-    viennagrid_mesh_hierarchy tmp;
-    viennagrid_mesh_mesh_hierarchy_get(mesh.internal(), &tmp);
+    return mesh.internal();
+  }
+
+
+
+
+
+
+  template<bool lhs_is_const, bool rhs_is_const>
+  bool operator==(base_mesh<lhs_is_const> const & lhs, base_mesh<rhs_is_const> const & rhs)
+  { return lhs.internal() == rhs.internal(); }
+
+  template<bool lhs_is_const, bool rhs_is_const>
+  bool operator!=(base_mesh<lhs_is_const> const & lhs, base_mesh<rhs_is_const> const & rhs)
+  { return !(lhs == rhs); }
+
+
+
+
+  template<bool is_const>
+  viennagrid_int element_count(base_mesh<is_const> const & mesh_hierarchy, element_tag et)
+  {
+    return element_count( internal_mesh(mesh_hierarchy), et.internal() );
+  }
+
+  template<bool is_const>
+  viennagrid_int vertex_count(base_mesh<is_const> const & mesh_hierarchy)
+  { return element_count( internal_mesh(mesh_hierarchy), VIENNAGRID_ELEMENT_TYPE_VERTEX ); }
+
+  template<bool is_const>
+  viennagrid_int line_count(base_mesh<is_const> const & mesh_hierarchy)
+  { return element_count( internal_mesh(mesh_hierarchy), VIENNAGRID_ELEMENT_TYPE_LINE ); }
+
+  template<bool is_const>
+  viennagrid_int edge_count(base_mesh<is_const> const & mesh_hierarchy)
+  { return element_count( internal_mesh(mesh_hierarchy), VIENNAGRID_ELEMENT_TYPE_EDGE ); }
+
+  template<bool is_const>
+  viennagrid_int triangle_count(base_mesh<is_const> const & mesh_hierarchy)
+  { return element_count( internal_mesh(mesh_hierarchy), VIENNAGRID_ELEMENT_TYPE_TRIANGLE ); }
+
+  template<bool is_const>
+  viennagrid_int quadrilateral_count(base_mesh<is_const> const & mesh_hierarchy)
+  { return element_count( internal_mesh(mesh_hierarchy), VIENNAGRID_ELEMENT_TYPE_QUADRILATERAL ); }
+
+  template<bool is_const>
+  viennagrid_int polygon_count(base_mesh<is_const> const & mesh_hierarchy)
+  { return element_count( internal_mesh(mesh_hierarchy), VIENNAGRID_ELEMENT_TYPE_POLYGON ); }
+
+  template<bool is_const>
+  viennagrid_int tetrahedron_count(base_mesh<is_const> const & mesh_hierarchy)
+  { return element_count( internal_mesh(mesh_hierarchy), VIENNAGRID_ELEMENT_TYPE_TETRAHEDRON ); }
+
+  template<bool is_const>
+  viennagrid_int hexahedron_count(base_mesh<is_const> const & mesh_hierarchy)
+  { return element_count( internal_mesh(mesh_hierarchy), VIENNAGRID_ELEMENT_TYPE_HEXAHEDRON ); }
+
+
+
+
+
+
+  inline void clear(viennagrid_mesh mesh)
+  {
+    viennagrid_mesh_clear(mesh);
+  }
+
+  template<typename SomethingT>
+  void clear(SomethingT const & something)
+  {
+    clear( internal_mesh(something) );
+  }
+
+
+  inline viennagrid_dimension geometric_dimension(viennagrid_mesh mesh)
+  {
+    viennagrid_dimension tmp;
+    viennagrid_mesh_geometric_dimension_get(mesh, &tmp);
     return tmp;
   }
+
+  template<typename SomethingT>
+  viennagrid_dimension geometric_dimension(SomethingT const & something)
+  {
+    return geometric_dimension( internal_mesh(something) );
+  }
+
+
+
+  inline viennagrid_dimension topologic_dimension(viennagrid_mesh mesh)
+  {
+    viennagrid_dimension tmp;
+    viennagrid_mesh_cell_dimension_get(mesh, &tmp);
+    return tmp;
+  }
+
+
+  template<typename SomethingT>
+  viennagrid_dimension topologic_dimension( SomethingT const & something )
+  {
+    return topologic_dimension(internal_mesh(something));
+  }
+
+
+
+  template<typename SomethingT>
+  viennagrid_dimension cell_dimension( SomethingT const & something )
+  {
+    return topologic_dimension(internal_mesh(something));
+  }
+
+  template<typename SomethingT>
+  viennagrid_dimension facet_dimension( SomethingT const & something )
+  {
+    return topologic_dimension(internal_mesh(something)) - 1;
+  }
+
+
+
+
+  template<bool element_is_const>
+  point get_point(viennagrid_mesh mesh, base_element<element_is_const> const & vertex);
+
+  template<typename SomethingT, bool element_is_const>
+  point get_point(SomethingT const & something, base_element<element_is_const> const & vertex)
+  {
+    return get_point(internal_mesh(something), vertex);
+  }
+
+  template<bool element_is_const>
+  point get_point(base_element<element_is_const> const & vertex);
+
+  template<bool element_is_const>
+  point get_point(base_element<element_is_const> const & element, viennagrid_int index);
+
+  void set_point(viennagrid_mesh mesh, base_element<false> const & vertex, point const & p);
+
+  template<typename SomethingT>
+  void set_point(SomethingT const & something, base_element<false> const & vertex, point const & p)
+  {
+    set_point(internal_mesh(something), vertex, p);
+  }
+
+  void set_point(base_element<false> const & vertex, point const & p);
+
 
 
 

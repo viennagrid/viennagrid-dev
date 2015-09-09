@@ -10,7 +10,7 @@
 
 #include "common.hpp"
 #include "buffer.hpp"
-#include "mesh.hpp"
+// #include "mesh.hpp"
 #include "region.hpp"
 #include "dynamic_sizeof.hpp"
 
@@ -455,6 +455,14 @@ private:
 
 
 
+
+
+
+
+
+
+
+
 struct viennagrid_mesh_hierarchy_
 {
   friend struct viennagrid_element_buffer;
@@ -463,22 +471,8 @@ struct viennagrid_mesh_hierarchy_
   friend struct viennautils::detail::dynamic_sizeof_impl;
 public:
 
-  viennagrid_mesh_hierarchy_() : geometric_dimension_(0), cell_dimension_(VIENNAGRID_INVALID_TOPOLOGIC_DIMENSION),
-  root_( new viennagrid_mesh_(this) ), /*highest_region_id(0),*/ change_counter_(0), retain_release_count(0), reference_counter(1)
-  {
-    clear();
-//     std::cout << "  NEW HIERARCHY " << this << std::endl;
-  }
-
-  ~viennagrid_mesh_hierarchy_()
-  {
-//     std::cout << "  DELETE HIERARCHY " << this << " (retain-release count=" << retain_release_count << ")" << std::endl;
-
-    delete root_;
-
-    for (std::vector<viennagrid_region>::iterator it = regions.begin(); it != regions.end(); ++it)
-      delete *it;
-  }
+  viennagrid_mesh_hierarchy_(viennagrid_mesh root_in);
+  ~viennagrid_mesh_hierarchy_();
 
   viennagrid_mesh root() { return root_; }
   void add_mesh(viennagrid_mesh mesh_)
@@ -604,30 +598,7 @@ public:
     return regions[ region_id_mapping[region_id] ];
   }
 
-  viennagrid_region get_or_create_region(viennagrid_region_id region_id)
-  {
-    if (region_id == VIENNAGRID_INVALID_REGION_ID)
-      return NULL;
-
-    viennagrid_region tmp = get_region(region_id);
-    if (tmp)
-      return tmp;
-
-    region_ids.push_back(region_id);
-    std::sort( region_ids.begin(), region_ids.end() );
-    regions.push_back( new viennagrid_region_(region_id, this) );
-
-    if (region_id >= viennagrid_region_id(region_id_mapping.size()))
-      region_id_mapping.resize( region_id+1, VIENNAGRID_INVALID_REGION_ID );
-
-    region_id_mapping[region_id] = regions.size()-1;
-
-    std::stringstream ss;
-    ss << (int)region_id;
-    regions.back()->set_name(ss.str());
-
-    return regions.back();
-  }
+  viennagrid_region get_or_create_region(viennagrid_region_id region_id);
 
   viennagrid_region create_region()
   {
@@ -667,51 +638,14 @@ public:
   viennagrid_int element_count( viennagrid_element_type element_type ) const { return element_counts[+element_type]; }
 
 
-  void clear()
-  {
-    boundary_layout_ = VIENNAGRID_BOUNDARY_LAYOUT_FULL;
-
-    for (int i = 0; i != VIENNAGRID_TOPOLOGIC_DIMENSION_END; ++i)
-    {
-      element_buffer(i).clear(this);
-      element_buffer(i).set_topologic_dimension(i);
-      element_counts[i] = 0;
-    }
-
-    geometric_dimension_ = 0;
-    cell_dimension_ = VIENNAGRID_INVALID_TOPOLOGIC_DIMENSION;
-
-    root_->clear();
-    meshes_.clear();
-    meshes_.push_back(root());
-
-    vertex_buffer.clear();
-
-    for (std::vector<viennagrid_region>::iterator it = regions.begin(); it != regions.end(); ++it)
-      delete *it;
-    regions.clear();
-    region_ids.clear();
-    region_id_mapping.clear();
-
-    change_counter_ = 0;
-  }
+  void clear();
 
 
   viennagrid_int mesh_count() const { return meshes_.size(); }
   viennagrid_mesh mesh(viennagrid_int i) { return meshes_[i]; }
 
 
-  void optimize_memory()
-  {
-    for (int i = 0; i != VIENNAGRID_TOPOLOGIC_DIMENSION_END; ++i)
-      element_buffers[i].optimize_memory();
-
-    for (std::size_t i = 0; i != meshes_.size(); ++i)
-      meshes_[i]->optimize_memory();
-
-    shrink_to_fit( vertex_buffer );
-  }
-
+  void optimize_memory();
   long memory_size() const;
 
 
@@ -743,7 +677,6 @@ private:
     }
 
     return triangle.first;
-//     return get_make_element(VIENNAGRID_ELEMENT_TAG_LINE, tmp, 2, mesh, false).first;
   }
 
 
@@ -808,14 +741,8 @@ private:
   std::vector<viennagrid_region> regions;
   std::vector<viennagrid_region_id> region_ids;
   std::vector<viennagrid_region_id> region_id_mapping;
-//   viennagrid_int highest_region_id;
-//   std::map<viennagrid_int, viennagrid_int> region_id_map;
 
   viennagrid_int change_counter_;
-  viennagrid_int retain_release_count;
-
-public:
-  viennagrid_int reference_counter;
 };
 
 

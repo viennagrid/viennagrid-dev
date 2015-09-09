@@ -10,6 +10,7 @@
 #include "common.hpp"
 #include "buffer.hpp"
 #include "dynamic_sizeof.hpp"
+#include "mesh_hierarchy.hpp"
 
 
 typedef sparse_packed_multibuffer<viennagrid_int, viennagrid_int> ViennaGridCoBoundaryBufferType;
@@ -153,22 +154,17 @@ private:
 
 
 
-struct viennagrid_mesh_
+struct viennagrid_mesh_ : public reference_counted
 {
   template<typename T>
   friend struct viennautils::detail::dynamic_sizeof_impl;
 
 public:
-  viennagrid_mesh_(viennagrid_mesh_hierarchy hierarchy_in);
-  viennagrid_mesh_(viennagrid_mesh_hierarchy hierarchy_in, viennagrid_mesh parent_in);
+  viennagrid_mesh_();
+  viennagrid_mesh_(viennagrid_mesh_hierarchy_ * hierarchy_in, viennagrid_mesh parent_in);
+  ~viennagrid_mesh_();
 
-  ~viennagrid_mesh_()
-  {
-    for (std::size_t i = 0; i != children.size(); ++i)
-      delete children[i];
-  }
-
-  viennagrid_mesh_hierarchy mesh_hierarchy() { return hierarchy_; }
+  viennagrid_mesh_hierarchy_ * mesh_hierarchy() { return hierarchy_; }
   viennagrid_mesh parent() { return parent_; }
 
   bool is_root() const;
@@ -301,34 +297,7 @@ public:
 
   void make_element_children(viennagrid_mesh child, viennagrid_int element_topo_dim);
 
-
-  void clear()
-  {
-    children.clear();
-    element_children.clear();
-    mesh_children_map.clear();
-
-    for (viennagrid_int i = 0; i != VIENNAGRID_TOPOLOGIC_DIMENSION_END; ++i)
-    {
-      element_handle_buffers[i].clear();
-    }
-
-    for (viennagrid_int i = 0; i != VIENNAGRID_TOPOLOGIC_DIMENSION_END; ++i)
-      for (viennagrid_int j = 0; j != VIENNAGRID_TOPOLOGIC_DIMENSION_END; ++j)
-        coboundary_change_counters[i][j] = 0;
-
-    for (viennagrid_int i = 0; i != VIENNAGRID_TOPOLOGIC_DIMENSION_END; ++i)
-      for (viennagrid_int j = 0; j != VIENNAGRID_TOPOLOGIC_DIMENSION_END; ++j)
-        for (viennagrid_int k = 0; k != VIENNAGRID_TOPOLOGIC_DIMENSION_END; ++k)
-          neighbor_change_counters[i][j][k] = 0;
-
-    for (viennagrid_int i = 0; i != VIENNAGRID_TOPOLOGIC_DIMENSION_END; ++i)
-    {
-      boundary_elements_[i].clear();
-    }
-
-    boundary_elements_change_counter = 0;
-  }
+  void clear();
 
 
   void set_name(std::string const & name_in)
@@ -350,7 +319,7 @@ public:
 
 private:
 
-  viennagrid_mesh_hierarchy hierarchy_;
+  viennagrid_mesh_hierarchy_ * hierarchy_;
 
   viennagrid_mesh parent_;
   std::vector<viennagrid_mesh> children;

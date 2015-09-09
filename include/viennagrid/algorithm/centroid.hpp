@@ -138,8 +138,8 @@ namespace viennagrid
    * @param  point_accessor       The point accessor providing point information for geometric calculation
    */
   template<typename PointAccessorT, bool mesh_region_is_const>
-  typename viennagrid::result_of::point< base_mesh_region<mesh_region_is_const> >::type
-  centroid(PointAccessorT const point_accessor, base_mesh_region<mesh_region_is_const> const & region)
+  typename viennagrid::result_of::point< base_region<mesh_region_is_const> >::type
+  centroid(PointAccessorT const point_accessor, base_region<mesh_region_is_const> const & region)
   {
     return detail::centroid_mesh(point_accessor, region, viennagrid::cell_dimension(region));
   }
@@ -149,8 +149,8 @@ namespace viennagrid
    * @param  region               The region which centroid is to be calculated
    */
   template<bool mesh_region_is_const>
-  typename viennagrid::result_of::point< base_mesh_region<mesh_region_is_const> >::type
-  centroid(base_mesh_region<mesh_region_is_const> const & region)
+  typename viennagrid::result_of::point< base_region<mesh_region_is_const> >::type
+  centroid(base_region<mesh_region_is_const> const & region)
   {
     return detail::centroid_mesh(mesh_point_accessor(region), region, viennagrid::cell_dimension(region));
   }
