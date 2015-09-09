@@ -352,34 +352,34 @@ static inline viennagrid_dimension viennagrid_topological_dimension(viennagrid_e
 }
 
 /* returns the boundary element count given a host element type and a boundary topological dimension, -1 is returned if the size is not static (e.g. polygon) */
-static inline viennagrid_int viennagrid_boundary_element_count( viennagrid_element_type host, viennagrid_dimension boundary_topo_dim )
+static inline viennagrid_int viennagrid_boundary_element_count( viennagrid_element_type host, viennagrid_dimension boundary_topologic_dimension)
 {
   switch (host)
   {
     case VIENNAGRID_ELEMENT_TYPE_LINE:
-      if (boundary_topo_dim == 0) return 2;
+      if (boundary_topologic_dimension== 0) return 2;
 
     case VIENNAGRID_ELEMENT_TYPE_TRIANGLE:
-      if (boundary_topo_dim == 1) return 3;
-      if (boundary_topo_dim == 0) return 3;
+      if (boundary_topologic_dimension== 1) return 3;
+      if (boundary_topologic_dimension== 0) return 3;
 
     case VIENNAGRID_ELEMENT_TYPE_QUADRILATERAL:
-      if (boundary_topo_dim == 1) return 4;
-      if (boundary_topo_dim == 0) return 4;
+      if (boundary_topologic_dimension== 1) return 4;
+      if (boundary_topologic_dimension== 0) return 4;
 
     case VIENNAGRID_ELEMENT_TYPE_POLYGON:
-      if (boundary_topo_dim == 1) return -1;
-      if (boundary_topo_dim == 0) return -1;
+      if (boundary_topologic_dimension== 1) return -1;
+      if (boundary_topologic_dimension== 0) return -1;
 
     case VIENNAGRID_ELEMENT_TYPE_TETRAHEDRON:
-      if (boundary_topo_dim == 2) return 4;
-      if (boundary_topo_dim == 1) return 6;
-      if (boundary_topo_dim == 0) return 4;
+      if (boundary_topologic_dimension== 2) return 4;
+      if (boundary_topologic_dimension== 1) return 6;
+      if (boundary_topologic_dimension== 0) return 4;
 
     case VIENNAGRID_ELEMENT_TYPE_HEXAHEDRON:
-      if (boundary_topo_dim == 2) return 6;
-      if (boundary_topo_dim == 1) return 12;
-      if (boundary_topo_dim == 0) return 8;
+      if (boundary_topologic_dimension== 2) return 6;
+      if (boundary_topologic_dimension== 1) return 12;
+      if (boundary_topologic_dimension== 0) return 8;
   }
 
   return 0;
