@@ -246,14 +246,21 @@ typedef struct viennagrid_mesh_io_ * viennagrid_mesh_io;
 #define VIENNAGRID_ERROR_UNSPECIFIED_ERROR                              1
 #define VIENNAGRID_ERROR_OUT_OF_MEMORY                                  2
 #define VIENNAGRID_ERROR_INVALID_ARGUMENTS                              3
-#define VIENNAGRID_ERROR_UNKNOWN_FLAG                                   4
-#define VIENNAGRID_ERROR_UNSUPPORTED_BOUNDARY_LAYOUT                    5
-#define VIENNAGRID_ERROR_MESH_IS_NOT_ROOT                               6
-#define VIENNAGRID_ERROR_MESH_HAS_CHILD_MESHES                          7
-#define VIENNAGRID_ERROR_ELEMENT_ALREADY_PRESENT                        8
-#define VIENNAGRID_ERROR_DESERIALIZE_MAGIC_VALUE_MISSMATCH              9
-#define VIENNAGRID_ERROR_DESERIALIZE_VERSION_MISSMATCH                 10
-#define VIENNAGRID_ERROR_PLC_MESH_TYPE_NOT_SUPPORTED_FOR_CONVERSION    11
+#define VIENNAGRID_ERROR_INVALID_MESH                                   4
+#define VIENNAGRID_ERROR_INVALID_REGION                                 5
+#define VIENNAGRID_ERROR_INVALID_CHILD_MESH_INDEX                       6
+#define VIENNAGRID_ERROR_INVALID_TOPOLOGIC_DIMENSION                    7
+#define VIENNAGRID_ERROR_INVALID_ELEMENT_TYPE                           8
+#define VIENNAGRID_ERROR_INVALID_ELEMENT_ID                             9
+#define VIENNAGRID_ERROR_INVALID_REGION_ID                             10
+#define VIENNAGRID_ERROR_UNKNOWN_PROPERTY                              11
+#define VIENNAGRID_ERROR_UNSUPPORTED_BOUNDARY_LAYOUT                   12
+#define VIENNAGRID_ERROR_MESH_IS_NOT_ROOT                              13
+#define VIENNAGRID_ERROR_MESH_HAS_CHILD_MESHES                         14
+#define VIENNAGRID_ERROR_ELEMENT_ALREADY_PRESENT                       15
+#define VIENNAGRID_ERROR_DESERIALIZE_MAGIC_VALUE_MISSMATCH             16
+#define VIENNAGRID_ERROR_DESERIALIZE_VERSION_MISSMATCH                 17
+#define VIENNAGRID_ERROR_PLC_MESH_TYPE_NOT_SUPPORTED_FOR_CONVERSION    18
 #define VIENNAGRID_ERROR_IO_CANNOT_OPEN_FILE                          100
 #define VIENNAGRID_ERROR_IO_FILE_EMPTY                                101
 #define VIENNAGRID_ERROR_IO_MESH_IS_NOT_ROOT                          102
@@ -328,6 +335,13 @@ typedef struct viennagrid_mesh_io_ * viennagrid_mesh_io;
  *                static functions
  *
  **********************************************************************************************/
+
+
+static inline viennagrid_bool viennagrid_element_type_valid(viennagrid_element_type et)
+{ return (et >= VIENNAGRID_ELEMENT_TYPE_START) && (et < VIENNAGRID_ELEMENT_TYPE_COUNT); }
+
+static inline viennagrid_bool viennagrid_topologic_dimension_valid(viennagrid_dimension topologic_dimension)
+{ return (topologic_dimension >= 0) && (topologic_dimension < VIENNAGRID_TOPOLOGIC_DIMENSION_END); }
 
 
 /* returns the topological dimension of a given element type */
@@ -553,7 +567,7 @@ VIENNAGRID_DYNAMIC_EXPORT viennagrid_error viennagrid_mesh_children_count(vienna
                                                                           viennagrid_int * children_count);
 /* gets a child mesh */
 VIENNAGRID_DYNAMIC_EXPORT viennagrid_error viennagrid_mesh_child_get(viennagrid_mesh mesh,
-                                                                     viennagrid_int id,
+                                                                     viennagrid_int index,
                                                                      viennagrid_mesh * child);
 
 /* gets the parent mesh, if mesh is the root mesh, parent will be NULL */
@@ -572,7 +586,7 @@ VIENNAGRID_DYNAMIC_EXPORT viennagrid_error viennagrid_mesh_name_set(viennagrid_m
 
 /* queries the number of element of a specific element type */
 VIENNAGRID_DYNAMIC_EXPORT viennagrid_error viennagrid_mesh_element_count(viennagrid_mesh mesh,
-                                                                         viennagrid_dimension topo_dim,
+                                                                         viennagrid_dimension topologic_dimension,
                                                                          viennagrid_int * count);
 VIENNAGRID_DYNAMIC_EXPORT viennagrid_error viennagrid_mesh_element_count_by_type(viennagrid_mesh mesh,
                                                                                  viennagrid_element_type element_type,
@@ -583,6 +597,12 @@ VIENNAGRID_DYNAMIC_EXPORT viennagrid_error viennagrid_mesh_element_count_by_type
 VIENNAGRID_DYNAMIC_EXPORT viennagrid_error viennagrid_mesh_vertex_create(viennagrid_mesh mesh,
                                                                          const viennagrid_numeric * coords,
                                                                          viennagrid_int * vertex_id);
+
+/* creates multiple vertices, returns the ID of the first vertex, the ID of the second vertex will be first_id+1 and so on. works only on root mesh */
+VIENNAGRID_DYNAMIC_EXPORT viennagrid_error viennagrid_mesh_vertex_batch_create(viennagrid_mesh mesh,
+                                                                               viennagrid_int vertex_count,
+                                                                               viennagrid_numeric * vertex_coords,
+                                                                               viennagrid_int * first_id);
 
 /* gets the coordinate pointer of all vertices of a mesh */
 VIENNAGRID_DYNAMIC_EXPORT viennagrid_error viennagrid_mesh_vertex_coords_pointer(viennagrid_mesh mesh,
@@ -599,13 +619,6 @@ VIENNAGRID_DYNAMIC_EXPORT viennagrid_error viennagrid_mesh_element_create(vienna
                                                                           viennagrid_int * vertex_ids,
                                                                           viennagrid_int * element_id);
 
-
-/* creates multiple vertices, returns the ID of the first vertex, the ID of the second vertex will be first_id+1 and so on. works only on root mesh */
-VIENNAGRID_DYNAMIC_EXPORT viennagrid_error viennagrid_mesh_vertex_batch_create(viennagrid_mesh mesh,
-                                                                               viennagrid_int vertex_count,
-                                                                               viennagrid_numeric * vertex_coords,
-                                                                               viennagrid_int * first_id);
-
 /* creates multiple elements, returns the ID of the first element, the ID of the second element will be first_id+1 and so on. element_types is an array which indicates the element types, one entry for each element to create. element_vertex_index_offsets and element_vertex_indices are arrays for the vertex id for each element to create. The size of element_vertex_index_offsets should be element_count+1, the vertex indices for the i-th element are stored in the array ranging from element_vertex_indices+element_vertex_index_offsets[i] to element_vertex_indices+element_vertex_index_offsets[i+1]. region_ids is an optional array indicating the region in which each element is. */
 VIENNAGRID_DYNAMIC_EXPORT viennagrid_error viennagrid_mesh_element_batch_create(viennagrid_mesh mesh,
                                                                                 viennagrid_int element_count,
@@ -615,84 +628,94 @@ VIENNAGRID_DYNAMIC_EXPORT viennagrid_error viennagrid_mesh_element_batch_create(
                                                                                 viennagrid_region_id * region_ids,
                                                                                 viennagrid_int * first_id);
 
+/* gets the element type pointer of a specific topological dimension */
+VIENNAGRID_DYNAMIC_EXPORT viennagrid_error viennagrid_element_type_pointer(viennagrid_mesh mesh,
+                                                                           viennagrid_dimension topologic_dimension,
+                                                                           viennagrid_element_type ** element_type_pointer);
+
 /* queries the type of an element */
 VIENNAGRID_DYNAMIC_EXPORT viennagrid_error viennagrid_element_type_get(viennagrid_mesh mesh,
-                                                                       viennagrid_dimension element_topo_dim,
+                                                                       viennagrid_dimension topologic_dimension,
                                                                        viennagrid_int element_id,
                                                                        viennagrid_element_type * element_type);
 
 /* gets the boundary element pointers of a specific topological dimension for a given boundary topological dimension */
 VIENNAGRID_DYNAMIC_EXPORT viennagrid_error viennagrid_element_boundary_element_pointers(viennagrid_mesh mesh,
-                                                                                        viennagrid_dimension element_topo_dim,
-                                                                                        viennagrid_dimension boundary_topo_dim,
+                                                                                        viennagrid_dimension topologic_dimension,
+                                                                                        viennagrid_dimension boundary_topologic_dimension,
                                                                                         viennagrid_int ** boundary_offsets,
                                                                                         viennagrid_int ** boundary_ids);
 
 /* gets the boundary elements of a specific element for a given boundary topological dimension */
 VIENNAGRID_DYNAMIC_EXPORT viennagrid_error viennagrid_element_boundary_elements(viennagrid_mesh mesh,
-                                                                                viennagrid_dimension element_topo_dim,
+                                                                                viennagrid_dimension topologic_dimension,
                                                                                 viennagrid_int element_id,
-                                                                                viennagrid_dimension boundary_topo_dim,
+                                                                                viennagrid_dimension boundary_topologic_dimension,
                                                                                 viennagrid_int ** boundary_element_id_begin,
                                                                                 viennagrid_int ** boundary_element_id_end);
 
 /* gets the coboundary element pointers of a specific topological dimension for a given coboundary topological dimension */
 VIENNAGRID_DYNAMIC_EXPORT viennagrid_error viennagrid_element_coboundary_element_pointers(viennagrid_mesh mesh,
-                                                                                          viennagrid_dimension element_topo_dim,
-                                                                                          viennagrid_dimension coboundary_topo_dim,
+                                                                                          viennagrid_dimension topologic_dimension,
+                                                                                          viennagrid_dimension coboundary_topologic_dimension,
                                                                                           viennagrid_int ** coboundary_element_ids_begin,
                                                                                           viennagrid_int ** coboundary_element_ids_end);
 
 /* gets the coboundary elements of a specific element for a given coboundary topological dimension */
 VIENNAGRID_DYNAMIC_EXPORT viennagrid_error viennagrid_element_coboundary_elements(viennagrid_mesh mesh,
-                                                                                  viennagrid_dimension element_topo_dim,
+                                                                                  viennagrid_dimension topologic_dimension,
                                                                                   viennagrid_int element_id,
-                                                                                  viennagrid_dimension coboundary_topo_dim,
+                                                                                  viennagrid_dimension coboundary_topologic_dimension,
                                                                                   viennagrid_int ** coboundary_element_ids_begin,
                                                                                   viennagrid_int ** coboundary_element_ids_end);
 
 
 /* gets the neighbor element pointers of a specific topological dimension for a given neighbor and connector topological dimension */
 VIENNAGRID_DYNAMIC_EXPORT viennagrid_error viennagrid_element_neighbor_elements_pointers(viennagrid_mesh mesh,
-                                                                                         viennagrid_dimension element_topo_dim,
-                                                                                         viennagrid_dimension connector_topo_dim,
-                                                                                         viennagrid_dimension neighbor_topo_dim,
+                                                                                         viennagrid_dimension topologic_dimension,
+                                                                                         viennagrid_dimension connector_topologic_dimension,
+                                                                                         viennagrid_dimension neighbor_topologic_dimension,
                                                                                          viennagrid_int ** neighbor_element_ids_begin,
                                                                                          viennagrid_int ** neighbor_element_ids_end);
 
 /* gets the neighbor elements of a specific element for a given neighbor and connector topological dimension */
 VIENNAGRID_DYNAMIC_EXPORT viennagrid_error viennagrid_element_neighbor_elements(viennagrid_mesh mesh,
-                                                                                viennagrid_dimension element_topo_dim,
+                                                                                viennagrid_dimension topologic_dimension,
                                                                                 viennagrid_int element_id,
-                                                                                viennagrid_dimension connector_topo_dim,
-                                                                                viennagrid_dimension neighbor_topo_dim,
+                                                                                viennagrid_dimension connector_topologic_dimension,
+                                                                                viennagrid_dimension neighbor_topologic_dimension,
                                                                                 viennagrid_int ** neighbor_element_ids_begin,
                                                                                 viennagrid_int ** neighbor_element_ids_end);
 
 
 /* queries if a given element is boundary of a mesh */
 VIENNAGRID_DYNAMIC_EXPORT viennagrid_error viennagrid_element_is_mesh_boundary(viennagrid_mesh mesh,
-                                                                               viennagrid_dimension element_topo_dim,
+                                                                               viennagrid_dimension topologic_dimension,
                                                                                viennagrid_int element_id,
                                                                                viennagrid_bool * result);
 
 /* queries if a given element is boundary of a mesh region */
 VIENNAGRID_DYNAMIC_EXPORT viennagrid_error viennagrid_element_is_region_boundary(viennagrid_region region,
                                                                                  viennagrid_mesh mesh,
-                                                                                 viennagrid_dimension element_topo_dim,
+                                                                                 viennagrid_dimension topologic_dimension,
                                                                                  viennagrid_int element_id,
                                                                                  viennagrid_bool * result);
 
 
 /* gets all elements of a mesh for a given topological dimension */
 VIENNAGRID_DYNAMIC_EXPORT viennagrid_error viennagrid_mesh_elements_get(viennagrid_mesh mesh,
-                                                                   viennagrid_dimension element_topo_dim,
+                                                                   viennagrid_dimension topologic_dimension,
                                                                    viennagrid_int ** element_ids_begin,
                                                                    viennagrid_int ** element_ids_end);
 
+/* gets the parent pointer of a specific topological dimension */
+VIENNAGRID_DYNAMIC_EXPORT viennagrid_error viennagrid_element_parent_pointer(viennagrid_mesh mesh,
+                                                                             viennagrid_dimension topologic_dimension,
+                                                                             viennagrid_int ** element_parent_id_pointer);
+
 /* queries the parent element of a given element */
 VIENNAGRID_DYNAMIC_EXPORT viennagrid_error viennagrid_element_parent_get(viennagrid_mesh mesh,
-                                                                         viennagrid_dimension element_topo_dim,
+                                                                         viennagrid_dimension topologic_dimension,
                                                                          viennagrid_int element_id,
                                                                          viennagrid_int * element_parent_id);
 
@@ -742,17 +765,17 @@ VIENNAGRID_DYNAMIC_EXPORT viennagrid_error viennagrid_mesh_regions_get(viennagri
 
 /* get the region pointers (all regions) of a given element */
 VIENNAGRID_DYNAMIC_EXPORT viennagrid_error viennagrid_element_regions_get(viennagrid_mesh mesh,
-                                                                          viennagrid_dimension element_topo_dim,
+                                                                          viennagrid_dimension topologic_dimension,
                                                                           viennagrid_int element_id,
                                                                           viennagrid_region_id ** region_ids_begin,
                                                                           viennagrid_region_id ** region_ids_end);
 /* adds an element to a region */
 VIENNAGRID_DYNAMIC_EXPORT viennagrid_error viennagrid_region_element_add(viennagrid_region region,
-                                                                         viennagrid_dimension element_topo_dim,
+                                                                         viennagrid_dimension topologic_dimension,
                                                                          viennagrid_int element_id);
 
 VIENNAGRID_DYNAMIC_EXPORT viennagrid_error viennagrid_region_contains_element(viennagrid_region region,
-                                                                              viennagrid_dimension element_topo_dim,
+                                                                              viennagrid_dimension topologic_dimension,
                                                                               viennagrid_int element_id,
                                                                               viennagrid_bool * value);
 
@@ -793,7 +816,7 @@ VIENNAGRID_DYNAMIC_EXPORT viennagrid_error viennagrid_plc_geometric_dimension_se
 
 /* queries the element count for a given topological dimension */
 VIENNAGRID_DYNAMIC_EXPORT viennagrid_error viennagrid_plc_element_count_get(viennagrid_plc plc,
-                                                                            viennagrid_dimension topo_dim,
+                                                                            viennagrid_dimension topologic_dimension,
                                                                             viennagrid_int * element_count);
 
 /* creates a vertex in a PLC, the created vertex ID is returned (optional, ignored if vertex_id is NULL) */
@@ -822,16 +845,16 @@ VIENNAGRID_DYNAMIC_EXPORT viennagrid_error viennagrid_plc_facet_create(viennagri
 
 /* gets the boundary element pointers of a specific topological dimension for a given boundary topological dimension */
 VIENNAGRID_DYNAMIC_EXPORT viennagrid_error viennagrid_plc_boundary_element_pointer(viennagrid_plc plc,
-                                                                                   viennagrid_dimension element_topo_dim,
-                                                                                   viennagrid_dimension boundary_topo_dim,
+                                                                                   viennagrid_dimension topologic_dimension,
+                                                                                   viennagrid_dimension boundary_topologic_dimension,
                                                                                    viennagrid_int ** boundary_element_offsets,
                                                                                    viennagrid_int ** boundary_element_ptr);
 
 /* get the boundary elements of a specific element given a boundary topological dimension */
 VIENNAGRID_DYNAMIC_EXPORT viennagrid_error viennagrid_plc_boundary_elements(viennagrid_plc plc,
-                                                                            viennagrid_dimension element_topo_dim,
+                                                                            viennagrid_dimension topologic_dimension,
                                                                             viennagrid_int element_id,
-                                                                            viennagrid_dimension boundary_topo_dim,
+                                                                            viennagrid_dimension boundary_topologic_dimension,
                                                                             viennagrid_int ** boundary_element_ids_begin,
                                                                             viennagrid_int ** boundary_element_ids_end);
 
@@ -901,13 +924,13 @@ VIENNAGRID_DYNAMIC_EXPORT viennagrid_error viennagrid_quantity_field_release(vie
 
 /* initializes a quantity field with a given topological dimension, size of a value and storage layout */
 VIENNAGRID_DYNAMIC_EXPORT viennagrid_error viennagrid_quantity_field_init(viennagrid_quantity_field quantity_field,
-                                                                          viennagrid_dimension topo_dim,
+                                                                          viennagrid_dimension topologic_dimension,
                                                                           viennagrid_int size_of_value,
                                                                           viennagrid_int storage_layout);
 
 /* queries the topologic dimension of a quantity field */
 VIENNAGRID_DYNAMIC_EXPORT viennagrid_error viennagrid_quantity_field_topologic_dimension_get(viennagrid_quantity_field quantity_field,
-                                                                                             viennagrid_dimension * topo_dim);
+                                                                                             viennagrid_dimension * topologic_dimension);
 /* queries the storage layout of a quantity field */
 VIENNAGRID_DYNAMIC_EXPORT viennagrid_error viennagrid_quantity_field_storage_layout_get(viennagrid_quantity_field quantity_field,
                                                                                         viennagrid_int * storage_layout);

@@ -398,8 +398,6 @@ viennagrid_int viennagrid_mesh_hierarchy_::make_elements(viennagrid_int element_
   viennagrid_int start_id = element_buffer(topologic_dimension).make_elements( element_count_, element_types_, element_vertex_index_offsets_, element_vertex_indices_ );
 
   update_cell_dimension(topologic_dimension);
-  for (int i = 0; i != element_count_; ++i)
-   ++element_counts[ +element_types_[i] ];
 
   if (region_ids)
   {
@@ -431,7 +429,6 @@ std::pair<viennagrid_int, bool> viennagrid_mesh_hierarchy_::get_make_element(vie
   id = element_buffer(element_topologic_dimension).make_element(element_type, vertex_ids, vertex_count, full_boundary_layout());
 
   update_cell_dimension(element_topologic_dimension);
-  ++element_counts[+element_type];
 
   if (mesh)
     mesh->add_element(element_topologic_dimension, id);
@@ -646,7 +643,6 @@ namespace viennautils
         size += element_buffers_size;
 //         std::cout << "[element_buffers] " << element_buffers_size << std::endl;
 
-        size += dynamic_sizeof( mh.element_counts );
         size += dynamic_sizeof( mh.geometric_dimension_ );
         size += dynamic_sizeof( mh.cell_dimension_ );
 
@@ -724,7 +720,6 @@ void viennagrid_mesh_hierarchy_::clear()
   {
     element_buffer(i).clear(this);
     element_buffer(i).set_topologic_dimension(i);
-    element_counts[i] = 0;
   }
 
   geometric_dimension_ = 0;

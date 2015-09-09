@@ -633,12 +633,7 @@ public:
   void update_change_counter( viennagrid_int & change_counter_to_update ) const { change_counter_to_update = change_counter_; }
   void increment_change_counter() { ++change_counter_; }
 
-
-  viennagrid_int element_count( viennagrid_element_type element_type ) const { return element_counts[+element_type]; }
-
-
   void clear();
-
 
   viennagrid_int mesh_count() const { return meshes_.size(); }
   viennagrid_mesh mesh(viennagrid_int i) { return meshes_[i]; }
@@ -727,7 +722,6 @@ private:
 
 
   viennagrid_element_buffer element_buffers[VIENNAGRID_TOPOLOGIC_DIMENSION_END];
-  viennagrid_int element_counts[VIENNAGRID_ELEMENT_TYPE_COUNT];
 
   viennagrid_dimension geometric_dimension_;
   viennagrid_dimension cell_dimension_;
