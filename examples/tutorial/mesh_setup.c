@@ -67,7 +67,6 @@ int main()
   viennagrid_error          err;
   viennagrid_mesh           my_mesh;
   viennagrid_region         my_region0, my_region1;
-//   viennagrid_region_id      my_region_id0, my_region_id1;
   viennagrid_int            *element_ptr_begin, *element_ptr_end;
 
   viennagrid_numeric coords0[2] = {0, 0}; viennagrid_int vertex0;

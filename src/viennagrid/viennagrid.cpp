@@ -212,19 +212,29 @@ viennagrid_error viennagrid_mesh_name_set(viennagrid_mesh mesh,
 }
 
 
-
-
 viennagrid_error viennagrid_mesh_element_count(viennagrid_mesh mesh,
-                                               viennagrid_element_type element_type,
+                                               viennagrid_dimension topo_dim,
                                                viennagrid_int * count)
 {
-  abort();
-
-//   if (count)
-//     *count = mesh_hierarchy->element_count(element_type);
+  if (count)
+    *count = mesh->element_count(topo_dim);
 
   return VIENNAGRID_SUCCESS;
 }
+
+viennagrid_error viennagrid_mesh_element_count_by_type(viennagrid_mesh mesh,
+                                                       viennagrid_element_type element_type,
+                                                       viennagrid_int * count)
+{
+  if (count)
+    *count = mesh->element_count_by_type(element_type);
+
+  return VIENNAGRID_SUCCESS;
+}
+
+
+
+
 
 viennagrid_error viennagrid_mesh_vertex_create(viennagrid_mesh mesh,
                                                const viennagrid_numeric * coords,

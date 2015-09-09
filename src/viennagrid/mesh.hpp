@@ -24,26 +24,29 @@ struct viennagrid_element_handle_buffer
   friend struct viennautils::detail::dynamic_sizeof_impl;
 public:
 
-  viennagrid_element_handle_buffer() { clear(); }
+  viennagrid_element_handle_buffer() { clear(-1); }
 
   bool element_present(viennagrid_int element_id) const
   {
     return find(element_id) != end();
   }
 
-  void add_element(viennagrid_int element_id)
+  void add_element(viennagrid_mesh_hierarchy mesh_hierarchy, viennagrid_int element_id)
   {
-    insert( element_id );
+    insert( mesh_hierarchy, element_id );
   }
 
-  void add_elements(viennagrid_int start_id, viennagrid_int count)
+  void add_elements(viennagrid_mesh_hierarchy mesh_hierarchy, viennagrid_int start_id, viennagrid_int count)
   {
     if (ids_.empty() || (start_id > ids_.back()))
     {
       viennagrid_int old_size = ids_.size();
       ids_.resize( ids_.size() + count );
       for (viennagrid_int i = 0; i != count; ++i)
+      {
         ids_[ old_size+i ] = start_id+i;
+        element_counts[ +mesh_hierarchy->element_buffer(topologic_dimension).element_type(start_id+i) ]++;
+      }
     }
     else
     {
@@ -52,9 +55,10 @@ public:
     }
   }
 
-  viennagrid_int * ids()
-  { return ids_.empty() ? 0 : &ids_[0]; }
+  viennagrid_int * ids() { return ids_.empty() ? 0 : &ids_[0]; }
   viennagrid_int count() const { return ids_.size(); }
+
+  viennagrid_int element_count(viennagrid_element_type et) const { return element_counts[+et]; }
 
   ViennaGridCoBoundaryBufferType & coboundary_buffer(viennagrid_dimension coboundary_topo_dim)
   { return coboundary_ids[+coboundary_topo_dim]; }
@@ -62,8 +66,10 @@ public:
                                                viennagrid_dimension neighbor_topo_dim)
   { return neighbor_ids[+connector_topo_dim][+neighbor_topo_dim]; }
 
-  void clear()
+  void clear(viennagrid_dimension topologic_dimension_)
   {
+    topologic_dimension = topologic_dimension_;
+
     ids_.clear();
 
     for (int i = 0; i != VIENNAGRID_TOPOLOGIC_DIMENSION_END; ++i)
@@ -72,6 +78,9 @@ public:
     for (int i = 0; i != VIENNAGRID_TOPOLOGIC_DIMENSION_END; ++i)
       for (int j = 0; j != VIENNAGRID_TOPOLOGIC_DIMENSION_END; ++j)
         neighbor_ids[i][j].clear();
+
+    for (int i = 0; i != VIENNAGRID_ELEMENT_TYPE_COUNT; ++i)
+      element_counts[i] = 0;
   }
 
   void optimize_memory()
@@ -116,21 +125,30 @@ private:
       return end();
   }
 
-  void insert(viennagrid_int id)
+  void insert(viennagrid_mesh_hierarchy mesh_hierarchy, viennagrid_int id)
   {
     if (ids_.empty() || (id > ids_.back()))
+    {
       ids_.push_back(id);
+      element_counts[ +mesh_hierarchy->element_buffer(topologic_dimension).element_type(id) ]++;
+    }
     else
     {
       iterator it = std::lower_bound(begin(), end(), id);
       if ( (*it) != id )
+      {
         ids_.insert(it, id);
+        element_counts[ +mesh_hierarchy->element_buffer(topologic_dimension).element_type(id) ]++;
+      }
     }
   }
 
+  viennagrid_dimension topologic_dimension;
 
   ViennaGridCoBoundaryBufferType coboundary_ids[VIENNAGRID_TOPOLOGIC_DIMENSION_END];
   ViennaGridNeighborBufferType neighbor_ids[VIENNAGRID_TOPOLOGIC_DIMENSION_END][VIENNAGRID_TOPOLOGIC_DIMENSION_END];
+
+  viennagrid_int element_counts[VIENNAGRID_ELEMENT_TYPE_COUNT];
 };
 
 
@@ -161,10 +179,10 @@ struct viennagrid_mesh_ : public reference_counted
 
 public:
   viennagrid_mesh_();
-  viennagrid_mesh_(viennagrid_mesh_hierarchy_ * hierarchy_in, viennagrid_mesh parent_in);
+  viennagrid_mesh_(viennagrid_mesh_hierarchy hierarchy_in, viennagrid_mesh parent_in);
   ~viennagrid_mesh_();
 
-  viennagrid_mesh_hierarchy_ * mesh_hierarchy() { return hierarchy_; }
+  viennagrid_mesh_hierarchy mesh_hierarchy() { return hierarchy_; }
   viennagrid_mesh parent() { return parent_; }
 
   bool is_root() const;
@@ -189,6 +207,8 @@ public:
 
   viennagrid_int element_count(viennagrid_dimension element_topo_dim)
   { return element_handle_buffer(element_topo_dim).count(); }
+  viennagrid_int element_count_by_type(viennagrid_element_type element_type)
+  { return element_handle_buffer( viennagrid_topological_dimension(element_type) ).element_count(element_type); }
 
   viennagrid_int * elements_begin(viennagrid_dimension element_topo_dim)
   { return element_handle_buffer(element_topo_dim).ids(); }
@@ -319,7 +339,7 @@ public:
 
 private:
 
-  viennagrid_mesh_hierarchy_ * hierarchy_;
+  viennagrid_mesh_hierarchy hierarchy_;
 
   viennagrid_mesh parent_;
   std::vector<viennagrid_mesh> children;

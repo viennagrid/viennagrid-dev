@@ -227,7 +227,6 @@ typedef char            viennagrid_dimension;
 typedef short           viennagrid_region_id;
 
 
-// typedef struct viennagrid_mesh_hierarchy_ * viennagrid_mesh_hierarchy;
 typedef struct viennagrid_mesh_ * viennagrid_mesh;
 typedef struct viennagrid_region_ * viennagrid_region;
 typedef struct viennagrid_plc_ * viennagrid_plc;
@@ -573,8 +572,11 @@ VIENNAGRID_DYNAMIC_EXPORT viennagrid_error viennagrid_mesh_name_set(viennagrid_m
 
 /* queries the number of element of a specific element type */
 VIENNAGRID_DYNAMIC_EXPORT viennagrid_error viennagrid_mesh_element_count(viennagrid_mesh mesh,
-                                                                         viennagrid_element_type element_type,
+                                                                         viennagrid_dimension topo_dim,
                                                                          viennagrid_int * count);
+VIENNAGRID_DYNAMIC_EXPORT viennagrid_error viennagrid_mesh_element_count_by_type(viennagrid_mesh mesh,
+                                                                                 viennagrid_element_type element_type,
+                                                                                 viennagrid_int * count);
 
 
 /* creates a vertex in a mesh, the ID of the created vertex will be returned in vertex_id (optional, will be ignored if vertex_id is NULL) */

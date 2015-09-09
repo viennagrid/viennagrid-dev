@@ -45,7 +45,7 @@ void viennagrid_mesh_::add_elements(viennagrid_dimension element_topo_dim,
   assert( (element_topo_dim >= 0) && (element_topo_dim < VIENNAGRID_TOPOLOGIC_DIMENSION_END) );
   assert( first_id >= 0 );
 
-  element_handle_buffer(element_topo_dim).add_elements( first_id, count );
+  element_handle_buffer(element_topo_dim).add_elements( mesh_hierarchy(), first_id, count );
 }
 
 
@@ -78,7 +78,7 @@ void viennagrid_mesh_::add_element(viennagrid_dimension element_topo_dim,
     }
   }
 
-  element_handle_buffer(element_topo_dim).add_element(element_id);
+  element_handle_buffer(element_topo_dim).add_element(mesh_hierarchy(), element_id);
 }
 
 
@@ -464,7 +464,7 @@ void viennagrid_mesh_::clear()
 
   for (viennagrid_int i = 0; i != VIENNAGRID_TOPOLOGIC_DIMENSION_END; ++i)
   {
-    element_handle_buffers[i].clear();
+    element_handle_buffers[i].clear(i);
   }
 
   for (viennagrid_int i = 0; i != VIENNAGRID_TOPOLOGIC_DIMENSION_END; ++i)

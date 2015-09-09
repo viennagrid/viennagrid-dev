@@ -10,7 +10,6 @@
 
 #include "common.hpp"
 #include "buffer.hpp"
-// #include "mesh.hpp"
 #include "region.hpp"
 #include "dynamic_sizeof.hpp"
 
@@ -24,7 +23,7 @@ struct element_key;
 struct viennagrid_element_buffer;
 struct viennagrid_mesh_hierarchy_;
 
-
+typedef viennagrid_mesh_hierarchy_ * viennagrid_mesh_hierarchy;
 
 
 template<typename T, typename SizeT>
