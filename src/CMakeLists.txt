@@ -1,4 +1,5 @@
-set(LIB_VIENNAGRID_SOURCES viennagrid/io.cpp
+set(LIB_VIENNAGRID_SOURCES viennagrid/algorithm.cpp
+                           viennagrid/io.cpp
                            viennagrid/mesh.cpp
                            viennagrid/mesh_hierarchy.cpp
                            viennagrid/plc.cpp
