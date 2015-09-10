@@ -83,7 +83,7 @@ int test_1d()
     return EXIT_FAILURE;
   }
 
-  err = viennagrid_mesh_retain(my_mesh); ERROR_CHECK(err);
+  err = viennagrid_mesh_release(my_mesh); ERROR_CHECK(err);
 
   std::cout << " PASSED" << std::endl;
   return EXIT_SUCCESS;
@@ -147,7 +147,7 @@ int test_2d_triangle()
     return EXIT_FAILURE;
   }
 
-  err = viennagrid_mesh_retain(my_mesh); ERROR_CHECK(err);
+  err = viennagrid_mesh_release(my_mesh); ERROR_CHECK(err);
 
   std::cout << " PASSED" << std::endl;
   return EXIT_SUCCESS;
@@ -215,7 +215,7 @@ int test_2d_quadrilateral()
     return EXIT_FAILURE;
   }
 
-  err = viennagrid_mesh_retain(my_mesh); ERROR_CHECK(err);
+  err = viennagrid_mesh_release(my_mesh); ERROR_CHECK(err);
 
   std::cout << " PASSED" << std::endl;
   return EXIT_SUCCESS;
@@ -282,7 +282,7 @@ int test_3d_tetrahedron()
     return EXIT_FAILURE;
   }
 
-  err = viennagrid_mesh_retain(my_mesh); ERROR_CHECK(err);
+  err = viennagrid_mesh_release(my_mesh); ERROR_CHECK(err);
 
   std::cout << " PASSED" << std::endl;
   return EXIT_SUCCESS;
@@ -387,7 +387,7 @@ int test_3d_hexahedron()
     return EXIT_FAILURE;
   }
 
-  err = viennagrid_mesh_retain(my_mesh); ERROR_CHECK(err);
+  err = viennagrid_mesh_release(my_mesh); ERROR_CHECK(err);
 
   std::cout << " PASSED" << std::endl;
   return EXIT_SUCCESS;
