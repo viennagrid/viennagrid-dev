@@ -7,7 +7,8 @@ set(LIB_VIENNAGRID_SOURCES viennagrid/algorithm.cpp
                            viennagrid/region.cpp
                            viennagrid/serialize.cpp
                            viennagrid/viennagrid.cpp
-                           viennagrid/io/netgen.cpp)
+                           viennagrid/io/netgen.cpp
+                           viennagrid/io/vtk.cpp)
 
 add_library(viennagrid SHARED ${LIB_VIENNAGRID_SOURCES})
 install(TARGETS viennagrid DESTINATION lib)

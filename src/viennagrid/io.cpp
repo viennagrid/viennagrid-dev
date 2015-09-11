@@ -204,5 +204,38 @@ viennagrid_error viennagrid_mesh_io_read(viennagrid_mesh_io mesh_io,
 
 
 
+viennagrid_error viennagrid_mesh_io_write_with_filetype(viennagrid_mesh_io mesh_io,
+                                                       const char * filename,
+                                                       viennagrid_int filetype)
+{
+  viennagrid_mesh mesh;
+  viennagrid_error err = viennagrid_mesh_io_mesh_get(mesh_io, &mesh); if (err != VIENNAGRID_SUCCESS) return err;
+
+  if (!mesh)
+    return VIENNAGRID_ERROR_IO_NO_MESH;
+
+  switch (filetype)
+  {
+    case VIENNAGRID_FILETYPE_VTK_MESH:
+      return viennagrid_mesh_io_read_vtk(mesh_io, filename);
+  }
+
+  return VIENNAGRID_ERROR_IO_UNKNOWN_FILETYPE;
+}
+
+
+
+viennagrid_error viennagrid_mesh_io_write(viennagrid_mesh_io mesh_io,
+                                          const char * filename)
+{
+  viennagrid_int filetype;
+
+  viennagrid_error error = viennagrid_mesh_io_filetype_from_filename(filename, &filetype);
+  if (error != VIENNAGRID_SUCCESS)
+    return error;
+
+  return viennagrid_mesh_io_write_with_filetype(mesh_io, filename, filetype);
+}
+
 
 

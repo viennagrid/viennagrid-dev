@@ -281,6 +281,9 @@ typedef struct viennagrid_mesh_io_ * viennagrid_mesh_io;
 #define VIENNAGRID_ERROR_IO_INVALID_HOLE_POINT_COUNT                  117
 #define VIENNAGRID_ERROR_IO_INVALID_SEED_POINT_COUNT                  118
 #define VIENNAGRID_ERROR_IO_UNSUPPORTED_ELEMENT_TYPE                  119
+#define VIENNAGRID_ERROR_IO_FILE_MALFORMED                            120
+#define VIENNAGRID_ERROR_IO_NO_MESH                                   121
+#define VIENNAGRID_ERROR_IO_WRITE_ERROR                               122
 
 /* VIENNAGRID BOOL DEFINES */
 #define VIENNAGRID_TRUE                             1
@@ -312,6 +315,7 @@ typedef struct viennagrid_mesh_io_ * viennagrid_mesh_io;
 /* VIENNAGRID FILETYPES */
 #define VIENNAGRID_FILETYPE_UNKNOWN                 0
 #define VIENNAGRID_FILETYPE_NETGEN_MESH             1
+#define VIENNAGRID_FILETYPE_VTK_MESH                2
 
 /* QUANTITY FIELD STORAGE TYPES */
 #define VIENNAGRID_QUANTITY_FIELD_STORAGE_DENSE     0
