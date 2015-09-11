@@ -7,10 +7,12 @@
 #include <cassert>
 #include <iterator>
 #include <algorithm>
+#include <iostream>
 
 viennagrid_error viennagrid_mesh_io_read_netgen(viennagrid_mesh_io mesh_io,
                                                 const char * filename)
 {
+  viennagrid_error err;
   std::ifstream reader(filename);
   std::string tmp;
 
@@ -44,7 +46,7 @@ viennagrid_error viennagrid_mesh_io_read_netgen(viennagrid_mesh_io mesh_io,
 
 
   viennagrid_mesh mesh;
-  viennagrid_mesh_io_mesh_get( mesh_io, &mesh );
+  err = viennagrid_mesh_io_mesh_get( mesh_io, &mesh ); if (err != VIENNAGRID_SUCCESS) return err;
 
   viennagrid_dimension geometric_dimension = -1;
 
@@ -63,7 +65,7 @@ viennagrid_error viennagrid_mesh_io_read_netgen(viennagrid_mesh_io mesh_io,
 
     if (geometric_dimension < 0)
     {
-      viennagrid_mesh_geometric_dimension_set(mesh, p.size());
+      err= viennagrid_mesh_geometric_dimension_set(mesh, p.size()); if (err != VIENNAGRID_SUCCESS) return err;
       geometric_dimension = p.size();
     }
     else if (geometric_dimension != (viennagrid_dimension)p.size())
@@ -71,7 +73,7 @@ viennagrid_error viennagrid_mesh_io_read_netgen(viennagrid_mesh_io mesh_io,
       return VIENNAGRID_ERROR_IO_VERTEX_DIMENSION_MISMATCH;
     }
 
-    viennagrid_mesh_vertex_create( mesh, &p[0], NULL );
+    err = viennagrid_mesh_vertex_create( mesh, &p[0], NULL ); if (err != VIENNAGRID_SUCCESS) return err;
   }
 
   if (!reader.good())
@@ -126,7 +128,7 @@ viennagrid_error viennagrid_mesh_io_read_netgen(viennagrid_mesh_io mesh_io,
     else
       return VIENNAGRID_ERROR_IO_UNSUPPORTED_ELEMENT_TYPE;
 
-    viennagrid_mesh_element_create(mesh, et, vertex_ids.size(), &vertex_ids[0], NULL);
+    err = viennagrid_mesh_element_create(mesh, et, vertex_ids.size(), &vertex_ids[0], NULL); if (err != VIENNAGRID_SUCCESS) return err;
   }
 
   return VIENNAGRID_SUCCESS;
