@@ -231,7 +231,7 @@ namespace viennagrid
     viennagrid_dimension topologic_dimension() const
     {
       viennagrid_dimension topologic_dimension_;
-      viennagrid_quantity_field_topologic_dimension_get(internal(), &topologic_dimension_);
+      viennagrid_quantity_field_topological_dimension_get(internal(), &topologic_dimension_);
       return topologic_dimension_;
     }
 

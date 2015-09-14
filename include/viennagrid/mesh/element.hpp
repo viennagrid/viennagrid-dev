@@ -6,6 +6,46 @@
 
 namespace viennagrid
 {
+
+
+  class element_id
+  {
+  public:
+
+    element_id() : id(-1) {}
+    element_id(viennagrid_element_id id_) : id(id_) {}
+    element_id(viennagrid_dimension topological_dimension_, viennagrid_element_id element_index_) : id( viennagrid_compose_element_id(topological_dimension_,element_index_) ) {}
+
+    bool valid() const { return id; }
+
+    viennagrid_element_id internal() const { return id; }
+    operator viennagrid_element_id() { return internal(); }
+
+
+    viennagrid_dimension topological_dimension() const { return viennagrid_topological_dimension_from_element_id(id); }
+    viennagrid_element_id index() const { return viennagrid_index_from_element_id(id); }
+
+
+    bool operator<(element_id rhs) const { return internal() < rhs.internal(); }
+
+    element_id & operator++() { ++id; return *this; }
+    element_id operator++(int) { viennagrid_element_id tmp(*this); ++(*this); return tmp; }
+
+  private:
+    viennagrid_element_id id;
+  };
+
+
+  inline std::ostream & operator<<(std::ostream & stream, element_id id)
+  {
+    stream << id.internal() << " (dim=" << (int)id.topological_dimension() << " index=" << id.index() << ")";
+    return stream;
+  }
+
+
+
+
+
   template<bool is_const>
   class base_element
   {
@@ -19,7 +59,7 @@ namespace viennagrid
     typedef base_element<false> nonconst_element_type;
     typedef base_element<true> const_element_type;
 
-    typedef viennagrid_int id_type;
+    typedef element_id id_type;
     typedef viennagrid_dimension dimension_type;
 
     typedef typename result_of::const_nonconst<mesh, is_const>::type mesh_type;
@@ -27,20 +67,16 @@ namespace viennagrid
 
     base_element() : mesh_(0), id_(-1) {}
     base_element(viennagrid_mesh mesh_in,
-                 dimension_type topologic_dimension_in,
                  id_type id_in) :
                  mesh_(mesh_in),
-                 topologic_dimension_(topologic_dimension_in),
                  id_(id_in) {}
     base_element(mesh_type const & mesh_in,
-                 dimension_type topologic_dimension_in,
                  id_type id_in) :
                  mesh_(mesh_in.internal()),
-                 topologic_dimension_(topologic_dimension_in),
                  id_(id_in) {}
 
     template<bool other_is_const>
-    base_element(base_element<other_is_const> element) : mesh_(element.mesh_), topologic_dimension_(element.topologic_dimension_), id_(element.id_) {}
+    base_element(base_element<other_is_const> element) : mesh_(element.mesh_), id_(element.id_) {}
 
     id_type id() const { return id_; }
     bool valid() const { return id() >= 0; }
@@ -56,7 +92,7 @@ namespace viennagrid
     element_tag tag() const
     {
       viennagrid_element_type type;
-      viennagrid_element_type_get( internal_mesh(), topologic_dimension(), id(), &type);
+      viennagrid_element_type_get( internal_mesh(), id(), &type);
       return element_tag(type);
     }
 
@@ -71,12 +107,11 @@ namespace viennagrid
 
     bool is_simplex() const { return tag().is_simplex(); }
 
-    dimension_type topologic_dimension() const { return topologic_dimension_; }
+    dimension_type topologic_dimension() const { return id_.topological_dimension(); }
 
   private:
 
     viennagrid_mesh mesh_;
-    dimension_type topologic_dimension_;
     id_type id_;
   };
 

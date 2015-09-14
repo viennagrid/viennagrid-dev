@@ -59,7 +59,7 @@ int test_1d()
   err = viennagrid_mesh_element_create(my_mesh, VIENNAGRID_ELEMENT_TYPE_LINE, 2, element1_vertices, &element1); ERROR_CHECK(err);
 
   viennagrid_numeric volume0;
-  err = viennagrid_element_volume(my_mesh, 1, element0, &volume0); ERROR_CHECK(err);
+  err = viennagrid_element_volume(my_mesh, element0, &volume0); ERROR_CHECK(err);
   if (std::fabs(volume0 - coords1) > 1e-4)
   {
     std::cerr << "ERROR: 1D volume check failed for volume0: " << volume0 << " vs. " << coords1 << std::endl;
@@ -67,7 +67,7 @@ int test_1d()
   }
 
   viennagrid_numeric volume1;
-  err = viennagrid_element_volume(my_mesh, 1, element1, &volume1); ERROR_CHECK(err);
+  err = viennagrid_element_volume(my_mesh, element1, &volume1); ERROR_CHECK(err);
   if (std::fabs(volume1 - (coords2 - coords1)) > 1e-4)
   {
     std::cerr << "ERROR: 1D volume check failed for volume1: " << volume1 << " vs. " << (coords2 - coords1) << std::endl;
@@ -123,7 +123,7 @@ int test_2d_triangle()
   err = viennagrid_mesh_element_create(my_mesh, VIENNAGRID_ELEMENT_TYPE_TRIANGLE, 3, element1_vertices, &element1); ERROR_CHECK(err);
 
   viennagrid_numeric volume0;
-  err = viennagrid_element_volume(my_mesh, 2, element0, &volume0); ERROR_CHECK(err);
+  err = viennagrid_element_volume(my_mesh, element0, &volume0); ERROR_CHECK(err);
   if (std::fabs(volume0 - 0.5) > 1e-4)
   {
     std::cerr << "ERROR: volume check failed for volume0: " << volume0 << " vs. " << 0.5 << std::endl;
@@ -131,7 +131,7 @@ int test_2d_triangle()
   }
 
   viennagrid_numeric volume1;
-  err = viennagrid_element_volume(my_mesh, 2, element1, &volume1); ERROR_CHECK(err);
+  err = viennagrid_element_volume(my_mesh, element1, &volume1); ERROR_CHECK(err);
   if (std::fabs(volume1 - 1.0) > 1e-4)
   {
     std::cerr << "ERROR: volume check failed for volume1: " << volume1 << " vs. " << 1.0 << std::endl;
@@ -191,7 +191,7 @@ int test_2d_quadrilateral()
   err = viennagrid_mesh_element_create(my_mesh, VIENNAGRID_ELEMENT_TYPE_QUADRILATERAL, 4, element1_vertices, &element1); ERROR_CHECK(err);
 
   viennagrid_numeric volume0;
-  err = viennagrid_element_volume(my_mesh, 2, element0, &volume0); ERROR_CHECK(err);
+  err = viennagrid_element_volume(my_mesh, element0, &volume0); ERROR_CHECK(err);
   if (std::fabs(volume0 - 1.5) > 1e-4)
   {
     std::cerr << "ERROR: volume check failed for volume0: " << volume0 << " vs. " << 1.5 << std::endl;
@@ -199,7 +199,7 @@ int test_2d_quadrilateral()
   }
 
   viennagrid_numeric volume1;
-  err = viennagrid_element_volume(my_mesh, 2, element1, &volume1); ERROR_CHECK(err);
+  err = viennagrid_element_volume(my_mesh, element1, &volume1); ERROR_CHECK(err);
   if (std::fabs(volume1 - 1.5) > 1e-4)
   {
     std::cerr << "ERROR: volume check failed for volume1: " << volume1 << " vs. " << 1.5 << std::endl;
@@ -258,7 +258,7 @@ int test_3d_tetrahedron()
   viennagrid_numeric ref_volume = 0.5 * 2.1 / 3.0;
 
   viennagrid_numeric volume0;
-  err = viennagrid_element_volume(my_mesh, 3, element0, &volume0); ERROR_CHECK(err);
+  err = viennagrid_element_volume(my_mesh, element0, &volume0); ERROR_CHECK(err);
   if (std::fabs(volume0 - ref_volume) > 1e-4)
   {
     std::cerr << "ERROR: volume check failed for volume0: " << volume0 << " vs. " << ref_volume << std::endl;
@@ -266,7 +266,7 @@ int test_3d_tetrahedron()
   }
 
   viennagrid_numeric volume1;
-  err = viennagrid_element_volume(my_mesh, 3, element1, &volume1); ERROR_CHECK(err);
+  err = viennagrid_element_volume(my_mesh, element1, &volume1); ERROR_CHECK(err);
   if (std::fabs(volume1 - ref_volume) > 1e-4)
   {
     std::cerr << "ERROR: volume check failed for volume1: " << volume1 << " vs. " << ref_volume << std::endl;
@@ -363,7 +363,7 @@ int test_3d_hexahedron()
   viennagrid_numeric ref_volume = 28.0 / 3.0;
 
   viennagrid_numeric volume0;
-  err = viennagrid_element_volume(my_mesh, 3, element0, &volume0); ERROR_CHECK(err);
+  err = viennagrid_element_volume(my_mesh, element0, &volume0); ERROR_CHECK(err);
   if (std::fabs(volume0 - ref_volume) > 1e-4)
   {
     std::cerr << "ERROR: volume check failed for volume0: " << volume0 << " vs. " << ref_volume << std::endl;
@@ -371,7 +371,7 @@ int test_3d_hexahedron()
   }
 
   viennagrid_numeric volume1;
-  err = viennagrid_element_volume(my_mesh, 3, element1, &volume1); ERROR_CHECK(err);
+  err = viennagrid_element_volume(my_mesh, element1, &volume1); ERROR_CHECK(err);
   if (std::fabs(volume1 - ref_volume) > 1e-4)
   {
     std::cerr << "ERROR: volume check failed for volume1: " << volume1 << " vs. " << ref_volume << std::endl;

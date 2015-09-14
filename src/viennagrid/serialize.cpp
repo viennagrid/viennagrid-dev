@@ -268,7 +268,7 @@ viennagrid_error viennagrid_mesh_deserialize(void * blob,
        (version_minor != VIENNAGRID_VERSION_MINOR) ||
        (version_patch != VIENNAGRID_VERSION_PATCH) )
   {
-    return VIENNAGRID_ERROR_DESERIALIZE_VERSION_MISSMATCH;
+    return VIENNAGRID_ERROR_DESERIALIZE_VERSION_MISMATCH;
   }
 
 
@@ -403,7 +403,7 @@ viennagrid_error viennagrid_mesh_deserialize(void * blob,
     {
       viennagrid_int region_id = cell_regions[j];
 
-      viennagrid_region_element_add( id_region_map[region_id], cell_dimension, cell_id );
+      viennagrid_region_element_add( id_region_map[region_id], cell_id );
     }
   }
 
@@ -411,12 +411,12 @@ viennagrid_error viennagrid_mesh_deserialize(void * blob,
   {
     for (viennagrid_int j = 0; j != mesh_vertex_count[i]; ++j)
     {
-      index_mesh_map[i]->add_element(0, mesh_vertices[i][j]);
+      index_mesh_map[i]->add_element(mesh_vertices[i][j]);
     }
 
     for (viennagrid_int j = 0; j != mesh_cell_count[i]; ++j)
     {
-      index_mesh_map[i]->add_element(cell_dimension, mesh_cells[i][j]);
+      index_mesh_map[i]->add_element(mesh_cells[i][j]);
     }
   }
 

@@ -32,24 +32,24 @@
 
 int print_cells_in_region(viennagrid_mesh my_mesh, viennagrid_region region)
 {
-  viennagrid_error     err;
-  viennagrid_int       *element_ptr_begin, *element_ptr_end;
-  viennagrid_int       *vertices_begin, *vertices_end;
-  viennagrid_int       *it;
-  viennagrid_int       *vertex_it;
-  viennagrid_bool      is_in_region;
+  viennagrid_error        err;
+  viennagrid_element_id   *element_ptr_begin, *element_ptr_end;
+  viennagrid_element_id   *vertices_begin, *vertices_end;
+  viennagrid_element_id   *it;
+  viennagrid_element_id   *vertex_it;
+  viennagrid_bool         is_in_region;
 
   err = viennagrid_mesh_elements_get(my_mesh, 2, &element_ptr_begin, &element_ptr_end); ERROR_CHECK(err);
 
   for (it = element_ptr_begin; it != element_ptr_end; ++it)
   {
-    err = viennagrid_region_contains_element(region, 2, *it, &is_in_region);
+    err = viennagrid_region_contains_element(region, *it, &is_in_region);
 
     if (is_in_region == VIENNAGRID_TRUE)
     {
       printf("--- Element %ld ---\n", (long)*it);
       /* print vertices: */
-      viennagrid_element_boundary_elements(my_mesh, 2, *it, 0, &vertices_begin, &vertices_end); ERROR_CHECK(err);
+      viennagrid_element_boundary_elements(my_mesh, *it, 0, &vertices_begin, &vertices_end); ERROR_CHECK(err);
       for (vertex_it = vertices_begin; vertex_it != vertices_end; ++vertex_it)
       {
         viennagrid_numeric *vertex_coords;
@@ -67,20 +67,20 @@ int main()
   viennagrid_error          err;
   viennagrid_mesh           my_mesh;
   viennagrid_region         my_region0, my_region1;
-  viennagrid_int            *element_ptr_begin, *element_ptr_end;
+  viennagrid_element_id            *element_ptr_begin, *element_ptr_end;
 
-  viennagrid_numeric coords0[2] = {0, 0}; viennagrid_int vertex0;
-  viennagrid_numeric coords1[2] = {1, 0}; viennagrid_int vertex1;
-  viennagrid_numeric coords2[2] = {2, 0}; viennagrid_int vertex2;
+  viennagrid_numeric coords0[2] = {0, 0}; viennagrid_element_id vertex0;
+  viennagrid_numeric coords1[2] = {1, 0}; viennagrid_element_id vertex1;
+  viennagrid_numeric coords2[2] = {2, 0}; viennagrid_element_id vertex2;
 
-  viennagrid_numeric coords3[2] = {2, 1}; viennagrid_int vertex3;
-  viennagrid_numeric coords4[2] = {1, 1}; viennagrid_int vertex4;
-  viennagrid_numeric coords5[2] = {0, 1}; viennagrid_int vertex5;
+  viennagrid_numeric coords3[2] = {2, 1}; viennagrid_element_id vertex3;
+  viennagrid_numeric coords4[2] = {1, 1}; viennagrid_element_id vertex4;
+  viennagrid_numeric coords5[2] = {0, 1}; viennagrid_element_id vertex5;
 
-  viennagrid_int element0_vertices[3]; viennagrid_int element0;
-  viennagrid_int element1_vertices[3]; viennagrid_int element1;
-  viennagrid_int element2_vertices[3]; viennagrid_int element2;
-  viennagrid_int element3_vertices[3]; viennagrid_int element3;
+  viennagrid_element_id element0_vertices[3]; viennagrid_element_id element0;
+  viennagrid_element_id element1_vertices[3]; viennagrid_element_id element1;
+  viennagrid_element_id element2_vertices[3]; viennagrid_element_id element2;
+  viennagrid_element_id element3_vertices[3]; viennagrid_element_id element3;
 
   /*
    * Define the necessary types:
@@ -129,11 +129,11 @@ int main()
   err = viennagrid_mesh_element_create(my_mesh, VIENNAGRID_ELEMENT_TYPE_TRIANGLE, 3, element2_vertices, &element2); ERROR_CHECK(err);
   err = viennagrid_mesh_element_create(my_mesh, VIENNAGRID_ELEMENT_TYPE_TRIANGLE, 3, element3_vertices, &element3); ERROR_CHECK(err);
 
-  err = viennagrid_region_element_add(my_region0, 2, element0); ERROR_CHECK(err);
-  err = viennagrid_region_element_add(my_region0, 2, element1); ERROR_CHECK(err);
+  err = viennagrid_region_element_add(my_region0, element0); ERROR_CHECK(err);
+  err = viennagrid_region_element_add(my_region0, element1); ERROR_CHECK(err);
 
-  err = viennagrid_region_element_add(my_region1, 2, element2); ERROR_CHECK(err);
-  err = viennagrid_region_element_add(my_region1, 2, element3); ERROR_CHECK(err);
+  err = viennagrid_region_element_add(my_region1, element2); ERROR_CHECK(err);
+  err = viennagrid_region_element_add(my_region1, element3); ERROR_CHECK(err);
 
   err = viennagrid_mesh_elements_get(my_mesh, 2, &element_ptr_begin, &element_ptr_end); ERROR_CHECK(err);
 

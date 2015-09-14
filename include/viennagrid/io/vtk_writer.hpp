@@ -289,7 +289,7 @@ namespace viennagrid
 //           detail::viennagrid_to_vtk_orientations<CellTag> reorderer;
           detail::viennagrid_to_vtk_orientations reorderer( (*it).tag() );
           for (std::size_t i=0; i<viennagrid_vertices.size(); ++i)
-            writer << viennagrid_vertices[reorderer(i)] << " ";
+            writer << viennagrid_vertices[reorderer(i)].index() << " ";
 
           writer << std::endl;
         }

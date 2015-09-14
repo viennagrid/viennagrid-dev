@@ -18,7 +18,7 @@ namespace viennagrid
 
     viennagrid_int id;
     viennagrid_mesh_vertex_create( mesh, &p[0], &id );
-    return element(mesh, 0, id);
+    return element(mesh, id);
   }
 
 
@@ -88,21 +88,21 @@ namespace viennagrid
                        ElementIteratorT elements_begin,
                        ElementIteratorT elements_end)
   {
-    std::vector<viennagrid_int> internal_vertices_indices;
+    std::vector<viennagrid_element_id> internal_vertices_indices;
 
     for (; elements_begin != elements_end; ++elements_begin)
     {
       internal_vertices_indices.push_back( (*elements_begin).id() );
     }
 
-    viennagrid_int id;
+    viennagrid_element_id id;
     viennagrid_mesh_element_create(mesh,
                                    et.internal(),
                                    internal_vertices_indices.size(),
                                    &internal_vertices_indices[0],
                                    &id);
 
-    return element(mesh, et.topologic_dimension(), id);
+    return element(mesh, id);
   }
 
 
@@ -158,7 +158,7 @@ namespace viennagrid
   template<typename ElementIteratorT, typename IntersectionIteratorT>
   element make_refined_element(mesh const & m,
                                element /*parent*/,
-                               element_tag et,
+                               element_tag /*et*/,
                                ElementIteratorT elements_begin,
                                ElementIteratorT elements_end,
                                IntersectionIteratorT intersects_begin,
@@ -196,7 +196,7 @@ namespace viennagrid
 //                                            &intersects_indices[0], &intersects_dimensions[0],
 //                                            &id);
 
-    return element(m.internal(), et.topologic_dimension(), id);
+    return element(m.internal(), id);
   }
 
 

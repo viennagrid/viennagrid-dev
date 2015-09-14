@@ -12,25 +12,28 @@
 
 
 
+
+
 viennagrid_error viennagrid_mesh_io_create(viennagrid_mesh_io * mesh_io)
 {
   if (mesh_io)
     *mesh_io = new viennagrid_mesh_io_();
+
   return VIENNAGRID_SUCCESS;
 }
 
 viennagrid_error viennagrid_mesh_io_retain(viennagrid_mesh_io mesh_io)
 {
-  if (mesh_io)
-    retain(mesh_io);
+  retain(mesh_io);
+
   return VIENNAGRID_SUCCESS;
 }
 
 
 viennagrid_error viennagrid_mesh_io_release(viennagrid_mesh_io mesh_io)
 {
-  if (mesh_io)
-    release(mesh_io);
+  release(mesh_io);
+
   return VIENNAGRID_SUCCESS;
 }
 
@@ -38,20 +41,27 @@ viennagrid_error viennagrid_mesh_io_clear(viennagrid_mesh_io mesh_io)
 {
   if (mesh_io)
     mesh_io->clear();
+
   return VIENNAGRID_SUCCESS;
 }
 
 viennagrid_error viennagrid_mesh_io_mesh_set(viennagrid_mesh_io mesh_io, viennagrid_mesh mesh)
 {
-  if (mesh_io)
-    mesh_io->set_mesh(mesh);
+  if (!mesh_io) return VIENNAGRID_ERROR_INVALID_MESH_IO;
+  if (!mesh)    return VIENNAGRID_ERROR_INVALID_MESH;
+
+  mesh_io->set_mesh(mesh);
+
   return VIENNAGRID_SUCCESS;
 }
 
 viennagrid_error viennagrid_mesh_io_mesh_get(viennagrid_mesh_io mesh_io, viennagrid_mesh * mesh)
 {
-  if (mesh_io && mesh)
+  if (!mesh_io) return VIENNAGRID_ERROR_INVALID_MESH_IO;
+
+  if (mesh)
     *mesh = mesh_io->get_mesh();
+
   return VIENNAGRID_SUCCESS;
 }
 
@@ -59,8 +69,11 @@ viennagrid_error viennagrid_mesh_io_mesh_get(viennagrid_mesh_io mesh_io, viennag
 viennagrid_error viennagrid_mesh_io_quantity_count(viennagrid_mesh_io mesh_io,
                                                    viennagrid_int * count)
 {
+  if (!mesh_io) return VIENNAGRID_ERROR_INVALID_MESH_IO;
+
   if (count)
     *count = mesh_io->quantity_field_count();
+
   return VIENNAGRID_SUCCESS;
 }
 
@@ -68,8 +81,12 @@ viennagrid_error viennagrid_mesh_io_quantity_field_get_by_index(viennagrid_mesh_
                                                                 viennagrid_int index,
                                                                 viennagrid_quantity_field * quantity_field)
 {
+  if (!mesh_io)                                                  return VIENNAGRID_ERROR_INVALID_MESH_IO;
+  if ((index < 0) || (index >= mesh_io->quantity_field_count())) return VIENNAGRID_ERROR_INVALID_IO_MESH_INDEX;
+
   if (quantity_field)
     *quantity_field = mesh_io->get_quantity_field(index);
+
   return VIENNAGRID_SUCCESS;
 }
 
@@ -77,20 +94,30 @@ viennagrid_error viennagrid_mesh_io_quantity_field_get(viennagrid_mesh_io mesh_i
                                                        const char * quantity_name,
                                                        viennagrid_quantity_field * quantity_field)
 {
+  if (!mesh_io)       return VIENNAGRID_ERROR_INVALID_MESH_IO;
+  if (!quantity_name) return VIENNAGRID_ERROR_INVALID_QUANTITY_FIELD_NAME;
+
   if (quantity_field)
     *quantity_field = mesh_io->get_quantity_field(quantity_name);
+
   return VIENNAGRID_SUCCESS;
 }
 
 viennagrid_error viennagrid_mesh_io_quantity_field_set(viennagrid_mesh_io mesh_io,
                                                        viennagrid_quantity_field quantity_field)
 {
-  if (mesh_io && quantity_field)
-  {
-    const char * quantity_name;
-    viennagrid_quantity_field_name_get(quantity_field, &quantity_name);
-    mesh_io->set_quantity_field( quantity_name, quantity_field );
-  }
+  if (!mesh_io)             return VIENNAGRID_ERROR_INVALID_MESH_IO;
+  if (!quantity_field)      return VIENNAGRID_ERROR_INVALID_QUANTITY_FIELD;
+
+  const char * quantity_field_name;
+  viennagrid_quantity_field_name_get(quantity_field, &quantity_field_name);
+
+  if (!quantity_field_name) return VIENNAGRID_ERROR_INVALID_QUANTITY_FIELD_NAME;
+
+  viennagrid_quantity_field qf = mesh_io->get_quantity_field(quantity_field_name);
+  if (!qf)                  return VIENNAGRID_ERROR_INVALID_QUANTITY_FIELD_NAME;
+
+  mesh_io->set_quantity_field( quantity_field_name, quantity_field );
 
   return VIENNAGRID_SUCCESS;
 }
@@ -98,19 +125,13 @@ viennagrid_error viennagrid_mesh_io_quantity_field_set(viennagrid_mesh_io mesh_i
 viennagrid_error viennagrid_mesh_io_quantity_field_unset(viennagrid_mesh_io mesh_io,
                                                          const char * quantity_name)
 {
-  if (mesh_io)
-  {
-    mesh_io->set_quantity_field( quantity_name, 0 );
-  }
+  if (!mesh_io)       return VIENNAGRID_ERROR_INVALID_MESH_IO;
+  if (!quantity_name) return VIENNAGRID_ERROR_INVALID_QUANTITY_FIELD_NAME;
+
+  mesh_io->set_quantity_field( quantity_name, 0 );
 
   return VIENNAGRID_SUCCESS;
 }
-
-
-
-
-
-
 
 
 
@@ -147,7 +168,7 @@ viennagrid_error viennagrid_mesh_io_filetype_from_filename(const char * filename
   }
 
   *filetype = VIENNAGRID_FILETYPE_UNKNOWN;
-  return VIENNAGRID_ERROR_IO_UNKNOWN_FILETYPE;
+  return VIENNAGRID_ERROR_UNKNOWN_FILETYPE;
 }
 
 
@@ -170,7 +191,7 @@ viennagrid_error viennagrid_mesh_io_read_with_filetype(viennagrid_mesh_io mesh_i
     viennagrid_bool is_root;
     viennagrid_mesh_is_root(mesh, &is_root);
     if (is_root != VIENNAGRID_TRUE)
-      return VIENNAGRID_ERROR_IO_MESH_IS_NOT_ROOT;
+      return VIENNAGRID_ERROR_MESH_IS_NOT_ROOT;
 
     viennagrid_mesh_clear(mesh);
   }
@@ -181,7 +202,7 @@ viennagrid_error viennagrid_mesh_io_read_with_filetype(viennagrid_mesh_io mesh_i
       return viennagrid_mesh_io_read_netgen(mesh_io, filename);
   }
 
-  return VIENNAGRID_ERROR_IO_UNKNOWN_FILETYPE;
+  return VIENNAGRID_ERROR_UNKNOWN_FILETYPE;
 }
 
 
@@ -212,7 +233,7 @@ viennagrid_error viennagrid_mesh_io_write_with_filetype(viennagrid_mesh_io mesh_
   viennagrid_error err = viennagrid_mesh_io_mesh_get(mesh_io, &mesh); if (err != VIENNAGRID_SUCCESS) return err;
 
   if (!mesh)
-    return VIENNAGRID_ERROR_IO_NO_MESH;
+    return VIENNAGRID_ERROR_NO_MESH;
 
   switch (filetype)
   {
@@ -220,7 +241,7 @@ viennagrid_error viennagrid_mesh_io_write_with_filetype(viennagrid_mesh_io mesh_
       return viennagrid_mesh_io_read_vtk(mesh_io, filename);
   }
 
-  return VIENNAGRID_ERROR_IO_UNKNOWN_FILETYPE;
+  return VIENNAGRID_ERROR_UNKNOWN_FILETYPE;
 }
 
 

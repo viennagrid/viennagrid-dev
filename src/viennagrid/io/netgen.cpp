@@ -21,13 +21,13 @@ viennagrid_error viennagrid_mesh_io_read_netgen(viennagrid_mesh_io mesh_io,
   #endif
 
   if (!reader)
-    return VIENNAGRID_ERROR_IO_CANNOT_OPEN_FILE;
+    return VIENNAGRID_ERROR_CANNOT_OPEN_FILE;
 
   long node_num = 0;
   long cell_num = 0;
 
   if (!reader.good())
-    return VIENNAGRID_ERROR_IO_FILE_EMPTY;
+    return VIENNAGRID_ERROR_FILE_EMPTY;
 
   //
   // Read vertices:
@@ -53,7 +53,7 @@ viennagrid_error viennagrid_mesh_io_read_netgen(viennagrid_mesh_io mesh_io,
   for (int i=0; i<node_num; i++)
   {
     if (!reader.good())
-      return VIENNAGRID_ERROR_IO_EOF_WHILE_READING_VERTICES;
+      return VIENNAGRID_ERROR_EOF_WHILE_READING_VERTICES;
 
     getline( reader, tmp );
     std::istringstream line(tmp);
@@ -70,14 +70,14 @@ viennagrid_error viennagrid_mesh_io_read_netgen(viennagrid_mesh_io mesh_io,
     }
     else if (geometric_dimension != (viennagrid_dimension)p.size())
     {
-      return VIENNAGRID_ERROR_IO_VERTEX_DIMENSION_MISMATCH;
+      return VIENNAGRID_ERROR_VERTEX_DIMENSION_MISMATCH;
     }
 
     err = viennagrid_mesh_vertex_create( mesh, &p[0], NULL ); if (err != VIENNAGRID_SUCCESS) return err;
   }
 
   if (!reader.good())
-    return VIENNAGRID_ERROR_IO_EOF_WHILE_READING_CELL_COUNT;
+    return VIENNAGRID_ERROR_EOF_WHILE_READING_CELL_COUNT;
 
 
   //
@@ -98,7 +98,7 @@ viennagrid_error viennagrid_mesh_io_read_netgen(viennagrid_mesh_io mesh_io,
   for (int i=0; i<cell_num; ++i)
   {
     if (!reader.good())
-      return VIENNAGRID_ERROR_IO_EOF_WHILE_READING_CELLS;
+      return VIENNAGRID_ERROR_EOF_WHILE_READING_CELLS;
 
     getline( reader, tmp );
     std::istringstream line(tmp);
@@ -126,7 +126,7 @@ viennagrid_error viennagrid_mesh_io_read_netgen(viennagrid_mesh_io mesh_io,
     else if (vertex_ids.size() == 4)
       et = VIENNAGRID_ELEMENT_TYPE_TETRAHEDRON;
     else
-      return VIENNAGRID_ERROR_IO_UNSUPPORTED_ELEMENT_TYPE;
+      return VIENNAGRID_ERROR_UNSUPPORTED_ELEMENT_TYPE;
 
     err = viennagrid_mesh_element_create(mesh, et, vertex_ids.size(), &vertex_ids[0], NULL); if (err != VIENNAGRID_SUCCESS) return err;
   }

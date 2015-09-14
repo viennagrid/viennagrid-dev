@@ -21,17 +21,16 @@ namespace viennagrid
     typedef typename result_of::const_nonconst<value_type *, is_const>::type pointer;
     typedef value_type reference;
 
-    unpack_element_functor(viennagrid_mesh mesh_in, viennagrid_int topologic_dimension_in) : mesh_(mesh_in), topologic_dimension_(topologic_dimension_in) {}
+    unpack_element_functor(viennagrid_mesh mesh_in) : mesh_(mesh_in) {}
 
     template<bool other_is_const>
-    unpack_element_functor(unpack_element_functor<other_is_const> const & other) : mesh_(other.mesh_), topologic_dimension_(other.topologic_dimension_) {}
+    unpack_element_functor(unpack_element_functor<other_is_const> const & other) : mesh_(other.mesh_) {}
 
 
-    value_type operator()(viennagrid_int & id) const { return value_type(mesh_, topologic_dimension_, id); }
-    const_value_type operator()(viennagrid_int const & id) const { return const_value_type(mesh_, topologic_dimension_, id); }
+    value_type operator()(viennagrid_element_id & id) const { return value_type(mesh_, id); }
+    const_value_type operator()(viennagrid_element_id const & id) const { return const_value_type(mesh_, id); }
 
     viennagrid_mesh mesh_;
-    viennagrid_int topologic_dimension_;
   };
 
 
@@ -46,8 +45,8 @@ namespace viennagrid
     typedef typename result_of::const_nonconst<mesh, is_const>::type mesh_type;
     typedef typename result_of::const_nonconst<mesh, true>::type const_mesh_type;
 
-    typedef typename result_of::const_nonconst<viennagrid_int *, is_const>::type index_pointer_type;
-    typedef typename result_of::const_nonconst<viennagrid_int *, true>::type const_index_pointer_type;
+    typedef typename result_of::const_nonconst<viennagrid_element_id *, is_const>::type index_pointer_type;
+    typedef typename result_of::const_nonconst<viennagrid_element_id *, true>::type const_index_pointer_type;
 
     typedef typename result_of::const_nonconst<element, is_const>::type element_type;
     typedef typename result_of::const_nonconst<element, false>::type nonconst_element_type;
@@ -58,7 +57,7 @@ namespace viennagrid
     base_element_range(ViewFunctorT view_functor_) : mesh_(0), element_index_begin(0), element_index_end(0), view_functor(view_functor_) {}
 
 
-    void from_mesh(viennagrid_mesh mesh, viennagrid_int topologic_dimension_in)
+    void from_mesh(viennagrid_mesh mesh, viennagrid_dimension topologic_dimension_in)
     {
       topologic_dimension_ = topologic_dimension_in;
       mesh_ = mesh;
@@ -68,12 +67,12 @@ namespace viennagrid
 
       viennagrid_mesh_elements_get(internal_mesh(),
                                    topologic_dimension(),
-                                   const_cast<viennagrid_int **>(&element_index_begin),
-                                   const_cast<viennagrid_int **>(&element_index_end));
+                                   const_cast<viennagrid_element_id **>(&element_index_begin),
+                                   const_cast<viennagrid_element_id **>(&element_index_end));
     }
 
     template<bool element_is_const>
-    void boundary_from_element(base_element<element_is_const> const & element, viennagrid_int topologic_dimension_in)
+    void boundary_from_element(base_element<element_is_const> const & element, viennagrid_dimension topologic_dimension_in)
     {
       topologic_dimension_ = topologic_dimension_in;
       mesh_= element.internal_mesh();
@@ -82,15 +81,14 @@ namespace viennagrid
         viennagrid_mesh_property_set(mesh_, VIENNAGRID_PROPERTY_BOUNDARY_LAYOUT, VIENNAGRID_BOUNDARY_LAYOUT_FULL);
 
       viennagrid_element_boundary_elements(internal_mesh(),
-                                           viennagrid::topologic_dimension(element),
                                            element.id(),
                                            topologic_dimension(),
-                                           const_cast<viennagrid_int **>(&element_index_begin),
-                                           const_cast<viennagrid_int **>(&element_index_end));
+                                           const_cast<viennagrid_element_id **>(&element_index_begin),
+                                           const_cast<viennagrid_element_id **>(&element_index_end));
     }
 
     template<bool element_is_const>
-    void coboundary_from_element(viennagrid_mesh mesh, base_element<element_is_const> const & element, viennagrid_int coboundary_topo_dim_in)
+    void coboundary_from_element(viennagrid_mesh mesh, base_element<element_is_const> const & element, viennagrid_dimension coboundary_topo_dim_in)
     {
       topologic_dimension_ = coboundary_topo_dim_in;
       mesh_ = mesh;
@@ -100,15 +98,14 @@ namespace viennagrid
         viennagrid_mesh_property_set(internal_mesh(), VIENNAGRID_PROPERTY_BOUNDARY_LAYOUT, VIENNAGRID_BOUNDARY_LAYOUT_FULL);
 
       viennagrid_element_coboundary_elements(mesh,
-                                             viennagrid::topologic_dimension(element),
                                              element.id(),
                                              topologic_dimension(),
-                                             const_cast<viennagrid_int **>(&element_index_begin),
-                                             const_cast<viennagrid_int **>(&element_index_end));
+                                             const_cast<viennagrid_element_id **>(&element_index_begin),
+                                             const_cast<viennagrid_element_id **>(&element_index_end));
     }
 
     template<bool element_is_const>
-    void neighbor_from_element(viennagrid_mesh mesh, base_element<element_is_const> const & element, viennagrid_int connector_topo_dim_in, viennagrid_int neighbor_topo_dim_in)
+    void neighbor_from_element(viennagrid_mesh mesh, base_element<element_is_const> const & element, viennagrid_dimension connector_topo_dim_in, viennagrid_dimension neighbor_topo_dim_in)
     {
       topologic_dimension_ = neighbor_topo_dim_in;
       mesh_ = mesh;
@@ -119,12 +116,11 @@ namespace viennagrid
         viennagrid_mesh_property_set(internal_mesh(), VIENNAGRID_PROPERTY_BOUNDARY_LAYOUT, VIENNAGRID_BOUNDARY_LAYOUT_FULL);
 
       viennagrid_element_neighbor_elements(mesh,
-                                           viennagrid::topologic_dimension(element),
                                            element.id(),
                                            connector_topo_dim_in,
                                            topologic_dimension(),
-                                           const_cast<viennagrid_int **>(&element_index_begin),
-                                           const_cast<viennagrid_int **>(&element_index_end));
+                                           const_cast<viennagrid_element_id **>(&element_index_begin),
+                                           const_cast<viennagrid_element_id **>(&element_index_end));
     }
 
 
@@ -143,15 +139,15 @@ namespace viennagrid
     iterator begin()
     {
       return iterator(transform_iterator(element_index_begin,
-                                         unpack_functor(internal_mesh(), topologic_dimension_)),
+                                         unpack_functor(internal_mesh())),
                       transform_iterator(element_index_end,
-                                         unpack_functor(internal_mesh(), topologic_dimension_)),
+                                         unpack_functor(internal_mesh())),
                       view_functor);
     }
     iterator end()
     {
       return iterator(transform_iterator(element_index_end,
-                                         unpack_functor(internal_mesh(), topologic_dimension_)),
+                                         unpack_functor(internal_mesh())),
                       view_functor);
 
     }
@@ -160,15 +156,15 @@ namespace viennagrid
     const_iterator cbegin() const
     {
       return const_iterator(const_transform_iterator(element_index_begin,
-                                                     const_unpack_functor(internal_mesh(), topologic_dimension_)),
+                                                     const_unpack_functor(internal_mesh())),
                             const_transform_iterator(element_index_end,
-                                                     const_unpack_functor(internal_mesh(), topologic_dimension_)),
+                                                     const_unpack_functor(internal_mesh())),
                             view_functor);
     }
     const_iterator cend() const
     {
       return const_iterator(const_transform_iterator(element_index_end,
-                                                     const_unpack_functor(internal_mesh(), topologic_dimension_)),
+                                                     const_unpack_functor(internal_mesh())),
                             view_functor);
 
     }

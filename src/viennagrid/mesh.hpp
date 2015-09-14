@@ -13,9 +13,9 @@
 #include "mesh_hierarchy.hpp"
 
 
-typedef sparse_packed_multibuffer<viennagrid_int, viennagrid_int> ViennaGridCoBoundaryBufferType;
-typedef sparse_packed_multibuffer<viennagrid_int, viennagrid_int> ViennaGridNeighborBufferType;
-typedef sparse_packed_multibuffer<viennagrid_int, viennagrid_int> ViennaGridElementChildrenBufferType;
+typedef sparse_packed_multibuffer<viennagrid_int, viennagrid_element_id> ViennaGridCoBoundaryBufferType;
+typedef sparse_packed_multibuffer<viennagrid_int, viennagrid_element_id> ViennaGridNeighborBufferType;
+typedef sparse_packed_multibuffer<viennagrid_int, viennagrid_element_id> ViennaGridElementChildrenBufferType;
 
 
 struct viennagrid_element_handle_buffer
@@ -26,17 +26,17 @@ public:
 
   viennagrid_element_handle_buffer() { clear(-1); }
 
-  bool element_present(viennagrid_int element_id) const
+  bool element_present(viennagrid_element_id element_id) const
   {
     return find(element_id) != end();
   }
 
-  void add_element(viennagrid_mesh_hierarchy mesh_hierarchy, viennagrid_int element_id)
+  void add_element(viennagrid_mesh_hierarchy mesh_hierarchy, viennagrid_element_id element_id)
   {
     insert( mesh_hierarchy, element_id );
   }
 
-  void add_elements(viennagrid_mesh_hierarchy mesh_hierarchy, viennagrid_int start_id, viennagrid_int count)
+  void add_elements(viennagrid_mesh_hierarchy mesh_hierarchy, viennagrid_element_id start_id, viennagrid_int count)
   {
     if (ids_.empty() || (start_id > ids_.back()))
     {
@@ -90,10 +90,10 @@ public:
 
 private:
 
-  std::vector<viennagrid_int> ids_;
+  std::vector<viennagrid_element_id> ids_;
 
-  typedef std::vector<viennagrid_int>::iterator iterator;
-  typedef std::vector<viennagrid_int>::const_iterator const_iterator;
+  typedef std::vector<viennagrid_element_id>::iterator iterator;
+  typedef std::vector<viennagrid_element_id>::const_iterator const_iterator;
 
   iterator begin() { return ids_.begin(); }
   iterator end() { return ids_.end(); }
@@ -101,7 +101,7 @@ private:
   const_iterator begin() const { return ids_.begin(); }
   const_iterator end() const { return ids_.end(); }
 
-  iterator find(viennagrid_int id)
+  iterator find(viennagrid_element_id id)
   {
     if (ids_.empty() || (id > ids_.back()))
       return end();
@@ -113,7 +113,7 @@ private:
       return end();
   }
 
-  const_iterator find(viennagrid_int id) const
+  const_iterator find(viennagrid_element_id id) const
   {
     if (ids_.empty() || (id > ids_.back()))
       return end();
@@ -125,7 +125,7 @@ private:
       return end();
   }
 
-  void insert(viennagrid_mesh_hierarchy mesh_hierarchy, viennagrid_int id)
+  void insert(viennagrid_mesh_hierarchy mesh_hierarchy, viennagrid_element_id id)
   {
     if (ids_.empty() || (id > ids_.back()))
     {
@@ -199,7 +199,7 @@ public:
     return count;
   }
 
-  viennagrid_mesh get_child(viennagrid_int id) { return children[id]; }
+  viennagrid_mesh get_child(viennagrid_int mesh_index) { return children[mesh_index]; }
 
 
   viennagrid_dimension geometric_dimension();
@@ -210,77 +210,40 @@ public:
   viennagrid_int element_count_by_type(viennagrid_element_type element_type)
   { return element_handle_buffer( viennagrid_topological_dimension(element_type) ).element_count(element_type); }
 
-  viennagrid_int * elements_begin(viennagrid_dimension element_topo_dim)
+  viennagrid_element_id * elements_begin(viennagrid_dimension element_topo_dim)
   { return element_handle_buffer(element_topo_dim).ids(); }
-  viennagrid_int * elements_end(viennagrid_dimension element_topo_dim)
+  viennagrid_element_id * elements_end(viennagrid_dimension element_topo_dim)
   { return elements_begin(element_topo_dim) + element_count(element_topo_dim); }
 
 
-  viennagrid_int * boundary_begin(viennagrid_dimension element_topo_dim, viennagrid_int element_id, viennagrid_dimension boundary_topo_dim);
-  viennagrid_int * boundary_end(viennagrid_dimension element_topo_dim, viennagrid_int element_id, viennagrid_dimension boundary_topo_dim);
 
-  viennagrid_int * coboundary_begin(viennagrid_dimension element_type, viennagrid_int element_id, viennagrid_dimension coboundary_type)
+  viennagrid_element_id * connected_begin(viennagrid_element_id element_id, viennagrid_dimension connector_topo_dim)
   {
-    make_coboundary(element_type, coboundary_type);
-    return element_handle_buffer(element_type).coboundary_buffer(coboundary_type).begin(element_id);
-  }
-  viennagrid_int * coboundary_end(viennagrid_dimension element_type, viennagrid_int element_id, viennagrid_dimension coboundary_type)
-  {
-    make_coboundary(element_type, coboundary_type);
-    return element_handle_buffer(element_type).coboundary_buffer(coboundary_type).end(element_id);
-  }
-
-
-
-  viennagrid_int * neighbor_begin(viennagrid_dimension element_type, viennagrid_int element_id, viennagrid_dimension connector_type, viennagrid_dimension neighbor_type)
-  {
-    make_neighbor(element_type, connector_type, neighbor_type);
-    return element_handle_buffer(element_type).neighbor_buffer(connector_type, neighbor_type).begin(element_id);
-  }
-  viennagrid_int * neighbor_end(viennagrid_dimension element_type, viennagrid_int element_id, viennagrid_dimension connector_type, viennagrid_dimension neighbor_type)
-  {
-    make_neighbor(element_type, connector_type, neighbor_type);
-    return element_handle_buffer(element_type).neighbor_buffer(connector_type, neighbor_type).end(element_id);
-  }
-
-
-
-
-  viennagrid_int * connected_begin(viennagrid_dimension element_type, viennagrid_int element_id, viennagrid_dimension connector_type)
-  {
-    assert( element_type != connector_type );
-    if (element_type > connector_type)
-      return boundary_begin(element_type, element_id, connector_type);
+    assert( TOPODIM(element_id) != connector_topo_dim );
+    if (TOPODIM(element_id) > connector_topo_dim)
+      return boundary_begin(element_id, connector_topo_dim);
     else
-      return coboundary_begin(element_type, element_id, connector_type);
+      return coboundary_begin(element_id, connector_topo_dim);
   }
 
-  viennagrid_int * connected_end(viennagrid_dimension element_type, viennagrid_int element_id, viennagrid_dimension connector_type)
+  viennagrid_element_id * connected_end(viennagrid_element_id element_id, viennagrid_dimension connector_topo_dim)
   {
-    assert( element_type != connector_type );
-    if (element_type > connector_type)
-      return boundary_end(element_type, element_id, connector_type);
+    assert( TOPODIM(element_id) != connector_topo_dim );
+    if (TOPODIM(element_id) > connector_topo_dim)
+      return boundary_end(element_id, connector_topo_dim);
     else
-      return coboundary_end(element_type, element_id, connector_type);
+      return coboundary_end(element_id, connector_topo_dim);
   }
 
 
-  void add_elements(viennagrid_dimension element_topo_dim,
-                    viennagrid_int first_id, viennagrid_int count);
-
-  void add_element(viennagrid_dimension element_topo_dim,
-                   viennagrid_int element_id);
-
-  viennagrid_int make_refined_element(
-    viennagrid_dimension      element_topo_dim,
-    viennagrid_int          element_id,
-    viennagrid_element_type    refined_element_type,
-    viennagrid_int            refined_element_refined_count,
-    viennagrid_int *        refined_element_refined_ids,
-    viennagrid_int            intersects_count,
-    viennagrid_int *        intersect_vertices_ids,
-    viennagrid_int *        intersects_ids,
-    viennagrid_dimension *    intersects_topo_dims);
+  viennagrid_element_id make_refined_element(
+    viennagrid_element_id       parent_id,
+    viennagrid_element_type     refined_element_type,
+    viennagrid_int              refined_element_vertex_count,
+    viennagrid_element_id *     refined_element_vertex_ids,
+    viennagrid_int              intersects_count,
+    viennagrid_element_id *     intersect_vertices_ids,
+    viennagrid_element_id *     intersecting_element_ids);
 
 
   void make_coboundary(viennagrid_dimension element_topo_dim, viennagrid_dimension coboundary_topo_dim);
@@ -299,11 +262,10 @@ public:
   void set_neighbor_uptodate(viennagrid_dimension element_topo_dim, viennagrid_dimension connector_type, viennagrid_dimension neighbor_type);
 
 
-  bool is_boundary(viennagrid_dimension element_topo_dim, viennagrid_int element_id)
-  { return boundary_elements(element_topo_dim).find(element_id) != boundary_elements(element_topo_dim).end(); }
 
-  void set_boundary(viennagrid_dimension element_topo_dim, viennagrid_int element_id)
-  { boundary_elements(element_topo_dim).insert(element_id); }
+
+  void set_boundary(viennagrid_element_id element_id)
+  { boundary_elements(TOPODIM(element_id)).insert(element_id); }
 
   void clear_boundary(viennagrid_dimension element_topo_dim)
   { boundary_elements(element_topo_dim).clear(); }
@@ -334,6 +296,107 @@ public:
   {
     for (int i = 0; i != VIENNAGRID_TOPOLOGIC_DIMENSION_END; ++i)
       element_handle_buffers[i].optimize_memory();
+  }
+
+
+
+
+
+
+
+  viennagrid_element_id make_vertex(const viennagrid_numeric * coords)
+  {
+    return viennagrid_compose_element_id(0, mesh_hierarchy()->make_vertex(coords));
+  }
+
+  viennagrid_element_id make_vertices(viennagrid_int vertex_count, const viennagrid_numeric * coords)
+  {
+    return viennagrid_compose_element_id(0, mesh_hierarchy()->make_vertices( vertex_count, coords ));
+  }
+
+
+
+  void add_elements(viennagrid_element_id first_id, viennagrid_int count);
+  void add_element(viennagrid_element_id element_id);
+
+
+  bool element_id_valid(viennagrid_element_id element_id)
+  {
+    return mesh_hierarchy()->element_id_valid(element_id);
+  }
+
+  viennagrid_element_type element_type(viennagrid_element_id element_id)
+  {
+    return mesh_hierarchy()->element_buffer(TOPODIM(element_id)).element_type(element_id);
+  }
+
+
+  void set_parent(viennagrid_element_id element_id, viennagrid_element_id parent_id)
+  {
+    mesh_hierarchy()->element_buffer(TOPODIM(element_id)).set_parent_id(element_id, parent_id);
+  }
+
+  viennagrid_element_type parent(viennagrid_element_id element_id)
+  {
+    return mesh_hierarchy()->element_buffer(TOPODIM(element_id)).parent_id(element_id);
+  }
+
+  viennagrid_element_id * boundary_begin(viennagrid_element_id element_id, viennagrid_dimension boundary_topo_dim)
+  {
+    return mesh_hierarchy()->boundary_begin(element_id, boundary_topo_dim);
+  }
+
+  viennagrid_element_id * boundary_end(viennagrid_element_id element_id, viennagrid_dimension boundary_topo_dim)
+  {
+    return mesh_hierarchy()->boundary_end(element_id, boundary_topo_dim);
+  }
+
+
+
+  viennagrid_element_id * coboundary_begin(viennagrid_element_id element_id, viennagrid_dimension coboundary_topo_dim)
+  {
+    make_coboundary(TOPODIM(element_id), coboundary_topo_dim);
+    return element_handle_buffer(TOPODIM(element_id)).coboundary_buffer(coboundary_topo_dim).begin(INDEX(element_id));
+  }
+
+  viennagrid_element_id * coboundary_end(viennagrid_element_id element_id, viennagrid_dimension coboundary_topo_dim)
+  {
+    make_coboundary(TOPODIM(element_id), coboundary_topo_dim);
+    return element_handle_buffer(TOPODIM(element_id)).coboundary_buffer(coboundary_topo_dim).end(INDEX(element_id));
+  }
+
+
+
+  viennagrid_element_id * neighbor_begin(viennagrid_element_id element_id, viennagrid_dimension connector_topo_dim, viennagrid_dimension neighbor_topo_dim)
+  {
+    make_neighbor(TOPODIM(element_id), connector_topo_dim, neighbor_topo_dim);
+    return element_handle_buffer(TOPODIM(element_id)).neighbor_buffer(connector_topo_dim, neighbor_topo_dim).begin(INDEX(element_id));
+  }
+
+  viennagrid_element_id * neighbor_end(viennagrid_element_id element_id, viennagrid_dimension connector_topo_dim, viennagrid_dimension neighbor_topo_dim)
+  {
+    make_neighbor(TOPODIM(element_id), connector_topo_dim, neighbor_topo_dim);
+    return element_handle_buffer(TOPODIM(element_id)).neighbor_buffer(connector_topo_dim, neighbor_topo_dim).end(INDEX(element_id));
+  }
+
+
+
+  viennagrid_region_id * regions_begin(viennagrid_element_id element_id)
+  {
+    return mesh_hierarchy()->element_buffer(TOPODIM(element_id)).regions_begin(element_id);
+  }
+
+  viennagrid_region_id * regions_end(viennagrid_element_id element_id)
+  {
+    return mesh_hierarchy()->element_buffer(TOPODIM(element_id)).regions_end(element_id);
+  }
+
+
+
+
+  bool is_boundary(viennagrid_element_id element_id)
+  {
+    return boundary_elements(TOPODIM(element_id)).find(element_id) != boundary_elements(TOPODIM(element_id)).end();
   }
 
 

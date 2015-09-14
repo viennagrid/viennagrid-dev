@@ -130,8 +130,8 @@ viennagrid_numeric spanned_volume(PointT1 const & p1,
 viennagrid_numeric volume(viennagrid_mesh mesh,
                           viennagrid_dimension geometry_dimension,
                           viennagrid_element_type element_type,
-                          viennagrid_int * vertices_start,
-                          viennagrid_int * /*vertices_end*/)
+                          viennagrid_element_id * vertices_start,
+                          viennagrid_element_id * /*vertices_end*/)
 {
   viennagrid_numeric * coords;
   viennagrid_mesh_vertex_coords_pointer(mesh, &coords);
@@ -169,19 +169,18 @@ viennagrid_numeric volume(viennagrid_mesh mesh,
 
 
 viennagrid_numeric volume(viennagrid_mesh mesh,
-                          viennagrid_dimension element_dimension,
-                          viennagrid_int element_id)
+                          viennagrid_element_id element_id)
 {
   viennagrid_element_type element_type;
-  viennagrid_element_type_get(mesh, element_dimension, element_id, &element_type);
+  viennagrid_element_type_get(mesh, element_id, &element_type);
 
   viennagrid_dimension geometry_dimension;
   viennagrid_mesh_geometric_dimension_get(mesh, &geometry_dimension);
 
-  viennagrid_int * vertices_start;
-  viennagrid_int * vertices_end;
+  viennagrid_element_id * vertices_start;
+  viennagrid_element_id * vertices_end;
 
-  viennagrid_element_boundary_elements(mesh, element_dimension, element_id, 0, &vertices_start, &vertices_end);
+  viennagrid_element_boundary_elements(mesh, element_id, 0, &vertices_start, &vertices_end);
 
   return volume(mesh, geometry_dimension, element_type, vertices_start, vertices_end);
 }
@@ -223,14 +222,14 @@ viennagrid_numeric volume_C(viennagrid::mesh const & mesh_)
   viennagrid_dimension cell_dimension;
   viennagrid_mesh_cell_dimension_get(mesh, &cell_dimension);
 
-  viennagrid_int * cells_start;
-  viennagrid_int * cells_end;
+  viennagrid_element_id * cells_start;
+  viennagrid_element_id * cells_end;
   viennagrid_mesh_elements_get(mesh, cell_dimension, &cells_start, &cells_end);
 
   viennagrid_numeric sum = 0;
-  for (viennagrid_int * cell_id = cells_start; cell_id != cells_end; ++cell_id)
+  for (viennagrid_element_id * cell_id = cells_start; cell_id != cells_end; ++cell_id)
   {
-    sum += volume(mesh, cell_dimension, *cell_id);
+    sum += volume(mesh, *cell_id);
   }
 
 //   std::cout << sum << std::endl;
@@ -247,21 +246,21 @@ viennagrid_numeric volume_C_pure(viennagrid::mesh const & mesh_)
   viennagrid_dimension geometry_dimension;
   viennagrid_mesh_geometric_dimension_get(mesh, &geometry_dimension);
 
-  viennagrid_int * cells_start;
-  viennagrid_int * cells_end;
+  viennagrid_element_id * cells_start;
+  viennagrid_element_id * cells_end;
   viennagrid_mesh_elements_get(mesh, cell_dimension, &cells_start, &cells_end);
 
 
-  viennagrid_int * boundary_offsets;
-  viennagrid_int * boundary_indices;
+  viennagrid_element_id * boundary_offsets;
+  viennagrid_element_id * boundary_indices;
   viennagrid_element_boundary_element_pointers(mesh, cell_dimension, 0, &boundary_offsets, &boundary_indices);
 
 
   viennagrid_numeric sum = 0;
-  for (viennagrid_int * cell_id = cells_start; cell_id != cells_end; ++cell_id)
+  for (viennagrid_element_id * cell_id = cells_start; cell_id != cells_end; ++cell_id)
   {
     viennagrid_element_type element_type;
-    viennagrid_element_type_get(mesh, cell_dimension, *cell_id, &element_type);
+    viennagrid_element_type_get(mesh, *cell_id, &element_type);
 
     sum += volume(mesh, geometry_dimension, element_type,
                   boundary_indices + boundary_offsets[*cell_id],
@@ -287,7 +286,7 @@ viennagrid_numeric volume_mixed_CPP_C(viennagrid::mesh const & mesh_)
   ConstElementRangeType cells(mesh, viennagrid::cell_dimension(mesh));
   for (ConstElementIteratorType cit = cells.begin(); cit != cells.end(); ++cit)
   {
-    sum += volume(mesh, viennagrid::cell_dimension(mesh), (*cit).id());
+    sum += volume(mesh, (*cit).id());
   }
 
 //   std::cout << sum << std::endl;
@@ -347,12 +346,12 @@ viennagrid_int iteration_C(viennagrid::mesh const & mesh_)
   viennagrid_dimension cell_dimension;
   viennagrid_mesh_cell_dimension_get(mesh, &cell_dimension);
 
-  viennagrid_int * cells_start;
-  viennagrid_int * cells_end;
+  viennagrid_element_id * cells_start;
+  viennagrid_element_id * cells_end;
   viennagrid_mesh_elements_get(mesh, cell_dimension, &cells_start, &cells_end);
 
   static viennagrid_int sum = 0;
-  for (viennagrid_int * cell_id = cells_start; cell_id != cells_end; ++cell_id)
+  for (viennagrid_element_id * cell_id = cells_start; cell_id != cells_end; ++cell_id)
   {
     sum += *cell_id;
   }
@@ -401,19 +400,19 @@ viennagrid_int boundary_iteration_C(viennagrid::mesh const & mesh_, int boundary
   viennagrid_dimension cell_dimension;
   viennagrid_mesh_cell_dimension_get(mesh, &cell_dimension);
 
-  viennagrid_int * cells_start;
-  viennagrid_int * cells_end;
+  viennagrid_element_id * cells_start;
+  viennagrid_element_id * cells_end;
   viennagrid_mesh_elements_get(mesh, cell_dimension, &cells_start, &cells_end);
 
   static viennagrid_int sum = 0;
-  for (viennagrid_int * cell_id = cells_start; cell_id != cells_end; ++cell_id)
+  for (viennagrid_element_id * cell_id = cells_start; cell_id != cells_end; ++cell_id)
   {
-    viennagrid_int * boundary_start;
-    viennagrid_int * boundary_end;
+    viennagrid_element_id * boundary_start;
+    viennagrid_element_id * boundary_end;
 
-    viennagrid_element_boundary_elements(mesh, cell_dimension, *cell_id, boundary_dimension, &boundary_start, &boundary_end);
+    viennagrid_element_boundary_elements(mesh, *cell_id, boundary_dimension, &boundary_start, &boundary_end);
 
-    for (viennagrid_int * boundary_id = boundary_start; boundary_id != boundary_end; ++boundary_id)
+    for (viennagrid_element_id * boundary_id = boundary_start; boundary_id != boundary_end; ++boundary_id)
       sum += *boundary_id;
   }
 
@@ -431,20 +430,20 @@ viennagrid_int boundary_iteration_C_pure(viennagrid::mesh const & mesh_, int bou
   viennagrid_dimension geometry_dimension;
   viennagrid_mesh_geometric_dimension_get(mesh, &geometry_dimension);
 
-  viennagrid_int * cells_start;
-  viennagrid_int * cells_end;
+  viennagrid_element_id * cells_start;
+  viennagrid_element_id * cells_end;
   viennagrid_mesh_elements_get(mesh, cell_dimension, &cells_start, &cells_end);
 
 
-  viennagrid_int * boundary_offsets;
-  viennagrid_int * boundary_indices;
+  viennagrid_element_id * boundary_offsets;
+  viennagrid_element_id * boundary_indices;
   viennagrid_element_boundary_element_pointers(mesh, cell_dimension, boundary_dimension, &boundary_offsets, &boundary_indices);
 
 
   viennagrid_int sum = 0;
-  for (viennagrid_int * cell_id = cells_start; cell_id != cells_end; ++cell_id)
+  for (viennagrid_element_id * cell_id = cells_start; cell_id != cells_end; ++cell_id)
   {
-    for (viennagrid_int * boundary_id = boundary_indices + boundary_offsets[*cell_id];
+    for (viennagrid_element_id * boundary_id = boundary_indices + boundary_offsets[*cell_id];
                             boundary_id != boundary_indices + boundary_offsets[*cell_id+1];
                           ++boundary_id)
     {

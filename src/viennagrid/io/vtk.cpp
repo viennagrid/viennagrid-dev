@@ -99,10 +99,10 @@ static viennagrid_error writeCells(viennagrid_mesh mesh, std::ofstream & writer)
   for (viennagrid_int *cit = cell_begin; cit != cell_end; ++cit)
   {
     viennagrid_int *cell_vertices_begin, *cell_vertices_end;
-    err = viennagrid_element_boundary_elements(mesh, cell_dim, *cit, 0, &cell_vertices_begin, &cell_vertices_end); if (err != VIENNAGRID_SUCCESS) return err;
+    err = viennagrid_element_boundary_elements(mesh, *cit, 0, &cell_vertices_begin, &cell_vertices_end); if (err != VIENNAGRID_SUCCESS) return err;
 
     viennagrid_element_type cell_type;
-    err = viennagrid_element_type_get(mesh, cell_dim, *cit, &cell_type); if (err != VIENNAGRID_SUCCESS) return err;
+    err = viennagrid_element_type_get(mesh, *cit, &cell_type); if (err != VIENNAGRID_SUCCESS) return err;
 
     switch (cell_type)
     {
@@ -137,7 +137,7 @@ static viennagrid_error writeCells(viennagrid_mesh mesh, std::ofstream & writer)
   for (viennagrid_int *cit = cell_begin; cit != cell_end; ++cit)
   {
     viennagrid_int *cell_vertices_begin, *cell_vertices_end;
-    err = viennagrid_element_boundary_elements(mesh, cell_dim, *cit, 0, &cell_vertices_begin, &cell_vertices_end); if (err != VIENNAGRID_SUCCESS) return err;
+    err = viennagrid_element_boundary_elements(mesh, *cit, 0, &cell_vertices_begin, &cell_vertices_end); if (err != VIENNAGRID_SUCCESS) return err;
 
     offset += (cell_vertices_end - cell_vertices_begin);
     writer << offset << " ";
@@ -152,7 +152,7 @@ static viennagrid_error writeCells(viennagrid_mesh mesh, std::ofstream & writer)
   for (viennagrid_int *cit = cell_begin; cit != cell_end; ++cit)
   {
     viennagrid_element_type cell_type;
-    err = viennagrid_element_type_get(mesh, cell_dim, *cit, &cell_type); if (err != VIENNAGRID_SUCCESS) return err;
+    err = viennagrid_element_type_get(mesh, *cit, &cell_type); if (err != VIENNAGRID_SUCCESS) return err;
 
     writer << vtk_element_type(cell_type) << " ";
   }
@@ -251,7 +251,7 @@ viennagrid_error viennagrid_mesh_io_read_vtk(viennagrid_mesh_io mesh_io, const c
   std::ofstream writer(ss.str().c_str());
 
   if (!writer)
-    return VIENNAGRID_ERROR_IO_CANNOT_OPEN_FILE;
+    return VIENNAGRID_ERROR_CANNOT_OPEN_FILE;
     //throw cannot_open_file_exception("* ViennaGrid: vtk_writer::operator(): File " + filename + ": Cannot open file!");
 
   viennagrid_mesh mesh;
@@ -263,7 +263,7 @@ viennagrid_error viennagrid_mesh_io_read_vtk(viennagrid_mesh_io mesh_io, const c
   }
   catch (std::exception & e)
   {
-    return VIENNAGRID_ERROR_IO_WRITE_ERROR;
+    return VIENNAGRID_ERROR_WRITE_ERROR;
   }
 
   viennagrid_dimension cell_dim;

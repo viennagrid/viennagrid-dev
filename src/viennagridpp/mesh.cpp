@@ -206,7 +206,6 @@ namespace viennagrid
   {
     viennagrid_bool result;
     viennagrid_element_is_mesh_boundary(mesh.internal(),
-                                        viennagrid::topologic_dimension(element),
                                         element.id(),
                                         &result);
     return result == VIENNAGRID_TRUE;

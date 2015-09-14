@@ -479,7 +479,7 @@ namespace viennagrid
             cell_vertex_handles[j] = vertices[global_vertex_index];
 //             viennagrid::add( mesh_obj.get_make_region(region_id), cell_vertex_handles[j] );
 
-            cell_vertex_ids[j] = cell_vertex_handles[j].id();
+//             cell_vertex_ids[j] = cell_vertex_handles[j].id();
           }
 
 
@@ -511,7 +511,7 @@ namespace viennagrid
             for (std::size_t i=0; i<container.second.size(); ++i)
             {
               std::size_t global_vertex_id = local_to_global_map[region_id][i];
-              ElementType vertex(mesh_obj, 0, global_vertex_id);
+              ElementType vertex(mesh_obj, global_vertex_id);
 
               (*registered_vertex_scalar_data[name]).set(vertex, (container.second)[i]);
             }
@@ -521,7 +521,7 @@ namespace viennagrid
             for (std::size_t i=0; i<container.second.size(); ++i)
             {
               std::size_t global_vertex_id = local_to_global_map[region_id][i];
-              ElementType vertex(mesh_obj, 0, global_vertex_id);
+              ElementType vertex(mesh_obj, global_vertex_id);
 
               (*current_registered_region_vertex_scalar_data[name]).set(vertex, (container.second)[i]);
             }
@@ -550,7 +550,7 @@ namespace viennagrid
             for (std::size_t i=0; i<container.second.size()/3; ++i)
             {
               std::size_t global_vertex_id = local_to_global_map[region_id][i];
-              ElementType vertex(mesh_obj, 0, global_vertex_id);
+              ElementType vertex(mesh_obj, global_vertex_id);
 
               std::vector<viennagrid_numeric> tmp(3);
               for (std::size_t j = 0; j != 3; ++j)
@@ -564,7 +564,7 @@ namespace viennagrid
             for (std::size_t i=0; i<container.second.size(); ++i)
             {
               std::size_t global_vertex_id = local_to_global_map[region_id][i];
-              ElementType vertex(mesh_obj, 0, global_vertex_id);
+              ElementType vertex(mesh_obj, global_vertex_id);
 
               std::vector<viennagrid_numeric> tmp(3);
               for (std::size_t j = 0; j != 3; ++j)
@@ -639,9 +639,9 @@ namespace viennagrid
             {
               ElementType const & cell = local_cells[region_id][i];
 
-              if ( static_cast<typename result_of::id<ElementType>::type>(cell_scalar_data[container.first][region_id].size()) <= cell.id())
-                cell_scalar_data[container.first][region_id].resize(static_cast<std::size_t>(cell.id()+1));
-              cell_scalar_data[container.first][region_id][static_cast<std::size_t>(cell.id())] = (container.second)[i];
+              if ( static_cast<typename result_of::id<ElementType>::type>(cell_scalar_data[container.first][region_id].size()) <= cell.id().index())
+                cell_scalar_data[container.first][region_id].resize(static_cast<std::size_t>(cell.id().index()+1));
+              cell_scalar_data[container.first][region_id][static_cast<std::size_t>(cell.id().index())] = (container.second)[i];
             }
           }
         }
@@ -685,12 +685,12 @@ namespace viennagrid
             {
               ElementType const & cell = local_cells[region_id][i];
 
-              if ( static_cast<typename result_of::id<ElementType>::type>(cell_vector_data[container.first][region_id].size()) <= cell.id())
-                cell_vector_data[container.first][region_id].resize(static_cast<std::size_t>(cell.id()+1));
-              cell_vector_data[container.first][region_id][static_cast<std::size_t>(cell.id())].resize(3);
-              cell_vector_data[container.first][region_id][static_cast<std::size_t>(cell.id())][0] = (container.second)[3*i+0];
-              cell_vector_data[container.first][region_id][static_cast<std::size_t>(cell.id())][1] = (container.second)[3*i+1];
-              cell_vector_data[container.first][region_id][static_cast<std::size_t>(cell.id())][2] = (container.second)[3*i+2];
+              if ( static_cast<typename result_of::id<ElementType>::type>(cell_vector_data[container.first][region_id].size()) <= cell.id().index())
+                cell_vector_data[container.first][region_id].resize(static_cast<std::size_t>(cell.id().index()+1));
+              cell_vector_data[container.first][region_id][static_cast<std::size_t>(cell.id().index())].resize(3);
+              cell_vector_data[container.first][region_id][static_cast<std::size_t>(cell.id().index())][0] = (container.second)[3*i+0];
+              cell_vector_data[container.first][region_id][static_cast<std::size_t>(cell.id().index())][1] = (container.second)[3*i+1];
+              cell_vector_data[container.first][region_id][static_cast<std::size_t>(cell.id().index())][2] = (container.second)[3*i+2];
             }
           }
         }
@@ -1391,7 +1391,7 @@ namespace viennagrid
             {
               ElementType const & cell = *cit;
 
-              assert( static_cast<std::size_t>(cell.id()) < region_values.size() );
+              assert( static_cast<std::size_t>(cell.id().index()) < region_values.size() );
               result.set( cell, region_values[cell.id()] );
             }
           }

@@ -17,6 +17,7 @@
 #include <cmath>
 
 #include "viennagrid/viennagrid.h"
+#include "common.hpp"
 
 /** @file viennagrid/algorithm/spanned_volume.hpp
     @brief Computes the volume of n-simplices spanned by points
@@ -206,14 +207,13 @@ viennagrid_error viennagrid_spanned_volume_4(viennagrid_int dimension,
 
 /* computes the volume (area/length) of a particular element of the mesh */
 VIENNAGRID_DYNAMIC_EXPORT viennagrid_error viennagrid_element_volume(viennagrid_mesh mesh,
-                                                                     viennagrid_dimension topologic_dimension,
-                                                                     viennagrid_int element_id,
+                                                                     viennagrid_element_id element_id,
                                                                      viennagrid_numeric * volume)
 {
   if (volume)
   {
     viennagrid_element_type element_type;
-    viennagrid_int err = viennagrid_element_type_get(mesh, topologic_dimension, element_id, &element_type);
+    viennagrid_int err = viennagrid_element_type_get(mesh, element_id, &element_type);
     if (err != VIENNAGRID_SUCCESS)
       return err;
 
@@ -223,7 +223,7 @@ VIENNAGRID_DYNAMIC_EXPORT viennagrid_error viennagrid_element_volume(viennagrid_
       return err;
 
     viennagrid_int *vertex_ids_begin, *vertex_ids_end;
-    err = viennagrid_element_boundary_elements(mesh, topologic_dimension, element_id, 0, &vertex_ids_begin, &vertex_ids_end);
+    err = viennagrid_element_boundary_elements(mesh, element_id, 0, &vertex_ids_begin, &vertex_ids_end);
     if (err != VIENNAGRID_SUCCESS)
       return err;
 
@@ -297,24 +297,23 @@ VIENNAGRID_DYNAMIC_EXPORT viennagrid_error viennagrid_element_volume(viennagrid_
 
 /* computes the surface of a particular element of the mesh */
 VIENNAGRID_DYNAMIC_EXPORT viennagrid_error viennagrid_element_surface(viennagrid_mesh mesh,
-                                                                      viennagrid_dimension topologic_dimension,
-                                                                      viennagrid_int element_id,
+                                                                      viennagrid_element_id element_id,
                                                                       viennagrid_numeric * surface)
 {
   if (surface)
   {
-    if (topologic_dimension < 1) // surface of vertex is undefined
+    if (TOPODIM(element_id) < 1) // surface of vertex is undefined
       return VIENNAGRID_INVALID_TOPOLOGIC_DIMENSION;
 
     // Sum volumes of facets
     viennagrid_int *facet_ids_begin, *facet_ids_end;
-    viennagrid_error err = viennagrid_element_boundary_elements(mesh, topologic_dimension, element_id, topologic_dimension - 1, &facet_ids_begin, &facet_ids_end); if (err != VIENNAGRID_SUCCESS) return err;
+    viennagrid_error err = viennagrid_element_boundary_elements(mesh, element_id, TOPODIM(element_id) - 1, &facet_ids_begin, &facet_ids_end); if (err != VIENNAGRID_SUCCESS) return err;
 
     *surface = 0;
     viennagrid_numeric surface_contribution;
     for (viennagrid_int * it = facet_ids_begin; it != facet_ids_end; ++it)
     {
-      err = viennagrid_element_volume(mesh, topologic_dimension - 1, *it, &surface_contribution); if (err != VIENNAGRID_SUCCESS) return err;
+      err = viennagrid_element_volume(mesh, *it, &surface_contribution); if (err != VIENNAGRID_SUCCESS) return err;
       *surface += surface_contribution;
     }
   }
@@ -339,7 +338,7 @@ VIENNAGRID_DYNAMIC_EXPORT viennagrid_error viennagrid_mesh_volume(viennagrid_mes
     err = viennagrid_mesh_elements_get(mesh, cell_dim, &cell_ids_begin, &cell_ids_end); if (err != VIENNAGRID_SUCCESS) return err;
     for (viennagrid_int *cit = cell_ids_begin; cit != cell_ids_end; ++cit)
     {
-      err = viennagrid_element_volume(mesh, cell_dim, *cit, &volume_contribution); if (err != VIENNAGRID_SUCCESS) return err;
+      err = viennagrid_element_volume(mesh, *cit, &volume_contribution); if (err != VIENNAGRID_SUCCESS) return err;
       *volume += volume_contribution;
     }
   }
@@ -371,7 +370,7 @@ VIENNAGRID_DYNAMIC_EXPORT viennagrid_error viennagrid_mesh_surface(viennagrid_me
     for (viennagrid_int *cit = cell_ids_begin; cit != cell_ids_end; ++cit)
     {
       viennagrid_int *facets_on_cell_begin, *facets_on_cell_end;
-      err = viennagrid_element_boundary_elements(mesh, cell_dim, *cit, cell_dim - 1, &facets_on_cell_begin, &facets_on_cell_end); if (err != VIENNAGRID_SUCCESS) return err;
+      err = viennagrid_element_boundary_elements(mesh, *cit, cell_dim - 1, &facets_on_cell_begin, &facets_on_cell_end); if (err != VIENNAGRID_SUCCESS) return err;
 
       for (viennagrid_int *fit = facets_on_cell_begin; fit != facets_on_cell_end; ++fit)
         facet_on_boundary[*fit] = !facet_on_boundary[*fit]; // facets belonging to only one cell will flip: false -> true. Others will double-flip: false -> true -> false
@@ -386,7 +385,7 @@ VIENNAGRID_DYNAMIC_EXPORT viennagrid_error viennagrid_mesh_surface(viennagrid_me
     {
       if (facet_on_boundary[*fit])
       {
-        err = viennagrid_element_volume(mesh, cell_dim - 1, *fit, &surface_contribution); if (err != VIENNAGRID_SUCCESS) return err;
+        err = viennagrid_element_volume(mesh, *fit, &surface_contribution); if (err != VIENNAGRID_SUCCESS) return err;
         *surface += surface_contribution;
       }
     }
@@ -397,14 +396,13 @@ VIENNAGRID_DYNAMIC_EXPORT viennagrid_error viennagrid_mesh_surface(viennagrid_me
 
 /* computes the centroid of a particular element of the mesh */
 VIENNAGRID_DYNAMIC_EXPORT viennagrid_error viennagrid_element_centroid(viennagrid_mesh mesh,
-                                                                       viennagrid_dimension topologic_dimension,
-                                                                       viennagrid_int element_id,
+                                                                       viennagrid_element_id element_id,
                                                                        viennagrid_numeric * coords)
 {
   if (coords)
   {
     viennagrid_element_type element_type;
-    viennagrid_int err = viennagrid_element_type_get(mesh, topologic_dimension, element_id, &element_type);
+    viennagrid_int err = viennagrid_element_type_get(mesh, element_id, &element_type);
     if (err != VIENNAGRID_SUCCESS)
       return err;
 

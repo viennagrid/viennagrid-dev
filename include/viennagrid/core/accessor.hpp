@@ -75,7 +75,7 @@ namespace viennagrid
   {
     template<typename ElementT>
     typename viennagrid::result_of::id<ElementT>::type operator()(ElementT const & element) const
-    { return element.id(); }
+    { return element.id().index(); }
   };
 
 
