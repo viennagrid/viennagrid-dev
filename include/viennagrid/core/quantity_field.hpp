@@ -128,10 +128,10 @@ namespace viennagrid
 
 
     void init(viennagrid_dimension topologic_dimension,
-              viennagrid_dimension values_dimension,
+              viennagrid_dimension values_per_quantity_,
               viennagrid_int storage_type = VIENNAGRID_QUANTITY_FIELD_STORAGE_DENSE)
     {
-      viennagrid_quantity_field_init(internal(), topologic_dimension, VIENNAGRID_QUANTITY_FIELD_TYPE_NUMERIC,values_dimension, storage_type);
+      viennagrid_quantity_field_init(internal(), topologic_dimension, VIENNAGRID_QUANTITY_FIELD_TYPE_NUMERIC, values_per_quantity_, storage_type);
     }
 
 
@@ -148,7 +148,7 @@ namespace viennagrid
 
     bool is_initialized() const
     {
-      return valid() && (topologic_dimension() != VIENNAGRID_INVALID_TOPOLOGIC_DIMENSION) && (values_dimension() >= 1);
+      return valid() && (topologic_dimension() != VIENNAGRID_INVALID_TOPOLOGIC_DIMENSION) && (values_per_quantity() >= 1);
     }
 
 
@@ -158,7 +158,7 @@ namespace viennagrid
       void * tmp;
       viennagrid_quantity_field_value_get(internal(), id, &tmp);
 
-      return value_type( (viennagrid_numeric*)tmp, values_dimension() );
+      return value_type( (viennagrid_numeric*)tmp, values_per_quantity() );
     }
 
     template<bool element_is_const>
@@ -198,7 +198,7 @@ namespace viennagrid
     template<bool element_is_const>
     void set(base_element<element_is_const> const & element, viennagrid_numeric const * value)
     {
-      check_init(element, values_dimension());
+      check_init(element, values_per_quantity());
       set(element.id(), value);
     }
 
@@ -235,7 +235,7 @@ namespace viennagrid
       return topologic_dimension_;
     }
 
-    viennagrid_dimension values_dimension() const
+    viennagrid_dimension values_per_quantity() const
     {
       viennagrid_int values_per_quantity;
       viennagrid_quantity_field_values_per_quantity_get(internal(), &values_per_quantity);
@@ -307,7 +307,7 @@ namespace viennagrid
       }
 
       assert( topologic_dimension() == viennagrid::topologic_dimension(element) );
-      assert( values_dimension() == size );
+      assert( values_per_quantity() == size );
     }
 
     void retain()
