@@ -214,6 +214,7 @@
 
 
 typedef char            viennagrid_bool;
+typedef char            viennagrid_byte;
 typedef int             viennagrid_int;
 typedef viennagrid_int  viennagrid_error;
 typedef viennagrid_int  viennagrid_element_id;
@@ -253,40 +254,41 @@ typedef struct viennagrid_mesh_io_ * viennagrid_mesh_io;
 #define VIENNAGRID_ERROR_INVALID_FACET_HOLE_POINT_INDEX                12
 #define VIENNAGRID_ERROR_INVALID_QUANTITY_FIELD                        13
 #define VIENNAGRID_ERROR_INVALID_STORAGE_LAYOUT                        14
-#define VIENNAGRID_ERROR_INVALID_MESH_IO                               15
-#define VIENNAGRID_ERROR_INVALID_IO_MESH_INDEX                         16
-#define VIENNAGRID_ERROR_INVALID_QUANTITY_FIELD_NAME                   17
-#define VIENNAGRID_ERROR_TOPOLOGICAL_DIMENSION_MISMATCH                17
-#define VIENNAGRID_ERROR_UNKNOWN_PROPERTY                              18
-#define VIENNAGRID_ERROR_UNSUPPORTED_BOUNDARY_LAYOUT                   19
-#define VIENNAGRID_ERROR_MESH_IS_NOT_ROOT                              20
-#define VIENNAGRID_ERROR_MESH_HAS_CHILD_MESHES                         21
-#define VIENNAGRID_ERROR_ELEMENT_ALREADY_PRESENT                       22
-#define VIENNAGRID_ERROR_DESERIALIZE_MAGIC_VALUE_MISSMATCH             23
-#define VIENNAGRID_ERROR_DESERIALIZE_VERSION_MISMATCH                  24
-#define VIENNAGRID_ERROR_PLC_MESH_TYPE_NOT_SUPPORTED_FOR_CONVERSION    25
-#define VIENNAGRID_ERROR_CANNOT_OPEN_FILE                              26
-#define VIENNAGRID_ERROR_FILE_EMPTY                                    27
-#define VIENNAGRID_ERROR_EOF_ENCOUNTERED                               28
-#define VIENNAGRID_ERROR_EOF_WHILE_READING_VERTICES                    29
-#define VIENNAGRID_ERROR_VERTEX_DIMENSION_MISMATCH                     30
-#define VIENNAGRID_ERROR_EOF_WHILE_READING_CELL_COUNT                  31
-#define VIENNAGRID_ERROR_EOF_WHILE_READING_CELLS                       32
-#define VIENNAGRID_ERROR_UNKNOWN_FILETYPE                              33
-#define VIENNAGRID_ERROR_INVALID_VERTEX_COUNT                          34
-#define VIENNAGRID_ERROR_INVALID_ATTRIBUTE_COUNT                       35
-#define VIENNAGRID_ERROR_INVALID_BOUNDARY_MARKER_COUNT                 36
-#define VIENNAGRID_ERROR_INVALID_FACET_COUNT                           37
-#define VIENNAGRID_ERROR_INVALID_FACET_POLYGON_COUNT                   38
-#define VIENNAGRID_ERROR_INVALID_FACET_HOLE_POINT_COUNT                39
-#define VIENNAGRID_ERROR_INVALID_POLYGON_VERTEX_COUNT                  40
-#define VIENNAGRID_ERROR_INVALID_VERTEX_ID                             41
-#define VIENNAGRID_ERROR_INVALID_HOLE_POINT_COUNT                      42
-#define VIENNAGRID_ERROR_INVALID_SEED_POINT_COUNT                      43
-#define VIENNAGRID_ERROR_UNSUPPORTED_ELEMENT_TYPE                      44
-#define VIENNAGRID_ERROR_FILE_MALFORMED                                45
-#define VIENNAGRID_ERROR_NO_MESH                                       46
-#define VIENNAGRID_ERROR_WRITE_ERROR                                   47
+#define VIENNAGRID_ERROR_INVALID_QUANTITLY_VALUE_TYPE                  15
+#define VIENNAGRID_ERROR_INVALID_MESH_IO                               16
+#define VIENNAGRID_ERROR_INVALID_IO_MESH_INDEX                         17
+#define VIENNAGRID_ERROR_INVALID_QUANTITY_FIELD_NAME                   18
+#define VIENNAGRID_ERROR_TOPOLOGICAL_DIMENSION_MISMATCH                19
+#define VIENNAGRID_ERROR_UNKNOWN_PROPERTY                              20
+#define VIENNAGRID_ERROR_UNSUPPORTED_BOUNDARY_LAYOUT                   21
+#define VIENNAGRID_ERROR_MESH_IS_NOT_ROOT                              22
+#define VIENNAGRID_ERROR_MESH_HAS_CHILD_MESHES                         23
+#define VIENNAGRID_ERROR_ELEMENT_ALREADY_PRESENT                       24
+#define VIENNAGRID_ERROR_DESERIALIZE_MAGIC_VALUE_MISSMATCH             25
+#define VIENNAGRID_ERROR_DESERIALIZE_VERSION_MISMATCH                  26
+#define VIENNAGRID_ERROR_PLC_MESH_TYPE_NOT_SUPPORTED_FOR_CONVERSION    27
+#define VIENNAGRID_ERROR_CANNOT_OPEN_FILE                              28
+#define VIENNAGRID_ERROR_FILE_EMPTY                                    29
+#define VIENNAGRID_ERROR_EOF_ENCOUNTERED                               30
+#define VIENNAGRID_ERROR_EOF_WHILE_READING_VERTICES                    31
+#define VIENNAGRID_ERROR_VERTEX_DIMENSION_MISMATCH                     32
+#define VIENNAGRID_ERROR_EOF_WHILE_READING_CELL_COUNT                  33
+#define VIENNAGRID_ERROR_EOF_WHILE_READING_CELLS                       34
+#define VIENNAGRID_ERROR_UNKNOWN_FILETYPE                              35
+#define VIENNAGRID_ERROR_INVALID_VERTEX_COUNT                          36
+#define VIENNAGRID_ERROR_INVALID_ATTRIBUTE_COUNT                       37
+#define VIENNAGRID_ERROR_INVALID_BOUNDARY_MARKER_COUNT                 38
+#define VIENNAGRID_ERROR_INVALID_FACET_COUNT                           39
+#define VIENNAGRID_ERROR_INVALID_FACET_POLYGON_COUNT                   40
+#define VIENNAGRID_ERROR_INVALID_FACET_HOLE_POINT_COUNT                41
+#define VIENNAGRID_ERROR_INVALID_POLYGON_VERTEX_COUNT                  42
+#define VIENNAGRID_ERROR_INVALID_VERTEX_ID                             43
+#define VIENNAGRID_ERROR_INVALID_HOLE_POINT_COUNT                      44
+#define VIENNAGRID_ERROR_INVALID_SEED_POINT_COUNT                      45
+#define VIENNAGRID_ERROR_UNSUPPORTED_ELEMENT_TYPE                      46
+#define VIENNAGRID_ERROR_FILE_MALFORMED                                47
+#define VIENNAGRID_ERROR_NO_MESH                                       48
+#define VIENNAGRID_ERROR_WRITE_ERROR                                   49
 
 /* VIENNAGRID BOOL DEFINES */
 #define VIENNAGRID_TRUE                             1
@@ -320,9 +322,15 @@ typedef struct viennagrid_mesh_io_ * viennagrid_mesh_io;
 #define VIENNAGRID_FILETYPE_NETGEN_MESH             1
 #define VIENNAGRID_FILETYPE_VTK_MESH                2
 
-/* QUANTITY FIELD STORAGE TYPES */
+
+/* QUANTITY FIELD TYPES */
+#define VIENNAGRID_QUANTITY_FIELD_TYPE_BYTE         0
+#define VIENNAGRID_QUANTITY_FIELD_TYPE_NUMERIC      1
+
+/* QUANTITY FIELD STORAGE LAYOUT */
 #define VIENNAGRID_QUANTITY_FIELD_STORAGE_DENSE     0
 #define VIENNAGRID_QUANTITY_FIELD_STORAGE_SPARSE    1
+
 
 /* VIENNAGRID MAGIC VALUE FOR SERIALIZATION */
 #define VIENNAGRID_MAGIC_VALUE                      0x42F42F42
@@ -973,7 +981,8 @@ VIENNAGRID_DYNAMIC_EXPORT viennagrid_error viennagrid_quantity_field_release(vie
 /* initializes a quantity field with a given topological dimension, size of a value and storage layout */
 VIENNAGRID_DYNAMIC_EXPORT viennagrid_error viennagrid_quantity_field_init(viennagrid_quantity_field quantity_field,
                                                                           viennagrid_dimension topological_dimension,
-                                                                          viennagrid_int size_of_value,
+                                                                          viennagrid_int values_type,
+                                                                          viennagrid_int values_per_quantity,
                                                                           viennagrid_int storage_layout);
 
 /* queries the toplogical dimension of a quantity field */
@@ -982,9 +991,12 @@ VIENNAGRID_DYNAMIC_EXPORT viennagrid_error viennagrid_quantity_field_topological
 /* queries the storage layout of a quantity field */
 VIENNAGRID_DYNAMIC_EXPORT viennagrid_error viennagrid_quantity_field_storage_layout_get(viennagrid_quantity_field quantity_field,
                                                                                         viennagrid_int * storage_layout);
+/* queries the storage layout of a quantity field */
+VIENNAGRID_DYNAMIC_EXPORT viennagrid_error viennagrid_quantity_field_values_type_get(viennagrid_quantity_field quantity_field,
+                                                                                     viennagrid_int * values_type);
 /* queries the size of a value of a quantity field */
-VIENNAGRID_DYNAMIC_EXPORT viennagrid_error viennagrid_quantity_field_size_of_value_get(viennagrid_quantity_field quantity_field,
-                                                                                       viennagrid_int * size_of_value);
+VIENNAGRID_DYNAMIC_EXPORT viennagrid_error viennagrid_quantity_field_values_per_quantity_get(viennagrid_quantity_field quantity_field,
+                                                                                             viennagrid_int * values_per_quantity);
 
 
 /* set the name of a quantity field, the name can be NULL to unset a name */
@@ -1003,11 +1015,11 @@ VIENNAGRID_DYNAMIC_EXPORT viennagrid_error viennagrid_quantity_field_unit_get(vi
 
 /* resizes the quantity field, is ignored is storage layout is sparse */
 VIENNAGRID_DYNAMIC_EXPORT viennagrid_error viennagrid_quantity_field_resize(viennagrid_quantity_field quantity_field,
-                                                                            viennagrid_int value_count);
+                                                                            viennagrid_int quantity_count);
 
 /* returns the values stored */
 VIENNAGRID_DYNAMIC_EXPORT viennagrid_error viennagrid_quantity_field_size(viennagrid_quantity_field quantity_field,
-                                                                           viennagrid_int * value_count);
+                                                                           viennagrid_int * quantity_count);
 
 /* sets the value for a specific element */
 VIENNAGRID_DYNAMIC_EXPORT viennagrid_error viennagrid_quantity_field_value_set(viennagrid_quantity_field quantity_field,

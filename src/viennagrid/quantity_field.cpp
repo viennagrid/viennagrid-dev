@@ -13,15 +13,34 @@
 // quantities
 struct viennagrid_quantity_field_t
 {
-  viennagrid_quantity_field_t() : topological_dimension(-1), size_of_value(-1), storage_layout(-1), reference_counter(1) {}
+  viennagrid_quantity_field_t() : topological_dimension(-1), values_type(-1), values_per_quantity(-1), storage_layout(-1), reference_counter(1) {}
 
   std::string name;
   std::string unit;
   viennagrid_dimension topological_dimension;
 
 
-  viennagrid_int size_of_value;
+  viennagrid_int values_type;
+  viennagrid_int values_per_quantity;
   viennagrid_int storage_layout;
+
+  viennagrid_int size_per_value() const
+  {
+    switch (values_type)
+    {
+      case VIENNAGRID_QUANTITY_FIELD_TYPE_BYTE:
+        return sizeof(viennagrid_byte);
+      case VIENNAGRID_QUANTITY_FIELD_TYPE_NUMERIC:
+        return sizeof(viennagrid_numeric);
+    }
+
+    return -1;
+  }
+
+  viennagrid_int size_per_quantity() const
+  {
+    return size_per_value() * values_per_quantity;
+  }
 
 
   std::vector<char> dense_values;
@@ -35,7 +54,7 @@ struct viennagrid_quantity_field_t
     switch ( storage_layout )
     {
       case VIENNAGRID_QUANTITY_FIELD_STORAGE_DENSE:
-        return dense_values.size() / size_of_value;
+        return dense_values.size() / size_per_quantity();
       case VIENNAGRID_QUANTITY_FIELD_STORAGE_SPARSE:
         return sparse_values.size();
     }
@@ -43,14 +62,14 @@ struct viennagrid_quantity_field_t
     return -1;
   }
 
-  void resize(viennagrid_int value_count)
+  void resize(viennagrid_int quantity_count)
   {
     switch ( storage_layout )
     {
       case VIENNAGRID_QUANTITY_FIELD_STORAGE_DENSE:
       {
-        dense_values.resize( size_of_value * value_count );
-        dense_valid_flags.resize( value_count, false );
+        dense_values.resize( size_per_quantity() * quantity_count );
+        dense_valid_flags.resize( quantity_count, false );
         break;
       }
       case VIENNAGRID_QUANTITY_FIELD_STORAGE_SPARSE:
@@ -60,7 +79,7 @@ struct viennagrid_quantity_field_t
     }
   }
 
-  void set(viennagrid_int element_id, void * value)
+  void set(viennagrid_int element_id, void * quantity)
   {
     void * dst = NULL;
 
@@ -71,7 +90,7 @@ struct viennagrid_quantity_field_t
         if ( element_id >= static_cast<viennagrid_int>(dense_valid_flags.size()) )
           resize(element_id+1);
 
-        dst = &dense_values[0] + element_id*size_of_value;
+        dst = &dense_values[0] + element_id*size_per_quantity();
         dense_valid_flags[element_id] = true;
 
         break;
@@ -81,7 +100,7 @@ struct viennagrid_quantity_field_t
       {
         std::map< viennagrid_int, char* >::iterator it = sparse_values.find(element_id);
         if (it == sparse_values.end())
-          it = sparse_values.insert( std::make_pair(element_id, new char[size_of_value]) ).first;
+          it = sparse_values.insert( std::make_pair(element_id, new char[size_per_quantity()]) ).first;
 
         dst = (*it).second;
 
@@ -89,8 +108,8 @@ struct viennagrid_quantity_field_t
       }
     }
 
-    if (value && dst)
-      memcpy(dst, value, size_of_value);
+    if (quantity && dst)
+      memcpy(dst, quantity, size_per_quantity());
   }
 
   void * get(viennagrid_int element_id)
@@ -102,7 +121,7 @@ struct viennagrid_quantity_field_t
         if ( (element_id < static_cast<viennagrid_int>(dense_valid_flags.size())) &&
             (dense_valid_flags[element_id]) )
         {
-          return &dense_values[0] + element_id*size_of_value;
+          return &dense_values[0] + element_id*size_per_quantity();
         }
 
         break;
@@ -171,21 +190,27 @@ viennagrid_error viennagrid_quantity_field_release(viennagrid_quantity_field qua
 
 viennagrid_error viennagrid_quantity_field_init(viennagrid_quantity_field quantity_field,
                                                 viennagrid_dimension topological_dimension,
-                                                viennagrid_int size_of_value,
+                                                viennagrid_int values_type,
+                                                viennagrid_int values_per_quantity,
                                                 viennagrid_int storage_layout)
 {
   if (!quantity_field)                                                return VIENNAGRID_ERROR_INVALID_QUANTITY_FIELD;
   if ((storage_layout != VIENNAGRID_QUANTITY_FIELD_STORAGE_DENSE) &&
       (storage_layout != VIENNAGRID_QUANTITY_FIELD_STORAGE_SPARSE)  ) return VIENNAGRID_ERROR_INVALID_STORAGE_LAYOUT;
+  if ((values_type != VIENNAGRID_QUANTITY_FIELD_TYPE_BYTE) &&
+      (values_type != VIENNAGRID_QUANTITY_FIELD_TYPE_NUMERIC))         return VIENNAGRID_ERROR_INVALID_QUANTITLY_VALUE_TYPE;
+  if (values_per_quantity <= 0)                                       return VIENNAGRID_ERROR_INVALID_ARGUMENTS;
 
   if ( (topological_dimension == quantity_field->topological_dimension) &&
-       (storage_layout == quantity_field->storage_layout) &&
-       (size_of_value == quantity_field->size_of_value) )
+       (values_type == quantity_field->values_type) &&
+       (values_per_quantity == quantity_field->values_per_quantity) &&
+       (storage_layout == quantity_field->storage_layout) )
     return VIENNAGRID_SUCCESS;
 
   quantity_field->topological_dimension = topological_dimension;
 
-  quantity_field->size_of_value = size_of_value;
+  quantity_field->values_type = values_type;
+  quantity_field->values_per_quantity = values_per_quantity;
   quantity_field->storage_layout = storage_layout;
 
   quantity_field->dense_values.clear();
@@ -218,13 +243,25 @@ viennagrid_error viennagrid_quantity_field_storage_layout_get(viennagrid_quantit
   return VIENNAGRID_SUCCESS;
 }
 
-viennagrid_error viennagrid_quantity_field_size_of_value_get(viennagrid_quantity_field quantity_field,
-                                                             viennagrid_int * size_of_value)
+viennagrid_error viennagrid_quantity_field_values_type_get(viennagrid_quantity_field quantity_field,
+                                                           viennagrid_int * values_type)
 {
   if (!quantity_field) return VIENNAGRID_ERROR_INVALID_QUANTITY_FIELD;
 
-  if (size_of_value)
-    *size_of_value = quantity_field->size_of_value;
+  if (values_type)
+    *values_type = quantity_field->values_type;
+
+  return VIENNAGRID_SUCCESS;
+}
+
+
+viennagrid_error viennagrid_quantity_field_values_per_quantity_get(viennagrid_quantity_field quantity_field,
+                                                                   viennagrid_int * values_per_quantity)
+{
+  if (!quantity_field) return VIENNAGRID_ERROR_INVALID_QUANTITY_FIELD;
+
+  if (values_per_quantity)
+    *values_per_quantity = quantity_field->values_per_quantity;
 
   return VIENNAGRID_SUCCESS;
 }
