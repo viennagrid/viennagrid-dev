@@ -1,5 +1,8 @@
 set(LIB_VIENNAGRID_SOURCES viennagrid/algorithm.cpp
                            viennagrid/io.cpp
+                           viennagrid/dynamic_sizeof.cpp
+                           viennagrid/element_buffer.cpp
+                           viennagrid/element_handle_buffer.cpp
                            viennagrid/mesh.cpp
                            viennagrid/mesh_hierarchy.cpp
                            viennagrid/plc.cpp

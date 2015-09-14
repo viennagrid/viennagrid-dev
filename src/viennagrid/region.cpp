@@ -18,13 +18,13 @@ void viennagrid_region_::add_element(viennagrid_element_id element_id)
 {
   mesh_hierarchy()->element_buffer(TOPODIM(element_id)).add_to_region(element_id, id());
 
-  for (viennagrid_dimension boundary_topo_dim = 0; boundary_topo_dim != TOPODIM(element_id); ++boundary_topo_dim)
+  for (viennagrid_dimension boundary_topological_dimension = 0; boundary_topological_dimension != TOPODIM(element_id); ++boundary_topological_dimension)
   {
-    viennagrid_int * boundary = mesh_hierarchy()->boundary_begin(element_id, boundary_topo_dim);
-    viennagrid_int * boundary_end = mesh_hierarchy()->boundary_end(element_id, boundary_topo_dim);
+    viennagrid_int * boundary = mesh_hierarchy()->boundary_begin(element_id, boundary_topological_dimension);
+    viennagrid_int * boundary_end = mesh_hierarchy()->boundary_end(element_id, boundary_topological_dimension);
 
     for (; boundary != boundary_end; ++boundary)
-      mesh_hierarchy()->element_buffer(boundary_topo_dim).add_to_region(*boundary, id());
+      mesh_hierarchy()->element_buffer(boundary_topological_dimension).add_to_region(*boundary, id());
   }
 }
 

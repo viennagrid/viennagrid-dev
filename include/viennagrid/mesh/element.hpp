@@ -89,6 +89,18 @@ namespace viennagrid
 
     viennagrid_mesh internal_mesh() const { return const_cast<viennagrid_mesh>(mesh_); }
 
+    void * get_aux() const
+    {
+      void * aux;
+      viennagrid_element_aux_get(mesh_, id_, &aux);
+      return aux;
+    }
+
+    void set_aux(void * aux)
+    {
+      viennagrid_element_aux_set(mesh_, id_, aux);
+    }
+
     element_tag tag() const
     {
       viennagrid_element_type type;

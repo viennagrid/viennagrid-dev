@@ -9,12 +9,12 @@
 #include "dynamic_sizeof.hpp"
 
 
-struct viennagrid_mesh_hierarchy_;
+class viennagrid_mesh_hierarchy_;
 typedef viennagrid_mesh_hierarchy_ * viennagrid_mesh_hierarchy;
 
 struct viennagrid_region_
 {
-  friend struct viennagrid_mesh_hierarchy_;
+  friend class viennagrid_mesh_hierarchy_;
 
   template<typename T>
   friend struct viennautils::detail::dynamic_sizeof_impl;
@@ -30,8 +30,8 @@ public:
   void set_boundary(viennagrid_element_id element_id)
   { boundary_elements(TOPODIM(element_id)).insert(element_id); }
 
-  void clear_boundary(viennagrid_dimension element_topo_dim)
-  { boundary_elements(element_topo_dim).clear(); }
+  void clear_boundary(viennagrid_dimension element_topological_dimension)
+  { boundary_elements(element_topological_dimension).clear(); }
 
   viennagrid_int id() const { return id_; }
 
@@ -58,7 +58,7 @@ public:
 
 private:
 
-  std::set<viennagrid_element_id> & boundary_elements(viennagrid_dimension element_topo_dim) { return boundary_elements_[+element_topo_dim]; }
+  std::set<viennagrid_element_id> & boundary_elements(viennagrid_dimension element_topological_dimension) { return boundary_elements_[+element_topological_dimension]; }
 
   std::string name_;
   viennagrid_int id_;

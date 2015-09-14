@@ -7,6 +7,18 @@
 #include <cstring>
 
 
+
+namespace viennautils
+{
+  namespace detail
+  {
+    template<typename T>
+    struct dynamic_sizeof_impl;
+  }
+}
+
+
+
 struct reference_counted
 {
   reference_counted() : retain_release_count(0), reference_counter(1) {}

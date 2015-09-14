@@ -193,42 +193,42 @@ viennagrid_error viennagrid_plc_facet_create(viennagrid_plc plc,
 
 
 viennagrid_error viennagrid_plc_boundary_element_pointer(viennagrid_plc plc,
-                                                         viennagrid_dimension element_topo_dim,
-                                                         viennagrid_dimension boundary_topo_dim,
+                                                         viennagrid_dimension element_topological_dimension,
+                                                         viennagrid_dimension boundary_topological_dimension,
                                                          viennagrid_int ** boundary_offsets,
                                                          viennagrid_int ** boundary_element_ptr)
 {
   if (!plc)                                                       return VIENNAGRID_ERROR_INVALID_PLC;
-  if (!viennagrid_topological_dimension_valid(element_topo_dim))  return VIENNAGRID_ERROR_INVALID_TOPOLOGIC_DIMENSION;
-  if (!viennagrid_topological_dimension_valid(boundary_topo_dim)) return VIENNAGRID_ERROR_INVALID_TOPOLOGIC_DIMENSION;
+  if (!viennagrid_topological_dimension_valid(element_topological_dimension))  return VIENNAGRID_ERROR_INVALID_TOPOLOGIC_DIMENSION;
+  if (!viennagrid_topological_dimension_valid(boundary_topological_dimension)) return VIENNAGRID_ERROR_INVALID_TOPOLOGIC_DIMENSION;
 
   if (boundary_offsets)
-    *boundary_offsets = plc->boundary_offsets(element_topo_dim, boundary_topo_dim);
+    *boundary_offsets = plc->boundary_offsets(element_topological_dimension, boundary_topological_dimension);
 
   if (boundary_element_ptr)
-    *boundary_element_ptr = plc->boundary_ptr(element_topo_dim, boundary_topo_dim);
+    *boundary_element_ptr = plc->boundary_ptr(element_topological_dimension, boundary_topological_dimension);
 
   return VIENNAGRID_SUCCESS;
 }
 
 
 viennagrid_error viennagrid_plc_boundary_elements(viennagrid_plc plc,
-                                                  viennagrid_dimension element_topo_dim,
+                                                  viennagrid_dimension element_topological_dimension,
                                                   viennagrid_int element_id,
-                                                  viennagrid_dimension boundary_topo_dim,
+                                                  viennagrid_dimension boundary_topological_dimension,
                                                   viennagrid_int ** boundary_element_ids_begin,
                                                   viennagrid_int ** boundary_element_ids_end)
 {
   if (!plc)                                                                                      return VIENNAGRID_ERROR_INVALID_PLC;
-  if (!viennagrid_topological_dimension_valid(element_topo_dim))                                 return VIENNAGRID_ERROR_INVALID_TOPOLOGIC_DIMENSION;
-  if ((element_id < 0) || (element_id >= plc->element_count(element_topo_dim)))                  return VIENNAGRID_ERROR_INVALID_ELEMENT_ID;
-  if (!viennagrid_topological_dimension_valid(boundary_topo_dim))                                return VIENNAGRID_ERROR_INVALID_TOPOLOGIC_DIMENSION;
+  if (!viennagrid_topological_dimension_valid(element_topological_dimension))                                 return VIENNAGRID_ERROR_INVALID_TOPOLOGIC_DIMENSION;
+  if ((element_id < 0) || (element_id >= plc->element_count(element_topological_dimension)))                  return VIENNAGRID_ERROR_INVALID_ELEMENT_ID;
+  if (!viennagrid_topological_dimension_valid(boundary_topological_dimension))                                return VIENNAGRID_ERROR_INVALID_TOPOLOGIC_DIMENSION;
 
   if (boundary_element_ids_begin)
-    *boundary_element_ids_begin = plc->boundary_begin(element_topo_dim, element_id, boundary_topo_dim);
+    *boundary_element_ids_begin = plc->boundary_begin(element_topological_dimension, element_id, boundary_topological_dimension);
 
   if (boundary_element_ids_end)
-    *boundary_element_ids_end = plc->boundary_end(element_topo_dim, element_id, boundary_topo_dim);
+    *boundary_element_ids_end = plc->boundary_end(element_topological_dimension, element_id, boundary_topological_dimension);
 
   return VIENNAGRID_SUCCESS;
 }

@@ -11,6 +11,8 @@
 
 #include <ostream>
 
+class viennagrid_mesh_hierarchy_;
+
 
 namespace viennautils
 {
@@ -200,11 +202,18 @@ namespace viennautils
       static long size(boost::container::flat_map<Key,T,Compare,Alloc> const & m)
       {
         long size = m.capacity()*(sizeof(T)+sizeof(Key));
-//         long size = v.size()*sizeof(T);
         for (typename boost::container::flat_map<Key,T,Compare,Alloc>::const_iterator it = m.begin(); it != m.end(); ++it)
           size += dynamic_sizeof(*it);
         return size;
       }
+    };
+
+
+
+    template<>
+    struct dynamic_sizeof_impl<viennagrid_mesh_hierarchy_>
+    {
+      static long size(viennagrid_mesh_hierarchy_ const & mh);
     };
   }
 

@@ -62,16 +62,6 @@ public:
     values.clear();
   }
 
-//   void print() const
-//   {
-//     for (std::size_t i = 0; i != offsets.size()-1; ++i)
-//     {
-//       std::cout << "Entry " << i << " [size=" << size(i) << "] :";
-//       for (const_iterator it = begin(i); it != end(i); ++it)
-//         std::cout << *it << " ";
-//       std::cout << std::endl;
-//     }
-//   }
 
 private:
   std::vector< std::vector<value_type> > values;
@@ -202,17 +192,6 @@ public:
     offsets = std::vector<size_type>(1,0);
     values.clear();
   }
-
-//   void print() const
-//   {
-//     for (std::size_t i = 0; i != offsets.size()-1; ++i)
-//     {
-//       std::cout << "Entry " << i << " [size=" << size(i) << "] :";
-//       for (const_iterator it = begin(i); it != end(i); ++it)
-//         std::cout << *it << " ";
-//       std::cout << std::endl;
-//     }
-//   }
 
   size_type * offset_pointer() { return &offsets[0]; }
   value_type * values_pointer() { return &values[0]; }
@@ -379,17 +358,6 @@ public:
 
   ValueContainer const & get_values() const { return values; }
   OffsetMap const & get_offsets() const { return offsets; }
-
-//   void print() const
-//   {
-//     for (typename OffsetMap::const_iterator it = offsets.begin(); it != offsets.end(); ++it)
-//     {
-//       std::cout << "Entry " << it->first << " [size=" << size(it->first) << "] :";
-//       for (const_iterator jt = begin(it->first); jt != end(it->first); ++jt)
-//         std::cout << *jt << " ";
-//       std::cout << std::endl;
-//     }
-//   }
 
 private:
   ValueContainer values;

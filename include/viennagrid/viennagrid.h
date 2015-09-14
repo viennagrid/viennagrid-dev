@@ -698,6 +698,14 @@ VIENNAGRID_DYNAMIC_EXPORT viennagrid_error viennagrid_element_type_get(viennagri
                                                                        viennagrid_element_id element_id,
                                                                        viennagrid_element_type * element_type);
 
+/* gets/sets aux data for an element */
+VIENNAGRID_DYNAMIC_EXPORT viennagrid_error viennagrid_element_aux_set(viennagrid_mesh mesh,
+                                                                      viennagrid_element_id element_id,
+                                                                      void * aux);
+VIENNAGRID_DYNAMIC_EXPORT viennagrid_error viennagrid_element_aux_get(viennagrid_mesh mesh,
+                                                                      viennagrid_element_id element_id,
+                                                                      void ** aux);
+
 /* gets the boundary element pointers of a specific topological dimension for a given boundary topological dimension */
 VIENNAGRID_DYNAMIC_EXPORT viennagrid_error viennagrid_element_boundary_element_pointers(viennagrid_mesh mesh,
                                                                                         viennagrid_dimension topological_dimension,
