@@ -93,6 +93,8 @@ int main()
   viennagrid::make_triangle(region1, v2, v3, v4 );
 
 
+  std::cout << "Vertex count " << viennagrid::vertex_count(mesh) << std::endl;
+  std::cout << "Vertex count " << viennagrid::element_count(mesh, 0) << std::endl;
   std::cout << "MH size = " << mesh.memory_size() << std::endl;
 
   //

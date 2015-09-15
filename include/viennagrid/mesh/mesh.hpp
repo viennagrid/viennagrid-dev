@@ -179,44 +179,54 @@ namespace viennagrid
 
 
 
+  template<bool is_const>
+  viennagrid_int element_count(base_mesh<is_const> const & mesh, viennagrid_dimension topological_dimension)
+  {
+    viennagrid_int count;
+    viennagrid_mesh_element_count( internal_mesh(mesh), topological_dimension, &count);
+    return count;
+  }
+
 
   template<bool is_const>
-  viennagrid_int element_count(base_mesh<is_const> const & mesh_hierarchy, element_tag et)
+  viennagrid_int element_count(base_mesh<is_const> const & mesh, element_tag et)
   {
-    return element_count( internal_mesh(mesh_hierarchy), et.internal() );
+    viennagrid_int count;
+    viennagrid_mesh_element_count_by_type( internal_mesh(mesh), et.internal(), &count);
+    return count;
   }
 
   template<bool is_const>
-  viennagrid_int vertex_count(base_mesh<is_const> const & mesh_hierarchy)
-  { return element_count( internal_mesh(mesh_hierarchy), VIENNAGRID_ELEMENT_TYPE_VERTEX ); }
+  viennagrid_int vertex_count(base_mesh<is_const> const & mesh)
+  { return element_count( mesh, viennagrid::vertex_tag() ); }
 
   template<bool is_const>
-  viennagrid_int line_count(base_mesh<is_const> const & mesh_hierarchy)
-  { return element_count( internal_mesh(mesh_hierarchy), VIENNAGRID_ELEMENT_TYPE_LINE ); }
+  viennagrid_int line_count(base_mesh<is_const> const & mesh)
+  { return element_count( mesh, viennagrid::line_tag() ); }
 
   template<bool is_const>
-  viennagrid_int edge_count(base_mesh<is_const> const & mesh_hierarchy)
-  { return element_count( internal_mesh(mesh_hierarchy), VIENNAGRID_ELEMENT_TYPE_EDGE ); }
+  viennagrid_int edge_count(base_mesh<is_const> const & mesh)
+  { return element_count( mesh, viennagrid::edge_tag() ); }
 
   template<bool is_const>
-  viennagrid_int triangle_count(base_mesh<is_const> const & mesh_hierarchy)
-  { return element_count( internal_mesh(mesh_hierarchy), VIENNAGRID_ELEMENT_TYPE_TRIANGLE ); }
+  viennagrid_int triangle_count(base_mesh<is_const> const & mesh)
+  { return element_count( mesh, viennagrid::triangle_tag() ); }
 
   template<bool is_const>
-  viennagrid_int quadrilateral_count(base_mesh<is_const> const & mesh_hierarchy)
-  { return element_count( internal_mesh(mesh_hierarchy), VIENNAGRID_ELEMENT_TYPE_QUADRILATERAL ); }
+  viennagrid_int quadrilateral_count(base_mesh<is_const> const & mesh)
+  { return element_count( mesh, viennagrid::quadrilateral_tag() ); }
 
   template<bool is_const>
-  viennagrid_int polygon_count(base_mesh<is_const> const & mesh_hierarchy)
-  { return element_count( internal_mesh(mesh_hierarchy), VIENNAGRID_ELEMENT_TYPE_POLYGON ); }
+  viennagrid_int polygon_count(base_mesh<is_const> const & mesh)
+  { return element_count( mesh, viennagrid::polygon_tag() ); }
 
   template<bool is_const>
-  viennagrid_int tetrahedron_count(base_mesh<is_const> const & mesh_hierarchy)
-  { return element_count( internal_mesh(mesh_hierarchy), VIENNAGRID_ELEMENT_TYPE_TETRAHEDRON ); }
+  viennagrid_int tetrahedron_count(base_mesh<is_const> const & mesh)
+  { return element_count( mesh, viennagrid::tetrahedron_tag() ); }
 
   template<bool is_const>
-  viennagrid_int hexahedron_count(base_mesh<is_const> const & mesh_hierarchy)
-  { return element_count( internal_mesh(mesh_hierarchy), VIENNAGRID_ELEMENT_TYPE_HEXAHEDRON ); }
+  viennagrid_int hexahedron_count(base_mesh<is_const> const & mesh)
+  { return element_count( mesh, viennagrid::hexahedron_tag() ); }
 
 
 

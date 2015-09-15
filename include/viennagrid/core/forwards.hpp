@@ -154,7 +154,7 @@ namespace viennagrid
     { return element_tag(element_tag_in); }
 
   private:
-    element_tag(viennagrid_element_type element_tag_in) : element_tag_(element_tag_in) {}
+    explicit element_tag(viennagrid_element_type element_tag_in) : element_tag_(element_tag_in) {}
 
     viennagrid_element_type element_tag_;
   };
