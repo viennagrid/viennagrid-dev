@@ -12,11 +12,21 @@
  * header.
  *
  * The ViennaGrid library can be split into the following main feature sets:
+ *  - Basics
  *  - Mesh data structure
  *  - Piecewise linear complexes (PLC)
  *  - Quantity fields
  *  - Serialization and IO
  *  - Algorithms
+ *
+ *
+ * -------------------------------------------------
+ * ---- Basics                                  ----
+ * -------------------------------------------------
+ *
+ * -- Reference Counting --
+ *
+ * Most object in ViennaGrid provide built-in reference counting. Objects, created using a viennagrid_XXX_create function, start with a reference counter equal to one. This reference counter can be increased by one and decreased by one using the corresponding viennagrid_XXX_retain and viennagrid_XXX_release functions, respectively. If the reference counter drop to 0, the object is automatically deleted.
  *
  *
  * -------------------------------------------------
@@ -81,7 +91,10 @@
  *
  *
  *    viennagrid_element_id first_vertex_id;
- *    viennagrid_numeric vertices_coords[12] = { 1.0, 1.0, 1.0, 2.0, 2.0, 2.0, 3.0, 3.0, 3.0, 4.0, 4.0, 4.0 };
+ *    viennagrid_numeric vertices_coords[12] = { 1.0, 0.0, 0.0,
+ *                                               0.0, 1.0, 0.0,
+ *                                               0.0, 0.0, 1.0,
+ *                                               1.0, 1.0, 1.0 };
  *    viennagrid_mesh_vertex_batch_create(mesh, 3, vertices_coords, &first_vertex_id);
  *    // the new creates vertices now have the IDs: first_vertex_id, first_vertex_id+1 and first_vertex_id+2
  *
@@ -107,7 +120,8 @@
  *    viennagrid_mesh_region_create(mesh, &region0);
  *
  *    viennagrid_region region1;
- *    viennagrid_mesh_region_get_or_create(mesh, 42, &region1);
+ *    viennagrid_region_id region_id = 42;
+ *    viennagrid_mesh_region_get_or_create(mesh, region_id, &region1);
  *
  * Regions can only be created in the root mesh. Elements can be added to regions using viennagrid_region_element_add:
  *
@@ -126,7 +140,8 @@
  *
  *    viennagrid_element_id * vertex_ids_begin;
  *    viennagrid_element_id * vertex_ids_end;
- *    viennagrid_mesh_elements_get(mesh, 0, &vertex_ids_begin, &vertex_ids_end);
+ *    viennagrid_dimension topological_dimension = 0;
+ *    viennagrid_mesh_elements_get(mesh, topological_dimension, &vertex_ids_begin, &vertex_ids_end);
  *
  *    for (viennagrid_element_id * vit = vertex_ids_begin; vit != vertex_ids_end; ++vit)
  *    {
@@ -138,7 +153,8 @@
  *
  *    viennagrid_element_id * boundary_vertex_ids_begin;
  *    viennagrid_element_id * boundary_vertex_ids_end;
- *    viennagrid_element_boundary_elements(mesh, triangle_id, 0, boundary_vertex_ids_begin, boundary_vertex_ids_end);
+ *    viennagrid_dimension boundary_topological_dimension = 0;
+ *    viennagrid_element_boundary_elements(mesh, triangle_id, boundary_topological_dimension, boundary_vertex_ids_begin, boundary_vertex_ids_end);
  *    // the third parameter is the boundary topological dimension
  *
  *    for (viennagrid_element_id * vit = boundary_vertex_ids_begin; vit != boundary_vertex_ids_end; ++vit)
@@ -151,7 +167,8 @@
  *
  *    viennagrid_element_id coboundary_line_ids_begin;
  *    viennagrid_element_id coboundary_line_ids_end;
- *    viennagrid_element_coboundary_elements(mesh, vertex_id, 1, &coboundary_line_ids_begin, &coboundary_line_ids_end);
+ *    viennagrid_dimension coboundary_topological_dimension = 1
+ *    viennagrid_element_coboundary_elements(mesh, vertex_id, coboundary_topological_dimension, &coboundary_line_ids_begin, &coboundary_line_ids_end);
  *    // the third parameter is the co-boundary topological dimension
  *
  *    for (viennagrid_element_id * lit = coboundary_line_ids_begin; lit != coboundary_line_ids_end; +lit)
@@ -163,7 +180,11 @@
  *
  *    viennagrid_element_id * neighbor_triangle_ids_begin;
  *    viennagrid_element_id * neighbor_triangle_ids_end;
- *    viennagrid_element_neighbor_elements(mesh, triangle_id, 1, 2, &neighbor_triangle_ids_begin, &neighbor_triangle_ids_end);
+ *    viennagrid_dimension connector_topological_dimension = 1;
+ *    viennagrid_dimension neighbor_topological_dimension = 1;
+ *    viennagrid_element_neighbor_elements(mesh, triangle_id,
+ *                                         connector_topological_dimension, neighbor_topological_dimension,
+ *                                         &neighbor_triangle_ids_begin, &neighbor_triangle_ids_end);
  *    // the third parameter is the topological dimension of the elements which are used as connection between the reference element and its neighbors
  *    // the fourth parameter is the neighbor topological dimension
  *
@@ -174,14 +195,78 @@
  *    }
  *
  *
- * --- Query information ---
+ * -------------------------------------------------
+ * ---- Piecewise linear complexes (PLC)        ----
+ * -------------------------------------------------
+ *
+ * A piecewise linear complex (PLC) is a boundary geometry representation using linear boundary elements. A PLC consists of multiple PLC facets which are abstractions of 2D polygons (with support for holes and additional lines). See [1] for more details on PLCs. The ViennaGrid PLC interface is similar to the ViennaGrid mesh interface, but has some small differences:
+ * - element IDs do not include topological dimension. They always start from 0.
+ * - There is no mesh hierarchy support. Support for regions only with seed points (see below).
+ * - There are no batch create functions
+ * - PLC facets are created using line IDs and not vertex IDs
+ *
+ * The usage, however is like very similar:
+ *
+ *    viennagrid_plc plc;
+ *    viennagrid_plc_create(&plc);
+ *
+ *    viennagrid_dimension geometric_dimension = 3;
+ *    viennagrid_plc_geometric_dimension_set(plc, geometric_dimension);
+ *
+ *    viennagrid_numeric vertices_coords[12] = { 0.0, 0.0, 2.0,
+ *                                               0.0, 1.0, 2.0,
+ *                                               1.0, 1.0, 2.0,
+ *                                               1.0, 0.0, 2.0 };
+ *
+ *    viennagrid_int vertex_id[4];
+ *    viennagrid_plc_vertex_create(plc, vertices_coords, vertex_id);
+ *    viennagrid_plc_vertex_create(plc, vertices_coords+3, vertex_id+1);
+ *    viennagrid_plc_vertex_create(plc, vertices_coords+6, vertex_id+2);
+ *    viennagrid_plc_vertex_create(plc, vertices_coords+9, vertex_id+3);
+ *
+ *    vienngrid_int line_id[4];
+ *    viennagrid_plc_line_create(plc, vertex_id[0], vertex_id[1], line_id);
+ *    viennagrid_plc_line_create(plc, vertex_id[1], vertex_id[2], line_id+1);
+ *    viennagrid_plc_line_create(plc, vertex_id[2], vertex_id[3], line_id+2);
+ *    viennagrid_plc_line_create(plc, vertex_id[3], vertex_id[0], line_id+3);
+ *
+ *    viennagrid_int facet_id;
+ *    viennagrid_int number_of_lines = 4;
+ *    viennagrid_plc_facet_create(plc, number_of_lines, line_id, &facet_id);
+ *
+ * Note, that all vertices of the lines have to be co-planar.
+ *
+ * Additionally, hole points (for a facet and global volumetric) as well as global seed points can be set. A facet hole point indicates a local hole on a 2D facet. A volumetric hole point indicates a volumetric hole at the particular location. A seed point, consisting of a point and a region id, is used for marking regions.
+ *
+ *    viennagrid_numeric facet_hole_point[3] = { 0.0, 0.0, 2.0 };
+ *    viennagrid_plc_facet_hole_point_add(plc, facet_id, facet_hole_point);
+ *
+ *    viennagrid_numeric volumetric_hole_point[3] = { 0.0, 0.0, 0.0 };
+ *    viennagrid_plc_volumetric_hole_point_add(plc, facet_hole_point);
+ *
+ *    viennagrid_numeric seed_point[3] = { 0.0, 0.0, 1.0 };
+ *    viennagrid_int region_id = 0;
+ *    viennagrid_plc_seed_point_add(plc, seed_point, region_id);
  *
  *
+ *
+ *
+ *
+ *
+ * -------------------------------------------------
+ * ---- Internals, Concepts and Design          ----
+ * -------------------------------------------------
  *
  * ViennaGrid is based on the following main concepts/aspects:
  *  - Hierarchical mesh architecture
  *  - Topological connectivity
  *  - Regions
+ *
+ * -------------------------------------------------
+ * ---- References                              ----
+ * -------------------------------------------------
+ *
+ * [1] http://wias-berlin.de/software/tetgen/plc.html
  *
  **********************************************************************************************/
 
@@ -357,21 +442,17 @@ typedef struct viennagrid_mesh_io_ * viennagrid_mesh_io;
 #define VIENNAGRID_ELEMENT_ID_TOPOLOGICAL_DIMENSION_MASK   ((viennagrid_element_id)3 << VIENNAGRID_ELEMENT_ID_MASK_OFFSET)
 #define VIENNAGRID_ELEMENT_ID_INDEX_MASK                   (~((viennagrid_element_id)3 << VIENNAGRID_ELEMENT_ID_MASK_OFFSET))
 
+/* extract the topological dimension from an element ID */
 static inline viennagrid_dimension viennagrid_topological_dimension_from_element_id(viennagrid_element_id element_id)
-{
-  return (element_id & VIENNAGRID_ELEMENT_ID_TOPOLOGICAL_DIMENSION_MASK) >> VIENNAGRID_ELEMENT_ID_MASK_OFFSET;
-}
+{ return (element_id & VIENNAGRID_ELEMENT_ID_TOPOLOGICAL_DIMENSION_MASK) >> VIENNAGRID_ELEMENT_ID_MASK_OFFSET; }
 
+/* extract the index from an element ID */
 static inline viennagrid_element_id viennagrid_index_from_element_id(viennagrid_element_id element_id)
-{
-  return element_id & VIENNAGRID_ELEMENT_ID_INDEX_MASK;
-}
+{ return element_id & VIENNAGRID_ELEMENT_ID_INDEX_MASK; }
 
-static inline viennagrid_element_id viennagrid_compose_element_id(viennagrid_dimension topological_dimension,
-                                                                  viennagrid_element_id element_index)
-{
-  return ((topological_dimension << VIENNAGRID_ELEMENT_ID_MASK_OFFSET) & VIENNAGRID_ELEMENT_ID_TOPOLOGICAL_DIMENSION_MASK) + element_index;
-}
+/* creates an element ID based on a topological dimension and the index */
+static inline viennagrid_element_id viennagrid_compose_element_id(viennagrid_dimension topological_dimension, viennagrid_element_id element_index)
+{ return ((topological_dimension << VIENNAGRID_ELEMENT_ID_MASK_OFFSET) & VIENNAGRID_ELEMENT_ID_TOPOLOGICAL_DIMENSION_MASK) + element_index; }
 
 
 
@@ -387,13 +468,6 @@ static inline viennagrid_bool viennagrid_element_type_valid(viennagrid_element_t
 /* checks, if a topological dimension is valid */
 static inline viennagrid_bool viennagrid_topological_dimension_valid(viennagrid_dimension topological_dimension)
 { return (topological_dimension >= 0) && (topological_dimension < VIENNAGRID_TOPOLOGIC_DIMENSION_END); }
-
-static inline viennagrid_bool viennagrid_element_id_valid(viennagrid_element_id element_id, viennagrid_element_id max_index)
-{
-  viennagrid_element_id index = viennagrid_index_from_element_id(element_id);
-  return ( viennagrid_topological_dimension_valid(viennagrid_topological_dimension_from_element_id(element_id)) &&
-           (index >= 0) && (index < max_index) ) ? VIENNAGRID_TRUE : VIENNAGRID_FALSE;
-}
 
 
 
@@ -872,9 +946,9 @@ VIENNAGRID_DYNAMIC_EXPORT viennagrid_error viennagrid_plc_geometric_dimension_se
                                                                                   viennagrid_int geometric_dimension);
 
 /* queries the element count for a given topological dimension */
-VIENNAGRID_DYNAMIC_EXPORT viennagrid_error viennagrid_plc_element_count_get(viennagrid_plc plc,
-                                                                            viennagrid_dimension topological_dimension,
-                                                                            viennagrid_int * element_count);
+VIENNAGRID_DYNAMIC_EXPORT viennagrid_error viennagrid_plc_element_count(viennagrid_plc plc,
+                                                                        viennagrid_dimension topological_dimension,
+                                                                        viennagrid_int * element_count);
 
 /* creates a vertex in a PLC, the created vertex ID is returned (optional, ignored if vertex_id is NULL) */
 VIENNAGRID_DYNAMIC_EXPORT viennagrid_error viennagrid_plc_vertex_create(viennagrid_plc plc,
@@ -952,13 +1026,6 @@ VIENNAGRID_DYNAMIC_EXPORT viennagrid_error viennagrid_plc_seed_points_get(vienna
                                                                           viennagrid_int * count,
                                                                           viennagrid_numeric ** coords,
                                                                           viennagrid_int ** region_ids);
-
-
-
-/* refines the lines of a PLC that no line in output_plc is greater than line_size */
-VIENNAGRID_DYNAMIC_EXPORT viennagrid_error viennagrid_plc_line_refine(viennagrid_plc plc,
-                                                                      viennagrid_plc output_plc,
-                                                                      viennagrid_numeric line_size);
 
 /* converts a mesh to a PLC (if possible) */
 VIENNAGRID_DYNAMIC_EXPORT viennagrid_error viennagrid_convert_mesh_to_plc(viennagrid_mesh mesh,
@@ -1167,5 +1234,11 @@ VIENNAGRID_DYNAMIC_EXPORT viennagrid_error viennagrid_mesh_surface(viennagrid_me
 VIENNAGRID_DYNAMIC_EXPORT viennagrid_error viennagrid_element_centroid(viennagrid_mesh mesh,
                                                                        viennagrid_element_id element_id,
                                                                        viennagrid_numeric * coords);
+
+
+/* refines the lines of a PLC that no line in output_plc is greater than line_size */
+VIENNAGRID_DYNAMIC_EXPORT viennagrid_error viennagrid_plc_line_refine(viennagrid_plc plc,
+                                                                      viennagrid_plc output_plc,
+                                                                      viennagrid_numeric line_size);
 
 #endif

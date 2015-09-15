@@ -24,7 +24,7 @@ int main()
 
 
   viennagrid_int facet_count;
-  viennagrid_plc_element_count_get(plc, 2, &facet_count);
+  viennagrid_plc_element_count(plc, 2, &facet_count);
 
 
   for (viennagrid_int facet = 0; facet != facet_count; ++facet)

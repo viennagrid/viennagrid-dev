@@ -107,9 +107,9 @@ viennagrid_error viennagrid_plc_geometric_dimension_set(viennagrid_plc plc,
   return VIENNAGRID_SUCCESS;
 }
 
-viennagrid_error viennagrid_plc_element_count_get(viennagrid_plc plc,
-                                                  viennagrid_dimension topologic_dimension,
-                                                  viennagrid_int * element_count)
+viennagrid_error viennagrid_plc_element_count(viennagrid_plc plc,
+                                              viennagrid_dimension topologic_dimension,
+                                              viennagrid_int * element_count)
 {
   if (!plc)                                                         return VIENNAGRID_ERROR_INVALID_PLC;
   if (!viennagrid_topological_dimension_valid(topologic_dimension)) return VIENNAGRID_ERROR_INVALID_TOPOLOGIC_DIMENSION;
@@ -357,10 +357,10 @@ viennagrid_error viennagrid_plc_line_refine(viennagrid_plc plc,
   viennagrid_plc_init_from_plc(plc, output_plc, VIENNAGRID_TRUE, VIENNAGRID_TRUE);
 
   viennagrid_int line_count;
-  viennagrid_plc_element_count_get(plc, 1, &line_count);
+  viennagrid_plc_element_count(plc, 1, &line_count);
 
   viennagrid_int facet_count;
-  viennagrid_plc_element_count_get(plc, 2, &facet_count);
+  viennagrid_plc_element_count(plc, 2, &facet_count);
 
   std::map<viennagrid_int, viennagrid_int> vertex_map;
   std::vector< std::vector<viennagrid_int> > line_to_lines_map(line_count);
