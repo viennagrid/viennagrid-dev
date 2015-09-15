@@ -86,9 +86,6 @@ namespace viennagrid
     template<bool is_const>
     friend class base_element;
 
-    template<bool is_const>
-    friend class base_mesh_hierarchy;
-
     template<viennagrid_element_type et>
     friend class static_element_tag;
 

@@ -168,22 +168,12 @@ namespace viennagrid
   base_element<is_const> parent(base_element<is_const> const & element)
   {
     viennagrid_int parent_id;
-    viennagrid_element_parent_get(internal_mesh_hierarchy(element),
+    viennagrid_element_parent_get(internal_mesh(element),
                                   viennagrid::topologic_dimension(element),
                                   element.id(),
                                   &parent_id);
-    return base_element<is_const>(element.get_mesh_hierarchy(), viennagrid::topologic_dimension(element), parent_id);
+    return base_element<is_const>(element.get_mesh(), viennagrid::topologic_dimension(element), parent_id);
   }
-
-  template<bool is_const>
-  void set_parent(base_element<false> element, base_element<is_const> const & parent)
-  {
-    viennagrid_element_parent_set(internal_mesh(element),
-                                  viennagrid::topologic_dimension(element),
-                                  element.id(),
-                                  parent.id());
-  }
-
 
 
 
