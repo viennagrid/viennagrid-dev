@@ -87,6 +87,9 @@ viennagrid_error viennagrid_mesh_release(viennagrid_mesh mesh)
 
 viennagrid_error viennagrid_mesh_memory_optimize(viennagrid_mesh mesh)
 {
+  if (!mesh) return VIENNAGRID_ERROR_INVALID_MESH;
+  if (!mesh->is_root()) return VIENNAGRID_ERROR_MESH_IS_NOT_ROOT;
+
   if (mesh)
     mesh->mesh_hierarchy()->optimize_memory();
 
@@ -97,6 +100,7 @@ viennagrid_error viennagrid_mesh_memory_size(viennagrid_mesh mesh,
                                              long * size)
 {
   if (!mesh) return VIENNAGRID_ERROR_INVALID_MESH;
+  if (!mesh->is_root()) return VIENNAGRID_ERROR_MESH_IS_NOT_ROOT;
 
   if (size)
     *size = mesh->mesh_hierarchy()->memory_size();
@@ -118,7 +122,11 @@ viennagrid_error viennagrid_mesh_property_set(viennagrid_mesh mesh,
   switch (property)
   {
     case VIENNAGRID_PROPERTY_BOUNDARY_LAYOUT:
+    {
+      if (!mesh->is_root()) return VIENNAGRID_ERROR_MESH_IS_NOT_ROOT;
       mesh->mesh_hierarchy()->set_boundary_layout(value);
+      break;
+    }
 
     default:
       return VIENNAGRID_ERROR_UNKNOWN_PROPERTY;
@@ -136,6 +144,7 @@ viennagrid_error viennagrid_mesh_property_get(viennagrid_mesh mesh,
   switch (property)
   {
     case VIENNAGRID_PROPERTY_BOUNDARY_LAYOUT:
+      if (!mesh->is_root()) return VIENNAGRID_ERROR_MESH_IS_NOT_ROOT;
       if (value)
         *value = mesh->mesh_hierarchy()->boundary_layout();
       break;
@@ -183,6 +192,9 @@ viennagrid_error viennagrid_mesh_geometric_dimension_set(viennagrid_mesh mesh,
 
 viennagrid_error viennagrid_mesh_clear(viennagrid_mesh mesh)
 {
+  if (!mesh)            return VIENNAGRID_ERROR_INVALID_MESH;
+  if (!mesh->is_root()) return VIENNAGRID_ERROR_MESH_IS_NOT_ROOT;
+
   if (mesh)
     mesh->clear();
 

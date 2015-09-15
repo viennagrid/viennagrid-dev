@@ -12,7 +12,7 @@
  * header.
  *
  * The ViennaGrid library can be split into the following main feature sets:
- *  - Mesh and mesh hierarchy data structures
+ *  - Mesh data structure
  *  - Piecewise linear complexes (PLC)
  *  - Quantity fields
  *  - Serialization and IO
@@ -20,7 +20,7 @@
  *
  *
  * -------------------------------------------------
- * ---- Mesh and mesh hierarchy data structures ----
+ * ---- Mesh data structure                     ----
  * -------------------------------------------------
  *
  *
@@ -49,9 +49,13 @@
  *    tetrahedron   |   3                     |  triangle      |  4
  *    hexahedron    |   3                     |  quadrilateral |  6
  *
- * Topological dimension is an important aspect in ViennaGrid and it is used in various API functions. An element within a mesh is identified by using its topological dimension and its ID. Iteration over boundary elements can be achieved using the function viennagrid_element_boundary_elements. Different elements can be connected if they have common boundary elements. Using these connections, other iterations are possible, like co-boundary iteration (viennagrid_element_coboundary_elements) or neighbor iteration (viennagrid_element_neighbor_elements).
+ * Topological dimension is an important aspect in ViennaGrid and it is used in various API functions. An element within a mesh is identified by using an ID. The element ID consists of a topological dimension and an index. The first created element for a topological dimension is always 0, the second is 1, and so on. The topological dimension and the index of an element is encoded into the element ID. Normally, a 32 bit signed integer data type is used as the element ID type. In that case, the index is encoded in the 29 least significant bits and the topological dimension in the next 2 bits:
  *
- * Every viennagrid_mesh also can have a number of child meshes, where each child mesh represents a refinement of the parent mesh. This parent-child relationship is also reflected in the elements itself, where each element has a parent element id (-1 indicating, that an element has no mesh). If a mesh doesn't have any parent mesh it is called the root mesh. Elements and vertices can only be created in the root mesh and only if the root mesh does not have any child meshes yet (otherwise the child meshes would lack these new created elements).
+ * ID = STTIIIIIIIIIIIII IIIIIIIIIIIIIIII
+ * Where S is the reserved (for e.g., invalid ID) signed bit, TT are the topological ID and the 29 I are the actual index. ViennaGrid provides functions for extracting the topological ID and the index from an element ID: viennagrid_topological_dimension_from_element_id and viennagrid_index_from_element_id. An element ID can be created based on its topological dimension and its index using viennagrid_compose_element_id. Note, that using a 32 bit integer as an element ID allows a maximum number of elements per topological dimension of 536 870 912.
+ * Iteration over boundary elements can be achieved using the function viennagrid_element_boundary_elements. Different elements can be connected if they have common boundary elements. Using these connections, other iterations are possible, like co-boundary iteration (viennagrid_element_coboundary_elements) or neighbor iteration (viennagrid_element_neighbor_elements).
+ *
+ * Every viennagrid_mesh also can have a number of child meshes, where each child mesh represents a refinement of the parent mesh. This parent-child relationship is also reflected in the elements itself, where each element has a parent element id (-1 indicating, that an element has no parent). If a mesh doesn't have any parent mesh it is called the root mesh. Elements and vertices can only be created in the root mesh and only if the root mesh does not have any child meshes yet (otherwise the child meshes would lack these new created elements).
  *
  * Additionally, each mesh element can be added to one or more regions. Regions can be used for identifying sub-meshes, for example if an object has different materials, each material can be represented by a region.
  *
@@ -67,35 +71,37 @@
  *
  * If the root mesh doesn't have any child meshes, vertices can be created in the root mesh. However, the geometric dimension has to be set first:
  *
- *    viennagrid_mesh_hierarchy_geometric_dimension_get(mesh_hierarchy, 3);
+ *    viennagrid_mesh_geometric_dimension_get(mesh, 3);
  *
- * If at some point the geometric dimension has already been set to another value, this function call invalidates all vertex coordinates. Now, vertices can be created one by one using the function viennagrid_mesh_vertex_create or multiple vertices at once using viennagrid_mesh_vertex_batch_create:
+ * If, at some point, the geometric dimension has already been set to another value, this function call invalidates all vertex coordinates. Now, vertices can be created one by one using the function viennagrid_mesh_vertex_create or multiple vertices at once using viennagrid_mesh_vertex_batch_create:
  *
- *    viennagrid_int vertex_id;
+ *    viennagrid_element_id vertex_id;
  *    viennagrid_numeric vertex_coords[3] = { 0.0, 0.0, 0.0 };
  *    viennagrid_mesh_vertex_create(mesh, vertex_coords0, &vertex_id0);
  *
  *
- *    viennagrid_int first_vertex_id;
- *    viennagrid_numeric vertices_coords[9] = { 1.0, 1.0, 1.0, 2.0, 2.0, 2.0, 3.0, 3.0, 3.0 };
+ *    viennagrid_element_id first_vertex_id;
+ *    viennagrid_numeric vertices_coords[12] = { 1.0, 1.0, 1.0, 2.0, 2.0, 2.0, 3.0, 3.0, 3.0, 4.0, 4.0, 4.0 };
  *    viennagrid_mesh_vertex_batch_create(mesh, 3, vertices_coords, &first_vertex_id);
  *    // the new creates vertices now have the IDs: first_vertex_id, first_vertex_id+1 and first_vertex_id+2
  *
  * Using the vertex IDs, elements can now be created using viennagrid_mesh_element_create for creating one element or viennagrid_mesh_element_batch_create for creating multiple elements:
  *
- *    viennagrid_int triangle_id;
- *    viennagrid_int vertex_ids[3] = { 0, 1, 2 };
+ *    viennagrid_element_id triangle_id;
+ *    viennagrid_element_id vertex_ids[3] = { first_vertex_id, first_vertex_id+1, first_vertex_id+2 };
  *    viennagrid_mesh_element_create(mesh, VIENNAGRID_ELEMENT_TYPE_TRIANGLE, 3, vertex_ids, &triangle_id);
  *
- *    viennagrid_int first_triangle_id;
+ *    viennagrid_element_id first_triangle_id;
  *    viennagrid_element_type element_types[3] = { VIENNAGRID_ELEMENT_TYPE_TRIANGLE, VIENNAGRID_ELEMENT_TYPE_TRIANGLE, VIENNAGRID_ELEMENT_TYPE_TRIANGLE };
  *    viennagrid_int element_vertex_index_offsets[3] = { 0, 3, 6, 9 };
- *    viennagrid_int element_vertex_indices[9] = { 0, 1, 2, 1, 3, 2, 1, 4, 3 };
+ *    viennagrid_element_id element_vertex_indices[9] = { first_vertex_id,   first_vertex_id+1, first_vertex_id+2,
+ *                                                        first_vertex_id+1, first_vertex_id+3, first_vertex_id+2,
+ *                                                        first_vertex_id+1, first_vertex_id+4, first_vertex_id+3 }
  *    viennagrid_mesh_element_batch_create(mesh, 3, element_types, element_vertex_index_offsets, element_vertex_indices, NULL, &first_triangle_id);
  *    // the 6th argument is a pointer to region_ids, one region_id for each element to create. we don't want to add are new element to regions, therefore this argument is NULL
  *    // the new created elements now have the IDs: first_triangle_id, first_triangle_id+1 and first_triangle_id+2
  *
- * New regions can be created using the functions viennagrid_mesh_region_create or viennagrid_mesh_hierarchy_region_get_or_create. While the first just creates a new region with an unused ID, the ladder function takes an additional region ID argument and returns the region with that ID if it is present or creates a new region with that particular ID:
+ * New regions can be created using the functions viennagrid_mesh_region_create. While the first just creates a new region with an unused ID, the ladder function takes an additional region ID argument and returns the region with that ID if it is present or creates a new region with that particular ID:
  *
  *    viennagrid_region region0;
  *    viennagrid_mesh_region_create(mesh, &region0);
@@ -103,15 +109,14 @@
  *    viennagrid_region region1;
  *    viennagrid_mesh_region_get_or_create(mesh, 42, &region1);
  *
- * Elements can be added to regions using viennagrid_region_element_add:
+ * Regions can only be created in the root mesh. Elements can be added to regions using viennagrid_region_element_add:
  *
- *    viennagrid_region_element_add(region0, 2, triangle_id);
- *    // adding element with topological dimension 2 and ID 3 to region0
+ *    viennagrid_region_element_add(region0, triangle_id);
  *
  *
  * --- Iteration ---
  *
- * In ViennaGrid, the iteration interface uses pointer ranges. Every function returns a begin pointer and an end pointer, in a way that the iteration loop can be done like
+ * In ViennaGrid, the iteration interface uses pointer ranges. Every function returns a begin pointer and an end pointer, in a way that the iteration loop can be written like
  *
  *    for (type * it = begin; it != end; ++it)
  *      // do something with *it
@@ -119,62 +124,57 @@
  *
  * To iterate over all elements of a mesh having a specific topological dimension, the function viennagrid_mesh_elements_get can be used:
  *
- *    viennagrid_int * vertex_ids_begin;
- *    viennagrid_int * vertex_ids_end;
+ *    viennagrid_element_id * vertex_ids_begin;
+ *    viennagrid_element_id * vertex_ids_end;
  *    viennagrid_mesh_elements_get(mesh, 0, &vertex_ids_begin, &vertex_ids_end);
  *
- *    for (viennagrid_int * vit = vertex_ids_begin; vit != vertex_ids_end; ++vit)
+ *    for (viennagrid_element_id * vit = vertex_ids_begin; vit != vertex_ids_end; ++vit)
  *    {
- *      viennagrid_int vertex_id = *vit;
+ *      viennagrid_element_id vertex_id = *vit;
  *      // do something
  *    }
  *
- * It is also possible to iterate over all boundary elements of an element having a specific topological dimension. The function viennagrid_element_boundary_elements is used for querying the boundary range:
+ * It is also possible to iterate over all boundary elements of an element having a specific boundary topological dimension. The function viennagrid_element_boundary_elements is used for querying the boundary range:
  *
- *    viennagrid_int * boundary_vertex_ids_begin;
- *    viennagrid_int * boundary_vertex_ids_end;
- *    viennagrid_element_boundary_elements(mesh_hierarchy, 2, triangle_id, 0, boundary_vertex_ids_begin, boundary_vertex_ids_end);
- *    // the second and third parameter is the topological dimension and the ID of the reference element, respectively
- *    // the fifth parameter is the boundary topological dimension
+ *    viennagrid_element_id * boundary_vertex_ids_begin;
+ *    viennagrid_element_id * boundary_vertex_ids_end;
+ *    viennagrid_element_boundary_elements(mesh, triangle_id, 0, boundary_vertex_ids_begin, boundary_vertex_ids_end);
+ *    // the third parameter is the boundary topological dimension
  *
- *    for (viennagrid_int * vit = boundary_vertex_ids_begin; vit != boundary_vertex_ids_end; ++vit)
+ *    for (viennagrid_element_id * vit = boundary_vertex_ids_begin; vit != boundary_vertex_ids_end; ++vit)
  *    {
- *      viennagrid_int vertex_id = *vit;
+ *      viennagrid_element_id vertex_id = *vit;
  *      // do something
  *    }
  *
  * Co-boundary and neighbor iteration work similarly, using the functions viennagrid_element_coboundary_elements and viennagrid_element_neighbor_elements:
  *
- *    viennagrid_int coboundary_line_ids_begin;
- *    viennagrid_int coboundary_line_ids_end;
- *    viennagrid_element_coboundary_elements(mesh, 0, vertex_id, 1, &coboundary_line_ids_begin, &coboundary_line_ids_end);
- *    // the second and third parameter is the topological dimension and the ID of the reference element, respectively
- *    // the fifth parameter is the co-boundary topological dimension
+ *    viennagrid_element_id coboundary_line_ids_begin;
+ *    viennagrid_element_id coboundary_line_ids_end;
+ *    viennagrid_element_coboundary_elements(mesh, vertex_id, 1, &coboundary_line_ids_begin, &coboundary_line_ids_end);
+ *    // the third parameter is the co-boundary topological dimension
  *
- *    for (viennagrid_int * lit = coboundary_line_ids_begin; lit != coboundary_line_ids_end; +lit)
+ *    for (viennagrid_element_id * lit = coboundary_line_ids_begin; lit != coboundary_line_ids_end; +lit)
  *    {
- *      viennagrid_int line_id = *lit;
+ *      viennagrid_element_id line_id = *lit;
  *      // do something
  *    }
  *
  *
- *    viennagrid_int neighbor_triangle_ids_begin;
- *    viennagrid_int neighbor_triangle_ids_end;
- *    viennagrid_element_neighbor_elements(mesh, 2, triangle_id, 1, 2, &neighbor_triangle_ids_begin, &neighbor_triangle_ids_end);
- *    // the second and third parameter is the topological dimension and the ID of the reference element, respectively
- *    // the fifth parameter is the topological dimension of the elements which are used as connection between the reference element and its neighbors
- *    // the sixth parameter is the neighbor topological dimension
+ *    viennagrid_element_id * neighbor_triangle_ids_begin;
+ *    viennagrid_element_id * neighbor_triangle_ids_end;
+ *    viennagrid_element_neighbor_elements(mesh, triangle_id, 1, 2, &neighbor_triangle_ids_begin, &neighbor_triangle_ids_end);
+ *    // the third parameter is the topological dimension of the elements which are used as connection between the reference element and its neighbors
+ *    // the fourth parameter is the neighbor topological dimension
  *
- *    for (viennagrid_int * tit = neighbor_triangle_ids_begin; tit != neighbor_triangle_ids_end; +tit)
+ *    for (viennagrid_element_id * tit = neighbor_triangle_ids_begin; tit != neighbor_triangle_ids_end; +tit)
  *    {
- *      viennagrid_int triangle_id = *tit;
+ *      viennagrid_element_id triangle_id = *tit;
  *      // do something
  *    }
  *
  *
  * --- Query information ---
- *
- * To
  *
  *
  *
@@ -563,33 +563,34 @@ VIENNAGRID_DYNAMIC_EXPORT viennagrid_error viennagrid_mesh_retain(viennagrid_mes
 VIENNAGRID_DYNAMIC_EXPORT viennagrid_error viennagrid_mesh_release(viennagrid_mesh mesh);
 
 
-/* optimizes memory usage */
+/* optimizes memory usage. can only be called on root mesh */
 VIENNAGRID_DYNAMIC_EXPORT viennagrid_error viennagrid_mesh_memory_optimize(viennagrid_mesh mesh);
-/* estimates the memory usage of a mesh hierarchy in bytes */
+/* estimates the memory usage of a mesh in bytes. Can only be called on root mesh */
 VIENNAGRID_DYNAMIC_EXPORT viennagrid_error viennagrid_mesh_memory_size(viennagrid_mesh mesh,
                                                                        long * size);
 
 
-/* serializes a mesh to a binary buffer, the buffer has to be deleted using viennagrid_delete */
+/* serializes a mesh to a binary buffer, the buffer has to be deleted using viennagrid_delete. Can only be called on root mesh */
 VIENNAGRID_DYNAMIC_EXPORT viennagrid_error viennagrid_mesh_serialize(viennagrid_mesh mesh,
                                                                      void ** blob,
                                                                      viennagrid_int * size);
-/* deserializes a binary buffer to a mesh hierarchy, the mesh hierarchy is cleared before deserialization */
+/* deserializes a binary buffer to a mesh, the mesh is cleared before deserialization. mesh has to be a root mesh */
 VIENNAGRID_DYNAMIC_EXPORT viennagrid_error viennagrid_mesh_deserialize(void * blob,
                                                                        viennagrid_int size,
                                                                        viennagrid_mesh mesh);
 
-/* set/get mesh options */
+/* set mesh options. Some properties can only be set on a root mesh */
 VIENNAGRID_DYNAMIC_EXPORT viennagrid_error viennagrid_mesh_property_set(viennagrid_mesh mesh,
                                                                         viennagrid_int property,
                                                                         viennagrid_int value);
+/* get mesh options. Some properties can only be get from a root mesh */
 VIENNAGRID_DYNAMIC_EXPORT viennagrid_error viennagrid_mesh_property_get(viennagrid_mesh mesh,
                                                                         viennagrid_int property,
                                                                         viennagrid_int * value);
 
 
 
-/* queries the topological dimension of cell elements of a mesh_hierarchy */
+/* queries the topological dimension of cell elements of a mesh */
 VIENNAGRID_DYNAMIC_EXPORT viennagrid_error viennagrid_mesh_cell_dimension_get(viennagrid_mesh mesh,
                                                                               viennagrid_dimension * topological_dimension);
 
@@ -597,15 +598,15 @@ VIENNAGRID_DYNAMIC_EXPORT viennagrid_error viennagrid_mesh_cell_dimension_get(vi
 VIENNAGRID_DYNAMIC_EXPORT viennagrid_error viennagrid_mesh_geometric_dimension_get(viennagrid_mesh mesh,
                                                                                    viennagrid_dimension * geometric_dimension);
 
-/* setting geometric dimension of the mesh will invalid all points (if geometric dimension changes) */
+/* setting geometric dimension of the mesh will invalid all points (if geometric dimension changes). mesh has to be a root mesh */
 VIENNAGRID_DYNAMIC_EXPORT viennagrid_error viennagrid_mesh_geometric_dimension_set(viennagrid_mesh mesh,
                                                                                    viennagrid_dimension geometric_dimension);
 
-/* clears a mesh hierarchy (removes all elements, meshes, regions, ... but does not touch reference counter) */
+/* clears a mesh (removes all elements, meshes, regions, ... but does not touch reference counter). mesh has to be a root mesh */
 VIENNAGRID_DYNAMIC_EXPORT viennagrid_error viennagrid_mesh_clear(viennagrid_mesh mesh);
 
 
-/* get the root mesh of the mesh hierarchy */
+/* get the root mesh of the mesh */
 VIENNAGRID_DYNAMIC_EXPORT viennagrid_error viennagrid_mesh_root_mesh_get(viennagrid_mesh mesh,
                                                                          viennagrid_mesh * root);
 
@@ -645,12 +646,12 @@ VIENNAGRID_DYNAMIC_EXPORT viennagrid_error viennagrid_mesh_element_count_by_type
                                                                                  viennagrid_int * count);
 
 
-/* creates a vertex in a mesh, the ID of the created vertex will be returned in vertex_id (optional, will be ignored if vertex_id is NULL) */
+/* creates a vertex in a mesh, the ID of the created vertex will be returned in vertex_id (optional, will be ignored if vertex_id is NULL). mesh has to be a root mesh which doesn't have any child meshes. */
 VIENNAGRID_DYNAMIC_EXPORT viennagrid_error viennagrid_mesh_vertex_create(viennagrid_mesh mesh,
                                                                          const viennagrid_numeric * coords,
                                                                          viennagrid_element_id * vertex_id);
 
-/* creates multiple vertices, returns the ID of the first vertex, the ID of the second vertex will be first_id+1 and so on. works only on root mesh */
+/* creates multiple vertices, returns the ID of the first vertex, the ID of the second vertex will be first_id+1 and so on. works only on root mesh. mesh has to be a root mesh which doesn't have any child meshes. */
 VIENNAGRID_DYNAMIC_EXPORT viennagrid_error viennagrid_mesh_vertex_batch_create(viennagrid_mesh mesh,
                                                                                viennagrid_int vertex_count,
                                                                                viennagrid_numeric * vertex_coords,
@@ -664,14 +665,14 @@ VIENNAGRID_DYNAMIC_EXPORT viennagrid_error viennagrid_mesh_vertex_coords_get(vie
                                                                              viennagrid_element_id id,
                                                                              viennagrid_numeric ** coords);
 
-/* creates an element of specific type in a mesh. the element is defined by its vertices, the ID of the created element will be returned in element_id (optional, will be ignored if element_id is NULL) */
+/* creates an element of specific type in a mesh. the element is defined by its vertices, the ID of the created element will be returned in element_id (optional, will be ignored if element_id is NULL). mesh has to be a root mesh which doesn't have any child meshes. */
 VIENNAGRID_DYNAMIC_EXPORT viennagrid_error viennagrid_mesh_element_create(viennagrid_mesh mesh,
                                                                           viennagrid_element_type element_type,
                                                                           viennagrid_int vertex_count,
                                                                           viennagrid_element_id * vertex_ids,
                                                                           viennagrid_element_id * element_id);
 
-/* creates multiple elements, returns the ID of the first element, the ID of the second element will be first_id+1 and so on. element_types is an array which indicates the element types, one entry for each element to create. element_vertex_index_offsets and element_vertex_indices are arrays for the vertex id for each element to create. The size of element_vertex_index_offsets should be element_count+1, the vertex indices for the i-th element are stored in the array ranging from element_vertex_indices+element_vertex_index_offsets[i] to element_vertex_indices+element_vertex_index_offsets[i+1]. region_ids is an optional array indicating the region in which each element is. */
+/* creates multiple elements, returns the ID of the first element, the ID of the second element will be first_id+1 and so on. element_types is an array which indicates the element types, one entry for each element to create. element_vertex_index_offsets and element_vertex_indices are arrays for the vertex id for each element to create. The size of element_vertex_index_offsets should be element_count+1, the vertex indices for the i-th element are stored in the array ranging from element_vertex_indices+element_vertex_index_offsets[i] to element_vertex_indices+element_vertex_index_offsets[i+1]. region_ids is an optional array indicating the region in which each element is. mesh has to be a root mesh which doesn't have any child meshes. */
 VIENNAGRID_DYNAMIC_EXPORT viennagrid_error viennagrid_mesh_element_batch_create(viennagrid_mesh mesh,
                                                                                 viennagrid_int element_count,
                                                                                 viennagrid_element_type * element_types,
@@ -790,25 +791,16 @@ VIENNAGRID_DYNAMIC_EXPORT viennagrid_error viennagrid_element_parent_get(viennag
 
 
 
-/* creates a new region using the next ID which is available */
-VIENNAGRID_DYNAMIC_EXPORT viennagrid_error viennagrid_mesh_region_create(viennagrid_mesh mesh,
-                                                                                   viennagrid_region * region);
+/* creates a new region using the next ID which is available. mesh has to be a root mesh. */
 VIENNAGRID_DYNAMIC_EXPORT viennagrid_error viennagrid_mesh_region_create(viennagrid_mesh mesh,
                                                                          viennagrid_region * region);
 
-
-/* queries the region with a given ID, if the region is not present, a new region with that ID is created */
-VIENNAGRID_DYNAMIC_EXPORT viennagrid_error viennagrid_mesh_region_get_or_create(viennagrid_mesh mesh,
-                                                                                          viennagrid_region_id region_id,
-                                                                                          viennagrid_region * region);
+/* queries the region with a given ID, if the region is not present, a new region with that ID is created. mesh has to be a root mesh. */
 VIENNAGRID_DYNAMIC_EXPORT viennagrid_error viennagrid_mesh_region_get_or_create(viennagrid_mesh mesh,
                                                                                 viennagrid_region_id region_id,
                                                                                 viennagrid_region * region);
 
 /* queries the region with a given ID, if the region is not present, NULL is returned */
-VIENNAGRID_DYNAMIC_EXPORT viennagrid_error viennagrid_mesh_region_get(viennagrid_mesh mesh,
-                                                                                viennagrid_region_id region_id,
-                                                                                viennagrid_region * region);
 VIENNAGRID_DYNAMIC_EXPORT viennagrid_error viennagrid_mesh_region_get(viennagrid_mesh mesh,
                                                                       viennagrid_region_id region_id,
                                                                       viennagrid_region * region);
@@ -826,7 +818,7 @@ VIENNAGRID_DYNAMIC_EXPORT viennagrid_error viennagrid_region_name_set(viennagrid
 /* queries the ID of a given region */
 VIENNAGRID_DYNAMIC_EXPORT viennagrid_error viennagrid_region_id_get(viennagrid_region region,
                                                                     viennagrid_region_id * id);
-/* get the region pointers (all regions) of a mesh hierarchy */
+/* get the region pointers (all regions) of a mesh */
 VIENNAGRID_DYNAMIC_EXPORT viennagrid_error viennagrid_mesh_regions_get(viennagrid_mesh mesh,
                                                                        viennagrid_region_id ** region_ids_begin,
                                                                        viennagrid_region_id ** region_ids_end);
