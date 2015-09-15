@@ -17,26 +17,39 @@ public:
   template<typename T>
   void serialize(T const & value)
   {
-    serialize(&value, 1);
+    std::size_t index = buffer_.size();
+    buffer_.resize( index + sizeof(T) );
+    memcpy( &buffer_[index], &value, sizeof(T) );
   }
 
   template<typename T>
   void serialize(T const * ptr, std::size_t count)
   {
-    std::size_t index = buffer_.size();
-    buffer_.resize( index + sizeof(T)*count );
-    memcpy( &buffer_[index], ptr, sizeof(T)*count );
+    if (!ptr || count < 0)
+      count = 0;
+
+    if (count > 0)
+    {
+      std::size_t index = buffer_.size();
+      buffer_.resize( index + sizeof(std::size_t) + sizeof(T)*count );
+
+      memcpy( &buffer_[index], &count, sizeof(std::size_t) );
+      memcpy( &buffer_[index] + sizeof(std::size_t), ptr, sizeof(T)*count );
+    }
+    else
+    {
+      std::size_t index = buffer_.size();
+      buffer_.resize( index + sizeof(std::size_t) );
+      memcpy( &buffer_[index], &count, sizeof(std::size_t) );
+    }
   }
 
   void serialize(std::string const & str)
   {
     if (str.empty())
-      serialize<int>(0);
+      serialize<char>(NULL, 0);
     else
-    {
-      serialize< viennagrid_int >( str.size() );
-      serialize< char >( str.c_str(), str.size() );
-    }
+      serialize<char>(str.c_str(), str.size());
   }
 
   std::size_t buffer_size() const { return buffer_.size(); }
@@ -45,6 +58,62 @@ public:
 private:
   std::vector<char> buffer_;
 };
+
+
+class deserializer
+{
+public:
+
+  deserializer(void * buffer_, std::size_t size_) : buffer((char*)buffer_), pos(0), size(size_) {}
+
+  template<typename T>
+  void deserialize(T & val)
+  {
+    memcpy(&val, buffer+pos, sizeof(T));
+    pos += sizeof(T);
+    assert(pos <= size);
+  }
+
+  void deserialize(std::string & str)
+  {
+    std::size_t count;
+    memcpy(&count, buffer+pos, sizeof(std::size_t));
+    pos += sizeof(std::size_t);
+
+    if (count == 0)
+      str = "";
+    else
+    {
+      str.resize(count);
+      memcpy(&str[0], buffer+pos, sizeof(char)*count);
+    }
+
+    pos += sizeof(char)*count;
+    assert(pos <= size);
+  }
+
+  template<typename T, typename Alloc>
+  void deserialize(std::vector<T, Alloc> & vec)
+  {
+    std::size_t count;
+    memcpy(&count, buffer+pos, sizeof(std::size_t));
+    pos += sizeof(std::size_t);
+
+    vec.resize(count);
+
+    if (!vec.empty())
+      memcpy(&vec[0], buffer+pos, sizeof(T)*count);
+    pos += sizeof(T)*count;
+
+    assert(pos <= size);
+  }
+
+private:
+  char * buffer;
+  std::size_t pos;
+  std::size_t size;
+};
+
 
 
 
@@ -78,18 +147,13 @@ viennagrid_error viennagrid_mesh_serialize(viennagrid_mesh mesh,
 
   s.serialize<viennagrid_dimension>( cell_dimension );
   s.serialize<viennagrid_int>( cell_count );
-  s.serialize<viennagrid_element_type>( mesh->element_types_pointer(cell_dimension), cell_count+1);
+  s.serialize<viennagrid_element_type>( mesh->element_types_pointer(cell_dimension), cell_count);
   s.serialize<viennagrid_int>( mesh->vertex_offsets_pointer(cell_dimension), cell_count+1);
   s.serialize<viennagrid_element_id>( mesh->vertex_ids_pointer(cell_dimension), mesh->vertex_offsets_pointer(cell_dimension)[cell_count]);
-  if ( mesh->parent_id_pointer(cell_dimension) )
-  {
-    s.serialize<bool>( true );
-    s.serialize<viennagrid_int>( mesh->parent_id_pointer(cell_dimension), cell_count );
-  }
-  else
-  {
-    s.serialize<bool>( false );
-  }
+
+  s.serialize<viennagrid_int>( mesh->parent_id_pointer(cell_dimension), mesh->parent_id_pointer_size(cell_dimension) );
+  s.serialize<void*>( mesh->aux_pointer(cell_dimension), mesh->aux_pointer_size(cell_dimension) );
+
 
 
 
@@ -108,10 +172,11 @@ viennagrid_error viennagrid_mesh_serialize(viennagrid_mesh mesh,
   int index = 0;
   for (viennagrid_int i = 0; i != cell_region_offsets[cell_count]; ++i)
   {
-    for (viennagrid_region_id * region_id = mesh->regions_begin( viennagrid_compose_element_id(cell_dimension, index) );
-                                region_id != mesh->regions_end( viennagrid_compose_element_id(cell_dimension, index) );
-                              ++region_id, ++index)
-         cell_regions[index] = *region_id;
+    viennagrid_region_id * region_ids_begin = mesh->regions_begin( viennagrid_compose_element_id(cell_dimension, index) );
+    viennagrid_region_id * region_ids_end   = mesh->regions_end( viennagrid_compose_element_id(cell_dimension, index) );
+
+    for (viennagrid_region_id * region_id = region_ids_begin; region_id != region_ids_end; ++region_id, ++index)
+      cell_regions[index] = *region_id;
   }
 
   s.serialize< viennagrid_int >( &cell_region_offsets[0], cell_count+1 );
@@ -129,8 +194,6 @@ viennagrid_error viennagrid_mesh_serialize(viennagrid_mesh mesh,
   s.serialize< viennagrid_int >( mesh_count );
 
   std::vector<viennagrid_int> mesh_parents(mesh_count);
-  std::vector<viennagrid_int> mesh_vertex_count(mesh_count);
-  std::vector<viennagrid_int> mesh_cell_count(mesh_count);
 
   for (viennagrid_int i = 0; i != mesh_count; ++i)
   {
@@ -148,21 +211,16 @@ viennagrid_error viennagrid_mesh_serialize(viennagrid_mesh mesh,
       mesh_parents[i] = -1;
     else
       mesh_parents[i] = mesh_to_index_map[tmp];
-
-    mesh_vertex_count[i] = tmp->element_count(0);
-    mesh_cell_count[i] = tmp->element_count(cell_dimension);
   }
 
   s.serialize< viennagrid_int >( &mesh_parents[0], mesh_count );
-  s.serialize< viennagrid_int >( &mesh_vertex_count[0], mesh_count );
-  s.serialize< viennagrid_int >( &mesh_cell_count[0], mesh_count );
 
   for (viennagrid_int i = 0; i != mesh_count; ++i)
   {
     viennagrid_mesh tmp = mesh->mesh_hierarchy()->mesh(i);
     s.serialize( tmp->name() );
-    s.serialize< viennagrid_int >( tmp->elements_begin(0), mesh_vertex_count[i] );
-    s.serialize< viennagrid_int >( tmp->elements_begin(cell_dimension), mesh_cell_count[i] );
+    s.serialize< viennagrid_int >( tmp->elements_begin(0), tmp->element_count(0) );
+    s.serialize< viennagrid_int >( tmp->elements_begin(cell_dimension), tmp->element_count(cell_dimension) );
   }
 
 
@@ -193,53 +251,13 @@ viennagrid_error viennagrid_mesh_serialize(viennagrid_mesh mesh,
 
 
 
-class deserializer
-{
-public:
-
-  deserializer(void * buffer_, std::size_t size_) : buffer((char*)buffer_), pos(0), size(size_) {}
-
-  template<typename T>
-  void deserialize(T & val)
-  {
-    deserialize(&val, 1);
-  }
-
-  void deserialize(std::string & str)
-  {
-    int size;
-    deserialize<int>(size);
-    if (size == 0)
-      str = "";
-    else
-    {
-      str.resize(size);
-      deserialize<char>( &str[0], size );
-    }
-  }
-
-  template<typename T>
-  void deserialize(T * ptr, std::size_t count)
-  {
-    memcpy(ptr, buffer+pos, sizeof(T)*count);
-    pos += sizeof(T)*count;
-    assert(pos <= size);
-  }
-
-
-
-private:
-  char * buffer;
-  std::size_t pos;
-  std::size_t size;
-};
 
 
 
 
 viennagrid_error viennagrid_mesh_deserialize(void * blob,
-                                                       viennagrid_int size,
-                                                       viennagrid_mesh mesh)
+                                             viennagrid_int size,
+                                             viennagrid_mesh mesh)
 {
   if (!mesh->is_root())
     return VIENNAGRID_ERROR_MESH_IS_NOT_ROOT;
@@ -280,8 +298,10 @@ viennagrid_error viennagrid_mesh_deserialize(void * blob,
   viennagrid_int vertex_count;
   d.deserialize< viennagrid_int >(vertex_count);
 
-  std::vector<viennagrid_numeric> vertex_coords(vertex_count*geometric_dimension);
-  d.deserialize< viennagrid_numeric >( &vertex_coords[0], vertex_count*geometric_dimension );
+  std::vector<viennagrid_numeric> vertex_coords;
+  d.deserialize< viennagrid_numeric >( vertex_coords );
+  if ((viennagrid_int)vertex_coords.size() != vertex_count*geometric_dimension)
+    return VIENNAGRID_ERROR_DESERIALIZE_ARRAY_SIZE_MISMATCH;
 
 
   // deserialize points
@@ -296,47 +316,49 @@ viennagrid_error viennagrid_mesh_deserialize(void * blob,
   viennagrid_int cell_count;
   d.deserialize< viennagrid_int >(cell_count);
 
-  std::vector<viennagrid_element_type> cell_element_types(cell_count);
-  d.deserialize< viennagrid_element_type >( &cell_element_types[0], cell_count );
+  std::vector<viennagrid_element_type> cell_element_types;
+  d.deserialize< viennagrid_element_type >( cell_element_types );
+  if ((viennagrid_int)cell_element_types.size() == cell_count)
+    return VIENNAGRID_ERROR_DESERIALIZE_ARRAY_SIZE_MISMATCH;
 
-  std::vector<viennagrid_int> cell_vertex_offsets(cell_count+1);
-  d.deserialize< viennagrid_int >( &cell_vertex_offsets[0], cell_count+1 );
+  std::vector<viennagrid_int> cell_vertex_offsets;
+  d.deserialize< viennagrid_int >( cell_vertex_offsets );
+  if ((viennagrid_int)cell_vertex_offsets.size() == cell_count+1)
+    return VIENNAGRID_ERROR_DESERIALIZE_ARRAY_SIZE_MISMATCH;
 
-  std::vector<viennagrid_int> cell_vertex_ids(cell_vertex_offsets[cell_count]);
-  d.deserialize< viennagrid_int >( &cell_vertex_ids[0], cell_vertex_offsets[cell_count] );
-
+  std::vector<viennagrid_int> cell_vertex_ids;
+  d.deserialize< viennagrid_int >( cell_vertex_ids );
+  if ((viennagrid_int)cell_vertex_ids.size() == cell_vertex_offsets[cell_count])
+    return VIENNAGRID_ERROR_DESERIALIZE_ARRAY_SIZE_MISMATCH;
 
   std::vector<viennagrid_int> cell_parent_ids;
-  bool cell_parents_available;
-  d.deserialize< bool >( cell_parents_available );
-  if (cell_parents_available)
-  {
-    cell_parent_ids.resize(cell_count);
-    d.deserialize< viennagrid_int >( &cell_parent_ids[0], cell_count );
-  }
+  d.deserialize< viennagrid_int >( cell_parent_ids );
+
+  std::vector<void*> aux_data;
+  d.deserialize< void* >( aux_data );
 
 
-  std::vector<viennagrid_int> cell_region_offsets(cell_count+1);
-  d.deserialize< viennagrid_int >( &cell_region_offsets[0], cell_count+1 );
+  std::vector<viennagrid_int> cell_region_offsets;
+  d.deserialize< viennagrid_int >( cell_region_offsets );
+  if ((viennagrid_int)cell_region_offsets.size() == cell_count+1)
+    return VIENNAGRID_ERROR_DESERIALIZE_ARRAY_SIZE_MISMATCH;
 
-  std::vector<viennagrid_int> cell_regions(cell_region_offsets[cell_count]);
-  d.deserialize< viennagrid_int >( &cell_regions[0], cell_region_offsets[cell_count] );
+  std::vector<viennagrid_int> cell_regions;
+  d.deserialize< viennagrid_int >( cell_regions );
+  if ((viennagrid_int)cell_regions.size() == cell_region_offsets[cell_count])
+    return VIENNAGRID_ERROR_DESERIALIZE_ARRAY_SIZE_MISMATCH;
 
 
   viennagrid_int mesh_count;
   d.deserialize< viennagrid_int >(mesh_count);
 
-  std::vector<viennagrid_int> mesh_parents(mesh_count);
-  d.deserialize< viennagrid_int >( &mesh_parents[0], mesh_count );
+  std::vector<viennagrid_int> mesh_parents;
+  d.deserialize< viennagrid_int >( mesh_parents );
+  if ((viennagrid_int)mesh_parents.size() == mesh_count)
+    return VIENNAGRID_ERROR_DESERIALIZE_ARRAY_SIZE_MISMATCH;
 
-  std::vector<viennagrid_int> mesh_vertex_count(mesh_count);
-  d.deserialize< viennagrid_int >( &mesh_vertex_count[0], mesh_count );
-
-  std::vector<viennagrid_int> mesh_cell_count(mesh_count);
-  d.deserialize< viennagrid_int >( &mesh_cell_count[0], mesh_count );
-
-  std::vector< std::vector<viennagrid_int> > mesh_vertices(mesh_count);
-  std::vector< std::vector<viennagrid_int> > mesh_cells(mesh_count);
+  std::vector< std::vector<viennagrid_element_id> > mesh_vertices(mesh_count);
+  std::vector< std::vector<viennagrid_element_id> > mesh_cells(mesh_count);
 
 
   std::vector<viennagrid_mesh> index_mesh_map(mesh_count);
@@ -355,11 +377,8 @@ viennagrid_error viennagrid_mesh_deserialize(void * blob,
     d.deserialize(name);
     viennagrid_mesh_name_set( index_mesh_map[i], name.c_str() );
 
-    mesh_vertices[i].resize( mesh_vertex_count[i] );
-    d.deserialize< viennagrid_int >( &mesh_vertices[i][0], mesh_vertex_count[i] );
-
-    mesh_cells[i].resize( mesh_cell_count[i] );
-    d.deserialize< viennagrid_int >( &mesh_cells[i][0], mesh_cell_count[i] );
+    d.deserialize< viennagrid_element_id >( mesh_vertices[i] );
+    d.deserialize< viennagrid_element_id >( mesh_cells[i] );
   }
 
   // deserialize regions
@@ -392,9 +411,14 @@ viennagrid_error viennagrid_mesh_deserialize(void * blob,
                                    &cell_vertex_ids[0] + cell_vertex_offsets[i],
                                    &cell_id);
 
-    if (cell_parents_available)
+    if (INDEX(cell_id) < (viennagrid_element_id)cell_parent_ids.size() )
     {
       mesh_hierarchy->element_buffer(cell_dimension).set_parent_id(cell_id, cell_parent_ids[i]);
+    }
+
+    if (INDEX(cell_id) < (viennagrid_element_id)aux_data.size() )
+    {
+      mesh_hierarchy->element_buffer(cell_dimension).set_aux(cell_id, aux_data[i]);
     }
 
     for (viennagrid_int j = cell_region_offsets[i]; j != cell_region_offsets[i+1]; ++j)
@@ -407,12 +431,12 @@ viennagrid_error viennagrid_mesh_deserialize(void * blob,
 
   for (viennagrid_int i = 0; i != mesh_count; ++i)
   {
-    for (viennagrid_int j = 0; j != mesh_vertex_count[i]; ++j)
+    for (viennagrid_int j = 0; j != (viennagrid_int)mesh_vertices[i].size(); ++j)
     {
       index_mesh_map[i]->add_element(mesh_vertices[i][j]);
     }
 
-    for (viennagrid_int j = 0; j != mesh_cell_count[i]; ++j)
+    for (viennagrid_int j = 0; j != (viennagrid_int)mesh_cells[i].size(); ++j)
     {
       index_mesh_map[i]->add_element(mesh_cells[i][j]);
     }
