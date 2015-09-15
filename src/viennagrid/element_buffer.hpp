@@ -70,18 +70,18 @@ public:
 
   void * aux(viennagrid_element_id element_id)
   {
-    if (aux_data_.empty())
+    if (aux_data.empty())
       return NULL;
 
-    return aux_data_[INDEX(element_id)];
+    return aux_data[INDEX(element_id)];
   }
 
   void set_aux(viennagrid_element_id element_id, void * data)
   {
-    if ( INDEX(element_id) >= (viennagrid_element_id)aux_data_.size() )
-      aux_data_.resize( INDEX(element_id)+1, NULL );
+    if ( INDEX(element_id) >= (viennagrid_element_id)aux_data.size() )
+      aux_data.resize( INDEX(element_id)+1, NULL );
 
-    aux_data_[INDEX(element_id)] = data;
+    aux_data[INDEX(element_id)] = data;
   }
 
 
@@ -157,6 +157,9 @@ public:
   viennagrid_int * vertex_offsets_pointer() { return boundary_buffer(0).offset_pointer(); }
   viennagrid_element_id * vertex_ids_pointer() { return boundary_buffer(0).values_pointer(); }
   viennagrid_element_id * parent_id_pointer() { return parents.empty() == 0 ? 0 : &parents[0]; }
+  viennagrid_int parent_id_pointer_size() { return parents.size(); }
+  void ** aux_pointer() { return aux_data.empty() == 0 ? 0 : &aux_data[0]; }
+  viennagrid_int aux_pointer_size() { return aux_data.size(); }
 
   ViennaGridBoundaryBufferType & boundary_buffer(viennagrid_dimension boundary_topological_dimension)
   {
@@ -167,6 +170,7 @@ public:
   {
     shrink_to_fit(element_types);
     shrink_to_fit(parents);
+    shrink_to_fit(aux_data);
 
     shrink_to_fit(boundary_ids);
     for (std::size_t i = 0; i != boundary_ids.size(); ++i)
@@ -261,7 +265,7 @@ private:
   std::vector<viennagrid_element_id> parents;
 
   // aux_data for elements
-  std::vector<void*> aux_data_;
+  std::vector<void*> aux_data;
 
   // region of elements
   std::vector< short_vector<viennagrid_region_id, viennagrid_region_id> > region_buffer;

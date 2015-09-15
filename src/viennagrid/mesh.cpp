@@ -445,8 +445,20 @@ viennagrid_element_id * viennagrid_mesh_::parent_id_pointer(viennagrid_dimension
   return mesh_hierarchy()->element_buffer(topological_dimension).parent_id_pointer();
 }
 
+viennagrid_int viennagrid_mesh_::parent_id_pointer_size(viennagrid_dimension topological_dimension)
+{
+  return mesh_hierarchy()->element_buffer(topological_dimension).parent_id_pointer_size();
+}
 
+void ** viennagrid_mesh_::aux_pointer(viennagrid_dimension topological_dimension)
+{
+  return mesh_hierarchy()->element_buffer(topological_dimension).aux_pointer();
+}
 
+viennagrid_int viennagrid_mesh_::aux_pointer_size(viennagrid_dimension topological_dimension)
+{
+  return mesh_hierarchy()->element_buffer(topological_dimension).aux_pointer_size();
+}
 
 
 

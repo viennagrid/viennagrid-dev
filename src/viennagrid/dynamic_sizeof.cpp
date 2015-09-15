@@ -47,7 +47,7 @@ namespace viennautils
         size += dynamic_sizeof( eb.element_types );
 
         size += dynamic_sizeof( eb.parents );
-        size += dynamic_sizeof( eb.aux_data_ );
+        size += dynamic_sizeof( eb.aux_data );
 
         size += dynamic_sizeof( eb.region_buffer );
         size += dynamic_sizeof( eb.packed_region_buffer );

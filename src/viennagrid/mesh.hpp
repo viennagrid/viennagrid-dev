@@ -156,6 +156,9 @@ public:
   viennagrid_int * vertex_offsets_pointer(viennagrid_dimension topological_dimension);
   viennagrid_element_id * vertex_ids_pointer(viennagrid_dimension topological_dimension);
   viennagrid_element_id * parent_id_pointer(viennagrid_dimension topological_dimension);
+  viennagrid_int parent_id_pointer_size(viennagrid_dimension topological_dimension);
+  void ** aux_pointer(viennagrid_dimension topological_dimension);
+  viennagrid_int aux_pointer_size(viennagrid_dimension topological_dimension);
 
 
 
