@@ -305,11 +305,7 @@ viennagrid_error viennagrid_mesh_deserialize(void * blob,
 
 
   // deserialize points
-  for (viennagrid_int i = 0; i != vertex_count; ++i)
-  {
-    viennagrid_mesh_vertex_create(mesh, &vertex_coords[0] + geometric_dimension*i, NULL);
-  }
-
+  viennagrid_mesh_vertex_batch_create(mesh, vertex_count, &vertex_coords[0], NULL);
 
   viennagrid_dimension cell_dimension;
   d.deserialize< viennagrid_dimension >(cell_dimension);
@@ -318,17 +314,17 @@ viennagrid_error viennagrid_mesh_deserialize(void * blob,
 
   std::vector<viennagrid_element_type> cell_element_types;
   d.deserialize< viennagrid_element_type >( cell_element_types );
-  if ((viennagrid_int)cell_element_types.size() == cell_count)
+  if ((viennagrid_int)cell_element_types.size() != cell_count)
     return VIENNAGRID_ERROR_DESERIALIZE_ARRAY_SIZE_MISMATCH;
 
   std::vector<viennagrid_int> cell_vertex_offsets;
   d.deserialize< viennagrid_int >( cell_vertex_offsets );
-  if ((viennagrid_int)cell_vertex_offsets.size() == cell_count+1)
+  if ((viennagrid_int)cell_vertex_offsets.size() != cell_count+1)
     return VIENNAGRID_ERROR_DESERIALIZE_ARRAY_SIZE_MISMATCH;
 
   std::vector<viennagrid_int> cell_vertex_ids;
   d.deserialize< viennagrid_int >( cell_vertex_ids );
-  if ((viennagrid_int)cell_vertex_ids.size() == cell_vertex_offsets[cell_count])
+  if ((viennagrid_int)cell_vertex_ids.size() != cell_vertex_offsets[cell_count])
     return VIENNAGRID_ERROR_DESERIALIZE_ARRAY_SIZE_MISMATCH;
 
   std::vector<viennagrid_int> cell_parent_ids;
@@ -340,12 +336,12 @@ viennagrid_error viennagrid_mesh_deserialize(void * blob,
 
   std::vector<viennagrid_int> cell_region_offsets;
   d.deserialize< viennagrid_int >( cell_region_offsets );
-  if ((viennagrid_int)cell_region_offsets.size() == cell_count+1)
+  if ((viennagrid_int)cell_region_offsets.size() != cell_count+1)
     return VIENNAGRID_ERROR_DESERIALIZE_ARRAY_SIZE_MISMATCH;
 
   std::vector<viennagrid_int> cell_regions;
   d.deserialize< viennagrid_int >( cell_regions );
-  if ((viennagrid_int)cell_regions.size() == cell_region_offsets[cell_count])
+  if ((viennagrid_int)cell_regions.size() != cell_region_offsets[cell_count])
     return VIENNAGRID_ERROR_DESERIALIZE_ARRAY_SIZE_MISMATCH;
 
 
@@ -354,7 +350,7 @@ viennagrid_error viennagrid_mesh_deserialize(void * blob,
 
   std::vector<viennagrid_int> mesh_parents;
   d.deserialize< viennagrid_int >( mesh_parents );
-  if ((viennagrid_int)mesh_parents.size() == mesh_count)
+  if ((viennagrid_int)mesh_parents.size() != mesh_count)
     return VIENNAGRID_ERROR_DESERIALIZE_ARRAY_SIZE_MISMATCH;
 
   std::vector< std::vector<viennagrid_element_id> > mesh_vertices(mesh_count);
