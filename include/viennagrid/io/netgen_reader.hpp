@@ -40,7 +40,7 @@ namespace viennagrid
        * @param filename      Name of the file
        */
       template <typename MeshType>
-      void operator()(MeshType & mesh_obj, std::string const & filename) const
+      void operator()(MeshType const & mesh_obj, std::string const & filename) const
       {
         typedef typename viennagrid::result_of::coord<MeshType>::type     CoordType;
         typedef typename result_of::element<MeshType, vertex_tag>::type   VertexType;

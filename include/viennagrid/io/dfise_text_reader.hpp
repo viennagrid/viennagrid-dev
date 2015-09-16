@@ -26,10 +26,10 @@
 #include "viennautils/dfise/grid_reader.hpp"
 #include "viennautils/dfise/data_reader.hpp"
 
-#include "viennagridpp/mesh/element_creation.hpp"
-#include "viennagridpp/algorithm/inclusion.hpp"
-#include "viennagridpp/algorithm/distance.hpp"
-#include "viennagridpp/quantity_field.hpp"
+#include "viennagrid/mesh/element_creation.hpp"
+#include "viennagrid/algorithm/inclusion.hpp"
+#include "viennagrid/algorithm/distance.hpp"
+#include "viennagrid/core/quantity_field.hpp"
 
 class P;
 
@@ -60,7 +60,7 @@ private:
   viennautils::dfise::grid_reader grid_reader_;
   viennautils::dfise::data_reader data_reader_;
 
-  static viennagrid_element_type to_viennagrid_element_type(viennautils::dfise::grid_reader::element_tag::type dfise_tag);
+  static viennagrid_element_type to_viennagrid_element_type(viennautils::dfise::grid_reader::element_tag dfise_tag);
 
   template<typename PointT>
   static PointT normal_vector(PointT const & p0, PointT const & p1);
@@ -157,7 +157,7 @@ bool dfise_text_reader::to_viennagrid(MeshT const & mesh, std::vector<viennagrid
       grid_reader::element const & e = dfise_elements[*element_it];
 
       //TODO manual TRIANGULATION should be kicked out asap
-      if(e.tag_ == viennautils::dfise::grid_reader::element_tag::quadrilateral)
+      if(e.tag_ == viennautils::dfise::grid_reader::element_tag_quadrilateral)
       {
         //TRIANGULATION
         std::vector<VertexType> cell_vertices(3);
@@ -327,17 +327,17 @@ bool dfise_text_reader::to_viennagrid(MeshT const & mesh, std::vector<viennagrid
   return true;
 }
 
-inline viennagrid_element_type dfise_text_reader::to_viennagrid_element_type(viennautils::dfise::grid_reader::element_tag::type dfise_tag)
+inline viennagrid_element_type dfise_text_reader::to_viennagrid_element_type(viennautils::dfise::grid_reader::element_tag dfise_tag)
 {
   switch(dfise_tag)
   {
-    case viennautils::dfise::grid_reader::element_tag::line:          return VIENNAGRID_ELEMENT_TYPE_LINE;
-    case viennautils::dfise::grid_reader::element_tag::triangle:      return VIENNAGRID_ELEMENT_TYPE_TRIANGLE;
-    case viennautils::dfise::grid_reader::element_tag::quadrilateral: return VIENNAGRID_ELEMENT_TYPE_QUADRILATERAL;
+    case viennautils::dfise::grid_reader::element_tag_line:          return VIENNAGRID_ELEMENT_TYPE_LINE;
+    case viennautils::dfise::grid_reader::element_tag_triangle:      return VIENNAGRID_ELEMENT_TYPE_TRIANGLE;
+    case viennautils::dfise::grid_reader::element_tag_quadrilateral: return VIENNAGRID_ELEMENT_TYPE_QUADRILATERAL;
   }
 
   assert(false);
-  return viennautils::dfise::grid_reader::element_tag::line;
+  return viennautils::dfise::grid_reader::element_tag_line;
 }
 
 template<typename PointT>

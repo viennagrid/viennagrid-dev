@@ -2,10 +2,10 @@
 #define VIENNAGRID_ALGORITHM_SIMPLEXIFY_HPP
 
 
-#include "viennagridpp/element/element.hpp"
-#include "viennagridpp/mesh/element_creation.hpp"
-#include "viennagridpp/mesh/mesh_operations.hpp"
-#include "viennagridpp/algorithm/volume.hpp"
+#include "viennagrid/mesh/element.hpp"
+#include "viennagrid/mesh/element_creation.hpp"
+#include "viennagrid/mesh/mesh_operations.hpp"
+#include "viennagrid/algorithm/volume.hpp"
 
 
 namespace viennagrid

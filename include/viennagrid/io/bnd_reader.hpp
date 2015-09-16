@@ -13,9 +13,9 @@
    License:      MIT (X11), see file LICENSE in the base directory
 ======================================================================= */
 
-#include "viennagridpp/io/helper.hpp"
+#include "viennagrid/io/helper.hpp"
 // #include "viennagrid/io/bnd.hpp"
-#include "viennagridpp/mesh/element_creation.hpp"
+#include "viennagrid/mesh/element_creation.hpp"
 
 #include <boost/array.hpp>
 

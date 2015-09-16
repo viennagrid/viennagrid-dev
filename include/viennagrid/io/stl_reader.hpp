@@ -18,10 +18,8 @@
 #include <iostream>
 #include <assert.h>
 
-#include "viennagridpp/forwards.hpp"
-#include "viennagridpp/io/helper.hpp"
-
-#include "viennagridpp/mesh/mesh.hpp"
+#include "viennagrid/viennagrid.hpp"
+#include "viennagrid/io/helper.hpp"
 
 /** @file viennagrid/io/tetgen_poly_reader.hpp
     @brief Provides a reader for STL files. See http://en.wikipedia.org/wiki/STL_(file_format)

@@ -64,7 +64,7 @@ namespace viennagrid
            typename VertexCopyMapT,
            typename EdgeRefinementFlagAccessorT, typename RefinementVertexAccessorT>
   void simple_refine(viennagrid::base_mesh<mesh_is_const> const & mesh_in,
-                     viennagrid::mesh & mesh_out,
+                     viennagrid::mesh const & mesh_out,
                      viennagrid_int topologic_dimension,
                      VertexCopyMapT & vertex_copy_map_,
                      EdgeRefinementFlagAccessorT const & edge_refinement_flag_accessor,

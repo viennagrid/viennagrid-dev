@@ -15,9 +15,9 @@
    License:         MIT (X11), see file LICENSE in the base directory
 =============================================================================== */
 
-#include "viennagridpp/algorithm/centroid.hpp"
-#include "viennagridpp/algorithm/geometry.hpp"
-#include "viennagridpp/algorithm/intersect.hpp"
+#include "viennagrid/algorithm/centroid.hpp"
+#include "viennagrid/algorithm/geometry.hpp"
+#include "viennagrid/algorithm/intersect.hpp"
 
 
 ////////////////////////////////////////////////////////////////////////

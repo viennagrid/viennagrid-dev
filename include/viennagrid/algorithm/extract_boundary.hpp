@@ -13,8 +13,8 @@
    License:      MIT (X11), see file LICENSE in the base directory
 ======================================================================= */
 
-#include "viennagridpp/mesh/element_creation.hpp"
-#include "viennagridpp/mesh/mesh_operations.hpp"
+#include "viennagrid/mesh/element_creation.hpp"
+#include "viennagrid/mesh/mesh_operations.hpp"
 
 /** @file viennagrid/algorithm/extract_boundary.hpp
     @brief Extraction of a hull/boundary of a mesh.
@@ -49,14 +49,14 @@ namespace viennagrid
     HullRangeType hull_elements( volume_mesh, hull_dimension );
     for (HullRangeIterator hit = hull_elements.begin(); hit != hull_elements.end(); ++hit)
     {
-      if ( viennagrid::is_any_boundary( volume_mesh, *hit ) )
+      if ( viennagrid::is_any_boundary( *hit ) )
       {
         HullElement hull_element = element_map( *hit );
 
-        typedef typename viennagrid::result_of::region_range<VolumeMeshType, VolumeElement>::type RegionRangeType;
+        typedef typename viennagrid::result_of::region_range<VolumeElement>::type RegionRangeType;
         typedef typename viennagrid::result_of::iterator<RegionRangeType>::type RegionRangeIterator;
 
-        RegionRangeType regions(volume_mesh, *hit);
+        RegionRangeType regions(*hit);
         for (RegionRangeIterator rit = regions.begin(); rit != regions.end(); ++rit)
         {
           viennagrid::add( hull_mesh.get_or_create_region((*rit).id()), hull_element );

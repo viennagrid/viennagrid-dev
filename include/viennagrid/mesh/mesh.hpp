@@ -92,7 +92,7 @@ namespace viennagrid
     const_region_type get_region(region_id_type region_id) const;
     bool region_exists(region_id_type region_id) const;
 
-    region_type get_or_create_region(std::string const & name);
+    region_type get_or_create_region(std::string const & name) const;
     const_region_type get_region(std::string const & name) const;
     bool region_exists(std::string const & name) const;
 
@@ -326,8 +326,8 @@ namespace viennagrid
   template<bool mesh_is_const, bool element_is_const>
   bool is_boundary( base_mesh<mesh_is_const> const & mesh, base_element<element_is_const> const & element );
 
-  template<bool mesh_is_const, bool element_is_const>
-  bool is_any_boundary(base_mesh<mesh_is_const> const & mesh, base_element<element_is_const> const & element);
+  template<bool element_is_const>
+  bool is_any_boundary(base_element<element_is_const> const & element);
 
   template<typename SomethingFirstT, typename SomethingSecondT, typename ElementT>
   bool is_interface( SomethingFirstT const & first, SomethingSecondT const & second, ElementT const & element )

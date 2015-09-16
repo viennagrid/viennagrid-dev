@@ -2,8 +2,8 @@
 #define VIENNAGRID_ALGORITHM_QUANTITY_INTERPOLATE_HPP
 
 
-#include "viennagridpp/algorithm/spanned_volume.hpp"
-#include "viennagridpp/algorithm/inclusion.hpp"
+#include "viennagrid/algorithm/spanned_volume.hpp"
+#include "viennagrid/algorithm/inclusion.hpp"
 
 
 namespace viennagrid

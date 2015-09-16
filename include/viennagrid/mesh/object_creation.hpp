@@ -1,8 +1,8 @@
 #ifndef VIENNAGRID_OBJECT_CREATION_HPP
 #define VIENNAGRID_OBJECT_CREATION_HPP
 
-#include "viennagridpp/mesh/mesh.hpp"
-#include "viennagridpp/algorithm/refine.hpp"
+#include "viennagrid/mesh/mesh.hpp"
+#include "viennagrid/algorithm/refine.hpp"
 
 namespace viennagrid
 {
@@ -151,30 +151,31 @@ namespace viennagrid
                         viennagrid_numeric radius,
                         int refinement_level)
   {
-    typedef viennagrid::mesh                                        MeshType;
-    typedef viennagrid::result_of::point<MeshType>::type            PointType;
-    typedef viennagrid::result_of::vertex_range<MeshType>::type     MeshRangeType;
-    typedef viennagrid::result_of::iterator<MeshRangeType>::type    MeshRangeIterator;
-
-    MeshType sphere;
-    viennagrid::make_icosahedron_hull( sphere, center, radius );
-
-    for (int i = 0; i != refinement_level; ++i)
-    {
-      MeshType tmp = sphere.create_child();
-      viennagrid::cell_refine_uniformly(sphere, tmp);
-      sphere = tmp;
-    }
-
-    MeshRangeType vertices(sphere);
-    for (MeshRangeIterator vit = vertices.begin(); vit != vertices.end(); ++vit)
-    {
-      PointType pt = viennagrid::get_point(*vit);
-      pt *= radius/viennagrid::norm_2(pt);
-      viennagrid::set_point( *vit, pt );
-    }
-
-    viennagrid::copy( sphere, mesh );
+    // TODO implement !!
+//     typedef viennagrid::mesh                                        MeshType;
+//     typedef viennagrid::result_of::point<MeshType>::type            PointType;
+//     typedef viennagrid::result_of::vertex_range<MeshType>::type     MeshRangeType;
+//     typedef viennagrid::result_of::iterator<MeshRangeType>::type    MeshRangeIterator;
+//
+//     MeshType sphere;
+//     viennagrid::make_icosahedron_hull( sphere, center, radius );
+//
+//     for (int i = 0; i != refinement_level; ++i)
+//     {
+//       MeshType tmp = sphere.create_child();
+//       viennagrid::cell_refine_uniformly(sphere, tmp);
+//       sphere = tmp;
+//     }
+//
+//     MeshRangeType vertices(sphere);
+//     for (MeshRangeIterator vit = vertices.begin(); vit != vertices.end(); ++vit)
+//     {
+//       PointType pt = viennagrid::get_point(*vit);
+//       pt *= radius/viennagrid::norm_2(pt);
+//       viennagrid::set_point( *vit, pt );
+//     }
+//
+//     viennagrid::copy( sphere, mesh );
   }
 
 
