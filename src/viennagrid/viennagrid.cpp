@@ -30,6 +30,10 @@ const char * viennagrid_element_type_string(viennagrid_element_type element_type
       return "tetrahedron";
     case VIENNAGRID_ELEMENT_TYPE_HEXAHEDRON:
       return "hexahedron";
+    case VIENNAGRID_ELEMENT_TYPE_WEDGE:
+      return "wedge";
+    case VIENNAGRID_ELEMENT_TYPE_PYRAMID:
+      return "pyramid";
 
     default:
       return 0;

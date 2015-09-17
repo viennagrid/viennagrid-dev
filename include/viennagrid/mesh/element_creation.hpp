@@ -262,6 +262,31 @@ namespace viennagrid
     return make_element<hexahedron_tag>(something, v, v+8);
   }
 
+  template<typename SomethingT>
+  element make_wedge(SomethingT const & something, element v0, element v1, element v2, element v3, element v4, element v5)
+  {
+    element v[6];
+    v[0] = v0;
+    v[1] = v1;
+    v[2] = v2;
+    v[3] = v3;
+    v[4] = v4;
+    v[5] = v5;
+    return make_element<wedge_tag>(something, v, v+6);
+  }
+
+  template<typename SomethingT>
+  element make_pyramid(SomethingT const & something, element v0, element v1, element v2, element v3, element v4)
+  {
+    element v[5];
+    v[0] = v0;
+    v[1] = v1;
+    v[2] = v2;
+    v[3] = v3;
+    v[4] = v4;
+    return make_element<pyramid_tag>(something, v, v+5);
+  }
+
 }
 
 #endif

@@ -46,6 +46,10 @@ namespace viennagrid
           return 10;
         case VIENNAGRID_ELEMENT_TYPE_HEXAHEDRON:
           return 12;
+        case VIENNAGRID_ELEMENT_TYPE_WEDGE:
+          return 13;
+        case VIENNAGRID_ELEMENT_TYPE_PYRAMID:
+          return 14;
 
         default:
           return -1;
@@ -70,6 +74,10 @@ namespace viennagrid
           return viennagrid::tetrahedron_tag();
         case 12:
           return viennagrid::hexahedron_tag();
+        case 13:
+          return viennagrid::wedge_tag();
+        case 14:
+          return viennagrid::pyramid_tag();
 
         default:
           return element_tag();
@@ -108,6 +116,15 @@ namespace viennagrid
                 case 3: return 2;
                 case 6: return 7;
                 case 7: return 6;
+                default: return j;
+              }
+            }
+            case VIENNAGRID_ELEMENT_TYPE_PYRAMID:
+            {
+              switch (j)
+              {
+                case 2: return 3;
+                case 3: return 2;
                 default: return j;
               }
             }

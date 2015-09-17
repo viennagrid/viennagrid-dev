@@ -111,6 +111,8 @@ namespace viennagrid
     static element_tag polygon() { return element_tag(VIENNAGRID_ELEMENT_TYPE_POLYGON); }
     static element_tag tetrahedron() { return element_tag(VIENNAGRID_ELEMENT_TYPE_TETRAHEDRON); }
     static element_tag hexahedron() { return element_tag(VIENNAGRID_ELEMENT_TYPE_HEXAHEDRON); }
+    static element_tag wedge() { return element_tag(VIENNAGRID_ELEMENT_TYPE_WEDGE); }
+    static element_tag pyramid() { return element_tag(VIENNAGRID_ELEMENT_TYPE_PYRAMID); }
 
     bool valid() const { return internal() != VIENNAGRID_ELEMENT_TYPE_NO_ELEMENT; }
     bool is_vertex() const { return *this == vertex(); }
@@ -121,6 +123,8 @@ namespace viennagrid
     bool is_polygon() const { return *this == polygon(); }
     bool is_tetrahedron() const { return *this == tetrahedron(); }
     bool is_hexahedron() const { return *this == hexahedron(); }
+    bool is_wedge() const { return *this == wedge(); }
+    bool is_pyramid() const { return *this == pyramid(); }
 
     bool is_simplex() const { return viennagrid_is_simplex(internal()) == VIENNAGRID_TRUE; }
 
@@ -177,7 +181,8 @@ namespace viennagrid
   typedef static_element_tag<VIENNAGRID_ELEMENT_TYPE_POLYGON> polygon_tag;
   typedef static_element_tag<VIENNAGRID_ELEMENT_TYPE_TETRAHEDRON> tetrahedron_tag;
   typedef static_element_tag<VIENNAGRID_ELEMENT_TYPE_HEXAHEDRON> hexahedron_tag;
-
+  typedef static_element_tag<VIENNAGRID_ELEMENT_TYPE_WEDGE> wedge_tag;
+  typedef static_element_tag<VIENNAGRID_ELEMENT_TYPE_PYRAMID> pyramid_tag;
 
 
 

@@ -245,6 +245,29 @@ private:
     return triangle.first;
   }
 
+  viennagrid_element_id get_make_quadrilateral(
+        viennagrid_element_id * vertex_ids, viennagrid_int vi0, viennagrid_int vi1, viennagrid_int vi2, viennagrid_int vi3,
+        viennagrid_element_id * line_ids, viennagrid_int li0, viennagrid_int li1, viennagrid_int li2, viennagrid_int li3,
+        viennagrid_mesh mesh)
+  {
+    viennagrid_element_id tmp[4] = { vertex_ids[vi0], vertex_ids[vi1], vertex_ids[vi2], vertex_ids[vi3] };
+
+    std::pair<viennagrid_element_id, bool> quad = get_make_element(VIENNAGRID_ELEMENT_TYPE_QUADRILATERAL, 4, tmp, mesh, false);
+
+    if (quad.second && full_boundary_layout())
+    {
+      viennagrid_element_id * local_line_ids = boundary_begin(quad.first, 1);
+      local_line_ids[0] = line_ids[li0];
+      local_line_ids[1] = line_ids[li1];
+      local_line_ids[2] = line_ids[li2];
+      local_line_ids[3] = line_ids[li3];
+    }
+
+    return quad.first;
+  }
+
+
+
 
 
   std::pair<viennagrid_element_id, bool> get_make_element_2(viennagrid_element_type element_type,

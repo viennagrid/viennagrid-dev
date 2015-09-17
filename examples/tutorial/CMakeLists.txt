@@ -73,6 +73,9 @@ target_link_libraries(convert_to_mphtxt viennagridpp)
 add_executable(hybrid    hybrid.cpp)
 target_link_libraries(hybrid viennagridpp)
 
+add_executable(hybrid_3d    hybrid_3d.cpp)
+target_link_libraries(hybrid_3d viennagridpp)
+
 add_executable(hierarchy    hierarchy.cpp)
 target_link_libraries(hierarchy viennagridpp)
 

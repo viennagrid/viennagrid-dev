@@ -4,44 +4,10 @@
 void viennagrid_element_buffer::reserve_boundary(viennagrid_element_id element_id)
 {
   viennagrid_element_type type = element_type(element_id);
+  viennagrid_dimension topological_dimension = viennagrid_topological_dimension(type);
 
-  switch (type)
-  {
-    case VIENNAGRID_ELEMENT_TYPE_VERTEX:
-    case VIENNAGRID_ELEMENT_TYPE_LINE:
-    {
-      break;
-    }
-
-    case VIENNAGRID_ELEMENT_TYPE_TRIANGLE:
-    {
-      boundary_ids[1].push_back(3);
-      break;
-    }
-
-    case VIENNAGRID_ELEMENT_TYPE_QUADRILATERAL:
-    {
-      boundary_ids[1].push_back(4);
-      break;
-    }
-
-    case VIENNAGRID_ELEMENT_TYPE_TETRAHEDRON:
-    {
-      boundary_ids[1].push_back(6);
-      boundary_ids[2].push_back(4);
-      break;
-    }
-
-    case VIENNAGRID_ELEMENT_TYPE_HEXAHEDRON:
-    {
-      boundary_ids[1].push_back(12);
-      boundary_ids[2].push_back(6);
-      break;
-    }
-
-    default:
-      assert(false);
-  }
+  for (viennagrid_dimension dim = 1; dim != topological_dimension; ++dim)
+    boundary_ids[+dim].push_back( viennagrid_boundary_element_count(type, dim) );
 }
 
 
@@ -65,8 +31,8 @@ void viennagrid_element_buffer::make_boundary(viennagrid_element_id element_id, 
       viennagrid_element_id * line_ids = boundary_begin(element_id, 1);
 
       line_ids[0] = mesh_hierarchy->get_make_line(vertex_ids, 0, 1, mesh);
-      line_ids[1] = mesh_hierarchy->get_make_line(vertex_ids, 0, 2, mesh);
-      line_ids[2] = mesh_hierarchy->get_make_line(vertex_ids, 1, 2, mesh);
+      line_ids[1] = mesh_hierarchy->get_make_line(vertex_ids, 1, 2, mesh);
+      line_ids[2] = mesh_hierarchy->get_make_line(vertex_ids, 2, 0, mesh);
 
       break;
     }
@@ -108,29 +74,78 @@ void viennagrid_element_buffer::make_boundary(viennagrid_element_id element_id, 
     case VIENNAGRID_ELEMENT_TYPE_HEXAHEDRON:
     {
       assert(boundary_ids[0].end(INDEX(element_id)) - vertex_ids == 8);
-      viennagrid_element_id * line_ptr = boundary_begin(element_id, 1);
-      viennagrid_element_id * quad_ptr = boundary_begin(element_id, 2);
+      viennagrid_element_id * line_ids = boundary_begin(element_id, 1);
+      viennagrid_element_id * quad_ids = boundary_begin(element_id, 2);
 
 
-      line_ptr[0] = mesh_hierarchy->get_make_line(vertex_ids, 0, 1, mesh);
-      line_ptr[1] = mesh_hierarchy->get_make_line(vertex_ids, 0, 2, mesh);
-      line_ptr[2] = mesh_hierarchy->get_make_line(vertex_ids, 0, 4, mesh);
-      line_ptr[3] = mesh_hierarchy->get_make_line(vertex_ids, 1, 3, mesh);
-      line_ptr[4] = mesh_hierarchy->get_make_line(vertex_ids, 1, 5, mesh);
-      line_ptr[5] = mesh_hierarchy->get_make_line(vertex_ids, 2, 3, mesh);
-      line_ptr[6] = mesh_hierarchy->get_make_line(vertex_ids, 2, 5, mesh);
-      line_ptr[7] = mesh_hierarchy->get_make_line(vertex_ids, 3, 7, mesh);
-      line_ptr[8] = mesh_hierarchy->get_make_line(vertex_ids, 4, 5, mesh);
-      line_ptr[9] = mesh_hierarchy->get_make_line(vertex_ids, 4, 6, mesh);
-      line_ptr[10] = mesh_hierarchy->get_make_line(vertex_ids, 5, 7, mesh);
-      line_ptr[11] = mesh_hierarchy->get_make_line(vertex_ids, 6, 7, mesh);
+      line_ids[0] = mesh_hierarchy->get_make_line(vertex_ids, 0, 1, mesh);
+      line_ids[1] = mesh_hierarchy->get_make_line(vertex_ids, 0, 2, mesh);
+      line_ids[2] = mesh_hierarchy->get_make_line(vertex_ids, 0, 4, mesh);
+      line_ids[3] = mesh_hierarchy->get_make_line(vertex_ids, 1, 3, mesh);
+      line_ids[4] = mesh_hierarchy->get_make_line(vertex_ids, 1, 5, mesh);
+      line_ids[5] = mesh_hierarchy->get_make_line(vertex_ids, 2, 3, mesh);
+      line_ids[6] = mesh_hierarchy->get_make_line(vertex_ids, 2, 6, mesh);
+      line_ids[7] = mesh_hierarchy->get_make_line(vertex_ids, 3, 7, mesh);
+      line_ids[8] = mesh_hierarchy->get_make_line(vertex_ids, 4, 5, mesh);
+      line_ids[9] = mesh_hierarchy->get_make_line(vertex_ids, 4, 6, mesh);
+      line_ids[10] = mesh_hierarchy->get_make_line(vertex_ids, 5, 7, mesh);
+      line_ids[11] = mesh_hierarchy->get_make_line(vertex_ids, 6, 7, mesh);
 
-      quad_ptr[0] = mesh_hierarchy->get_make_element_4(VIENNAGRID_ELEMENT_TYPE_QUADRILATERAL, vertex_ids, 0, 1, 2, 3, mesh).first;
-      quad_ptr[1] = mesh_hierarchy->get_make_element_4(VIENNAGRID_ELEMENT_TYPE_QUADRILATERAL, vertex_ids, 0, 1, 4, 5, mesh).first;
-      quad_ptr[2] = mesh_hierarchy->get_make_element_4(VIENNAGRID_ELEMENT_TYPE_QUADRILATERAL, vertex_ids, 0, 2, 4, 6, mesh).first;
-      quad_ptr[3] = mesh_hierarchy->get_make_element_4(VIENNAGRID_ELEMENT_TYPE_QUADRILATERAL, vertex_ids, 1, 3, 5, 7, mesh).first;
-      quad_ptr[4] = mesh_hierarchy->get_make_element_4(VIENNAGRID_ELEMENT_TYPE_QUADRILATERAL, vertex_ids, 2, 3, 6, 7, mesh).first;
-      quad_ptr[5] = mesh_hierarchy->get_make_element_4(VIENNAGRID_ELEMENT_TYPE_QUADRILATERAL, vertex_ids, 4, 5, 6, 7, mesh).first;
+      quad_ids[0] = mesh_hierarchy->get_make_quadrilateral(vertex_ids, 1, 0, 3, 2, line_ids, 0, 3, 1, 5, mesh);
+      quad_ids[1] = mesh_hierarchy->get_make_quadrilateral(vertex_ids, 0, 1, 4, 5, line_ids, 0, 2, 4, 8, mesh);
+      quad_ids[2] = mesh_hierarchy->get_make_quadrilateral(vertex_ids, 2, 0, 6, 4, line_ids, 1, 6, 2, 9, mesh);
+      quad_ids[3] = mesh_hierarchy->get_make_quadrilateral(vertex_ids, 1, 3, 5, 7, line_ids, 3, 4, 7, 10, mesh);
+      quad_ids[4] = mesh_hierarchy->get_make_quadrilateral(vertex_ids, 3, 2, 7, 6, line_ids, 5, 7, 6, 11, mesh);
+      quad_ids[5] = mesh_hierarchy->get_make_quadrilateral(vertex_ids, 4, 5, 6, 7, line_ids, 8, 9, 10, 11, mesh);
+
+      break;
+    }
+
+    case VIENNAGRID_ELEMENT_TYPE_WEDGE:
+    {
+      assert(boundary_ids[0].end(INDEX(element_id)) - vertex_ids == 6);
+      viennagrid_element_id * line_ids = boundary_begin(element_id, 1);
+      viennagrid_element_id * triquad_ids = boundary_begin(element_id, 2);
+
+      line_ids[0] = mesh_hierarchy->get_make_line(vertex_ids, 0, 1, mesh);
+      line_ids[1] = mesh_hierarchy->get_make_line(vertex_ids, 1, 2, mesh);
+      line_ids[2] = mesh_hierarchy->get_make_line(vertex_ids, 2, 0, mesh);
+      line_ids[3] = mesh_hierarchy->get_make_line(vertex_ids, 0, 3, mesh);
+      line_ids[4] = mesh_hierarchy->get_make_line(vertex_ids, 1, 4, mesh);
+      line_ids[5] = mesh_hierarchy->get_make_line(vertex_ids, 2, 5, mesh);
+      line_ids[6] = mesh_hierarchy->get_make_line(vertex_ids, 3, 4, mesh);
+      line_ids[7] = mesh_hierarchy->get_make_line(vertex_ids, 4, 5, mesh);
+      line_ids[8] = mesh_hierarchy->get_make_line(vertex_ids, 5, 3, mesh);
+
+      triquad_ids[0] = mesh_hierarchy->get_make_triangle(vertex_ids, 0, 1, 2, line_ids, 0, 1, 2, mesh);
+      triquad_ids[1] = mesh_hierarchy->get_make_quadrilateral(vertex_ids, 0, 2, 3, 5, line_ids, 2, 3, 5, 8, mesh);
+      triquad_ids[2] = mesh_hierarchy->get_make_quadrilateral(vertex_ids, 2, 1, 5, 4, line_ids, 1, 5, 4, 7, mesh);
+      triquad_ids[3] = mesh_hierarchy->get_make_quadrilateral(vertex_ids, 1, 0, 4, 3, line_ids, 0, 4, 3, 6, mesh);
+      triquad_ids[4] = mesh_hierarchy->get_make_triangle(vertex_ids, 3, 5, 4, line_ids, 8, 7, 6, mesh);
+
+      break;
+    }
+
+    case VIENNAGRID_ELEMENT_TYPE_PYRAMID:
+    {
+      assert(boundary_ids[0].end(INDEX(element_id)) - vertex_ids == 5);
+      viennagrid_element_id * line_ids = boundary_begin(element_id, 1);
+      viennagrid_element_id * triquad_ids = boundary_begin(element_id, 2);
+
+      line_ids[0] = mesh_hierarchy->get_make_line(vertex_ids, 0, 1, mesh);
+      line_ids[1] = mesh_hierarchy->get_make_line(vertex_ids, 0, 2, mesh);
+      line_ids[2] = mesh_hierarchy->get_make_line(vertex_ids, 1, 3, mesh);
+      line_ids[3] = mesh_hierarchy->get_make_line(vertex_ids, 2, 3, mesh);
+      line_ids[4] = mesh_hierarchy->get_make_line(vertex_ids, 0, 4, mesh);
+      line_ids[5] = mesh_hierarchy->get_make_line(vertex_ids, 1, 4, mesh);
+      line_ids[6] = mesh_hierarchy->get_make_line(vertex_ids, 2, 4, mesh);
+      line_ids[7] = mesh_hierarchy->get_make_line(vertex_ids, 3, 4, mesh);
+
+      triquad_ids[0] = mesh_hierarchy->get_make_quadrilateral(vertex_ids, 1, 0, 3, 2, line_ids, 0, 2, 1, 3, mesh);
+      triquad_ids[1] = mesh_hierarchy->get_make_triangle(vertex_ids, 0, 1, 4, line_ids, 0, 5, 4, mesh);
+      triquad_ids[2] = mesh_hierarchy->get_make_triangle(vertex_ids, 2, 0, 4, line_ids, 1, 4, 6, mesh);
+      triquad_ids[3] = mesh_hierarchy->get_make_triangle(vertex_ids, 1, 3, 4, line_ids, 2, 7, 5, mesh);
+      triquad_ids[4] = mesh_hierarchy->get_make_triangle(vertex_ids, 3, 2, 4, line_ids, 3, 6, 7, mesh);
 
       break;
     }
@@ -179,6 +194,8 @@ viennagrid_element_id viennagrid_element_buffer::make_element(viennagrid_element
 
     case VIENNAGRID_ELEMENT_TYPE_TETRAHEDRON:
     case VIENNAGRID_ELEMENT_TYPE_HEXAHEDRON:
+    case VIENNAGRID_ELEMENT_TYPE_WEDGE:
+    case VIENNAGRID_ELEMENT_TYPE_PYRAMID:
     {
       assert((vertex_count == -1) || (vertex_count == viennagrid_boundary_element_count(element_type, 0)));
       ptr = boundary_buffer(0).push_back( vertex_count );

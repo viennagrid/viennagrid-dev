@@ -49,15 +49,17 @@
  * On the left three triangle with the corner vertices 0,1,5 and 1,4,5 can be seen. On the right, there is a quadrilateral with the vertex indices 1,2,3,4. Each element type has an associated topological dimension, indicating the smallest dimension of its extent. A boundary element with topological dimension one less is called a facet.
  * Currently, ViennaGrid supports the following element types:
  *
- *    element type  |  topological dimension  |  facet type    |  facet count
- *  ----------------|-------------------------|----------------|---------------
- *    vertex        |   0                     |  -             |  -
- *    line          |   1                     |  vertex        |  2
- *    triangle      |   2                     |  line          |  3
- *    quadrilateral |   2                     |  line          |  4
- *    polygon       |   2                     |  line          |  k
- *    tetrahedron   |   3                     |  triangle      |  4
- *    hexahedron    |   3                     |  quadrilateral |  6
+ *    element type  |  topological dimension  |  facet type                  |  facet count
+ *  ----------------|-------------------------|------------------------------|---------------
+ *    vertex        |   0                     |  -                           |  -
+ *    line          |   1                     |  vertex                      |  2
+ *    triangle      |   2                     |  line                        |  3
+ *    quadrilateral |   2                     |  line                        |  4
+ *    polygon       |   2                     |  line                        |  k
+ *    tetrahedron   |   3                     |  triangle                    |  4
+ *    hexahedron    |   3                     |  quadrilateral               |  6
+ *    wedge         |   3                     |  triangle and quadrilateral  |  2 triangles, 3 quadrilaterals
+ *    pyramid       |   3                     |  triangle and quadrilateral  |  1 quadrilateral, 4 triangles
  *
  * Topological dimension is an important aspect in ViennaGrid and it is used in various API functions. An element within a mesh is identified by using an ID. The element ID consists of a topological dimension and an index. The first created element for a topological dimension is always 0, the second is 1, and so on. The topological dimension and the index of an element is encoded into the element ID. Normally, a 32 bit signed integer data type is used as the element ID type. In that case, the index is encoded in the 29 least significant bits and the topological dimension in the next 2 bits:
  *
@@ -398,7 +400,9 @@ typedef struct viennagrid_mesh_io_ * viennagrid_mesh_io;
 #define VIENNAGRID_ELEMENT_TYPE_POLYGON             4
 #define VIENNAGRID_ELEMENT_TYPE_TETRAHEDRON         5
 #define VIENNAGRID_ELEMENT_TYPE_HEXAHEDRON          6
-#define VIENNAGRID_ELEMENT_TYPE_COUNT               7
+#define VIENNAGRID_ELEMENT_TYPE_WEDGE               7
+#define VIENNAGRID_ELEMENT_TYPE_PYRAMID             8
+#define VIENNAGRID_ELEMENT_TYPE_COUNT               9
 
 #define VIENNAGRID_TOPOLOGIC_DIMENSION_END          4
 
@@ -489,6 +493,8 @@ static inline viennagrid_dimension viennagrid_topological_dimension(viennagrid_e
     return 2;
   case VIENNAGRID_ELEMENT_TYPE_TETRAHEDRON:
   case VIENNAGRID_ELEMENT_TYPE_HEXAHEDRON:
+  case VIENNAGRID_ELEMENT_TYPE_WEDGE:
+  case VIENNAGRID_ELEMENT_TYPE_PYRAMID:
     return 3;
   default:
     return -1;
@@ -530,6 +536,18 @@ static inline viennagrid_int viennagrid_boundary_element_count( viennagrid_eleme
       if (boundary_topological_dimension== 1) return 12;
       if (boundary_topological_dimension== 0) return 8;
       return 0;
+
+    case VIENNAGRID_ELEMENT_TYPE_WEDGE:
+      if (boundary_topological_dimension== 2) return 5;
+      if (boundary_topological_dimension== 1) return 9;
+      if (boundary_topological_dimension== 0) return 6;
+      return 0;
+
+    case VIENNAGRID_ELEMENT_TYPE_PYRAMID:
+      if (boundary_topological_dimension== 2) return 5;
+      if (boundary_topological_dimension== 1) return 8;
+      if (boundary_topological_dimension== 0) return 5;
+      return 0;
   }
 
   return 0;
@@ -569,6 +587,20 @@ static inline viennagrid_int viennagrid_boundary_element_count_from_element_type
       if (boundary == VIENNAGRID_ELEMENT_TYPE_QUADRILATERAL) return 6;
       if (boundary == VIENNAGRID_ELEMENT_TYPE_LINE) return 12;
       if (boundary == VIENNAGRID_ELEMENT_TYPE_VERTEX) return 8;
+      break;
+
+    case VIENNAGRID_ELEMENT_TYPE_WEDGE:
+      if (boundary == VIENNAGRID_ELEMENT_TYPE_QUADRILATERAL) return 3;
+      if (boundary == VIENNAGRID_ELEMENT_TYPE_TRIANGLE) return 2;
+      if (boundary == VIENNAGRID_ELEMENT_TYPE_LINE) return 9;
+      if (boundary == VIENNAGRID_ELEMENT_TYPE_VERTEX) return 6;
+      break;
+
+    case VIENNAGRID_ELEMENT_TYPE_PYRAMID:
+      if (boundary == VIENNAGRID_ELEMENT_TYPE_QUADRILATERAL) return 1;
+      if (boundary == VIENNAGRID_ELEMENT_TYPE_TRIANGLE) return 4;
+      if (boundary == VIENNAGRID_ELEMENT_TYPE_LINE) return 8;
+      if (boundary == VIENNAGRID_ELEMENT_TYPE_VERTEX) return 5;
       break;
   }
 
