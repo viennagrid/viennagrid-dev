@@ -248,8 +248,8 @@ namespace viennagrid
     vector(vector<T> const & rhs) : std::vector<T, Alloc>(rhs) {}
 
 
-    T & operator[](viennagrid::element_id element_id) { return (*this)[ element_id.index() ]; }
-    T const & operator[](viennagrid::element_id element_id) const { return (*this)[ element_id.index() ]; }
+    T & operator[](viennagrid::element_id element_id) { return std::vector<T, Alloc>::operator[]( element_id.index() ); }
+    T const & operator[](viennagrid::element_id element_id) const { return std::vector<T, Alloc>::operator[]( element_id.index() ); }
 
   private:
   };
