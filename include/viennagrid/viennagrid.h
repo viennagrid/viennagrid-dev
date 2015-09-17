@@ -252,6 +252,58 @@
  *
  *
  *
+ * -------------------------------------------------
+ * ---- Quantity fields                         ----
+ * -------------------------------------------------
+ *
+ * A quantity fields is a data structure which is able to store additional information for each element. Typical use cases for quantity fields are physical quantities like temperature. The data stored in a quantity field can be configured. For each element of a mesh, one quantity is stored in a quantity field. A quantity itself consists of a number of values. Currently, two types of values are supported: bytes (VIENNAGRID_QUANTITY_FIELD_TYPE_BYTE) and floats (VIENNAGRID_QUANTITY_FIELD_TYPE_NUMERIC). Bytes can be used to store arbitrary data for element. Floats are somehow special because they can be interpreted by IO functionalities like file reader/writer. Two types of storage layouts are supported: dense and sparse. When using dense storage layout, the quantities are stores in a continuous memory buffer, enabling fast access and data locality. When using a sparse layout, an associative tree container (std::map) is used for storing the data which has slower access but does not result in a huge memory overhead if not all elements do have quantities.
+ *
+ * Quantity field are used like this:
+ *
+ *    viennagrid_quantity_field quantity_field;
+ *    viennagrid_quantity_field_create(&quantity_field);
+ *
+ *    viennagrid_quantity_field_init(quantity_field,
+ *                                   0,                                        // topological dimension of the elements
+ *                                   VIENNAGRID_QUANTITY_FIELD_TYPE_NUMERIC,   // floats
+ *                                   1,                                        // one float per element
+ *                                   VIENNAGRID_QUANTITY_FIELD_STORAGE_DENSE); // dense storage layout
+ *
+ *
+ *    viennagrid_element_id element_id;
+ *    viennagrid_numeric some_value = 42.3141;
+ *
+ *    viennagrid_quantity_field_value_set(quantity_field, element_id, &some_value);
+ *
+ *    viennagrid_numeric * tmp;
+ *    viennagrid_quantity_field_value_get(quantity_field, element_id, (void**)&tmp);
+ *    // do something with *tmp
+ *
+ *
+ * Additionally, a quantity field can have an optional name and an optional unit, both being simple strings:
+ *
+ *    viennagrid_quantity_field_name_set(quantity_field, "temperature");
+ *    viennagrid_quantity_field_unit_set(quantity_field, "K");
+ *
+ *    const char * name;
+ *    const char * unit;
+ *    viennagrid_quantity_field_name_get(quantity_field, &name);
+ *    viennagrid_quantity_field_unit_get(quantity_field, &unit);
+ *
+ *
+ * -------------------------------------------------
+ * ---- Serialization and IO                    ----
+ * -------------------------------------------------
+ *
+ *
+ *
+ *
+ * -------------------------------------------------
+ * ---- Algorithms                              ----
+ * -------------------------------------------------
+ *
+ *
+ *
  *
  *
  *
@@ -260,6 +312,7 @@
  * -------------------------------------------------
  *
  * ViennaGrid is based on the following main concepts/aspects:
+ *  - Memory layout
  *  - Hierarchical mesh architecture
  *  - Topological connectivity
  *  - Regions
