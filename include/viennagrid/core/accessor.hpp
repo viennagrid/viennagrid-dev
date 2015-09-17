@@ -74,7 +74,7 @@ namespace viennagrid
   struct id_unpack
   {
     template<typename ElementT>
-    typename viennagrid::result_of::id<ElementT>::type operator()(ElementT const & element) const
+    typename viennagrid::result_of::id<ElementT>::type::index_type operator()(ElementT const & element) const
     { return element.id().index(); }
   };
 
@@ -127,7 +127,7 @@ namespace viennagrid
     template<typename AccessT>
     struct unpack_id_type<id_unpack, AccessT>
     {
-      typedef typename AccessT::id_type type;
+      typedef typename AccessT::id_type::index_type type;
     };
 
   }

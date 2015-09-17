@@ -165,7 +165,7 @@ namespace viennagrid
     value_type get(base_element<element_is_const> const & element) const
     {
       assert( viennagrid::topologic_dimension(element) == topologic_dimension() );
-      return get(element.id());
+      return get(element.id().index());
     }
 
     bool valid(viennagrid_int id) const
@@ -176,7 +176,7 @@ namespace viennagrid
     template<bool element_is_const>
     bool valid(base_element<element_is_const> const & element) const
     {
-      return valid(element.id());
+      return valid(element.id().index());
     }
 
 
@@ -199,21 +199,21 @@ namespace viennagrid
     void set(base_element<element_is_const> const & element, viennagrid_numeric const * value)
     {
       check_init(element, values_per_quantity());
-      set(element.id(), value);
+      set(element.id().index(), value);
     }
 
     template<bool element_is_const>
     void set(base_element<element_is_const> const & element, std::vector<viennagrid_numeric> const & value)
     {
       check_init(element, value.size());
-      set(element.id(), value);
+      set(element.id().index(), value);
     }
 
     template<bool element_is_const>
     void set(base_element<element_is_const> const & element, viennagrid_numeric value)
     {
       check_init(element, 1);
-      set(element.id(), value);
+      set(element.id().index(), value);
     }
 
     viennagrid_int size() const

@@ -77,7 +77,7 @@ namespace viennagrid
   {
     point result( viennagrid::geometric_dimension(mesh) );
     viennagrid_numeric const * tmp;
-    viennagrid_mesh_vertex_coords_get(mesh, vertex.id(), const_cast<viennagrid_numeric **>(&tmp));
+    viennagrid_mesh_vertex_coords_get(mesh, vertex.id().internal(), const_cast<viennagrid_numeric **>(&tmp));
     std::copy(tmp, tmp+result.size(), result.begin());
     return result;
   }
@@ -90,7 +90,7 @@ namespace viennagrid
   void set_point(viennagrid_mesh mesh, base_element<false> const & vertex, point const & p)
   {
     viennagrid_numeric * tmp;
-    viennagrid_mesh_vertex_coords_get(mesh, vertex.id(), &tmp);
+    viennagrid_mesh_vertex_coords_get(mesh, vertex.id().internal(), &tmp);
     std::copy(p.begin(), p.end(), tmp);
   }
 
@@ -206,7 +206,7 @@ namespace viennagrid
   {
     viennagrid_bool result;
     viennagrid_element_is_mesh_boundary(mesh.internal(),
-                                        element.id(),
+                                        element.id().internal(),
                                         &result);
     return result == VIENNAGRID_TRUE;
   }

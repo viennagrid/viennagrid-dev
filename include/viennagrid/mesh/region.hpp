@@ -122,7 +122,7 @@ namespace viennagrid
     base_region_range(element const & element_) : mesh_(element_.internal_mesh())
     {
       viennagrid_element_regions_get(mesh_,
-                                     element_.id(),
+                                     element_.id().internal(),
                                      const_cast<viennagrid_region_id **>(&begin_),
                                      const_cast<viennagrid_region_id **>(&end_));
     }

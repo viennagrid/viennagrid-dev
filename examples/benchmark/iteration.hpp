@@ -286,7 +286,7 @@ viennagrid_numeric volume_mixed_CPP_C(viennagrid::mesh const & mesh_)
   ConstElementRangeType cells(mesh, viennagrid::cell_dimension(mesh));
   for (ConstElementIteratorType cit = cells.begin(); cit != cells.end(); ++cit)
   {
-    sum += volume(mesh, (*cit).id());
+    sum += volume(mesh, (*cit).id().internal());
   }
 
 //   std::cout << sum << std::endl;
@@ -332,7 +332,7 @@ viennagrid_int iteration_CPP(viennagrid::mesh const & mesh)
   ConstElementRangeType cells(mesh, viennagrid::cell_dimension(mesh));
   for (ConstElementIteratorType cit = cells.begin(); cit != cells.end(); ++cit)
   {
-    sum += (*cit).id();
+    sum += (*cit).id().index();
   }
 
 //   std::cout << sum << std::endl;
@@ -386,7 +386,7 @@ viennagrid_int boundary_iteration_CPP(viennagrid::mesh const & mesh, int boundar
   {
     ConstBoundaryRangeType boundary_elements(*cit, boundary_dimension);
     for (ConstBoundaryIteratorType bit = boundary_elements.begin(); bit != boundary_elements.end(); ++bit)
-      sum += (*bit).id();
+      sum += (*bit).id().index();
   }
 
 //   std::cout << sum << std::endl;

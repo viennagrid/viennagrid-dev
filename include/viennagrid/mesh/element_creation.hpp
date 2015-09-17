@@ -92,7 +92,7 @@ namespace viennagrid
 
     for (; elements_begin != elements_end; ++elements_begin)
     {
-      internal_vertices_indices.push_back( (*elements_begin).id() );
+      internal_vertices_indices.push_back( (*elements_begin).id().internal() );
     }
 
     viennagrid_element_id id;
@@ -164,22 +164,22 @@ namespace viennagrid
                                IntersectionIteratorT intersects_begin,
                                IntersectionIteratorT intersects_end)
   {
-    std::vector<viennagrid_int> internal_vertices_indices;
+    std::vector<viennagrid_element_id> internal_vertices_ids;
 
     for (; elements_begin != elements_end; ++elements_begin)
     {
-      internal_vertices_indices.push_back( (*elements_begin).id() );
+      internal_vertices_ids.push_back( (*elements_begin).id().internal() );
     }
 
-    std::vector<viennagrid_int> vertex_indices;
+    std::vector<viennagrid_element_id> vertex_ids;
     std::vector<viennagrid_dimension> intersects_dimensions;
-    std::vector<viennagrid_int> intersects_indices;
+    std::vector<viennagrid_element_id> intersects_indices;
 
     for (; intersects_begin != intersects_end; ++intersects_begin)
     {
-      vertex_indices.push_back( (intersects_begin->first).id() );
+      vertex_ids.push_back( (intersects_begin->first).id().internal() );
       intersects_dimensions.push_back( viennagrid::topologic_dimension(intersects_begin->second) );
-      intersects_indices.push_back( (intersects_begin->second).id() );
+      intersects_indices.push_back( (intersects_begin->second).id().internal() );
     }
 
 

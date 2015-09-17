@@ -81,7 +81,7 @@ namespace viennagrid
         viennagrid_mesh_property_set(mesh_, VIENNAGRID_PROPERTY_BOUNDARY_LAYOUT, VIENNAGRID_BOUNDARY_LAYOUT_FULL);
 
       viennagrid_element_boundary_elements(internal_mesh(),
-                                           element.id(),
+                                           element.id().internal(),
                                            topologic_dimension(),
                                            const_cast<viennagrid_element_id **>(&element_index_begin),
                                            const_cast<viennagrid_element_id **>(&element_index_end));
@@ -98,7 +98,7 @@ namespace viennagrid
         viennagrid_mesh_property_set(internal_mesh(), VIENNAGRID_PROPERTY_BOUNDARY_LAYOUT, VIENNAGRID_BOUNDARY_LAYOUT_FULL);
 
       viennagrid_element_coboundary_elements(mesh,
-                                             element.id(),
+                                             element.id().internal(),
                                              topologic_dimension(),
                                              const_cast<viennagrid_element_id **>(&element_index_begin),
                                              const_cast<viennagrid_element_id **>(&element_index_end));
@@ -116,7 +116,7 @@ namespace viennagrid
         viennagrid_mesh_property_set(internal_mesh(), VIENNAGRID_PROPERTY_BOUNDARY_LAYOUT, VIENNAGRID_BOUNDARY_LAYOUT_FULL);
 
       viennagrid_element_neighbor_elements(mesh,
-                                           element.id(),
+                                           element.id().internal(),
                                            connector_topological_dimension_in,
                                            topologic_dimension(),
                                            const_cast<viennagrid_element_id **>(&element_index_begin),

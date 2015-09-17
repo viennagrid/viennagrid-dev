@@ -5,7 +5,7 @@ namespace viennagrid
 
  void add(viennagrid_region region, element const & e)
   {
-    viennagrid_region_element_add( region, e.id() );
+    viennagrid_region_element_add( region, e.id().internal() );
   }
 
 
@@ -19,7 +19,7 @@ namespace viennagrid
     viennagrid_region_id * end;
 
     viennagrid_element_regions_get(internal_mesh(element),
-                                   element.id(),
+                                   element.id().internal(),
                                    &it,
                                    &end);
 
@@ -44,7 +44,7 @@ namespace viennagrid
     viennagrid_bool result;
     viennagrid_element_is_region_boundary(region.internal(),
                                           region.get_mesh().internal(),
-                                          element.id(),
+                                          element.id().internal(),
                                           &result);
     return result == VIENNAGRID_TRUE;
   }

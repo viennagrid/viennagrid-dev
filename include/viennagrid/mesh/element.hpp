@@ -12,24 +12,31 @@ namespace viennagrid
   {
   public:
 
+    typedef viennagrid_dimension dimension_type;
+    typedef viennagrid_element_id index_type;
+
     element_id() : id(-1) {}
     element_id(viennagrid_element_id id_) : id(id_) {}
-    element_id(viennagrid_dimension topological_dimension_, viennagrid_element_id element_index_) : id( viennagrid_compose_element_id(topological_dimension_,element_index_) ) {}
+    element_id(dimension_type topological_dimension_, index_type element_index_) : id( viennagrid_compose_element_id(topological_dimension_,element_index_) ) {}
 
-    bool valid() const { return id; }
+    bool valid() const { return id >= 0; }
 
     viennagrid_element_id internal() const { return id; }
-    operator viennagrid_element_id() const { return internal(); }
+
+    dimension_type topological_dimension() const { return viennagrid_topological_dimension_from_element_id(id); }
+    index_type index() const { return viennagrid_index_from_element_id(id); }
 
 
-    viennagrid_dimension topological_dimension() const { return viennagrid_topological_dimension_from_element_id(id); }
-    viennagrid_element_id index() const { return viennagrid_index_from_element_id(id); }
-
+    bool operator==(element_id rhs) const { return internal() == rhs.internal(); }
+    bool operator!=(element_id rhs) const { return internal() != rhs.internal(); }
 
     bool operator<(element_id rhs) const { return internal() < rhs.internal(); }
+    bool operator<=(element_id rhs) const { return internal() <= rhs.internal(); }
+    bool operator>(element_id rhs) const { return internal() > rhs.internal(); }
+    bool operator>=(element_id rhs) const { return internal() >= rhs.internal(); }
 
     element_id & operator++() { ++id; return *this; }
-    element_id operator++(int) { viennagrid_element_id tmp(*this); ++(*this); return tmp; }
+    element_id operator++(int) { element_id tmp(*this); ++(*this); return tmp; }
 
   private:
     viennagrid_element_id id;
@@ -79,7 +86,7 @@ namespace viennagrid
     base_element(base_element<other_is_const> element) : mesh_(element.mesh_), id_(element.id_) {}
 
     id_type id() const { return id_; }
-    bool valid() const { return id() >= 0; }
+    bool valid() const { return id().valid(); }
 
     mesh_type get_mesh()
     { return mesh_type(mesh_); }
@@ -104,7 +111,7 @@ namespace viennagrid
     element_tag tag() const
     {
       viennagrid_element_type type;
-      viennagrid_element_type_get( internal_mesh(), id(), &type);
+      viennagrid_element_type_get( internal_mesh(), id().internal(), &type);
       return element_tag(type);
     }
 
