@@ -106,7 +106,7 @@ bool dfise_text_reader::to_viennagrid(MeshT const & mesh, std::vector<viennagrid
   typedef typename viennagrid::result_of::element<MeshT>::type VertexType;
 
   typedef std::map<std::string, RegionContact> RegionContactMap;
-
+  
   std::vector<VertexType> vertices;
 
   {
@@ -139,7 +139,7 @@ bool dfise_text_reader::to_viennagrid(MeshT const & mesh, std::vector<viennagrid
   {
     cell_dimension = std::max(cell_dimension, viennagrid_topological_dimension(to_viennagrid_element_type(it->tag_)));
   }
-
+  
   RegionContactMap region_contacts;
 
   grid_reader::RegionMap const & regions = grid_reader_.get_regions();
@@ -334,6 +334,7 @@ inline viennagrid_element_type dfise_text_reader::to_viennagrid_element_type(vie
     case viennautils::dfise::grid_reader::element_tag_line:          return VIENNAGRID_ELEMENT_TYPE_LINE;
     case viennautils::dfise::grid_reader::element_tag_triangle:      return VIENNAGRID_ELEMENT_TYPE_TRIANGLE;
     case viennautils::dfise::grid_reader::element_tag_quadrilateral: return VIENNAGRID_ELEMENT_TYPE_QUADRILATERAL;
+    case viennautils::dfise::grid_reader::element_tag_tetrahedron:   return VIENNAGRID_ELEMENT_TYPE_TETRAHEDRON;
   }
 
   assert(false);
