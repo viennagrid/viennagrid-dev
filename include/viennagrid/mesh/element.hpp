@@ -7,52 +7,6 @@
 namespace viennagrid
 {
 
-
-  class element_id
-  {
-  public:
-
-    typedef viennagrid_dimension dimension_type;
-    typedef viennagrid_element_id index_type;
-
-    element_id() : id(-1) {}
-    element_id(viennagrid_element_id id_) : id(id_) {}
-    element_id(dimension_type topological_dimension_, index_type element_index_) : id( viennagrid_compose_element_id(topological_dimension_,element_index_) ) {}
-
-    bool valid() const { return id >= 0; }
-
-    viennagrid_element_id internal() const { return id; }
-
-    dimension_type topological_dimension() const { return viennagrid_topological_dimension_from_element_id(id); }
-    index_type index() const { return viennagrid_index_from_element_id(id); }
-
-
-    bool operator==(element_id rhs) const { return internal() == rhs.internal(); }
-    bool operator!=(element_id rhs) const { return internal() != rhs.internal(); }
-
-    bool operator<(element_id rhs) const { return internal() < rhs.internal(); }
-    bool operator<=(element_id rhs) const { return internal() <= rhs.internal(); }
-    bool operator>(element_id rhs) const { return internal() > rhs.internal(); }
-    bool operator>=(element_id rhs) const { return internal() >= rhs.internal(); }
-
-    element_id & operator++() { ++id; return *this; }
-    element_id operator++(int) { element_id tmp(*this); ++(*this); return tmp; }
-
-  private:
-    viennagrid_element_id id;
-  };
-
-
-  inline std::ostream & operator<<(std::ostream & stream, element_id id)
-  {
-    stream << id.internal() << " (dim=" << (int)id.topological_dimension() << " index=" << id.index() << ")";
-    return stream;
-  }
-
-
-
-
-
   template<bool is_const>
   class base_element
   {

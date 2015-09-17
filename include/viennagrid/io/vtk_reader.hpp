@@ -1392,7 +1392,7 @@ namespace viennagrid
               ElementType const & cell = *cit;
 
               assert( static_cast<std::size_t>(cell.id().index()) < region_values.size() );
-              result.set( cell, region_values[cell.id()] );
+              result.set( cell, region_values[cell.id().index()] );
             }
           }
 

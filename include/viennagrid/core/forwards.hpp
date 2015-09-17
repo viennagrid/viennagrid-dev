@@ -2,6 +2,9 @@
 #define VIENNAGRID_FORWARDS_HPP
 
 #include <string>
+#include <ostream>
+#include <vector>
+#include <cassert>
 #include "viennagrid/viennagrid.h"
 
 namespace viennagrid
@@ -174,6 +177,83 @@ namespace viennagrid
   typedef static_element_tag<VIENNAGRID_ELEMENT_TYPE_POLYGON> polygon_tag;
   typedef static_element_tag<VIENNAGRID_ELEMENT_TYPE_TETRAHEDRON> tetrahedron_tag;
   typedef static_element_tag<VIENNAGRID_ELEMENT_TYPE_HEXAHEDRON> hexahedron_tag;
+
+
+
+
+
+
+
+
+  class element_id
+  {
+  public:
+
+    typedef viennagrid_dimension dimension_type;
+    typedef viennagrid_element_id index_type;
+
+    element_id() : id(-1) {}
+    element_id(viennagrid_element_id id_) : id(id_) {}
+    element_id(dimension_type topological_dimension_, index_type element_index_) : id( viennagrid_compose_element_id(topological_dimension_,element_index_) ) {}
+
+    bool valid() const { return id >= 0; }
+
+    viennagrid_element_id internal() const { return id; }
+
+    dimension_type topological_dimension() const { return viennagrid_topological_dimension_from_element_id(id); }
+    index_type index() const { return viennagrid_index_from_element_id(id); }
+
+
+    bool operator==(element_id rhs) const { return internal() == rhs.internal(); }
+    bool operator!=(element_id rhs) const { return internal() != rhs.internal(); }
+
+    bool operator<(element_id rhs) const { return internal() < rhs.internal(); }
+    bool operator<=(element_id rhs) const { return internal() <= rhs.internal(); }
+    bool operator>(element_id rhs) const { return internal() > rhs.internal(); }
+    bool operator>=(element_id rhs) const { return internal() >= rhs.internal(); }
+
+    element_id & operator++() { ++id; return *this; }
+    element_id operator++(int) { element_id tmp(*this); ++(*this); return tmp; }
+
+    element_id operator+=(viennagrid_int offset) { id += offset; return *this; }
+    element_id operator+(viennagrid_int offset) const { element_id tmp(*this); tmp += offset; return tmp; }
+
+    element_id operator-=(viennagrid_int offset) { assert(offset <= index()); id -= offset; return *this; }
+    element_id operator-(viennagrid_int offset) const { element_id tmp(*this); tmp -= offset; return tmp; }
+
+
+  private:
+    viennagrid_element_id id;
+  };
+
+
+  inline std::ostream & operator<<(std::ostream & stream, element_id id)
+  {
+    stream << id.internal() << " (dim=" << (int)id.topological_dimension() << " index=" << id.index() << ")";
+    return stream;
+  }
+
+
+
+  template<typename T, typename Alloc = std::allocator<T> >
+  class vector : public std::vector<T, Alloc>
+  {
+  public:
+
+    typedef typename std::vector<T, Alloc>::size_type size_type;
+    typedef typename std::vector<T, Alloc>::value_type value_type;
+
+    vector() {}
+    vector(size_type n, value_type const & val = value_type()) : std::vector<T, Alloc>(n, val) {}
+    vector(vector<T> const & rhs) : std::vector<T, Alloc>(rhs) {}
+
+
+    T & operator[](viennagrid::element_id element_id) { return (*this)[ element_id.index() ]; }
+    T const & operator[](viennagrid::element_id element_id) const { return (*this)[ element_id.index() ]; }
+
+  private:
+  };
+
 
 
 
