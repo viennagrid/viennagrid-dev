@@ -19,7 +19,7 @@ namespace viennagrid
     bool valid() const { return id; }
 
     viennagrid_element_id internal() const { return id; }
-    operator viennagrid_element_id() { return internal(); }
+    operator viennagrid_element_id() const { return internal(); }
 
 
     viennagrid_dimension topological_dimension() const { return viennagrid_topological_dimension_from_element_id(id); }
