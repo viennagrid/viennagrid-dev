@@ -172,8 +172,8 @@ public:
     return get_or_create_region( region_id_mapping.size() );
   }
 
-  viennagrid_region_id * region_ids_begin() { return &region_ids[0]; }
-  viennagrid_region_id * region_ids_end() { return &region_ids[0] + region_ids.size(); }
+  viennagrid_region_id * region_ids_begin() { return region_ids.empty() ? NULL : &region_ids[0]; }
+  viennagrid_region_id * region_ids_end() { return region_ids.empty() ? NULL : &region_ids[0] + region_ids.size(); }
 
   bool is_in_region(viennagrid_element_id element_id, viennagrid_region_id region_id)
   {

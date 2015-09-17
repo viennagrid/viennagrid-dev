@@ -156,9 +156,9 @@ public:
   viennagrid_element_type * element_types_pointer() { return topological_dimension == 0 ? 0 : &element_types[0]; }
   viennagrid_int * vertex_offsets_pointer() { return boundary_buffer(0).offset_pointer(); }
   viennagrid_element_id * vertex_ids_pointer() { return boundary_buffer(0).values_pointer(); }
-  viennagrid_element_id * parent_id_pointer() { return parents.empty() == 0 ? 0 : &parents[0]; }
+  viennagrid_element_id * parent_id_pointer() { return parents.empty() ? 0 : &parents[0]; }
   viennagrid_int parent_id_pointer_size() { return parents.size(); }
-  void ** aux_pointer() { return aux_data.empty() == 0 ? 0 : &aux_data[0]; }
+  void ** aux_pointer() { return aux_data.empty() ? 0 : &aux_data[0]; }
   viennagrid_int aux_pointer_size() { return aux_data.size(); }
 
   ViennaGridBoundaryBufferType & boundary_buffer(viennagrid_dimension boundary_topological_dimension)

@@ -132,7 +132,7 @@ public:
     std::size_t start_index = values.size();
     values.resize( values.size()+count );
     offsets.push_back(values.size());
-    return &values[0] + start_index;
+    return values.empty() ? NULL : &values[0] + start_index;
   }
 
   void reserve(size_type offsets_count, size_type values_count)
@@ -247,7 +247,7 @@ public:
     if (it == offsets.end())
       return 0;
 
-    return &values[0] + it->second;
+    return values.empty() ? NULL : &values[0] + it->second;
   }
 
   iterator end(size_type index)
@@ -257,9 +257,9 @@ public:
       return 0;
     ++it;
     if (it == offsets.end())
-      return &values[0] + values.size();
+      return values.empty() ? NULL : &values[0] + values.size();
 
-    return &values[0] + it->second;
+    return values.empty() ? NULL : &values[0] + it->second;
   }
 
   const_iterator cbegin(size_type index) const
@@ -268,7 +268,7 @@ public:
     if (it == offsets.end())
       return 0;
 
-    return &values[0] + it->second;
+    return values.empty() ? NULL : &values[0] + it->second;
   }
 
   const_iterator cend(size_type index) const
@@ -278,9 +278,9 @@ public:
       return 0;
     ++it;
     if (it == offsets.end())
-      return &values[0] + values.size();
+      return values.empty() ? NULL : &values[0] + values.size();
 
-    return &values[0] + it->second;
+    return values.empty() ? NULL : &values[0] + it->second;
   }
 
   const_iterator begin(size_type index) const { return cbegin(index); }
@@ -304,7 +304,7 @@ public:
     std::size_t start_index = values.size();
     offsets[index] = start_index;
     values.resize( values.size()+count );
-    return &values[0] + start_index;
+    return values.empty() ? NULL : &values[0] + start_index;
   }
 
   pointer resize(size_type index, size_type count)

@@ -180,7 +180,7 @@ viennagrid_error viennagrid_mesh_serialize(viennagrid_mesh mesh,
   }
 
   s.serialize< viennagrid_int >( &cell_region_offsets[0], cell_count+1 );
-  s.serialize< viennagrid_int >( &cell_regions[0], cell_region_offsets[cell_count] );
+  s.serialize< viennagrid_int >( cell_regions.empty() ? NULL : &cell_regions[0], cell_region_offsets[cell_count] );
 
 
 

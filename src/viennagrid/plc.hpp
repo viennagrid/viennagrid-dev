@@ -96,7 +96,7 @@ public:
 
   viennagrid_numeric * get_hole_points()
   {
-    return &holes_points_[0];
+    return holes_points_.empty() ? NULL : &holes_points_[0];
   }
 
   void add_hole_point(const viennagrid_numeric * coords)
@@ -118,12 +118,12 @@ public:
 
   viennagrid_numeric * get_seed_points()
   {
-    return &seed_points_[0];
+    return seed_points_.empty() ? NULL : &seed_points_[0];
   }
 
   viennagrid_int * get_seed_point_regions()
   {
-    return &seed_point_regions_[0];
+    return seed_point_regions_.empty() ? NULL : &seed_point_regions_[0];
   }
 
   void add_seed_point(const viennagrid_numeric * coords, viennagrid_int region_id)
