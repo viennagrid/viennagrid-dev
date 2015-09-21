@@ -349,8 +349,8 @@ viennagrid_error viennagrid_quantity_field_value_set(viennagrid_quantity_field q
                                                      viennagrid_int element_id,
                                                      void * value)
 {
-  if (!quantity_field)                                            return VIENNAGRID_ERROR_INVALID_QUANTITY_FIELD;
-  if ((element_id < 0) || (element_id >= quantity_field->size())) return VIENNAGRID_ERROR_INVALID_ELEMENT_ID;
+  if (!quantity_field)       return VIENNAGRID_ERROR_INVALID_QUANTITY_FIELD;
+  if (INDEX(element_id) < 0) return VIENNAGRID_ERROR_INVALID_ELEMENT_ID;
 
   quantity_field->set(element_id, value);
 
@@ -361,8 +361,8 @@ viennagrid_error viennagrid_quantity_field_value_get(viennagrid_quantity_field q
                                                      viennagrid_int element_id,
                                                      void ** values)
 {
-  if (!quantity_field)                                            return VIENNAGRID_ERROR_INVALID_QUANTITY_FIELD;
-  if ((element_id < 0) || (element_id >= quantity_field->size())) return VIENNAGRID_ERROR_INVALID_ELEMENT_ID;
+  if (!quantity_field)       return VIENNAGRID_ERROR_INVALID_QUANTITY_FIELD;
+  if (INDEX(element_id) < 0) return VIENNAGRID_ERROR_INVALID_ELEMENT_ID;
 
   if (values)
     *values = quantity_field->get(element_id);
