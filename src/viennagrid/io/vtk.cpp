@@ -268,11 +268,9 @@ viennagrid_error viennagrid_mesh_io_read_vtk(viennagrid_mesh_io mesh_io, const c
 
   viennagrid_dimension cell_dim;
   err = viennagrid_mesh_cell_dimension_get(mesh, &cell_dim); if (err != VIENNAGRID_SUCCESS) return err;
-  std::cout << "Cell dimension: " << long(cell_dim) << std::endl;
 
   viennagrid_int *vertex_begin, *vertex_end;
   err = viennagrid_mesh_elements_get(mesh, 0, &vertex_begin, &vertex_end); if (err != VIENNAGRID_SUCCESS) return err;
-  std::cout << "Vertices: " << long(vertex_end - vertex_begin) << std::endl;
 
   viennagrid_int *cell_begin, *cell_end;
   err = viennagrid_mesh_elements_get(mesh, cell_dim, &cell_begin, &cell_end); if (err != VIENNAGRID_SUCCESS) return err;
