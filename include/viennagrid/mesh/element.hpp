@@ -53,13 +53,13 @@ namespace viennagrid
     void * get_aux() const
     {
       void * aux;
-      viennagrid_element_aux_get(mesh_, id_, &aux);
+      viennagrid_element_aux_get(mesh_, id_.internal(), &aux);
       return aux;
     }
 
     void set_aux(void * aux)
     {
-      viennagrid_element_aux_set(mesh_, id_, aux);
+      viennagrid_element_aux_set(mesh_, id_.internal(), aux);
     }
 
     element_tag tag() const
