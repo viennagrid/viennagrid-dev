@@ -105,7 +105,7 @@ public:
 viennagrid_error viennagrid_mesh_io_read_netgen(viennagrid_mesh_io mesh_io,
                                                 const char * filename);
 
-viennagrid_error viennagrid_mesh_io_read_vtk(viennagrid_mesh_io mesh_io,
+viennagrid_error viennagrid_mesh_io_write_vtk(viennagrid_mesh_io mesh_io,
                                              const char * filename);
 
 #endif

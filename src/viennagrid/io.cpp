@@ -66,8 +66,8 @@ viennagrid_error viennagrid_mesh_io_mesh_get(viennagrid_mesh_io mesh_io, viennag
 }
 
 
-viennagrid_error viennagrid_mesh_io_quantity_count(viennagrid_mesh_io mesh_io,
-                                                   viennagrid_int * count)
+viennagrid_error viennagrid_mesh_io_quantity_field_count(viennagrid_mesh_io mesh_io,
+                                                         viennagrid_int * count)
 {
   if (!mesh_io) return VIENNAGRID_ERROR_INVALID_MESH_IO;
 
@@ -115,7 +115,7 @@ viennagrid_error viennagrid_mesh_io_quantity_field_set(viennagrid_mesh_io mesh_i
   if (!quantity_field_name) return VIENNAGRID_ERROR_INVALID_QUANTITY_FIELD_NAME;
 
   viennagrid_quantity_field qf = mesh_io->get_quantity_field(quantity_field_name);
-  if (!qf)                  return VIENNAGRID_ERROR_INVALID_QUANTITY_FIELD_NAME;
+  if (qf)                   return VIENNAGRID_ERROR_INVALID_QUANTITY_FIELD_NAME;
 
   mesh_io->set_quantity_field( quantity_field_name, quantity_field );
 
@@ -238,7 +238,7 @@ viennagrid_error viennagrid_mesh_io_write_with_filetype(viennagrid_mesh_io mesh_
   switch (filetype)
   {
     case VIENNAGRID_FILETYPE_VTK_MESH:
-      return viennagrid_mesh_io_read_vtk(mesh_io, filename);
+      return viennagrid_mesh_io_write_vtk(mesh_io, filename);
   }
 
   return VIENNAGRID_ERROR_UNKNOWN_FILETYPE;

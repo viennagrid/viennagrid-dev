@@ -19,6 +19,7 @@
 #include <iostream>
 #include <iterator>
 #include <set>
+#include <vector>
 
 #include "vtk_common.hpp"
 
@@ -32,14 +33,6 @@
 /////////////////// VTK export ////////////////////////////
 //
 
-
-/** @brief Writes the XML file header */
-static void writeVTKHeader(std::ofstream & writer)
-{
-  writer << "<?xml version=\"1.0\"?>" << std::endl;
-  writer << "<VTKFile type=\"UnstructuredGrid\" version=\"0.1\" byte_order=\"LittleEndian\">" << std::endl;
-  writer << " <UnstructuredGrid>" << std::endl;
-}
 
 /** @brief Writes all the vertices of the mesh */
 static viennagrid_error writePoints(viennagrid_mesh mesh, std::ofstream & writer)
@@ -81,6 +74,53 @@ static viennagrid_error writePoints(viennagrid_mesh mesh, std::ofstream & writer
 
   return VIENNAGRID_SUCCESS;
 } //writePoints()
+
+
+
+/** @brief Writes vector-valued data defined on vertices (points) to file */
+static viennagrid_error writeElementData(viennagrid_mesh mesh, std::ofstream & writer, viennagrid_quantity_field field, viennagrid_dimension element_dimension)
+{
+  viennagrid_int err;
+
+  const char *quantity_name;
+  err = viennagrid_quantity_field_name_get(field, &quantity_name); if (err != VIENNAGRID_SUCCESS) return err;
+
+  viennagrid_int num_components;
+  err = viennagrid_quantity_field_values_per_quantity_get(field, &num_components); if (err != VIENNAGRID_SUCCESS) return err;
+
+  if (num_components > 0)
+  {
+    writer << "    <DataArray type=\"Float32\" Name=\"" << quantity_name << "\" NumberOfComponents=\"" << num_components << "\" format=\"ascii\">" << std::endl;
+
+    viennagrid_int *elements_begin, *elements_end;
+    err = viennagrid_mesh_elements_get(mesh, element_dimension, &elements_begin, &elements_end); if (err != VIENNAGRID_SUCCESS) return err;
+
+    for (viennagrid_int *eit = elements_begin; eit != elements_end; ++eit)
+    {
+      viennagrid_numeric *value;
+      err = viennagrid_quantity_field_value_get(field, *eit, reinterpret_cast<void**>(&value));if (err != VIENNAGRID_SUCCESS) return err;
+
+      writer << value[0] << " ";
+      if (num_components > 1)
+      {
+        writer << value[1] << " ";
+
+        // Vector data is always written with three components:
+        if (num_components > 2)
+          writer << value[2] << " ";
+        else
+          writer << "0 ";
+      }
+    }
+    writer << std::endl;
+
+    writer << "    </DataArray>" << std::endl;
+  }
+
+  return VIENNAGRID_SUCCESS;
+} //writeElementData
+
+
 
 /** @brief Writes the mesh's cells to the file */
 static viennagrid_error writeCells(viennagrid_mesh mesh, std::ofstream & writer)
@@ -166,83 +206,11 @@ static viennagrid_error writeCells(viennagrid_mesh mesh, std::ofstream & writer)
 
 
 
-
-
-
-
-
-/** @brief Writes vector-valued data defined on vertices (points) to file * /
-template <typename RegionT, typename IOAccessorType>
-void writePointData(RegionT const &, std::ofstream & writer, std::string const & name, IOAccessorType const & accessor, region_id_type region_id)
-{
-  typedef typename IOAccessorType::value_type ValueType;
-
-  std::map< VertexIDType, ElementType > & current_used_vertex_map = used_vertex_map[region_id];
-  for (typename std::map< VertexIDType, ElementType >::iterator it = current_used_vertex_map.begin(); it != current_used_vertex_map.end(); ++it)
-  {
-    if (!accessor.valid(it->second))
-    {
-      //TODO we need some kind of reporting here
-      return;
-    }
-  }
-
-  writer << "    <DataArray type=\"" << ValueTypeInformation<ValueType>::type_name() << "\" Name=\"" << name <<
-    "\" NumberOfComponents=\"" << ValueTypeInformation<ValueType>::num_components() << "\" format=\"ascii\">" << std::endl;
-
-  for (typename std::map< VertexIDType, ElementType >::iterator it = current_used_vertex_map.begin(); it != current_used_vertex_map.end(); ++it)
-  {
-    ValueTypeInformation<ValueType>::write(writer, accessor.get(it->second));
-    writer << " ";
-  }
-  writer << std::endl;
-
-  writer << "    </DataArray>" << std::endl;
-} //writePointDataScalar
-*/
-
-/** @brief Writes vector-valued data defined on vertices (points) to file * /
-template <typename RegionT, typename IOAccessorType>
-void writeCellData(RegionT const &, std::ofstream & writer, std::string const & name, IOAccessorType const & accessor, region_id_type region_id)
-{
-  typedef typename IOAccessorType::value_type ValueType;
-
-  writer << "    <DataArray type=\"" << ValueTypeInformation<ValueType>::type_name() << "\" Name=\"" << name <<
-    "\" NumberOfComponents=\"" << ValueTypeInformation<ValueType>::num_components() << "\" format=\"ascii\">" << std::endl;
-
-
-  std::set< ElementType > & current_used_cells_map = used_cell_map[region_id];
-  for (typename std::set< ElementType >::iterator it = current_used_cells_map.begin(); it != current_used_cells_map.end(); ++it)
-
-  {
-    //step 1: Write vertex indices in ViennaGrid orientation to array:
-//           ElementType const & cell = viennagrid::dereference_handle(region, it->second);
-//             ElementType const & cell = *cit;
-
-    ValueTypeInformation<ValueType>::write(writer, accessor.get(*it));
-    writer << " ";
-  }
-  writer << std::endl;
-
-  writer << "    </DataArray>" << std::endl;
-} //writePointDataScalar
-*/
-
-
-/** @brief Writes the XML footer */
-void writeFooter(std::ofstream & writer)
-{
-  writer << " </UnstructuredGrid>" << std::endl;
-  writer << "</VTKFile>" << std::endl;
-}
-
-
-
 /** @brief Top-level function for writing to VTK.
   *
   * Current limitations: Regions are not considered, but instead the full mesh is written in a single .vtu
   */
-viennagrid_error viennagrid_mesh_io_read_vtk(viennagrid_mesh_io mesh_io, const char *filename)
+viennagrid_error viennagrid_mesh_io_write_vtk(viennagrid_mesh_io mesh_io, const char *filename)
 {
   viennagrid_error err;
 
@@ -259,57 +227,99 @@ viennagrid_error viennagrid_mesh_io_read_vtk(viennagrid_mesh_io mesh_io, const c
 
   try
   {
-    writeVTKHeader(writer);
+    writer << "<?xml version=\"1.0\"?>" << std::endl;
+    writer << "<VTKFile type=\"UnstructuredGrid\" version=\"0.1\" byte_order=\"LittleEndian\">" << std::endl;
+    writer << " <UnstructuredGrid>" << std::endl;
+
+    viennagrid_dimension cell_dim;
+    err = viennagrid_mesh_cell_dimension_get(mesh, &cell_dim); if (err != VIENNAGRID_SUCCESS) return err;
+
+    //
+    // Query vertex and cell data, determine the number of quantity fields located on vertices and cells
+    //
+    viennagrid_int fields;
+    err = viennagrid_mesh_io_quantity_field_count(mesh_io, &fields); if (err != VIENNAGRID_SUCCESS) return err;
+
+    std::vector<viennagrid_int> vertex_fields;
+    std::vector<viennagrid_int>   cell_fields;
+    for (viennagrid_int i = 0; i < fields; ++i)
+    {
+      viennagrid_quantity_field field;
+      err = viennagrid_mesh_io_quantity_field_get_by_index(mesh_io, i, &field); if (err != VIENNAGRID_SUCCESS) return err;
+
+      viennagrid_int field_values_type;
+      err = viennagrid_quantity_field_values_type_get(field, &field_values_type); if (err != VIENNAGRID_SUCCESS) return err;
+
+      // If the quantity is a scalar, we include it in the output.
+      // (Clearly we do not know here how arbitrary user-defined data can be written to file)
+      if (field_values_type == VIENNAGRID_QUANTITY_FIELD_TYPE_NUMERIC)
+      {
+        viennagrid_dimension topo_dim;
+        err = viennagrid_quantity_field_topological_dimension_get(field, &topo_dim); if (err != VIENNAGRID_SUCCESS) return err;
+
+        if (topo_dim == 0)
+          vertex_fields.push_back(i);
+        else if (topo_dim == cell_dim)
+          cell_fields.push_back(i);
+      }
+    }
+
+    viennagrid_int *vertex_begin, *vertex_end;
+    err = viennagrid_mesh_elements_get(mesh, 0, &vertex_begin, &vertex_end); if (err != VIENNAGRID_SUCCESS) return err;
+
+    viennagrid_int *cell_begin, *cell_end;
+    err = viennagrid_mesh_elements_get(mesh, cell_dim, &cell_begin, &cell_end); if (err != VIENNAGRID_SUCCESS) return err;
+
+    writer << "  <Piece NumberOfPoints=\""
+           << (vertex_end - vertex_begin)
+           << "\" NumberOfCells=\""
+           << (cell_end - cell_begin)
+           << "\">" << std::endl;
+
+    err = writePoints(mesh, writer); if (err != VIENNAGRID_SUCCESS) return err;
+
+    if (vertex_fields.size() > 0)
+    {
+      writer << "   <PointData>" << std::endl;
+      for (std::size_t i=0; i<vertex_fields.size(); ++i)
+      {
+        viennagrid_quantity_field field;
+        err = viennagrid_mesh_io_quantity_field_get_by_index(mesh_io, vertex_fields[i], &field); if (err != VIENNAGRID_SUCCESS) return err;
+
+        err = writeElementData(mesh, writer, field, 0); if (err != VIENNAGRID_SUCCESS) return err;
+      }
+      writer << "   </PointData>" << std::endl;
+    }
+
+    //
+    // Write cells and cell data:
+    //
+    writeCells(mesh, writer);
+
+    if (cell_fields.size() > 0)
+    {
+      writer << "   <CellData>" << std::endl;
+      for (std::size_t i=0; i<cell_fields.size(); ++i)
+      {
+        viennagrid_quantity_field field;
+        err = viennagrid_mesh_io_quantity_field_get_by_index(mesh_io, cell_fields[i], &field); if (err != VIENNAGRID_SUCCESS) return err;
+
+        err = writeElementData(mesh, writer, field, cell_dim); if (err != VIENNAGRID_SUCCESS) return err;
+      }
+      writer << "   </CellData>" << std::endl;
+    }
+
+    //
+    // Final bits:
+    //
+    writer << "  </Piece>" << std::endl;
+    writer << " </UnstructuredGrid>" << std::endl;
+    writer << "</VTKFile>" << std::endl;
   }
   catch (std::exception & e)
   {
     return VIENNAGRID_ERROR_WRITE_ERROR;
   }
-
-  viennagrid_dimension cell_dim;
-  err = viennagrid_mesh_cell_dimension_get(mesh, &cell_dim); if (err != VIENNAGRID_SUCCESS) return err;
-
-  viennagrid_int *vertex_begin, *vertex_end;
-  err = viennagrid_mesh_elements_get(mesh, 0, &vertex_begin, &vertex_end); if (err != VIENNAGRID_SUCCESS) return err;
-
-  viennagrid_int *cell_begin, *cell_end;
-  err = viennagrid_mesh_elements_get(mesh, cell_dim, &cell_begin, &cell_end); if (err != VIENNAGRID_SUCCESS) return err;
-
-  writer << "  <Piece NumberOfPoints=\""
-         << (vertex_end - vertex_begin)
-         << "\" NumberOfCells=\""
-         << (cell_end - cell_begin)
-         << "\">" << std::endl;
-
-  writePoints(mesh, writer);
-
-  /*if (vertex_scalar_data.size() > 0 || vertex_vector_data.size() > 0)
-  {
-    writer << "   <PointData>" << std::endl;
-
-      for (typename VertexScalarOutputAccessorContainer::const_iterator it = vertex_scalar_data.begin(); it != vertex_scalar_data.end(); ++it)
-        writePointData( mesh_obj, writer, it->first, *(it->second), tmp_id );
-      for (typename VertexVectorOutputAccessorContainer::const_iterator it = vertex_vector_data.begin(); it != vertex_vector_data.end(); ++it)
-        writePointData( mesh_obj, writer, it->first, *(it->second), tmp_id );
-
-    writer << "   </PointData>" << std::endl;
-  } */
-
-  writeCells(mesh, writer);
-  /*if (cell_scalar_data.size() > 0 || cell_vector_data.size() > 0)
-  {
-    writer << "   <CellData>" << std::endl;
-
-      for (typename CellScalarOutputAccessorContainer::const_iterator it = cell_scalar_data.begin(); it != cell_scalar_data.end(); ++it)
-        writeCellData( mesh_obj, writer, it->first, *(it->second), tmp_id );
-      for (typename CellVectorOutputAccessorContainer::const_iterator it = cell_vector_data.begin(); it != cell_vector_data.end(); ++it)
-        writeCellData( mesh_obj, writer, it->first, *(it->second), tmp_id );
-
-    writer << "   </CellData>" << std::endl;
-  }*/
-
-  writer << "  </Piece>" << std::endl;
-  writeFooter(writer);
 
   return VIENNAGRID_SUCCESS;
 }
