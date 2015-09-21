@@ -31,8 +31,8 @@ void viennagrid_element_buffer::make_boundary(viennagrid_element_id element_id, 
       viennagrid_element_id * line_ids = boundary_begin(element_id, 1);
 
       line_ids[0] = mesh_hierarchy->get_make_line(vertex_ids, 0, 1, mesh);
-      line_ids[1] = mesh_hierarchy->get_make_line(vertex_ids, 1, 2, mesh);
-      line_ids[2] = mesh_hierarchy->get_make_line(vertex_ids, 2, 0, mesh);
+      line_ids[1] = mesh_hierarchy->get_make_line(vertex_ids, 0, 2, mesh);
+      line_ids[2] = mesh_hierarchy->get_make_line(vertex_ids, 1, 2, mesh);
 
       break;
     }
@@ -108,20 +108,20 @@ void viennagrid_element_buffer::make_boundary(viennagrid_element_id element_id, 
       viennagrid_element_id * triquad_ids = boundary_begin(element_id, 2);
 
       line_ids[0] = mesh_hierarchy->get_make_line(vertex_ids, 0, 1, mesh);
-      line_ids[1] = mesh_hierarchy->get_make_line(vertex_ids, 1, 2, mesh);
-      line_ids[2] = mesh_hierarchy->get_make_line(vertex_ids, 2, 0, mesh);
-      line_ids[3] = mesh_hierarchy->get_make_line(vertex_ids, 0, 3, mesh);
+      line_ids[1] = mesh_hierarchy->get_make_line(vertex_ids, 0, 2, mesh);
+      line_ids[2] = mesh_hierarchy->get_make_line(vertex_ids, 0, 3, mesh);
+      line_ids[3] = mesh_hierarchy->get_make_line(vertex_ids, 1, 2, mesh);
       line_ids[4] = mesh_hierarchy->get_make_line(vertex_ids, 1, 4, mesh);
       line_ids[5] = mesh_hierarchy->get_make_line(vertex_ids, 2, 5, mesh);
       line_ids[6] = mesh_hierarchy->get_make_line(vertex_ids, 3, 4, mesh);
-      line_ids[7] = mesh_hierarchy->get_make_line(vertex_ids, 4, 5, mesh);
-      line_ids[8] = mesh_hierarchy->get_make_line(vertex_ids, 5, 3, mesh);
+      line_ids[7] = mesh_hierarchy->get_make_line(vertex_ids, 3, 5, mesh);
+      line_ids[8] = mesh_hierarchy->get_make_line(vertex_ids, 4, 5, mesh);
 
-      triquad_ids[0] = mesh_hierarchy->get_make_triangle(vertex_ids, 0, 1, 2, line_ids, 0, 1, 2, mesh);
-      triquad_ids[1] = mesh_hierarchy->get_make_quadrilateral(vertex_ids, 0, 2, 3, 5, line_ids, 2, 3, 5, 8, mesh);
-      triquad_ids[2] = mesh_hierarchy->get_make_quadrilateral(vertex_ids, 2, 1, 5, 4, line_ids, 1, 5, 4, 7, mesh);
-      triquad_ids[3] = mesh_hierarchy->get_make_quadrilateral(vertex_ids, 1, 0, 4, 3, line_ids, 0, 4, 3, 6, mesh);
-      triquad_ids[4] = mesh_hierarchy->get_make_triangle(vertex_ids, 3, 5, 4, line_ids, 8, 7, 6, mesh);
+      triquad_ids[0] = mesh_hierarchy->get_make_triangle(vertex_ids, 0, 1, 2, line_ids, 0, 1, 3, mesh);
+      triquad_ids[1] = mesh_hierarchy->get_make_quadrilateral(vertex_ids, 0, 2, 3, 5, line_ids, 1, 2, 5, 7, mesh);
+      triquad_ids[2] = mesh_hierarchy->get_make_quadrilateral(vertex_ids, 2, 1, 5, 4, line_ids, 3, 5, 4, 8, mesh);
+      triquad_ids[3] = mesh_hierarchy->get_make_quadrilateral(vertex_ids, 1, 0, 4, 3, line_ids, 0, 4, 2, 6, mesh);
+      triquad_ids[4] = mesh_hierarchy->get_make_triangle(vertex_ids, 3, 5, 4, line_ids, 7, 8, 6, mesh);
 
       break;
     }
@@ -134,18 +134,18 @@ void viennagrid_element_buffer::make_boundary(viennagrid_element_id element_id, 
 
       line_ids[0] = mesh_hierarchy->get_make_line(vertex_ids, 0, 1, mesh);
       line_ids[1] = mesh_hierarchy->get_make_line(vertex_ids, 0, 2, mesh);
-      line_ids[2] = mesh_hierarchy->get_make_line(vertex_ids, 1, 3, mesh);
-      line_ids[3] = mesh_hierarchy->get_make_line(vertex_ids, 2, 3, mesh);
-      line_ids[4] = mesh_hierarchy->get_make_line(vertex_ids, 0, 4, mesh);
-      line_ids[5] = mesh_hierarchy->get_make_line(vertex_ids, 1, 4, mesh);
+      line_ids[2] = mesh_hierarchy->get_make_line(vertex_ids, 0, 4, mesh);
+      line_ids[3] = mesh_hierarchy->get_make_line(vertex_ids, 1, 3, mesh);
+      line_ids[4] = mesh_hierarchy->get_make_line(vertex_ids, 1, 4, mesh);
+      line_ids[5] = mesh_hierarchy->get_make_line(vertex_ids, 2, 3, mesh);
       line_ids[6] = mesh_hierarchy->get_make_line(vertex_ids, 2, 4, mesh);
       line_ids[7] = mesh_hierarchy->get_make_line(vertex_ids, 3, 4, mesh);
 
-      triquad_ids[0] = mesh_hierarchy->get_make_quadrilateral(vertex_ids, 1, 0, 3, 2, line_ids, 0, 2, 1, 3, mesh);
-      triquad_ids[1] = mesh_hierarchy->get_make_triangle(vertex_ids, 0, 1, 4, line_ids, 0, 5, 4, mesh);
-      triquad_ids[2] = mesh_hierarchy->get_make_triangle(vertex_ids, 2, 0, 4, line_ids, 1, 4, 6, mesh);
-      triquad_ids[3] = mesh_hierarchy->get_make_triangle(vertex_ids, 1, 3, 4, line_ids, 2, 7, 5, mesh);
-      triquad_ids[4] = mesh_hierarchy->get_make_triangle(vertex_ids, 3, 2, 4, line_ids, 3, 6, 7, mesh);
+      triquad_ids[0] = mesh_hierarchy->get_make_quadrilateral(vertex_ids, 1, 0, 3, 2, line_ids, 0, 2, 3, 5, mesh);
+      triquad_ids[1] = mesh_hierarchy->get_make_triangle(vertex_ids, 0, 1, 4, line_ids, 0, 4, 2, mesh);
+      triquad_ids[2] = mesh_hierarchy->get_make_triangle(vertex_ids, 2, 0, 4, line_ids, 1, 2, 6, mesh);
+      triquad_ids[3] = mesh_hierarchy->get_make_triangle(vertex_ids, 1, 3, 4, line_ids, 3, 7, 4, mesh);
+      triquad_ids[4] = mesh_hierarchy->get_make_triangle(vertex_ids, 3, 2, 4, line_ids, 5, 6, 7, mesh);
 
       break;
     }
