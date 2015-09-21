@@ -411,28 +411,31 @@ VIENNAGRID_DYNAMIC_EXPORT viennagrid_error viennagrid_element_centroid(viennagri
     if (err != VIENNAGRID_SUCCESS)
       return err;
 
-    viennagrid_int *vertex_ids_begin, *vertex_ids_end;
-    err = viennagrid_mesh_elements_get(mesh, 0, &vertex_ids_begin, &vertex_ids_end);
-    if (err != VIENNAGRID_SUCCESS)
-      return err;
-
-    std::vector<viennagrid_numeric *> point_coords(vertex_ids_end - vertex_ids_begin);
-    for (viennagrid_int *it = vertex_ids_begin; it<vertex_ids_end; ++it)
-    {
-      err = viennagrid_mesh_vertex_coords_get(mesh, *it, &(point_coords[it - vertex_ids_begin]));
-      if (err != VIENNAGRID_SUCCESS)
-        return err;
-    }
-
     if (element_type == VIENNAGRID_ELEMENT_TYPE_VERTEX)
     {
+      viennagrid_numeric * point_coords;
+      err = viennagrid_mesh_vertex_coords_get(mesh, element_id, &point_coords); if (err != VIENNAGRID_SUCCESS) return err;
+
       for (viennagrid_dimension d = 0; d<dim; ++d)
-        coords[+d] = point_coords[0][+d];
+        coords[+d] = point_coords[+d];
     }
     else if (   (element_type == VIENNAGRID_ELEMENT_TYPE_LINE)        || (element_type == VIENNAGRID_ELEMENT_TYPE_EDGE)
              || (element_type == VIENNAGRID_ELEMENT_TYPE_TRIANGLE)    || (element_type == VIENNAGRID_ELEMENT_TYPE_QUADRILATERAL)
              || (element_type == VIENNAGRID_ELEMENT_TYPE_TETRAHEDRON) || (element_type == VIENNAGRID_ELEMENT_TYPE_HEXAHEDRON) )
     {
+      viennagrid_int *vertex_ids_begin, *vertex_ids_end;
+      err = viennagrid_element_boundary_elements(mesh, element_id, 0, &vertex_ids_begin, &vertex_ids_end);
+      if (err != VIENNAGRID_SUCCESS)
+        return err;
+
+      std::vector<viennagrid_numeric *> point_coords(vertex_ids_end - vertex_ids_begin);
+      for (viennagrid_int *it = vertex_ids_begin; it<vertex_ids_end; ++it)
+      {
+        err = viennagrid_mesh_vertex_coords_get(mesh, *it, &(point_coords[it - vertex_ids_begin]));
+        if (err != VIENNAGRID_SUCCESS)
+          return err;
+      }
+
       for (viennagrid_dimension d = 0; d<dim; ++d)
         coords[+d] = 0;
 
