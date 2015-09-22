@@ -108,25 +108,44 @@ viennagrid_error viennagrid_plc_geometric_dimension_set(viennagrid_plc plc,
 }
 
 viennagrid_error viennagrid_plc_element_count(viennagrid_plc plc,
-                                              viennagrid_dimension topologic_dimension,
+                                              viennagrid_dimension topological_dimension,
                                               viennagrid_int * element_count)
 {
   if (!plc)                                                         return VIENNAGRID_ERROR_INVALID_PLC;
-  if (!viennagrid_topological_dimension_valid(topologic_dimension)) return VIENNAGRID_ERROR_INVALID_TOPOLOGIC_DIMENSION;
+  if (!viennagrid_topological_dimension_valid(topological_dimension)) return VIENNAGRID_ERROR_INVALID_TOPOLOGIC_DIMENSION;
 
   if (element_count)
-    *element_count = plc->element_count(topologic_dimension);
+    *element_count = plc->element_count(topological_dimension);
 
   return VIENNAGRID_SUCCESS;
 }
 
+
+viennagrid_error viennagrid_plc_elements_get(viennagrid_plc plc,
+                                             viennagrid_dimension topological_dimension,
+                                             viennagrid_element_id * start_id,
+                                             viennagrid_element_id * end_id)
+{
+  if (!plc)                                                           return VIENNAGRID_ERROR_INVALID_PLC;
+  if (!viennagrid_topological_dimension_valid(topological_dimension)) return VIENNAGRID_ERROR_INVALID_TOPOLOGIC_DIMENSION;
+
+  if (start_id)
+    *start_id = ID(topological_dimension, 0);
+
+  if (end_id)
+    *end_id = ID(topological_dimension, plc->element_count(topological_dimension));
+
+  return VIENNAGRID_SUCCESS;
+}
+
+
 viennagrid_error viennagrid_plc_vertex_create(viennagrid_plc plc,
                                               const viennagrid_numeric * coords,
-                                              viennagrid_int * vertex_id)
+                                              viennagrid_element_id * vertex_id)
 {
   if (!plc) return VIENNAGRID_ERROR_INVALID_PLC;
 
-  viennagrid_int id = plc->make_vertex(coords);
+  viennagrid_element_id id = plc->make_vertex(coords);
 
   if (vertex_id)
     *vertex_id = id;
@@ -213,22 +232,20 @@ viennagrid_error viennagrid_plc_boundary_element_pointer(viennagrid_plc plc,
 
 
 viennagrid_error viennagrid_plc_boundary_elements(viennagrid_plc plc,
-                                                  viennagrid_dimension element_topological_dimension,
-                                                  viennagrid_int element_id,
+                                                  viennagrid_element_id element_id,
                                                   viennagrid_dimension boundary_topological_dimension,
                                                   viennagrid_int ** boundary_element_ids_begin,
                                                   viennagrid_int ** boundary_element_ids_end)
 {
-  if (!plc)                                                                                      return VIENNAGRID_ERROR_INVALID_PLC;
-  if (!viennagrid_topological_dimension_valid(element_topological_dimension))                                 return VIENNAGRID_ERROR_INVALID_TOPOLOGIC_DIMENSION;
-  if ((element_id < 0) || (element_id >= plc->element_count(element_topological_dimension)))                  return VIENNAGRID_ERROR_INVALID_ELEMENT_ID;
-  if (!viennagrid_topological_dimension_valid(boundary_topological_dimension))                                return VIENNAGRID_ERROR_INVALID_TOPOLOGIC_DIMENSION;
+  if (!plc)                                                                    return VIENNAGRID_ERROR_INVALID_PLC;
+  if (!plc->element_id_valid(element_id))                                      return VIENNAGRID_ERROR_INVALID_ELEMENT_ID;
+  if (!viennagrid_topological_dimension_valid(boundary_topological_dimension)) return VIENNAGRID_ERROR_INVALID_TOPOLOGIC_DIMENSION;
 
   if (boundary_element_ids_begin)
-    *boundary_element_ids_begin = plc->boundary_begin(element_topological_dimension, element_id, boundary_topological_dimension);
+    *boundary_element_ids_begin = plc->boundary_begin(element_id, boundary_topological_dimension);
 
   if (boundary_element_ids_end)
-    *boundary_element_ids_end = plc->boundary_end(element_topological_dimension, element_id, boundary_topological_dimension);
+    *boundary_element_ids_end = plc->boundary_end(element_id, boundary_topological_dimension);
 
   return VIENNAGRID_SUCCESS;
 }
@@ -237,8 +254,8 @@ viennagrid_error viennagrid_plc_facet_hole_point_add(viennagrid_plc plc,
                                                      viennagrid_int facet_id,
                                                      const viennagrid_numeric * coords)
 {
-  if (!plc)                                                  return VIENNAGRID_ERROR_INVALID_PLC;
-  if ((facet_id < 0) || (facet_id >= plc->element_count(2))) return VIENNAGRID_ERROR_INVALID_ELEMENT_ID;
+  if (!plc)                             return VIENNAGRID_ERROR_INVALID_PLC;
+  if (!plc->element_id_valid(facet_id)) return VIENNAGRID_ERROR_INVALID_ELEMENT_ID;
 
   plc->add_facet_hole_point(facet_id, coords);
 
@@ -250,7 +267,7 @@ viennagrid_error viennagrid_plc_facet_hole_point_delete(viennagrid_plc plc,
                                                         viennagrid_int point_id)
 {
   if (!plc)                                                                  return VIENNAGRID_ERROR_INVALID_PLC;
-  if ((facet_id < 0) || (facet_id >= plc->element_count(2)))                 return VIENNAGRID_ERROR_INVALID_ELEMENT_ID;
+  if (!plc->element_id_valid(facet_id))                                      return VIENNAGRID_ERROR_INVALID_ELEMENT_ID;
   if ((point_id < 0) || (point_id >= plc->facet_hole_point_count(facet_id))) return VIENNAGRID_ERROR_INVALID_FACET_HOLE_POINT_INDEX;
 
   plc->delete_facet_hole_point(facet_id, point_id);
@@ -263,8 +280,8 @@ viennagrid_error viennagrid_plc_facet_hole_points_get(viennagrid_plc plc,
                                                       viennagrid_int * hole_point_count,
                                                       viennagrid_numeric ** coords)
 {
-  if (!plc)                                                  return VIENNAGRID_ERROR_INVALID_PLC;
-  if ((facet_id < 0) || (facet_id >= plc->element_count(2))) return VIENNAGRID_ERROR_INVALID_ELEMENT_ID;
+  if (!plc)                             return VIENNAGRID_ERROR_INVALID_PLC;
+  if (!plc->element_id_valid(facet_id)) return VIENNAGRID_ERROR_INVALID_ELEMENT_ID;
 
   if (coords)
     *coords = plc->facet_hole_points(facet_id);
@@ -369,7 +386,7 @@ viennagrid_error viennagrid_plc_line_refine(viennagrid_plc plc,
   {
     viennagrid_int * vertices_begin;
     viennagrid_int * vertices_end;
-    viennagrid_plc_boundary_elements(plc, 1, line_id, 0, &vertices_begin, &vertices_end);
+    viennagrid_plc_boundary_elements(plc, line_id, 0, &vertices_begin, &vertices_end);
 
     viennagrid_int v0 = *(vertices_begin+0);
     viennagrid_int v1 = *(vertices_begin+1);
@@ -459,7 +476,7 @@ viennagrid_error viennagrid_plc_line_refine(viennagrid_plc plc,
 
     viennagrid_int * lines_begin;
     viennagrid_int * lines_end;
-    viennagrid_plc_boundary_elements(plc, 2, facet_id, 1, &lines_begin, &lines_end);
+    viennagrid_plc_boundary_elements(plc, facet_id, 1, &lines_begin, &lines_end);
 
     for (viennagrid_int * line_it = lines_begin; line_it != lines_end; ++line_it)
     {
@@ -509,15 +526,15 @@ void viennagrid_plc_::set_geometric_dimension(viennagrid_dimension geometric_dim
   vertex_buffer.resize( geometric_dimension() * vertex_count );
 }
 
-viennagrid_int viennagrid_plc_::element_count(int topologic_dimension)
+viennagrid_int viennagrid_plc_::element_count(int topological_dimension) const
 {
-  if (topologic_dimension == 0)
+  if (topological_dimension == 0)
     return vertex_count();
 
-  if (topologic_dimension == 1)
+  if (topological_dimension == 1)
     return line_vertices_.size();
 
-  if (topologic_dimension == 2)
+  if (topological_dimension == 2)
     return facet_vertices_.size();
 
   assert(false);
@@ -526,7 +543,7 @@ viennagrid_int viennagrid_plc_::element_count(int topologic_dimension)
 
 
 
-viennagrid_int viennagrid_plc_::get_make_line(viennagrid_int vertex_id0, viennagrid_int vertex_id1)
+viennagrid_element_id viennagrid_plc_::get_make_line(viennagrid_element_id vertex_id0, viennagrid_element_id vertex_id1)
 {
   if (vertex_id1 < vertex_id0)
     std::swap(vertex_id0, vertex_id1);
@@ -536,18 +553,18 @@ viennagrid_int viennagrid_plc_::get_make_line(viennagrid_int vertex_id0, viennag
     viennagrid_int * vptr = line_vertices_.begin(i);
 
     if ( (vertex_id0 == *vptr) && (vertex_id1 == *(vptr+1)) )
-      return i;
+      return ID(1, i);
   }
 
   viennagrid_int id = line_vertices_.size();
   viennagrid_int * vptr = line_vertices_.push_back(2);
   *vptr = vertex_id0;
   *(vptr+1) = vertex_id1;
-  return id;
+  return ID(1, id);
 }
 
 
-viennagrid_int viennagrid_plc_::get_make_facet(viennagrid_int line_count, viennagrid_int * line_ids)
+viennagrid_element_id viennagrid_plc_::get_make_facet(viennagrid_int line_count, viennagrid_element_id * line_ids)
 {
   std::vector<viennagrid_int> sorted_line_ids(line_count);
   std::copy(line_ids, line_ids+line_count, sorted_line_ids.begin());
@@ -569,7 +586,7 @@ viennagrid_int viennagrid_plc_::get_make_facet(viennagrid_int line_count, vienna
     }
 
     if (j == line_count)
-      return id;
+      return ID(2, id);
   }
 
   viennagrid_int id = facet_lines_.size();
@@ -579,8 +596,8 @@ viennagrid_int viennagrid_plc_::get_make_facet(viennagrid_int line_count, vienna
   std::set<viennagrid_int> vertices;
   for (int i = 0; i != line_count; ++i)
   {
-    viennagrid_int * vptr_begin = boundary_begin(1, sorted_line_ids[i], 0);
-    viennagrid_int * vptr_end = boundary_end(1, sorted_line_ids[i], 0);
+    viennagrid_int * vptr_begin = boundary_begin(sorted_line_ids[i], 0);
+    viennagrid_int * vptr_end = boundary_end(sorted_line_ids[i], 0);
 
     for (viennagrid_int * vptr = vptr_begin; vptr != vptr_end; ++vptr)
       vertices.insert(*vptr);
@@ -590,16 +607,16 @@ viennagrid_int viennagrid_plc_::get_make_facet(viennagrid_int line_count, vienna
 
   facet_hole_points_.push_back(0);
 
-  return id;
+  return ID(2, id);
 }
 
 
 
 
-viennagrid_int * viennagrid_plc_::boundary_ptr(viennagrid_dimension topologic_dimension,
-                                               viennagrid_dimension boundary_topologic_dimension)
+viennagrid_element_id * viennagrid_plc_::boundary_ptr(viennagrid_dimension topological_dimension,
+                                                      viennagrid_dimension boundary_topological_dimension)
 {
-  switch (topologic_dimension)
+  switch (topological_dimension)
   {
     case 1:
     {
@@ -608,7 +625,7 @@ viennagrid_int * viennagrid_plc_::boundary_ptr(viennagrid_dimension topologic_di
 
     case 2:
     {
-      switch (boundary_topologic_dimension)
+      switch (boundary_topological_dimension)
       {
         case 0:
           return facet_vertices_.values_pointer();
@@ -622,10 +639,10 @@ viennagrid_int * viennagrid_plc_::boundary_ptr(viennagrid_dimension topologic_di
   return 0;
 }
 
-viennagrid_int * viennagrid_plc_::boundary_offsets(viennagrid_dimension topologic_dimension,
-                                  viennagrid_dimension boundary_topologic_dimension)
+viennagrid_int * viennagrid_plc_::boundary_offsets(viennagrid_dimension topological_dimension,
+                                  viennagrid_dimension boundary_topological_dimension)
 {
-  switch (topologic_dimension)
+  switch (topological_dimension)
   {
     case 1:
     {
@@ -634,7 +651,7 @@ viennagrid_int * viennagrid_plc_::boundary_offsets(viennagrid_dimension topologi
 
     case 2:
     {
-      switch (boundary_topologic_dimension)
+      switch (boundary_topological_dimension)
       {
         case 0:
           return facet_vertices_.offset_pointer();
@@ -653,25 +670,24 @@ viennagrid_int * viennagrid_plc_::boundary_offsets(viennagrid_dimension topologi
 
 
 
-viennagrid_int * viennagrid_plc_::boundary_begin(viennagrid_dimension topologic_dimension,
-                                  viennagrid_int id,
-                                  viennagrid_dimension boundary_topologic_dimension)
+viennagrid_element_id * viennagrid_plc_::boundary_begin(viennagrid_element_id id,
+                                                        viennagrid_dimension boundary_topological_dimension)
 {
-  switch (topologic_dimension)
+  switch (TOPODIM(id))
   {
     case 1:
     {
-      return line_vertices_.begin(id);
+      return line_vertices_.begin(INDEX(id));
     }
 
     case 2:
     {
-      switch (boundary_topologic_dimension)
+      switch (boundary_topological_dimension)
       {
         case 0:
-          return facet_vertices_.begin(id);
+          return facet_vertices_.begin(INDEX(id));
         case 1:
-          return facet_lines_.begin(id);
+          return facet_lines_.begin(INDEX(id));
       }
     }
   }
@@ -680,25 +696,24 @@ viennagrid_int * viennagrid_plc_::boundary_begin(viennagrid_dimension topologic_
   return 0;
 }
 
-viennagrid_int * viennagrid_plc_::boundary_end(viennagrid_dimension topologic_dimension,
-                                viennagrid_int id,
-                                viennagrid_dimension boundary_topologic_dimension)
+viennagrid_element_id * viennagrid_plc_::boundary_end(viennagrid_element_id id,
+                                                      viennagrid_dimension boundary_topological_dimension)
 {
-  switch (topologic_dimension)
+  switch (TOPODIM(id))
   {
     case 1:
     {
-      return line_vertices_.end(id);
+      return line_vertices_.end(INDEX(id));
     }
 
     case 2:
     {
-      switch (boundary_topologic_dimension)
+      switch (boundary_topological_dimension)
       {
         case 0:
-          return facet_vertices_.end(id);
+          return facet_vertices_.end(INDEX(id));
         case 1:
-          return facet_lines_.end(id);
+          return facet_lines_.end(INDEX(id));
       }
     }
   }

@@ -9,6 +9,7 @@
 
 #include "viennagrid/viennagrid.h"
 #include "buffer.hpp"
+#include "common.hpp"
 
 
 struct viennagrid_plc_
@@ -17,18 +18,18 @@ public:
   viennagrid_plc_() : geometric_dimension_(0), reference_counter(1) {}
 
 
-  viennagrid_dimension geometric_dimension() { return geometric_dimension_; }
+  viennagrid_dimension geometric_dimension() const { return geometric_dimension_; }
   void set_geometric_dimension(viennagrid_dimension geometric_dimension_in);
 
-  viennagrid_int element_count(int topologic_dimension);
+  viennagrid_int element_count(int topologic_dimension) const;
 
-  viennagrid_int make_vertex(const viennagrid_numeric * coords)
+  viennagrid_element_id make_vertex(const viennagrid_numeric * coords)
   {
     viennagrid_int id = vertex_count();
     vertex_buffer.resize( vertex_buffer.size() + geometric_dimension() );
     if (coords)
       std::copy(coords, coords + geometric_dimension(), get_vertex(id));
-    return id;
+    return ID(0, id);
   }
 
   viennagrid_numeric * get_vertex(viennagrid_int vertex_id)
@@ -42,46 +43,44 @@ public:
   }
 
 
-  viennagrid_int get_make_line(viennagrid_int vertex_id0, viennagrid_int vertex_id1);
-  viennagrid_int get_make_facet(viennagrid_int line_count, viennagrid_int * line_ids);
+  viennagrid_element_id get_make_line(viennagrid_int vertex_id0, viennagrid_int vertex_id1);
+  viennagrid_element_id get_make_facet(viennagrid_int line_count, viennagrid_int * line_ids);
 
 
-  viennagrid_int * boundary_ptr(viennagrid_dimension topologic_dimension,
-                                viennagrid_dimension boundary_topologic_dimension);
+  viennagrid_element_id * boundary_ptr(viennagrid_dimension topologic_dimension,
+                                       viennagrid_dimension boundary_topologic_dimension);
   viennagrid_int * boundary_offsets(viennagrid_dimension topologic_dimension,
                                     viennagrid_dimension boundary_topologic_dimension);
 
 
-  viennagrid_int * boundary_begin(viennagrid_dimension topologic_dimension,
-                                    viennagrid_int id,
-                                    viennagrid_dimension boundary_topologic_dimension);
-  viennagrid_int * boundary_end(viennagrid_dimension topologic_dimension,
-                                  viennagrid_int id,
-                                  viennagrid_dimension boundary_topologic_dimension);
+  viennagrid_element_id * boundary_begin(viennagrid_int id,
+                                         viennagrid_dimension boundary_topologic_dimension);
+  viennagrid_element_id * boundary_end(viennagrid_int id,
+                                       viennagrid_dimension boundary_topologic_dimension);
 
 
 
 
 
-  void add_facet_hole_point(viennagrid_int id, const viennagrid_numeric * coords)
+  void add_facet_hole_point(viennagrid_element_id id, const viennagrid_numeric * coords)
   {
     for (viennagrid_dimension i = 0; i != geometric_dimension(); ++i)
-      facet_hole_points_.add(id, coords[+i]);
+      facet_hole_points_.add(INDEX(id), coords[+i]);
   }
 
-  void delete_facet_hole_point(viennagrid_int id, viennagrid_int point_id)
+  void delete_facet_hole_point(viennagrid_element_id id, viennagrid_int point_id)
   {
-    facet_hole_points_.erase(id, point_id*geometric_dimension(), (point_id+1)*geometric_dimension());
+    facet_hole_points_.erase(INDEX(id), point_id*geometric_dimension(), (point_id+1)*geometric_dimension());
   }
 
-  viennagrid_int facet_hole_point_count(viennagrid_int id)
+  viennagrid_int facet_hole_point_count(viennagrid_element_id id)
   {
-    return facet_hole_points_.size(id) / geometric_dimension();
+    return facet_hole_points_.size(INDEX(id)) / geometric_dimension();
   }
 
-  viennagrid_numeric * facet_hole_points(viennagrid_int id)
+  viennagrid_numeric * facet_hole_points(viennagrid_element_id id)
   {
-    return facet_hole_points_.begin(id);
+    return facet_hole_points_.begin(INDEX(id));
   }
 
 
@@ -137,6 +136,13 @@ public:
   }
 
 
+  bool element_id_valid(viennagrid_element_id element_id) const
+  {
+    return viennagrid_topological_dimension_valid(TOPODIM(element_id)) &&
+           (INDEX(element_id) >= 0) &&
+           (INDEX(element_id) < element_count(TOPODIM(element_id)));
+  }
+
 
   void clear()
   {
@@ -157,7 +163,7 @@ public:
 
 private:
 
-  viennagrid_int vertex_count()
+  viennagrid_int vertex_count() const
   {
     return vertex_buffer.size() / geometric_dimension();
   }
@@ -165,10 +171,10 @@ private:
   std::vector<viennagrid_numeric> vertex_buffer;
   viennagrid_dimension geometric_dimension_;
 
-  dense_packed_multibuffer<viennagrid_int, viennagrid_int> line_vertices_;
+  dense_packed_multibuffer<viennagrid_int, viennagrid_element_id> line_vertices_;
 
-  dense_packed_multibuffer<viennagrid_int, viennagrid_int> facet_vertices_;
-  dense_packed_multibuffer<viennagrid_int, viennagrid_int> facet_lines_;
+  dense_packed_multibuffer<viennagrid_int, viennagrid_element_id> facet_vertices_;
+  dense_packed_multibuffer<viennagrid_int, viennagrid_element_id> facet_lines_;
   dense_packed_multibuffer<viennagrid_int, viennagrid_numeric> facet_hole_points_;
 
   std::vector<viennagrid_numeric> holes_points_;

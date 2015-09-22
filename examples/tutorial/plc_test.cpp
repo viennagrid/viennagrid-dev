@@ -100,7 +100,7 @@ int main()
   printf("All vertices of the facet\n");
   viennagrid_int * vertices_begin;
   viennagrid_int * vertices_end;
-  viennagrid_plc_boundary_elements(plc, 2, facet, 0, &vertices_begin, &vertices_end);
+  viennagrid_plc_boundary_elements(plc, facet, 0, &vertices_begin, &vertices_end);
 
   for (viennagrid_int * it = vertices_begin; it != vertices_end; ++it)
   {
@@ -113,13 +113,13 @@ int main()
   printf("All lines of the facet\n");
   viennagrid_int * lines_begin;
   viennagrid_int * lines_end;
-  viennagrid_plc_boundary_elements(plc, 2, facet, 1, &lines_begin, &lines_end);
+  viennagrid_plc_boundary_elements(plc, facet, 1, &lines_begin, &lines_end);
 
   for (viennagrid_int * it = lines_begin; it != lines_end; ++it)
   {
     viennagrid_int * vertices_on_line_begin;
     viennagrid_int * vertices_on_line_end;
-    viennagrid_plc_boundary_elements(plc, 1, *it, 0, &vertices_on_line_begin, &vertices_on_line_end);
+    viennagrid_plc_boundary_elements(plc, *it, 0, &vertices_on_line_begin, &vertices_on_line_end);
 
     printf("  [line %d: %d, %d]\n", *it, *vertices_on_line_begin, *(vertices_on_line_begin+1));
   }

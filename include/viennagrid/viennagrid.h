@@ -1035,10 +1035,16 @@ VIENNAGRID_DYNAMIC_EXPORT viennagrid_error viennagrid_plc_element_count(viennagr
                                                                         viennagrid_dimension topological_dimension,
                                                                         viennagrid_int * element_count);
 
+/* queries the element IDs for all elements of a specific topological dimension */
+VIENNAGRID_DYNAMIC_EXPORT viennagrid_error viennagrid_plc_elements_get(viennagrid_plc plc,
+                                                                       viennagrid_dimension topological_dimension,
+                                                                       viennagrid_element_id * start_id,
+                                                                       viennagrid_element_id * end_id);
+
 /* creates a vertex in a PLC, the created vertex ID is returned (optional, ignored if vertex_id is NULL) */
 VIENNAGRID_DYNAMIC_EXPORT viennagrid_error viennagrid_plc_vertex_create(viennagrid_plc plc,
                                                                         const viennagrid_numeric * coords,
-                                                                        viennagrid_int * vertex_id);
+                                                                        viennagrid_element_id * vertex_id);
 /* gets the coordinates pointer of a PLC */
 VIENNAGRID_DYNAMIC_EXPORT viennagrid_error viennagrid_plc_vertex_coords_pointer(viennagrid_plc plc,
                                                                                 viennagrid_numeric ** coords);
@@ -1049,14 +1055,14 @@ VIENNAGRID_DYNAMIC_EXPORT viennagrid_error viennagrid_plc_vertex_coords_get(vien
 
 /* creates a line in a PLC using two vertex IDs, the created line ID is returned (optional, ignored if line_id is NULL) */
 VIENNAGRID_DYNAMIC_EXPORT viennagrid_error viennagrid_plc_line_create(viennagrid_plc plc,
-                                                                      viennagrid_int vertex_id0,
-                                                                      viennagrid_int vertex_id1,
-                                                                      viennagrid_int * line_id);
+                                                                      viennagrid_element_id vertex_id0,
+                                                                      viennagrid_element_id vertex_id1,
+                                                                      viennagrid_element_id * line_id);
 /* creates a line in a PLC using a buffer of line IDs, the created facet ID is returned (optional, ignored if facet_id is NULL) */
 VIENNAGRID_DYNAMIC_EXPORT viennagrid_error viennagrid_plc_facet_create(viennagrid_plc plc,
                                                                        viennagrid_int line_count,
-                                                                       viennagrid_int * line_ids,
-                                                                       viennagrid_int * facet_id);
+                                                                       viennagrid_element_id * line_ids,
+                                                                       viennagrid_element_id * facet_id);
 
 
 /* gets the boundary element pointers of a specific topological dimension for a given boundary topological dimension */
@@ -1064,27 +1070,26 @@ VIENNAGRID_DYNAMIC_EXPORT viennagrid_error viennagrid_plc_boundary_element_point
                                                                                    viennagrid_dimension topological_dimension,
                                                                                    viennagrid_dimension boundary_topological_dimension,
                                                                                    viennagrid_int ** boundary_element_offsets,
-                                                                                   viennagrid_int ** boundary_element_ptr);
+                                                                                   viennagrid_element_id ** boundary_element_ptr);
 
 /* get the boundary elements of a specific element given a boundary topological dimension */
 VIENNAGRID_DYNAMIC_EXPORT viennagrid_error viennagrid_plc_boundary_elements(viennagrid_plc plc,
-                                                                            viennagrid_dimension topological_dimension,
-                                                                            viennagrid_int element_id,
+                                                                            viennagrid_element_id element_id,
                                                                             viennagrid_dimension boundary_topological_dimension,
-                                                                            viennagrid_int ** boundary_element_ids_begin,
-                                                                            viennagrid_int ** boundary_element_ids_end);
+                                                                            viennagrid_element_id ** boundary_element_ids_begin,
+                                                                            viennagrid_element_id ** boundary_element_ids_end);
 
 /* adds a hole point to a given facet */
 VIENNAGRID_DYNAMIC_EXPORT viennagrid_error viennagrid_plc_facet_hole_point_add(viennagrid_plc plc,
-                                                                               viennagrid_int facet_id,
+                                                                               viennagrid_element_id facet_id,
                                                                                const viennagrid_numeric * coords);
 /* deletes a hole point from a given facet */
 VIENNAGRID_DYNAMIC_EXPORT viennagrid_error viennagrid_plc_facet_hole_point_delete(viennagrid_plc plc,
-                                                                                  viennagrid_int facet_id,
+                                                                                  viennagrid_element_id facet_id,
                                                                                   viennagrid_int point_id);
 /* gets the coordinates and the count of a all hole points on a facet */
 VIENNAGRID_DYNAMIC_EXPORT viennagrid_error viennagrid_plc_facet_hole_points_get(viennagrid_plc plc,
-                                                                                viennagrid_int facet_id,
+                                                                                viennagrid_element_id facet_id,
                                                                                 viennagrid_int * hole_point_count,
                                                                                 viennagrid_numeric ** coords);
 
