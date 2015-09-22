@@ -242,7 +242,7 @@ viennagrid_element_id viennagrid_element_buffer::make_elements(viennagrid_int el
   element_count += element_count_;
 
   element_types.resize( element_count_ );
-  std::copy( element_types_, element_types_+element_count_, element_types.begin()+first_id );
+  std::copy( element_types_, element_types_+element_count_, element_types.begin()+INDEX(first_id) );
 
   boundary_buffer(0).push_back(element_count_, element_vertex_index_offsets_, element_vertex_indices_);
 
