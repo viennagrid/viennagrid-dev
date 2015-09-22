@@ -8,10 +8,10 @@ namespace viennagrid
   inline point get_point(viennagrid_plc plc, viennagrid_int vertex_id)
   {
     viennagrid_dimension geometric_dimension;
-    viennagrid_plc_geometric_dimension_get(plc, &geometric_dimension);
+    THROW_ON_ERROR( viennagrid_plc_geometric_dimension_get(plc, &geometric_dimension) );
 
     viennagrid_numeric * coords;
-    viennagrid_plc_vertex_coords_get(plc, vertex_id, &coords);
+    THROW_ON_ERROR( viennagrid_plc_vertex_coords_get(plc, vertex_id, &coords) );
 
     point tmp(geometric_dimension);
     std::copy( coords, coords+geometric_dimension, &tmp[0] );

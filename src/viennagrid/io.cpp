@@ -115,7 +115,7 @@ viennagrid_error viennagrid_mesh_io_quantity_field_set(viennagrid_mesh_io mesh_i
   if (!quantity_field_name) return VIENNAGRID_ERROR_INVALID_QUANTITY_FIELD_NAME;
 
   viennagrid_quantity_field qf = mesh_io->get_quantity_field(quantity_field_name);
-  if (qf)                   return VIENNAGRID_ERROR_INVALID_QUANTITY_FIELD_NAME;
+  if (qf)                   return VIENNAGRID_ERROR_QUANTITY_FIELD_NAME_ALREADY_IN_USE;
 
   mesh_io->set_quantity_field( quantity_field_name, quantity_field );
 

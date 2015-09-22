@@ -42,6 +42,120 @@ const char * viennagrid_element_type_string(viennagrid_element_type element_type
 
 
 
+const char * viennagrid_error_string(viennagrid_error error)
+{
+  switch (error)
+  {
+    case VIENNAGRID_ERROR_UNSPECIFIED_ERROR:
+      return "unspecified error";
+    case VIENNAGRID_ERROR_OUT_OF_MEMORY:
+      return "out of memory";
+    case VIENNAGRID_ERROR_INVALID_ARGUMENTS:
+      return "invalid arguments";
+    case VIENNAGRID_ERROR_INVALID_MESH:
+      return "invalid mesh";
+    case VIENNAGRID_ERROR_INVALID_REGION:
+      return "invalid region";
+    case VIENNAGRID_ERROR_INVALID_CHILD_MESH_INDEX:
+      return "invalid child mesh index";
+    case VIENNAGRID_ERROR_INVALID_TOPOLOGICAL_DIMENSION:
+      return "invalid topological dimension";
+    case VIENNAGRID_ERROR_INVALID_ELEMENT_TYPE:
+      return "invalid element type";
+    case VIENNAGRID_ERROR_INVALID_ELEMENT_ID:
+      return "invalid element ID";
+    case VIENNAGRID_ERROR_INVALID_REGION_ID:
+      return "invalid region ID";
+    case VIENNAGRID_ERROR_INVALID_PLC:
+      return "invalid PLC";
+    case VIENNAGRID_ERROR_INVALID_FACET_HOLE_POINT_INDEX:
+      return "invalid facet hole point index";
+    case VIENNAGRID_ERROR_INVALID_QUANTITY_FIELD:
+      return "invalid quantity field";
+    case VIENNAGRID_ERROR_INVALID_STORAGE_LAYOUT:
+      return "invalid storage layout";
+    case VIENNAGRID_ERROR_INVALID_QUANTITLY_VALUE_TYPE:
+      return "invalid quantity value type";
+    case VIENNAGRID_ERROR_INVALID_MESH_IO:
+      return "invalid mesh IO";
+    case VIENNAGRID_ERROR_INVALID_IO_MESH_INDEX:
+      return "invalid mesh IO mesh index";
+    case VIENNAGRID_ERROR_INVALID_QUANTITY_FIELD_NAME:
+      return "invalid quantity field name";
+    case VIENNAGRID_ERROR_QUANTITY_FIELD_NAME_ALREADY_IN_USE:
+      return "quantity field name already in use";
+    case VIENNAGRID_ERROR_TOPOLOGICAL_DIMENSION_MISMATCH:
+      return "topological dimension mismatch";
+    case VIENNAGRID_ERROR_UNKNOWN_PROPERTY:
+      return "unknown property";
+    case VIENNAGRID_ERROR_UNSUPPORTED_BOUNDARY_LAYOUT:
+      return "unsupported boundary layout";
+    case VIENNAGRID_ERROR_MESH_IS_NOT_ROOT:
+      return "mesh is not root";
+    case VIENNAGRID_ERROR_MESH_HAS_CHILD_MESHES:
+      return "mesh has child meshes";
+    case VIENNAGRID_ERROR_ELEMENT_ALREADY_PRESENT:
+      return "element already present";
+    case VIENNAGRID_ERROR_DESERIALIZE_MAGIC_VALUE_MISMATCH:
+      return "deserialize magic value mismatch";
+    case VIENNAGRID_ERROR_DESERIALIZE_VERSION_MISMATCH:
+      return "deserialize version mismatch";
+    case VIENNAGRID_ERROR_DESERIALIZE_ARRAY_SIZE_MISMATCH:
+      return "deserialize array size mismatch";
+    case VIENNAGRID_ERROR_PLC_MESH_TYPE_NOT_SUPPORTED_FOR_CONVERSION:
+      return "PLC mesh type not supported for conversion";
+    case VIENNAGRID_ERROR_CANNOT_OPEN_FILE:
+      return "cannot open file";
+    case VIENNAGRID_ERROR_FILE_EMPTY:
+      return "file is empty";
+    case VIENNAGRID_ERROR_EOF_ENCOUNTERED:
+      return "EOF encountered";
+    case VIENNAGRID_ERROR_EOF_WHILE_READING_VERTICES:
+      return "EOF while reading vertices";
+    case VIENNAGRID_ERROR_VERTEX_DIMENSION_MISMATCH:
+      return "vertex dimension mismatch";
+    case VIENNAGRID_ERROR_EOF_WHILE_READING_CELL_COUNT:
+      return "EOF while reading cell count";
+    case VIENNAGRID_ERROR_EOF_WHILE_READING_CELLS:
+      return "EOF while reading cells";
+    case VIENNAGRID_ERROR_UNKNOWN_FILETYPE:
+      return "unknown filetype";
+    case VIENNAGRID_ERROR_INVALID_VERTEX_COUNT:
+      return "invalid vertex count";
+    case VIENNAGRID_ERROR_INVALID_ATTRIBUTE_COUNT:
+      return "invalid attribute count";
+    case VIENNAGRID_ERROR_INVALID_BOUNDARY_MARKER_COUNT:
+      return "invalid boundary marker count";
+    case VIENNAGRID_ERROR_INVALID_FACET_COUNT:
+      return "invalid facet count";
+    case VIENNAGRID_ERROR_INVALID_FACET_POLYGON_COUNT:
+      return "invalid facet polygon count";
+    case VIENNAGRID_ERROR_INVALID_FACET_HOLE_POINT_COUNT:
+      return "invalid facet hole point count";
+    case VIENNAGRID_ERROR_INVALID_POLYGON_VERTEX_COUNT:
+      return "invalid polygon vertex count";
+    case VIENNAGRID_ERROR_INVALID_VERTEX_ID:
+      return "invalid vertex ID";
+    case VIENNAGRID_ERROR_INVALID_HOLE_POINT_COUNT:
+      return "invalid hole point count";
+    case VIENNAGRID_ERROR_INVALID_SEED_POINT_COUNT:
+      return "invalid seed point count";
+    case VIENNAGRID_ERROR_UNSUPPORTED_ELEMENT_TYPE:
+      return "unsupported element type";
+    case VIENNAGRID_ERROR_FILE_MALFORMED:
+      return "file malformed";
+    case VIENNAGRID_ERROR_NO_MESH:
+      return "no mesh";
+    case VIENNAGRID_ERROR_WRITE_ERROR:
+      return "write error";
+
+    default:
+      return 0;
+  }
+}
+
+
+
 
 
 viennagrid_error viennagrid_new(viennagrid_int size, void ** ptr)
@@ -300,8 +414,8 @@ viennagrid_error viennagrid_mesh_element_count(viennagrid_mesh mesh,
                                                viennagrid_dimension topological_dimension,
                                                viennagrid_int * count)
 {
-  if (!mesh)                                             return VIENNAGRID_ERROR_INVALID_MESH;
-  if (!viennagrid_topological_dimension_valid(topological_dimension)) return VIENNAGRID_ERROR_INVALID_TOPOLOGIC_DIMENSION;
+  if (!mesh)                                                          return VIENNAGRID_ERROR_INVALID_MESH;
+  if (!viennagrid_topological_dimension_valid(topological_dimension)) return VIENNAGRID_ERROR_INVALID_TOPOLOGICAL_DIMENSION;
 
   if (count)
     *count = mesh->element_count(topological_dimension);
@@ -450,7 +564,7 @@ viennagrid_error viennagrid_element_type_pointer(viennagrid_mesh mesh,
                                                  viennagrid_element_type ** element_type)
 {
   if (!mesh)                                                        return VIENNAGRID_ERROR_INVALID_MESH;
-  if (!viennagrid_topological_dimension_valid(topologic_dimension)) return VIENNAGRID_ERROR_INVALID_TOPOLOGIC_DIMENSION;
+  if (!viennagrid_topological_dimension_valid(topologic_dimension)) return VIENNAGRID_ERROR_INVALID_TOPOLOGICAL_DIMENSION;
 
   if (element_type)
     *element_type = mesh->mesh_hierarchy()->element_buffer(topologic_dimension).element_types_pointer();
@@ -508,8 +622,8 @@ viennagrid_error viennagrid_element_boundary_element_pointers(viennagrid_mesh me
                                                               viennagrid_element_id ** boundary_ids)
 {
   if (!mesh)                                                      return VIENNAGRID_ERROR_INVALID_MESH;
-  if (!viennagrid_topological_dimension_valid(element_topological_dimension))  return VIENNAGRID_ERROR_INVALID_TOPOLOGIC_DIMENSION;
-  if (!viennagrid_topological_dimension_valid(boundary_topological_dimension)) return VIENNAGRID_ERROR_INVALID_TOPOLOGIC_DIMENSION;
+  if (!viennagrid_topological_dimension_valid(element_topological_dimension))  return VIENNAGRID_ERROR_INVALID_TOPOLOGICAL_DIMENSION;
+  if (!viennagrid_topological_dimension_valid(boundary_topological_dimension)) return VIENNAGRID_ERROR_INVALID_TOPOLOGICAL_DIMENSION;
 
   if (boundary_offsets)
     *boundary_offsets = mesh->mesh_hierarchy()->element_buffer(element_topological_dimension).boundary_buffer(boundary_topological_dimension).offset_pointer();
@@ -530,7 +644,7 @@ viennagrid_error viennagrid_element_boundary_elements(viennagrid_mesh mesh,
 {
   if (!mesh)                                                      return VIENNAGRID_ERROR_INVALID_MESH;
   if (!mesh->element_id_valid(element_id))                        return VIENNAGRID_ERROR_INVALID_ELEMENT_ID;
-  if (!viennagrid_topological_dimension_valid(boundary_topological_dimension)) return VIENNAGRID_ERROR_INVALID_TOPOLOGIC_DIMENSION;
+  if (!viennagrid_topological_dimension_valid(boundary_topological_dimension)) return VIENNAGRID_ERROR_INVALID_TOPOLOGICAL_DIMENSION;
 
   if (boundary_element_ids_begin)
     *boundary_element_ids_begin = mesh->boundary_begin(element_id, boundary_topological_dimension);
@@ -550,7 +664,7 @@ viennagrid_error viennagrid_element_coboundary_elements(viennagrid_mesh mesh,
 {
   if (!mesh)                                                        return VIENNAGRID_ERROR_INVALID_MESH;
   if (!mesh->element_id_valid(element_id))                          return VIENNAGRID_ERROR_INVALID_ELEMENT_ID;
-  if (!viennagrid_topological_dimension_valid(coboundary_topological_dimension)) return VIENNAGRID_ERROR_INVALID_TOPOLOGIC_DIMENSION;
+  if (!viennagrid_topological_dimension_valid(coboundary_topological_dimension)) return VIENNAGRID_ERROR_INVALID_TOPOLOGICAL_DIMENSION;
 
   if (coboundary_element_ids_begin)
     *coboundary_element_ids_begin = mesh->coboundary_begin(element_id, coboundary_topological_dimension);
@@ -571,8 +685,8 @@ viennagrid_error viennagrid_element_neighbor_elements(viennagrid_mesh mesh,
 {
   if (!mesh)                                                       return VIENNAGRID_ERROR_INVALID_MESH;
   if (!mesh->element_id_valid(element_id))                         return VIENNAGRID_ERROR_INVALID_ELEMENT_ID;
-  if (!viennagrid_topological_dimension_valid(connector_topological_dimension)) return VIENNAGRID_ERROR_INVALID_TOPOLOGIC_DIMENSION;
-  if (!viennagrid_topological_dimension_valid(neighbor_topological_dimension))  return VIENNAGRID_ERROR_INVALID_TOPOLOGIC_DIMENSION;
+  if (!viennagrid_topological_dimension_valid(connector_topological_dimension)) return VIENNAGRID_ERROR_INVALID_TOPOLOGICAL_DIMENSION;
+  if (!viennagrid_topological_dimension_valid(neighbor_topological_dimension))  return VIENNAGRID_ERROR_INVALID_TOPOLOGICAL_DIMENSION;
 
   if (neighbor_element_ids_begin)
     *neighbor_element_ids_begin = mesh->neighbor_begin(element_id, connector_topological_dimension, neighbor_topological_dimension);
@@ -627,7 +741,7 @@ viennagrid_error viennagrid_mesh_elements_get(viennagrid_mesh mesh,
                                               viennagrid_element_id ** element_ids_end)
 {
   if (!mesh)                                                     return VIENNAGRID_ERROR_INVALID_MESH;
-  if (!viennagrid_topological_dimension_valid(element_topological_dimension)) return VIENNAGRID_ERROR_INVALID_TOPOLOGIC_DIMENSION;
+  if (!viennagrid_topological_dimension_valid(element_topological_dimension)) return VIENNAGRID_ERROR_INVALID_TOPOLOGICAL_DIMENSION;
 
   if (element_ids_begin)
     *element_ids_begin = mesh->elements_begin(element_topological_dimension);
@@ -645,7 +759,7 @@ viennagrid_error viennagrid_element_parent_pointer(viennagrid_mesh mesh,
                                                    viennagrid_element_id ** element_parent_id)
 {
   if (!mesh)                                                        return VIENNAGRID_ERROR_INVALID_MESH;
-  if (!viennagrid_topological_dimension_valid(topologic_dimension)) return VIENNAGRID_ERROR_INVALID_TOPOLOGIC_DIMENSION;
+  if (!viennagrid_topological_dimension_valid(topologic_dimension)) return VIENNAGRID_ERROR_INVALID_TOPOLOGICAL_DIMENSION;
 
   if (element_parent_id)
     *element_parent_id = mesh->mesh_hierarchy()->element_buffer(topologic_dimension).parent_id_pointer();

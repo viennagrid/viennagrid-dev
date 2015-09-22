@@ -270,7 +270,7 @@ viennagrid_error viennagrid_mesh_deserialize(void * blob,
   d.deserialize< viennagrid_int >(magic_value);
 
   if (magic_value != VIENNAGRID_MAGIC_VALUE)
-    return VIENNAGRID_ERROR_DESERIALIZE_MAGIC_VALUE_MISSMATCH;
+    return VIENNAGRID_ERROR_DESERIALIZE_MAGIC_VALUE_MISMATCH;
 
 
   viennagrid_int version_major;

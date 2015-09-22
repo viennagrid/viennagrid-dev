@@ -19,6 +19,7 @@
 #include <vector>
 #include <deque>
 
+#include "viennagrid/core/forwards.hpp"
 #include "viennagrid/mesh/element.hpp"
 #include "viennagrid/viennagrid.h"
 
@@ -101,14 +102,14 @@ namespace viennagrid
 
     quantity_field()
     {
-      viennagrid_quantity_field_create( &internal_quantity_field );
+      THROW_ON_ERROR( viennagrid_quantity_field_create( &internal_quantity_field ) );
     }
 
     quantity_field(viennagrid_dimension topologic_dimension,
                    viennagrid_dimension values_dimension,
                    viennagrid_int storage_type = VIENNAGRID_QUANTITY_FIELD_STORAGE_DENSE)
     {
-      viennagrid_quantity_field_create( &internal_quantity_field );
+      THROW_ON_ERROR( viennagrid_quantity_field_create(&internal_quantity_field) );
       init(topologic_dimension, values_dimension, storage_type);
     }
 
@@ -131,7 +132,9 @@ namespace viennagrid
               viennagrid_dimension values_per_quantity_,
               viennagrid_int storage_type = VIENNAGRID_QUANTITY_FIELD_STORAGE_DENSE)
     {
-      viennagrid_quantity_field_init(internal(), topologic_dimension, VIENNAGRID_QUANTITY_FIELD_TYPE_NUMERIC, values_per_quantity_, storage_type);
+      THROW_ON_ERROR(
+        viennagrid_quantity_field_init(internal(), topologic_dimension, VIENNAGRID_QUANTITY_FIELD_TYPE_NUMERIC, values_per_quantity_, storage_type)
+      );
     }
 
 
@@ -156,7 +159,7 @@ namespace viennagrid
     value_type get(viennagrid_int id) const
     {
       void * tmp;
-      viennagrid_quantity_field_value_get(internal(), id, &tmp);
+      THROW_ON_ERROR( viennagrid_quantity_field_value_get(internal(), id, &tmp) );
 
       return value_type( (viennagrid_numeric*)tmp, values_per_quantity() );
     }
@@ -182,17 +185,17 @@ namespace viennagrid
 
     void set(viennagrid_int id, viennagrid_numeric const * value)
     {
-      viennagrid_quantity_field_value_set(internal(), id, const_cast<viennagrid_numeric*>(value));
+      THROW_ON_ERROR( viennagrid_quantity_field_value_set(internal(), id, const_cast<viennagrid_numeric*>(value)) );
     }
 
     void set(viennagrid_int id, std::vector<viennagrid_numeric> const & value)
     {
-      viennagrid_quantity_field_value_set(internal(), id, const_cast<viennagrid_numeric*>(&value[0]));
+      set(id, &value[0]);
     }
 
     void set(viennagrid_int id, viennagrid_numeric value)
     {
-      viennagrid_quantity_field_value_set(internal(), id, &value);
+      set(id, &value);
     }
 
     template<bool element_is_const>
@@ -219,33 +222,33 @@ namespace viennagrid
     viennagrid_int size() const
     {
       viennagrid_int size_;
-      viennagrid_quantity_field_size(internal(), &size_);
+      THROW_ON_ERROR( viennagrid_quantity_field_size(internal(), &size_) );
       return size_;
     }
 
     void resize(viennagrid_int size)
     {
-      viennagrid_quantity_field_resize(internal(), size);
+      THROW_ON_ERROR( viennagrid_quantity_field_resize(internal(), size) );
     }
 
     viennagrid_dimension topologic_dimension() const
     {
       viennagrid_dimension topologic_dimension_;
-      viennagrid_quantity_field_topological_dimension_get(internal(), &topologic_dimension_);
+      THROW_ON_ERROR( viennagrid_quantity_field_topological_dimension_get(internal(), &topologic_dimension_) );
       return topologic_dimension_;
     }
 
     viennagrid_dimension values_per_quantity() const
     {
       viennagrid_int values_per_quantity;
-      viennagrid_quantity_field_values_per_quantity_get(internal(), &values_per_quantity);
+      THROW_ON_ERROR( viennagrid_quantity_field_values_per_quantity_get(internal(), &values_per_quantity) );
       return values_per_quantity;
     }
 
     viennagrid_int storage_layout() const
     {
       viennagrid_int storage_layout_;
-      viennagrid_quantity_field_storage_layout_get(internal(), &storage_layout_);
+      THROW_ON_ERROR( viennagrid_quantity_field_storage_layout_get(internal(), &storage_layout_) );
       return storage_layout_;
     }
 
@@ -254,7 +257,7 @@ namespace viennagrid
       assert(valid());
 
       const char * tmp;
-      viennagrid_quantity_field_name_get(internal(), &tmp);
+      THROW_ON_ERROR( viennagrid_quantity_field_name_get(internal(), &tmp) );
       if (tmp)
         return tmp;
       else
@@ -265,10 +268,11 @@ namespace viennagrid
     {
       assert(valid());
 
-      if (name_.empty())
-        viennagrid_quantity_field_name_set(internal(), NULL);
+      const char * str = NULL;
+      if (!name_.empty())
+        str = name_.c_str();
 
-      viennagrid_quantity_field_name_set(internal(), name_.c_str());
+      THROW_ON_ERROR( viennagrid_quantity_field_name_set(internal(), str) );
     }
 
 
@@ -277,7 +281,7 @@ namespace viennagrid
       assert(valid());
 
       const char * tmp;
-      viennagrid_quantity_field_unit_get(internal(), &tmp);
+      THROW_ON_ERROR( viennagrid_quantity_field_unit_get(internal(), &tmp) );
       if (tmp)
         return tmp;
       else
@@ -288,10 +292,11 @@ namespace viennagrid
     {
       assert(valid());
 
-      if (unit_.empty())
-        viennagrid_quantity_field_unit_set(internal(), NULL);
+      const char * str = NULL;
+      if (!unit_.empty())
+        str = unit_.c_str();
 
-      viennagrid_quantity_field_unit_set(internal(), unit_.c_str());
+      THROW_ON_ERROR( viennagrid_quantity_field_unit_set(internal(), str) );
     }
 
     viennagrid_quantity_field internal() const { return internal_quantity_field; }
@@ -313,13 +318,13 @@ namespace viennagrid
     void retain()
     {
       if (internal())
-        viennagrid_quantity_field_retain(internal());
+        THROW_ON_ERROR( viennagrid_quantity_field_retain(internal()) );
     }
 
     void release()
     {
       if (internal())
-        viennagrid_quantity_field_release(internal());
+        THROW_ON_ERROR( viennagrid_quantity_field_release(internal()) );
     }
 
     viennagrid_quantity_field internal_quantity_field;

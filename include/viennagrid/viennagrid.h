@@ -386,7 +386,7 @@ typedef struct viennagrid_mesh_io_ * viennagrid_mesh_io;
 #define VIENNAGRID_ERROR_INVALID_MESH                                   4
 #define VIENNAGRID_ERROR_INVALID_REGION                                 5
 #define VIENNAGRID_ERROR_INVALID_CHILD_MESH_INDEX                       6
-#define VIENNAGRID_ERROR_INVALID_TOPOLOGIC_DIMENSION                    7
+#define VIENNAGRID_ERROR_INVALID_TOPOLOGICAL_DIMENSION                  7
 #define VIENNAGRID_ERROR_INVALID_ELEMENT_TYPE                           8
 #define VIENNAGRID_ERROR_INVALID_ELEMENT_ID                             9
 #define VIENNAGRID_ERROR_INVALID_REGION_ID                             10
@@ -398,38 +398,39 @@ typedef struct viennagrid_mesh_io_ * viennagrid_mesh_io;
 #define VIENNAGRID_ERROR_INVALID_MESH_IO                               16
 #define VIENNAGRID_ERROR_INVALID_IO_MESH_INDEX                         17
 #define VIENNAGRID_ERROR_INVALID_QUANTITY_FIELD_NAME                   18
-#define VIENNAGRID_ERROR_TOPOLOGICAL_DIMENSION_MISMATCH                19
-#define VIENNAGRID_ERROR_UNKNOWN_PROPERTY                              20
-#define VIENNAGRID_ERROR_UNSUPPORTED_BOUNDARY_LAYOUT                   21
-#define VIENNAGRID_ERROR_MESH_IS_NOT_ROOT                              22
-#define VIENNAGRID_ERROR_MESH_HAS_CHILD_MESHES                         23
-#define VIENNAGRID_ERROR_ELEMENT_ALREADY_PRESENT                       24
-#define VIENNAGRID_ERROR_DESERIALIZE_MAGIC_VALUE_MISSMATCH             25
-#define VIENNAGRID_ERROR_DESERIALIZE_VERSION_MISMATCH                  26
-#define VIENNAGRID_ERROR_DESERIALIZE_ARRAY_SIZE_MISMATCH               27
-#define VIENNAGRID_ERROR_PLC_MESH_TYPE_NOT_SUPPORTED_FOR_CONVERSION    28
-#define VIENNAGRID_ERROR_CANNOT_OPEN_FILE                              29
-#define VIENNAGRID_ERROR_FILE_EMPTY                                    30
-#define VIENNAGRID_ERROR_EOF_ENCOUNTERED                               31
-#define VIENNAGRID_ERROR_EOF_WHILE_READING_VERTICES                    32
-#define VIENNAGRID_ERROR_VERTEX_DIMENSION_MISMATCH                     33
-#define VIENNAGRID_ERROR_EOF_WHILE_READING_CELL_COUNT                  34
-#define VIENNAGRID_ERROR_EOF_WHILE_READING_CELLS                       35
-#define VIENNAGRID_ERROR_UNKNOWN_FILETYPE                              36
-#define VIENNAGRID_ERROR_INVALID_VERTEX_COUNT                          37
-#define VIENNAGRID_ERROR_INVALID_ATTRIBUTE_COUNT                       38
-#define VIENNAGRID_ERROR_INVALID_BOUNDARY_MARKER_COUNT                 39
-#define VIENNAGRID_ERROR_INVALID_FACET_COUNT                           40
-#define VIENNAGRID_ERROR_INVALID_FACET_POLYGON_COUNT                   41
-#define VIENNAGRID_ERROR_INVALID_FACET_HOLE_POINT_COUNT                42
-#define VIENNAGRID_ERROR_INVALID_POLYGON_VERTEX_COUNT                  43
-#define VIENNAGRID_ERROR_INVALID_VERTEX_ID                             44
-#define VIENNAGRID_ERROR_INVALID_HOLE_POINT_COUNT                      45
-#define VIENNAGRID_ERROR_INVALID_SEED_POINT_COUNT                      46
-#define VIENNAGRID_ERROR_UNSUPPORTED_ELEMENT_TYPE                      47
-#define VIENNAGRID_ERROR_FILE_MALFORMED                                48
-#define VIENNAGRID_ERROR_NO_MESH                                       49
-#define VIENNAGRID_ERROR_WRITE_ERROR                                   50
+#define VIENNAGRID_ERROR_QUANTITY_FIELD_NAME_ALREADY_IN_USE            19
+#define VIENNAGRID_ERROR_TOPOLOGICAL_DIMENSION_MISMATCH                20
+#define VIENNAGRID_ERROR_UNKNOWN_PROPERTY                              21
+#define VIENNAGRID_ERROR_UNSUPPORTED_BOUNDARY_LAYOUT                   22
+#define VIENNAGRID_ERROR_MESH_IS_NOT_ROOT                              23
+#define VIENNAGRID_ERROR_MESH_HAS_CHILD_MESHES                         24
+#define VIENNAGRID_ERROR_ELEMENT_ALREADY_PRESENT                       25
+#define VIENNAGRID_ERROR_DESERIALIZE_MAGIC_VALUE_MISMATCH              26
+#define VIENNAGRID_ERROR_DESERIALIZE_VERSION_MISMATCH                  27
+#define VIENNAGRID_ERROR_DESERIALIZE_ARRAY_SIZE_MISMATCH               28
+#define VIENNAGRID_ERROR_PLC_MESH_TYPE_NOT_SUPPORTED_FOR_CONVERSION    29
+#define VIENNAGRID_ERROR_CANNOT_OPEN_FILE                              30
+#define VIENNAGRID_ERROR_FILE_EMPTY                                    31
+#define VIENNAGRID_ERROR_EOF_ENCOUNTERED                               32
+#define VIENNAGRID_ERROR_EOF_WHILE_READING_VERTICES                    33
+#define VIENNAGRID_ERROR_VERTEX_DIMENSION_MISMATCH                     34
+#define VIENNAGRID_ERROR_EOF_WHILE_READING_CELL_COUNT                  35
+#define VIENNAGRID_ERROR_EOF_WHILE_READING_CELLS                       36
+#define VIENNAGRID_ERROR_UNKNOWN_FILETYPE                              37
+#define VIENNAGRID_ERROR_INVALID_VERTEX_COUNT                          38
+#define VIENNAGRID_ERROR_INVALID_ATTRIBUTE_COUNT                       39
+#define VIENNAGRID_ERROR_INVALID_BOUNDARY_MARKER_COUNT                 40
+#define VIENNAGRID_ERROR_INVALID_FACET_COUNT                           41
+#define VIENNAGRID_ERROR_INVALID_FACET_POLYGON_COUNT                   42
+#define VIENNAGRID_ERROR_INVALID_FACET_HOLE_POINT_COUNT                43
+#define VIENNAGRID_ERROR_INVALID_POLYGON_VERTEX_COUNT                  44
+#define VIENNAGRID_ERROR_INVALID_VERTEX_ID                             45
+#define VIENNAGRID_ERROR_INVALID_HOLE_POINT_COUNT                      46
+#define VIENNAGRID_ERROR_INVALID_SEED_POINT_COUNT                      47
+#define VIENNAGRID_ERROR_UNSUPPORTED_ELEMENT_TYPE                      48
+#define VIENNAGRID_ERROR_FILE_MALFORMED                                49
+#define VIENNAGRID_ERROR_NO_MESH                                       50
+#define VIENNAGRID_ERROR_WRITE_ERROR                                   51
 
 /* VIENNAGRID BOOL DEFINES */
 #define VIENNAGRID_TRUE                             1
@@ -683,6 +684,8 @@ static inline viennagrid_bool viennagrid_is_simplex(viennagrid_element_type et)
 /* returns the string of a given element type, if element_type is invalid, NULL is returned */
 const char * viennagrid_element_type_string(viennagrid_element_type element_type);
 
+/* returns the string of a given error string, if error is invalid, NULL is returned */
+const char * viennagrid_error_string(viennagrid_error error);
 
 
 

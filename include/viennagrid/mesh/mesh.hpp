@@ -32,8 +32,8 @@ namespace viennagrid
 
     base_mesh() : internal_mesh_(0)
     {
-      viennagrid_mesh_create(&internal_mesh_);
-      viennagrid_mesh_property_set(internal_mesh_, VIENNAGRID_PROPERTY_BOUNDARY_LAYOUT, VIENNAGRID_BOUNDARY_LAYOUT_SPARSE);
+      THROW_ON_ERROR( viennagrid_mesh_create(&internal_mesh_) );
+      THROW_ON_ERROR( viennagrid_mesh_property_set(internal_mesh_, VIENNAGRID_PROPERTY_BOUNDARY_LAYOUT, VIENNAGRID_BOUNDARY_LAYOUT_SPARSE) );
     }
 
     template<bool other_is_const>
@@ -65,21 +65,21 @@ namespace viennagrid
     base_mesh<is_const> get_root()
     {
       viennagrid_mesh root;
-      viennagrid_mesh_root_mesh_get(internal(), &root);
+      THROW_ON_ERROR( viennagrid_mesh_root_mesh_get(internal(), &root) );
       return base_mesh<is_const>(root);
     }
 
     const_mesh get_root() const
     {
       viennagrid_mesh root;
-      viennagrid_mesh_root_mesh_get(internal(), &root);
+      THROW_ON_ERROR( viennagrid_mesh_root_mesh_get(internal(), &root) );
       return const_mesh(root);
     }
 
     bool is_root() const
     {
       viennagrid_bool value;
-      viennagrid_mesh_is_root(internal(), &value);
+      THROW_ON_ERROR( viennagrid_mesh_is_root(internal(), &value) );
       return value == VIENNAGRID_TRUE;
     }
 
@@ -99,23 +99,23 @@ namespace viennagrid
 
     void serialize(void ** buffer, viennagrid_int * size)
     {
-      viennagrid_mesh_serialize( internal(), buffer, size );;
+      THROW_ON_ERROR( viennagrid_mesh_serialize(internal(), buffer, size) );
     }
 
     void deserialize(void * buffer, viennagrid_int size)
     {
-      viennagrid_mesh_deserialize( buffer, size, internal() );
+      THROW_ON_ERROR( viennagrid_mesh_deserialize(buffer, size, internal()) );
     }
 
     void optimize_memory()
     {
-      viennagrid_meshmemory_optimize( internal() );
+      THROW_ON_ERROR( viennagrid_mesh_memory_optimize(internal()) );
     }
 
     long memory_size() const
     {
       long size;
-      viennagrid_mesh_memory_size( internal(), &size );
+      THROW_ON_ERROR( viennagrid_mesh_memory_size(internal(), &size) );
       return size;
     }
 
@@ -124,13 +124,13 @@ namespace viennagrid
     std::string name() const
     {
       const char * name_;
-      viennagrid_mesh_name_get(internal(), &name_);
+      THROW_ON_ERROR( viennagrid_mesh_name_get(internal(), &name_) );
       return name_;
     }
 
     void set_name(std::string const & name_)
     {
-      viennagrid_mesh_name_set(internal(), name_.c_str());
+      THROW_ON_ERROR( viennagrid_mesh_name_set(internal(), name_.c_str()) );
     }
 
   private:
@@ -138,13 +138,13 @@ namespace viennagrid
     void retain() const
     {
       if (internal())
-        viennagrid_mesh_retain( internal() );
+        THROW_ON_ERROR( viennagrid_mesh_retain(internal()) );
     }
 
     void release() const
     {
       if (internal())
-        viennagrid_mesh_release( internal() );
+        THROW_ON_ERROR( viennagrid_mesh_release(internal()) );
     }
 
     viennagrid_mesh internal_mesh_;
@@ -183,7 +183,7 @@ namespace viennagrid
   viennagrid_int element_count(base_mesh<is_const> const & mesh, viennagrid_dimension topological_dimension)
   {
     viennagrid_int count;
-    viennagrid_mesh_element_count( internal_mesh(mesh), topological_dimension, &count);
+    THROW_ON_ERROR( viennagrid_mesh_element_count( internal_mesh(mesh), topological_dimension, &count) );
     return count;
   }
 
@@ -192,7 +192,7 @@ namespace viennagrid
   viennagrid_int element_count(base_mesh<is_const> const & mesh, element_tag et)
   {
     viennagrid_int count;
-    viennagrid_mesh_element_count_by_type( internal_mesh(mesh), et.internal(), &count);
+    THROW_ON_ERROR( viennagrid_mesh_element_count_by_type( internal_mesh(mesh), et.internal(), &count) );
     return count;
   }
 
@@ -235,7 +235,7 @@ namespace viennagrid
 
   inline void clear(viennagrid_mesh mesh)
   {
-    viennagrid_mesh_clear(mesh);
+    THROW_ON_ERROR( viennagrid_mesh_clear(mesh) );
   }
 
   template<typename SomethingT>
@@ -248,7 +248,7 @@ namespace viennagrid
   inline viennagrid_dimension geometric_dimension(viennagrid_mesh mesh)
   {
     viennagrid_dimension tmp;
-    viennagrid_mesh_geometric_dimension_get(mesh, &tmp);
+    THROW_ON_ERROR( viennagrid_mesh_geometric_dimension_get(mesh, &tmp) );
     return tmp;
   }
 
@@ -263,7 +263,7 @@ namespace viennagrid
   inline viennagrid_dimension topologic_dimension(viennagrid_mesh mesh)
   {
     viennagrid_dimension tmp;
-    viennagrid_mesh_cell_dimension_get(mesh, &tmp);
+    THROW_ON_ERROR( viennagrid_mesh_cell_dimension_get(mesh, &tmp) );
     return tmp;
   }
 

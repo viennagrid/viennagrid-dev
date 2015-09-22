@@ -9,7 +9,7 @@ namespace viennagrid
   {
     viennagrid_region_id * begin;
     viennagrid_region_id * end;
-    viennagrid_mesh_regions_get(internal(), &begin, &end);
+    THROW_ON_ERROR( viennagrid_mesh_regions_get(internal(), &begin, &end) );
     return end-begin;
   }
 
@@ -26,7 +26,7 @@ namespace viennagrid
   typename base_mesh<is_const>::region_type base_mesh<is_const>::get_or_create_region(region_id_type region_id) const
   {
     viennagrid_region region;
-    viennagrid_mesh_region_get_or_create( internal(), region_id, &region );
+    THROW_ON_ERROR( viennagrid_mesh_region_get_or_create(internal(), region_id, &region) );
     return region_type(internal(), region);
   }
 
@@ -39,7 +39,7 @@ namespace viennagrid
   typename base_mesh<is_const>::region_type base_mesh<is_const>::create_region() const
   {
     viennagrid_region region;
-    viennagrid_mesh_region_create( internal(), &region );
+    THROW_ON_ERROR( viennagrid_mesh_region_create(internal(), &region) );
     return region_type(internal(), region);
   }
 
@@ -51,7 +51,7 @@ namespace viennagrid
   typename base_mesh<is_const>::const_region_type base_mesh<is_const>::get_region(region_id_type region_id) const
   {
     viennagrid_region region;
-    viennagrid_mesh_region_get( internal(), region_id, &region );
+    THROW_ON_ERROR( viennagrid_mesh_region_get(internal(), region_id, &region) );
     return const_region_type(internal(), region);
   }
 
@@ -63,7 +63,7 @@ namespace viennagrid
   bool base_mesh<is_const>::region_exists(region_id_type region_id) const
   {
     viennagrid_region region;
-    viennagrid_mesh_region_get( internal(), region_id, &region );
+    THROW_ON_ERROR( viennagrid_mesh_region_get(internal(), region_id, &region) );
     return region != NULL;
   }
 
@@ -77,7 +77,7 @@ namespace viennagrid
   {
     point result( viennagrid::geometric_dimension(mesh) );
     viennagrid_numeric const * tmp;
-    viennagrid_mesh_vertex_coords_get(mesh, vertex.id().internal(), const_cast<viennagrid_numeric **>(&tmp));
+    THROW_ON_ERROR( viennagrid_mesh_vertex_coords_get(mesh, vertex.id().internal(), const_cast<viennagrid_numeric **>(&tmp)) );
     std::copy(tmp, tmp+result.size(), result.begin());
     return result;
   }
@@ -90,7 +90,7 @@ namespace viennagrid
   void set_point(viennagrid_mesh mesh, base_element<false> const & vertex, point const & p)
   {
     viennagrid_numeric * tmp;
-    viennagrid_mesh_vertex_coords_get(mesh, vertex.id().internal(), &tmp);
+    THROW_ON_ERROR( viennagrid_mesh_vertex_coords_get(mesh, vertex.id().internal(), &tmp) );
     std::copy(p.begin(), p.end(), tmp);
   }
 
@@ -205,9 +205,9 @@ namespace viennagrid
   bool is_boundary( base_mesh<mesh_is_const> const & mesh, base_element<element_is_const> const & element )
   {
     viennagrid_bool result;
-    viennagrid_element_is_mesh_boundary(mesh.internal(),
-                                        element.id().internal(),
-                                        &result);
+    THROW_ON_ERROR( viennagrid_element_is_mesh_boundary(mesh.internal(),
+                                                        element.id().internal(),
+                                                        &result) );
     return result == VIENNAGRID_TRUE;
   }
 

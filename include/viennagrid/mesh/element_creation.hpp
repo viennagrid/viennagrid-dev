@@ -14,10 +14,10 @@ namespace viennagrid
                              point const & p)
   {
     if ( (viennagrid::geometric_dimension(mesh) <= 0) && (!p.empty()) )
-      viennagrid_mesh_geometric_dimension_set(mesh, p.size());
+      THROW_ON_ERROR( viennagrid_mesh_geometric_dimension_set(mesh, p.size()) );
 
     viennagrid_int id;
-    viennagrid_mesh_vertex_create( mesh, &p[0], &id );
+    THROW_ON_ERROR( viennagrid_mesh_vertex_create(mesh, &p[0], &id) );
     return element(mesh, id);
   }
 
@@ -96,11 +96,11 @@ namespace viennagrid
     }
 
     viennagrid_element_id id;
-    viennagrid_mesh_element_create(mesh,
-                                   et.internal(),
-                                   internal_vertices_indices.size(),
-                                   &internal_vertices_indices[0],
-                                   &id);
+    THROW_ON_ERROR( viennagrid_mesh_element_create(mesh,
+                                                   et.internal(),
+                                                   internal_vertices_indices.size(),
+                                                   &internal_vertices_indices[0],
+                                                   &id) );
 
     return element(mesh, id);
   }

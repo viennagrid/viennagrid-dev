@@ -63,12 +63,12 @@ namespace viennagrid
       mesh_ = mesh;
 
       if ( !((topologic_dimension() == 0) || (topologic_dimension() == cell_dimension(get_mesh()))) )
-        viennagrid_mesh_property_set(mesh_, VIENNAGRID_PROPERTY_BOUNDARY_LAYOUT, VIENNAGRID_BOUNDARY_LAYOUT_FULL);
+        THROW_ON_ERROR( viennagrid_mesh_property_set(mesh_, VIENNAGRID_PROPERTY_BOUNDARY_LAYOUT, VIENNAGRID_BOUNDARY_LAYOUT_FULL) );
 
-      viennagrid_mesh_elements_get(internal_mesh(),
-                                   topologic_dimension(),
-                                   const_cast<viennagrid_element_id **>(&element_index_begin),
-                                   const_cast<viennagrid_element_id **>(&element_index_end));
+      THROW_ON_ERROR( viennagrid_mesh_elements_get(internal_mesh(),
+                                                   topologic_dimension(),
+                                                   const_cast<viennagrid_element_id **>(&element_index_begin),
+                                                   const_cast<viennagrid_element_id **>(&element_index_end)) );
     }
 
     template<bool element_is_const>
@@ -78,13 +78,13 @@ namespace viennagrid
       mesh_= element.internal_mesh();
 
       if (topologic_dimension() != 0)
-        viennagrid_mesh_property_set(mesh_, VIENNAGRID_PROPERTY_BOUNDARY_LAYOUT, VIENNAGRID_BOUNDARY_LAYOUT_FULL);
+        THROW_ON_ERROR( viennagrid_mesh_property_set(mesh_, VIENNAGRID_PROPERTY_BOUNDARY_LAYOUT, VIENNAGRID_BOUNDARY_LAYOUT_FULL) );
 
-      viennagrid_element_boundary_elements(internal_mesh(),
-                                           element.id().internal(),
-                                           topologic_dimension(),
-                                           const_cast<viennagrid_element_id **>(&element_index_begin),
-                                           const_cast<viennagrid_element_id **>(&element_index_end));
+      THROW_ON_ERROR( viennagrid_element_boundary_elements(internal_mesh(),
+                                                           element.id().internal(),
+                                                           topologic_dimension(),
+                                                           const_cast<viennagrid_element_id **>(&element_index_begin),
+                                                           const_cast<viennagrid_element_id **>(&element_index_end)) );
     }
 
     template<bool element_is_const>
@@ -93,15 +93,14 @@ namespace viennagrid
       topologic_dimension_ = coboundary_topological_dimension_in;
       mesh_ = mesh;
 
-
       if ( !((viennagrid::topologic_dimension(element) == 0) && (coboundary_topological_dimension_in == cell_dimension(get_mesh()))) )
-        viennagrid_mesh_property_set(internal_mesh(), VIENNAGRID_PROPERTY_BOUNDARY_LAYOUT, VIENNAGRID_BOUNDARY_LAYOUT_FULL);
+        THROW_ON_ERROR( viennagrid_mesh_property_set(internal_mesh(), VIENNAGRID_PROPERTY_BOUNDARY_LAYOUT, VIENNAGRID_BOUNDARY_LAYOUT_FULL) );
 
-      viennagrid_element_coboundary_elements(mesh,
-                                             element.id().internal(),
-                                             topologic_dimension(),
-                                             const_cast<viennagrid_element_id **>(&element_index_begin),
-                                             const_cast<viennagrid_element_id **>(&element_index_end));
+      THROW_ON_ERROR( viennagrid_element_coboundary_elements(mesh,
+                                                             element.id().internal(),
+                                                             topologic_dimension(),
+                                                             const_cast<viennagrid_element_id **>(&element_index_begin),
+                                                             const_cast<viennagrid_element_id **>(&element_index_end)) );
     }
 
     template<bool element_is_const>
@@ -113,14 +112,14 @@ namespace viennagrid
       if ( !((viennagrid::topologic_dimension(element) == cell_dimension(mesh_)) &&
             (connector_topological_dimension_in == 0) &&
             (neighbor_topological_dimension_in == cell_dimension(mesh_))) )
-        viennagrid_mesh_property_set(internal_mesh(), VIENNAGRID_PROPERTY_BOUNDARY_LAYOUT, VIENNAGRID_BOUNDARY_LAYOUT_FULL);
+        THROW_ON_ERROR( viennagrid_mesh_property_set(internal_mesh(), VIENNAGRID_PROPERTY_BOUNDARY_LAYOUT, VIENNAGRID_BOUNDARY_LAYOUT_FULL) );
 
-      viennagrid_element_neighbor_elements(mesh,
-                                           element.id().internal(),
-                                           connector_topological_dimension_in,
-                                           topologic_dimension(),
-                                           const_cast<viennagrid_element_id **>(&element_index_begin),
-                                           const_cast<viennagrid_element_id **>(&element_index_end));
+      THROW_ON_ERROR( viennagrid_element_neighbor_elements(mesh,
+                                                           element.id().internal(),
+                                                           connector_topological_dimension_in,
+                                                           topologic_dimension(),
+                                                           const_cast<viennagrid_element_id **>(&element_index_begin),
+                                                           const_cast<viennagrid_element_id **>(&element_index_end)) );
     }
 
 

@@ -53,19 +53,19 @@ namespace viennagrid
     void * get_aux() const
     {
       void * aux;
-      viennagrid_element_aux_get(mesh_, id_.internal(), &aux);
+      THROW_ON_ERROR( viennagrid_element_aux_get(mesh_, id_.internal(), &aux) );
       return aux;
     }
 
     void set_aux(void * aux)
     {
-      viennagrid_element_aux_set(mesh_, id_.internal(), aux);
+      THROW_ON_ERROR( viennagrid_element_aux_set(mesh_, id_.internal(), aux) );
     }
 
     element_tag tag() const
     {
       viennagrid_element_type type;
-      viennagrid_element_type_get( internal_mesh(), id().internal(), &type);
+      THROW_ON_ERROR( viennagrid_element_type_get( internal_mesh(), id().internal(), &type) );
       return element_tag(type);
     }
 
@@ -129,10 +129,10 @@ namespace viennagrid
   base_element<is_const> parent(base_element<is_const> const & element)
   {
     viennagrid_int parent_id;
-    viennagrid_element_parent_get(internal_mesh(element),
-                                  viennagrid::topologic_dimension(element),
-                                  element.id(),
-                                  &parent_id);
+    THROW_ON_ERROR( viennagrid_element_parent_get(internal_mesh(element),
+                                                  viennagrid::topologic_dimension(element),
+                                                  element.id(),
+                                                  &parent_id) );
     return base_element<is_const>(element.get_mesh(), viennagrid::topologic_dimension(element), parent_id);
   }
 

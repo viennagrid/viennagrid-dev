@@ -5,6 +5,8 @@
 #include <ostream>
 #include <vector>
 #include <cassert>
+#include <stdexcept>
+
 #include "viennagrid/viennagrid.h"
 
 namespace viennagrid
@@ -75,6 +77,23 @@ namespace viennagrid
   class null_type;
 
 
+
+  class exception : public std::runtime_error
+  {
+  public:
+
+    exception(viennagrid_error error_code_in) : std::runtime_error( viennagrid_error_string(error_code_in) ? viennagrid_error_string(error_code_in) : "unspecified error" ), error_code_(error_code_in) {}
+    viennagrid_error error_code() const { return error_code_; }
+
+  private:
+    viennagrid_error error_code_;
+  };
+
+  inline void THROW_ON_ERROR(viennagrid_error error)
+  {
+    if (error != VIENNAGRID_SUCCESS)
+      throw exception(error);
+  }
 
 
 

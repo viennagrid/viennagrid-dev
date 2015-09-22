@@ -36,26 +36,26 @@ namespace viennagrid
     id_type id() const
     {
       id_type id_;
-      viennagrid_region_id_get(region_, &id_);
+      THROW_ON_ERROR( viennagrid_region_id_get(region_, &id_) );
       return id_;
     }
 
     std::string get_name() const
     {
       const char * name_;
-      viennagrid_region_name_get(internal(), &name_);
+      THROW_ON_ERROR( viennagrid_region_name_get(internal(), &name_) );
       return std::string(name_);
     }
 
     void set_name(std::string const & name_)
     {
-      viennagrid_region_name_set(internal(), name_.c_str());
+      THROW_ON_ERROR( viennagrid_region_name_set(internal(), name_.c_str()) );
     }
 
     viennagrid_dimension geometric_dimension() const
     {
       viennagrid_dimension tmp;
-      viennagrid_mesh_geometric_dimension_get(mesh_, &tmp);
+      THROW_ON_ERROR( viennagrid_mesh_geometric_dimension_get(mesh_, &tmp) );
       return tmp;
     }
 
@@ -89,13 +89,13 @@ namespace viennagrid
     value_type operator()(viennagrid_region_id & id)
     {
       viennagrid_region region;
-      viennagrid_mesh_region_get( mesh_, id, &region );
+      THROW_ON_ERROR( viennagrid_mesh_region_get(mesh_, id, &region) );
       return value_type(mesh_, region);
     }
     const_value_type operator()(viennagrid_region_id const & id)
     {
       viennagrid_region region;
-      viennagrid_mesh_region_get( mesh_, id, &region );
+      THROW_ON_ERROR( viennagrid_mesh_region_get(mesh_, id, &region) );
       return const_value_type(mesh_, region);
     }
 
@@ -114,17 +114,17 @@ namespace viennagrid
 
     base_region_range(mesh_type const & mesh_in) : mesh_(mesh_in.internal())
     {
-      viennagrid_mesh_regions_get(internal_mesh(mesh_in),
-                                  const_cast<viennagrid_region_id **>(&begin_),
-                                  const_cast<viennagrid_region_id **>(&end_));
+      THROW_ON_ERROR( viennagrid_mesh_regions_get(internal_mesh(mesh_in),
+                                                  const_cast<viennagrid_region_id **>(&begin_),
+                                                  const_cast<viennagrid_region_id **>(&end_)) );
     }
 
     base_region_range(element const & element_) : mesh_(element_.internal_mesh())
     {
-      viennagrid_element_regions_get(mesh_,
-                                     element_.id().internal(),
-                                     const_cast<viennagrid_region_id **>(&begin_),
-                                     const_cast<viennagrid_region_id **>(&end_));
+      THROW_ON_ERROR( viennagrid_element_regions_get(mesh_,
+                                                     element_.id().internal(),
+                                                     const_cast<viennagrid_region_id **>(&begin_),
+                                                     const_cast<viennagrid_region_id **>(&end_)) );
     }
 
     typedef transform_iterator<region_pointer_type, unpack_region_functor<is_const> > iterator;
