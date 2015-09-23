@@ -99,9 +99,6 @@ int main()
   err = viennagrid_mesh_region_create(my_mesh, &my_region0); ERROR_CHECK(err);
   err = viennagrid_mesh_region_create(my_mesh, &my_region1); ERROR_CHECK(err);
 
-//   err = viennagrid_region_id_get(my_region0, &my_region_id0); ERROR_CHECK(err);
-//   err = viennagrid_region_id_get(my_region1, &my_region_id1); ERROR_CHECK(err);
-
   /*
    * Step 2: Add vertices to the mesh.
    *         Note that vertices with IDs are enumerated in the order they are pushed to the mesh.
