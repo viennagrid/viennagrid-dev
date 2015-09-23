@@ -244,7 +244,7 @@ namespace viennagrid
       {
         if ( edge_refinement_flag_accessor.get(*eit) )
         {
-          edge_to_vertex_handle_accessor.set( *eit, viennagrid::make_vertex(mesh_out,viennagrid::centroid(point_accessor_in, *eit)) );
+          edge_to_vertex_handle_accessor.set( *eit, viennagrid::make_vertex(mesh_out,viennagrid::centroid(*eit)) );
         }
       }
 
