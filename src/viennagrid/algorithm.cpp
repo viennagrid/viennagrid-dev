@@ -393,32 +393,17 @@ viennagrid_error viennagrid_mesh_surface(viennagrid_mesh mesh,
       return VIENNAGRID_ERROR_INVALID_TOPOLOGICAL_DIMENSION;
 
     //
-    // Step 1: Find all facets on the boundary (do not assume that co-boundary information has been set up)
-    //
-    viennagrid_element_id *facet_ids_begin, *facet_ids_end;
-    RETURN_ON_ERROR( viennagrid_mesh_elements_get(mesh, cell_dim - 1, &facet_ids_begin, &facet_ids_end) );
-
-    std::vector<bool> facet_on_boundary(facet_ids_end - facet_ids_begin, false);
-
-    viennagrid_element_id *cell_ids_begin, *cell_ids_end;
-    RETURN_ON_ERROR( viennagrid_mesh_elements_get(mesh, cell_dim, &cell_ids_begin, &cell_ids_end) );
-    for (viennagrid_element_id *cit = cell_ids_begin; cit != cell_ids_end; ++cit)
-    {
-      viennagrid_element_id *facets_on_cell_begin, *facets_on_cell_end;
-      RETURN_ON_ERROR( viennagrid_element_boundary_elements(mesh, *cit, cell_dim - 1, &facets_on_cell_begin, &facets_on_cell_end) );
-
-      for (viennagrid_element_id *fit = facets_on_cell_begin; fit != facets_on_cell_end; ++fit)
-        facet_on_boundary[*fit] = !facet_on_boundary[*fit]; // facets belonging to only one cell will flip: false -> true. Others will double-flip: false -> true -> false
-    }
-
-    //
-    // Step 2: Sum contributions from all facets on boundary
+    // Sum contributions from all facets on boundary
     //
     *surface = 0;
+    viennagrid_element_id *facet_ids_begin, *facet_ids_end;
+    RETURN_ON_ERROR( viennagrid_mesh_elements_get(mesh, cell_dim-1, &facet_ids_begin, &facet_ids_end) );
     viennagrid_numeric surface_contribution;
+    viennagrid_bool is_boundary;
     for (viennagrid_element_id *fit = facet_ids_begin; fit != facet_ids_end; ++fit)
     {
-      if (facet_on_boundary[*fit])
+      RETURN_ON_ERROR( viennagrid_element_is_mesh_boundary(mesh, *fit, &is_boundary) );
+      if (is_boundary == VIENNAGRID_TRUE)
       {
         RETURN_ON_ERROR( viennagrid_element_volume(mesh, *fit, &surface_contribution) );
         *surface += surface_contribution;
