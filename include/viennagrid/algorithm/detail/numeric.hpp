@@ -16,8 +16,6 @@
 #include <algorithm>
 #include <cmath>
 
-#include "viennagrid/algorithm/norm.hpp"
-
 /** @file viennagrid/algorithm/detail/numeric.hpp
     @brief Helper routines controlling numeric tolerances
 */

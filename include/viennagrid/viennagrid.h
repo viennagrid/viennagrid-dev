@@ -1279,10 +1279,20 @@ VIENNAGRID_DYNAMIC_EXPORT viennagrid_error viennagrid_inner_prod(viennagrid_dime
                                                                  viennagrid_numeric const * v2,
                                                                  viennagrid_numeric       * result);
 
+/* computes the l1-norm of a vector: result = ||v1||_1 */
+VIENNAGRID_DYNAMIC_EXPORT viennagrid_error viennagrid_norm_1(viennagrid_dimension dimension,
+                                                             viennagrid_numeric const * v1,
+                                                             viennagrid_numeric       * result);
+
 /* computes the l2-norm of a vector: result = ||v1||_2 */
-VIENNAGRID_DYNAMIC_EXPORT viennagrid_error viennagrid_norm(viennagrid_dimension dimension,
-                                                           viennagrid_numeric const * v1,
-                                                           viennagrid_numeric       * result);
+VIENNAGRID_DYNAMIC_EXPORT viennagrid_error viennagrid_norm_2(viennagrid_dimension dimension,
+                                                             viennagrid_numeric const * v1,
+                                                             viennagrid_numeric       * result);
+
+/* computes the inf-norm of a vector: result = ||v1||_inf */
+VIENNAGRID_DYNAMIC_EXPORT viennagrid_error viennagrid_norm_inf(viennagrid_dimension dimension,
+                                                             viennagrid_numeric const * v1,
+                                                             viennagrid_numeric       * result);
 
 /* computes the volume (length) of the line spanned by two points */
 VIENNAGRID_DYNAMIC_EXPORT viennagrid_error viennagrid_spanned_volume_2(viennagrid_dimension dimension,

@@ -13,9 +13,7 @@
    License:      MIT (X11), see file LICENSE in the base directory
 ======================================================================= */
 
-#include "viennagrid/algorithm/inner_prod.hpp"
-#include "viennagrid/algorithm/cross_prod.hpp"
-#include "viennagrid/algorithm/norm.hpp"
+#include "viennagrid/viennagrid.hpp"
 
 /** @file viennagrid/algorithm/angle.hpp
     @brief Contains functions for calculating angles between vectors given by points

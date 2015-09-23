@@ -21,8 +21,6 @@
 #include "viennagrid/viennagrid.hpp"
 #include "viennagrid/algorithm/distance.hpp"
 #include "viennagrid/algorithm/volume.hpp"
-#include "viennagrid/algorithm/cross_prod.hpp"
-#include "viennagrid/algorithm/norm.hpp"
 
 inline void fuzzy_check(double a, double b)
 {

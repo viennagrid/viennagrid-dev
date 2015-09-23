@@ -199,7 +199,62 @@ namespace viennagrid
   }
 
 
+  /** @brief Returns the cross product of two vectors. If the vectors have one or two components only, the zero vector is returned.
+   *
+   * @param v1    The first vector given in some coordinate system
+   * @param v2    The second vector given in another coordinate system
+   */
+  inline point cross_prod(point const& v0, point const& v1)
+  {
+    assert(v0.size() == v1.size());
+    assert(v0.size() == 3);
 
+    point result(v0.size());
+    THROW_ON_ERROR( viennagrid_cross_prod(&v0[0], &v1[0], &result[0]) );
+    return result;
+  }
+
+
+  /** @brief Returns the cross product of two vectors. If the vectors have one or two components only, the zero vector is returned.
+   *
+   * @param v1    The first vector given in some coordinate system
+   * @param v2    The second vector given in another coordinate system
+   */
+  inline viennagrid_numeric inner_prod(point const& v0, point const& v1)
+  {
+    assert(v0.size() == v1.size());
+
+    viennagrid_numeric result;
+    THROW_ON_ERROR( viennagrid_inner_prod(v0.size(), &v0[0], &v1[0], &result) );
+    return result;
+  }
+
+
+  /** @brief Convenience shortcut for the 1-norm of a vector. */
+  inline viennagrid_numeric norm_1(point const & p)
+  {
+    viennagrid_numeric result;
+    THROW_ON_ERROR( viennagrid_norm_1(p.size(), &p[0], &result) );
+    return result;
+  }
+
+  /** @brief Convenience shortcut for the 2-norm of a vector. */
+  inline viennagrid_numeric norm_2(point const & p)
+  {
+    viennagrid_numeric result;
+    THROW_ON_ERROR( viennagrid_norm_2(p.size(), &p[0], &result) );
+    return result;
+  }
+  inline viennagrid_numeric norm(point const & p)
+  { return norm_2(p); }
+
+  /** @brief Convenience shortcut for the 2-norm of a vector. */
+  inline viennagrid_numeric norm_inf(point const & p)
+  {
+    viennagrid_numeric result;
+    THROW_ON_ERROR( viennagrid_norm_inf(p.size(), &p[0], &result) );
+    return result;
+  }
 
   std::ostream& operator<< (std::ostream & os, point const & p);
   std::istream& operator>> (std::istream & is, point & pt);

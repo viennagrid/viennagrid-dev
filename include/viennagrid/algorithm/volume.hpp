@@ -19,7 +19,6 @@
 #include <stdexcept>
 
 #include "viennagrid/viennagrid.hpp"
-#include "viennagrid/algorithm/norm.hpp"
 #include "viennagrid/algorithm/spanned_volume.hpp"
 
 /** @file viennagrid/algorithm/volume.hpp
@@ -50,7 +49,7 @@ namespace viennagrid
       ConstVertexRangeType vertices(element);
 
       if (element.is_line())
-        return norm( accessor.get(vertices[0]) - accessor.get(vertices[1]) );
+        return norm_2( accessor.get(vertices[0]) - accessor.get(vertices[1]) );
 
       if (element.is_triangle())
         return spanned_volume(accessor.get(vertices[0]), accessor.get(vertices[1]), accessor.get(vertices[2]));

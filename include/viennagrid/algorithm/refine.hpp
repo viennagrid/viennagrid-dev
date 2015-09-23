@@ -15,7 +15,6 @@
 
 #include "viennagrid/viennagrid.hpp"
 #include "viennagrid/algorithm/centroid.hpp"
-#include "viennagrid/algorithm/norm.hpp"
 
 #include "viennagrid/algorithm/detail/refine_tri.hpp"
 #include "viennagrid/algorithm/detail/refine_tet.hpp"

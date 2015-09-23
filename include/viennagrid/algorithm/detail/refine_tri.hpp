@@ -14,7 +14,6 @@
 ======================================================================= */
 
 #include "viennagrid/viennagrid.hpp"
-#include "viennagrid/algorithm/norm.hpp"
 
 /** @file viennagrid/algorithm/detail/refine_tri.hpp
     @brief Provides refinement routines for a triangle

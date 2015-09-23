@@ -20,7 +20,6 @@
 
 #include "viennagrid/viennagrid.hpp"
 #include "viennagrid/algorithm/spanned_volume.hpp"
-#include "viennagrid/algorithm/cross_prod.hpp"
 
 /** @file viennagrid/algorithm/circumcenter.hpp
     @brief Computes the circumcenter of n-cells.
@@ -234,7 +233,7 @@ namespace viennagrid
                              + cross_prod(B, C) * viennagrid::inner_prod(A, A)
                              ) / (viennagrid::inner_prod(A, viennagrid::cross_prod(B, C)) * 2.0);
       PointT cprodBC = viennagrid::cross_prod(B, C);
-      if (std::fabs(viennagrid::inner_prod(A, cprodBC)) < 1e-10 * viennagrid::norm(cprodBC) )
+      if (std::fabs(viennagrid::inner_prod(A, cprodBC)) < 1e-10 * viennagrid::norm_2(cprodBC) )
       {
         std::cerr << "Near singularity in circum center calculation!" << std::endl;
         std::cerr << "A: " << A << std::endl;

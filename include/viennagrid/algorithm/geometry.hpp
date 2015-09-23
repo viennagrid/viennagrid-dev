@@ -16,9 +16,6 @@
 #include <limits>
 #include "viennagrid/core/point_accessor.hpp"
 #include "viennagrid/mesh/mesh.hpp"
-#include "viennagrid/algorithm/inner_prod.hpp"
-#include "viennagrid/algorithm/norm.hpp"
-#include "viennagrid/algorithm/cross_prod.hpp"
 #include "viennagrid/algorithm/detail/numeric.hpp"
 
 /** @file viennagrid/algorithm/geometry.hpp

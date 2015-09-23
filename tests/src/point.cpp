@@ -23,8 +23,6 @@
 
 #include "viennagrid/viennagrid.hpp"
 #include "viennagrid/algorithm/spanned_volume.hpp"
-#include "viennagrid/algorithm/inner_prod.hpp"
-#include "viennagrid/algorithm/cross_prod.hpp"
 
 //compare a and b, taking round-off into account
 inline bool fuzzy_equal(double a, double b)
@@ -109,43 +107,46 @@ void test_operations(PointType1 const & c0, PointType1 const & c1, PointType1 co
 
 
 
-  std::cout << "Testing cross products: ";
-  if ( !fuzzy_equal(viennagrid::cross_prod(c1, c0), viennagrid::cross_prod(p1, p0))
-       || !fuzzy_equal(viennagrid::cross_prod(c2, c1), viennagrid::cross_prod(p2, p1))
-       || !fuzzy_equal(viennagrid::cross_prod(c3, c0), viennagrid::cross_prod(p3, p0))
-       || !fuzzy_equal(viennagrid::cross_prod(c1, c3), viennagrid::cross_prod(p1, p3))
-     )
-    exit(EXIT_FAILURE);
-  if ( !fuzzy_equal(viennagrid::cross_prod(c1, p0), viennagrid::cross_prod(c1, p0))
-       || !fuzzy_equal(viennagrid::cross_prod(c2, p1), viennagrid::cross_prod(c2, p1))
-       || !fuzzy_equal(viennagrid::cross_prod(c3, p0), viennagrid::cross_prod(c3, p0))
-       || !fuzzy_equal(viennagrid::cross_prod(c1, p3), viennagrid::cross_prod(c1, p3)) )
-    exit(EXIT_FAILURE);
-  std::cout << "[PASSED]" << std::endl;
+  if (c0.size() == 3)
+  {
+    std::cout << "Testing cross products: ";
+    if ( !fuzzy_equal(viennagrid::cross_prod(c1, c0), viennagrid::cross_prod(p1, p0))
+        || !fuzzy_equal(viennagrid::cross_prod(c2, c1), viennagrid::cross_prod(p2, p1))
+        || !fuzzy_equal(viennagrid::cross_prod(c3, c0), viennagrid::cross_prod(p3, p0))
+        || !fuzzy_equal(viennagrid::cross_prod(c1, c3), viennagrid::cross_prod(p1, p3))
+      )
+      exit(EXIT_FAILURE);
+    if ( !fuzzy_equal(viennagrid::cross_prod(c1, p0), viennagrid::cross_prod(c1, p0))
+        || !fuzzy_equal(viennagrid::cross_prod(c2, p1), viennagrid::cross_prod(c2, p1))
+        || !fuzzy_equal(viennagrid::cross_prod(c3, p0), viennagrid::cross_prod(c3, p0))
+        || !fuzzy_equal(viennagrid::cross_prod(c1, p3), viennagrid::cross_prod(c1, p3)) )
+      exit(EXIT_FAILURE);
+    std::cout << "[PASSED]" << std::endl;
+  }
 
   std::cout << "Testing norms: ";
-  if (    !fuzzy_equal(viennagrid::norm(c0, viennagrid::one_norm_tag()), viennagrid::norm(p0, viennagrid::one_norm_tag()))
-       || !fuzzy_equal(viennagrid::norm(c1, viennagrid::one_norm_tag()), viennagrid::norm(p1, viennagrid::one_norm_tag()))
-       || !fuzzy_equal(viennagrid::norm(c2, viennagrid::one_norm_tag()), viennagrid::norm(p2, viennagrid::one_norm_tag()))
-       || !fuzzy_equal(viennagrid::norm(c3, viennagrid::one_norm_tag()), viennagrid::norm(p3, viennagrid::one_norm_tag()))
+  if (    !fuzzy_equal(viennagrid::norm_1(c0), viennagrid::norm_1(p0))
+       || !fuzzy_equal(viennagrid::norm_1(c1), viennagrid::norm_1(p1))
+       || !fuzzy_equal(viennagrid::norm_1(c2), viennagrid::norm_1(p2))
+       || !fuzzy_equal(viennagrid::norm_1(c3), viennagrid::norm_1(p3))
      )
     exit(EXIT_FAILURE);
-  if (    !fuzzy_equal(viennagrid::norm(c0, viennagrid::two_norm_tag()), viennagrid::norm(p0, viennagrid::two_norm_tag()))
-       || !fuzzy_equal(viennagrid::norm(c1, viennagrid::two_norm_tag()), viennagrid::norm(p1, viennagrid::two_norm_tag()))
-       || !fuzzy_equal(viennagrid::norm(c2, viennagrid::two_norm_tag()), viennagrid::norm(p2, viennagrid::two_norm_tag()))
-       || !fuzzy_equal(viennagrid::norm(c3, viennagrid::two_norm_tag()), viennagrid::norm(p3, viennagrid::two_norm_tag()))
+  if (    !fuzzy_equal(viennagrid::norm_2(c0), viennagrid::norm_2(p0))
+       || !fuzzy_equal(viennagrid::norm_2(c1), viennagrid::norm_2(p1))
+       || !fuzzy_equal(viennagrid::norm_2(c2), viennagrid::norm_2(p2))
+       || !fuzzy_equal(viennagrid::norm_2(c3), viennagrid::norm_2(p3))
      )
     exit(EXIT_FAILURE);
-  if (    !fuzzy_equal(viennagrid::norm(c0, viennagrid::inf_norm_tag()), viennagrid::norm(p0, viennagrid::inf_norm_tag()))
-       || !fuzzy_equal(viennagrid::norm(c1, viennagrid::inf_norm_tag()), viennagrid::norm(p1, viennagrid::inf_norm_tag()))
-       || !fuzzy_equal(viennagrid::norm(c2, viennagrid::inf_norm_tag()), viennagrid::norm(p2, viennagrid::inf_norm_tag()))
-       || !fuzzy_equal(viennagrid::norm(c3, viennagrid::inf_norm_tag()), viennagrid::norm(p3, viennagrid::inf_norm_tag()))
+  if (    !fuzzy_equal(viennagrid::norm_inf(c0), viennagrid::norm_inf(p0))
+       || !fuzzy_equal(viennagrid::norm_inf(c1), viennagrid::norm_inf(p1))
+       || !fuzzy_equal(viennagrid::norm_inf(c2), viennagrid::norm_inf(p2))
+       || !fuzzy_equal(viennagrid::norm_inf(c3), viennagrid::norm_inf(p3))
      )
     exit(EXIT_FAILURE);
-  if (    !fuzzy_equal(viennagrid::norm(3.1415*c3, viennagrid::two_norm_tag()), viennagrid::norm(3.1415*p3, viennagrid::two_norm_tag()))
-       || !fuzzy_equal(viennagrid::norm(c1,        viennagrid::one_norm_tag()), viennagrid::norm(p1,        viennagrid::one_norm_tag()))
-       || !fuzzy_equal(viennagrid::norm(c2+p1,     viennagrid::two_norm_tag()), viennagrid::norm(p2+c1,     viennagrid::two_norm_tag()))
-       || !fuzzy_equal(viennagrid::norm(c3-c2,     viennagrid::inf_norm_tag()), viennagrid::norm(p3-p2,     viennagrid::inf_norm_tag()))
+  if (    !fuzzy_equal(viennagrid::norm_2(3.1415*c3), viennagrid::norm_2(3.1415*p3))
+       || !fuzzy_equal(viennagrid::norm_1(c1       ), viennagrid::norm_1(p1       ))
+       || !fuzzy_equal(viennagrid::norm_2(c2+p1    ), viennagrid::norm_2(p2+c1    ))
+       || !fuzzy_equal(viennagrid::norm_inf(c3-c2  ), viennagrid::norm_inf(p3-p2  ))
      )
     exit(EXIT_FAILURE);
   std::cout << "[PASSED]" << std::endl;

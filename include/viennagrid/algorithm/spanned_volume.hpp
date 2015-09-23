@@ -17,9 +17,6 @@
 
 //#include <math.h>
 #include "viennagrid/core/forwards.hpp"
-#include "viennagrid/algorithm/cross_prod.hpp"
-#include "viennagrid/algorithm/norm.hpp"
-#include "viennagrid/algorithm/inner_prod.hpp"
 
 
 /** @file viennagrid/algorithm/spanned_volume.hpp
@@ -160,7 +157,7 @@ namespace viennagrid
 
         PointT1 v3 = cross_prod(v1, v2);
 
-        return norm(v3) / 2.0;
+        return norm_2(v3) / 2.0;
       }
 
       return 0;

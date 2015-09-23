@@ -55,10 +55,27 @@ viennagrid_error viennagrid_inner_prod(viennagrid_dimension dimension,
   return VIENNAGRID_SUCCESS;
 }
 
+
+/* computes the l1-norm of a vector: result = ||v1||_1 */
+viennagrid_error viennagrid_norm_1(viennagrid_dimension dimension,
+                                   viennagrid_numeric const * v1,
+                                   viennagrid_numeric       * result)
+{
+  if (result)
+  {
+    *result = 0;
+    for (viennagrid_dimension i = 0; i < dimension; ++i)
+      *result +=  std::abs(v1[+i]);
+  }
+
+  return VIENNAGRID_SUCCESS;
+}
+
+
 /* computes the l2-norm of a vector: result = ||v1||_2 */
-viennagrid_error viennagrid_norm(viennagrid_dimension dimension,
-                                 viennagrid_numeric const * v1,
-                                 viennagrid_numeric       * result)
+viennagrid_error viennagrid_norm_2(viennagrid_dimension dimension,
+                                   viennagrid_numeric const * v1,
+                                   viennagrid_numeric       * result)
 {
   if (result)
   {
@@ -66,6 +83,21 @@ viennagrid_error viennagrid_norm(viennagrid_dimension dimension,
     for (viennagrid_dimension i = 0; i < dimension; ++i)
       *result += v1[+i] * v1[+i];
     *result = std::sqrt(*result);
+  }
+
+  return VIENNAGRID_SUCCESS;
+}
+
+/* computes the l2-norm of a vector: result = ||v1||_2 */
+viennagrid_error viennagrid_norm_inf(viennagrid_dimension dimension,
+                                     viennagrid_numeric const * v1,
+                                     viennagrid_numeric       * result)
+{
+  if (result && dimension > 0)
+  {
+    *result = std::abs(v1[0]);
+    for (viennagrid_dimension i = 1; i < dimension; ++i)
+      *result = std::max( *result, std::abs(v1[+i]) );
   }
 
   return VIENNAGRID_SUCCESS;

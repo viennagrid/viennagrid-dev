@@ -21,8 +21,6 @@
 #include <utility>
 
 #include "viennagrid/viennagrid.hpp"
-#include "viennagrid/algorithm/norm.hpp"
-#include "viennagrid/algorithm/inner_prod.hpp"
 
 /** @file viennagrid/algorithm/closest_points.hpp
     @brief Routines for computing the two points of two different objects being closest to each other.

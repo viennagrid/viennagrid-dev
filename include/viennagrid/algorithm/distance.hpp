@@ -20,8 +20,6 @@
 #include <limits>
 
 #include "viennagrid/viennagrid.hpp"
-#include "viennagrid/algorithm/norm.hpp"
-#include "viennagrid/algorithm/inner_prod.hpp"
 #include "viennagrid/algorithm/closest_points.hpp"
 
 /** @file viennagrid/algorithm/distance.hpp
