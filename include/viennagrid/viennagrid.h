@@ -1295,6 +1295,12 @@ VIENNAGRID_DYNAMIC_EXPORT viennagrid_error viennagrid_norm_inf(viennagrid_dimens
                                                              viennagrid_numeric       * result);
 
 /* computes the volume (length) of the line spanned by two points */
+VIENNAGRID_DYNAMIC_EXPORT viennagrid_error viennagrid_signed_spanned_volume_2(viennagrid_dimension dimension,
+                                                                              viennagrid_numeric const * p1,
+                                                                              viennagrid_numeric const * p2,
+                                                                              viennagrid_numeric       * volume);
+
+/* computes the volume (length) of the line spanned by two points */
 VIENNAGRID_DYNAMIC_EXPORT viennagrid_error viennagrid_spanned_volume_2(viennagrid_dimension dimension,
                                                                        viennagrid_numeric const * p1,
                                                                        viennagrid_numeric const * p2,

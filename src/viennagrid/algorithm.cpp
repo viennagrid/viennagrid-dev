@@ -110,10 +110,10 @@ viennagrid_error viennagrid_norm_inf(viennagrid_dimension dimension,
 //
 
 /** @brief Returns the signed volume of the line spanned by two points (begin, end) */
-viennagrid_error viennagrid_spanned_volume_2(viennagrid_dimension dimension,
-                                             viennagrid_numeric const * p1,
-                                             viennagrid_numeric const * p2,
-                                             viennagrid_numeric       * result)
+viennagrid_error viennagrid_signed_spanned_volume_2(viennagrid_dimension dimension,
+                                                    viennagrid_numeric const * p1,
+                                                    viennagrid_numeric const * p2,
+                                                    viennagrid_numeric       * result)
 {
   if (dimension == 1)
     *result = p2[0] - p1[0];
@@ -135,6 +135,20 @@ viennagrid_error viennagrid_spanned_volume_2(viennagrid_dimension dimension,
 
   return VIENNAGRID_SUCCESS;
 }
+
+/** @brief Returns the area of the triangle spanned by the three points p1, p2, p3 */
+viennagrid_error viennagrid_spanned_volume_2(viennagrid_dimension dimension,
+                                             viennagrid_numeric const * p1,
+                                             viennagrid_numeric const * p2,
+                                             viennagrid_numeric       * result)
+{
+  if (result)
+  {
+    RETURN_ON_ERROR( viennagrid_signed_spanned_volume_2(dimension, p1, p2, result) );
+  }
+  return VIENNAGRID_SUCCESS;
+}
+
 
 
 viennagrid_error viennagrid_signed_spanned_volume_3(viennagrid_dimension dimension,
