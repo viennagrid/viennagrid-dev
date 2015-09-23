@@ -58,7 +58,7 @@ public:
   viennagrid_dimension facet_dimension() const { return cell_dimension()-1; }
   void update_cell_dimension(viennagrid_dimension topologic_dimension)
   {
-    if (cell_dimension() == VIENNAGRID_INVALID_TOPOLOGIC_DIMENSION)
+    if (cell_dimension() == VIENNAGRID_INVALID_TOPOLOGICAL_DIMENSION)
       cell_dimension_ = topologic_dimension;
 
     cell_dimension_ = std::max( cell_dimension_, topologic_dimension );
@@ -316,7 +316,7 @@ private:
   viennagrid_int boundary_layout_;
 
 
-  viennagrid_element_buffer element_buffers[VIENNAGRID_TOPOLOGIC_DIMENSION_END];
+  viennagrid_element_buffer element_buffers[VIENNAGRID_TOPOLOGICAL_DIMENSION_END];
 
   viennagrid_dimension geometric_dimension_;
   viennagrid_dimension cell_dimension_;

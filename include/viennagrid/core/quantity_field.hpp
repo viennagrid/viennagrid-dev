@@ -151,7 +151,7 @@ namespace viennagrid
 
     bool is_initialized() const
     {
-      return valid() && (topologic_dimension() != VIENNAGRID_INVALID_TOPOLOGIC_DIMENSION) && (values_per_quantity() >= 1);
+      return valid() && (topologic_dimension() != VIENNAGRID_INVALID_TOPOLOGICAL_DIMENSION) && (values_per_quantity() >= 1);
     }
 
 

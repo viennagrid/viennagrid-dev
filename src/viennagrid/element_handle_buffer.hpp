@@ -44,11 +44,11 @@ public:
 
     ids_.clear();
 
-    for (int i = 0; i != VIENNAGRID_TOPOLOGIC_DIMENSION_END; ++i)
+    for (int i = 0; i != VIENNAGRID_TOPOLOGICAL_DIMENSION_END; ++i)
       coboundary_ids[i].clear();
 
-    for (int i = 0; i != VIENNAGRID_TOPOLOGIC_DIMENSION_END; ++i)
-      for (int j = 0; j != VIENNAGRID_TOPOLOGIC_DIMENSION_END; ++j)
+    for (int i = 0; i != VIENNAGRID_TOPOLOGICAL_DIMENSION_END; ++i)
+      for (int j = 0; j != VIENNAGRID_TOPOLOGICAL_DIMENSION_END; ++j)
         neighbor_ids[i][j].clear();
 
     for (int i = 0; i != VIENNAGRID_ELEMENT_TYPE_COUNT; ++i)
@@ -101,8 +101,8 @@ private:
 
   viennagrid_dimension topologic_dimension;
 
-  ViennaGridCoBoundaryBufferType coboundary_ids[VIENNAGRID_TOPOLOGIC_DIMENSION_END];
-  ViennaGridNeighborBufferType neighbor_ids[VIENNAGRID_TOPOLOGIC_DIMENSION_END][VIENNAGRID_TOPOLOGIC_DIMENSION_END];
+  ViennaGridCoBoundaryBufferType coboundary_ids[VIENNAGRID_TOPOLOGICAL_DIMENSION_END];
+  ViennaGridNeighborBufferType neighbor_ids[VIENNAGRID_TOPOLOGICAL_DIMENSION_END][VIENNAGRID_TOPOLOGICAL_DIMENSION_END];
 
   viennagrid_int element_counts[VIENNAGRID_ELEMENT_TYPE_COUNT];
 };

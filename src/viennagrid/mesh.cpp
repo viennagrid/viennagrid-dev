@@ -583,21 +583,21 @@ void viennagrid_mesh_::clear()
   children.clear();
   mesh_children_map.clear();
 
-  for (viennagrid_int i = 0; i != VIENNAGRID_TOPOLOGIC_DIMENSION_END; ++i)
+  for (viennagrid_int i = 0; i != VIENNAGRID_TOPOLOGICAL_DIMENSION_END; ++i)
   {
     element_handle_buffers[i].clear(i);
   }
 
-  for (viennagrid_int i = 0; i != VIENNAGRID_TOPOLOGIC_DIMENSION_END; ++i)
-    for (viennagrid_int j = 0; j != VIENNAGRID_TOPOLOGIC_DIMENSION_END; ++j)
+  for (viennagrid_int i = 0; i != VIENNAGRID_TOPOLOGICAL_DIMENSION_END; ++i)
+    for (viennagrid_int j = 0; j != VIENNAGRID_TOPOLOGICAL_DIMENSION_END; ++j)
       coboundary_change_counters[i][j] = 0;
 
-  for (viennagrid_int i = 0; i != VIENNAGRID_TOPOLOGIC_DIMENSION_END; ++i)
-    for (viennagrid_int j = 0; j != VIENNAGRID_TOPOLOGIC_DIMENSION_END; ++j)
-      for (viennagrid_int k = 0; k != VIENNAGRID_TOPOLOGIC_DIMENSION_END; ++k)
+  for (viennagrid_int i = 0; i != VIENNAGRID_TOPOLOGICAL_DIMENSION_END; ++i)
+    for (viennagrid_int j = 0; j != VIENNAGRID_TOPOLOGICAL_DIMENSION_END; ++j)
+      for (viennagrid_int k = 0; k != VIENNAGRID_TOPOLOGICAL_DIMENSION_END; ++k)
         neighbor_change_counters[i][j][k] = 0;
 
-  for (viennagrid_int i = 0; i != VIENNAGRID_TOPOLOGIC_DIMENSION_END; ++i)
+  for (viennagrid_int i = 0; i != VIENNAGRID_TOPOLOGICAL_DIMENSION_END; ++i)
   {
     boundary_elements_[i].clear();
   }

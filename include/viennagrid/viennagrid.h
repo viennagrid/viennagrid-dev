@@ -458,7 +458,7 @@ typedef struct viennagrid_mesh_io_ * viennagrid_mesh_io;
 #define VIENNAGRID_ELEMENT_TYPE_PYRAMID             8
 #define VIENNAGRID_ELEMENT_TYPE_COUNT               9
 
-#define VIENNAGRID_TOPOLOGIC_DIMENSION_END          4
+#define VIENNAGRID_TOPOLOGICAL_DIMENSION_END        4
 
 
 /* VIENNAGRID FILETYPES */
@@ -485,7 +485,7 @@ typedef struct viennagrid_mesh_io_ * viennagrid_mesh_io;
 #define VIENNAGRID_VERSION_PATCH                    _VERSION_PATCH_
 
 
-#define VIENNAGRID_INVALID_TOPOLOGIC_DIMENSION     -1
+#define VIENNAGRID_INVALID_TOPOLOGICAL_DIMENSION   -1
 #define VIENNAGRID_INVALID_REGION_ID               -1
 
 
@@ -525,7 +525,7 @@ static inline viennagrid_bool viennagrid_element_type_valid(viennagrid_element_t
 
 /* checks, if a topological dimension is valid */
 static inline viennagrid_bool viennagrid_topological_dimension_valid(viennagrid_dimension topological_dimension)
-{ return (topological_dimension >= 0) && (topological_dimension < VIENNAGRID_TOPOLOGIC_DIMENSION_END); }
+{ return (topological_dimension >= 0) && (topological_dimension < VIENNAGRID_TOPOLOGICAL_DIMENSION_END); }
 
 
 
@@ -1274,31 +1274,31 @@ VIENNAGRID_DYNAMIC_EXPORT viennagrid_error viennagrid_cross_prod(viennagrid_nume
                                                                  viennagrid_numeric       * result);
 
 /* computes the inner product of two vectors: result = (v1, v2) */
-VIENNAGRID_DYNAMIC_EXPORT viennagrid_error viennagrid_inner_prod(viennagrid_int dimension,
+VIENNAGRID_DYNAMIC_EXPORT viennagrid_error viennagrid_inner_prod(viennagrid_dimension dimension,
                                                                  viennagrid_numeric const * v1,
                                                                  viennagrid_numeric const * v2,
                                                                  viennagrid_numeric       * result);
 
 /* computes the l2-norm of a vector: result = ||v1||_2 */
-VIENNAGRID_DYNAMIC_EXPORT viennagrid_error viennagrid_norm(viennagrid_int dimension,
+VIENNAGRID_DYNAMIC_EXPORT viennagrid_error viennagrid_norm(viennagrid_dimension dimension,
                                                            viennagrid_numeric const * v1,
                                                            viennagrid_numeric       * result);
 
 /* computes the volume (length) of the line spanned by two points */
-VIENNAGRID_DYNAMIC_EXPORT viennagrid_error viennagrid_spanned_volume_2(viennagrid_int dimension,
+VIENNAGRID_DYNAMIC_EXPORT viennagrid_error viennagrid_spanned_volume_2(viennagrid_dimension dimension,
                                                                        viennagrid_numeric const * p1,
                                                                        viennagrid_numeric const * p2,
                                                                        viennagrid_numeric       * volume);
 
 /* computes the volume (area) of a triangle defined by three points (2d or 3d) */
-VIENNAGRID_DYNAMIC_EXPORT viennagrid_error viennagrid_spanned_volume_3(viennagrid_int dimension,
+VIENNAGRID_DYNAMIC_EXPORT viennagrid_error viennagrid_spanned_volume_3(viennagrid_dimension dimension,
                                                                        viennagrid_numeric const * p1,
                                                                        viennagrid_numeric const * p2,
                                                                        viennagrid_numeric const * p3,
                                                                        viennagrid_numeric       * volume);
 
 /* computes the volume of a tetrahedron defined by four points (3d) */
-VIENNAGRID_DYNAMIC_EXPORT viennagrid_error viennagrid_spanned_volume_4(viennagrid_int dimension,
+VIENNAGRID_DYNAMIC_EXPORT viennagrid_error viennagrid_spanned_volume_4(viennagrid_dimension dimension,
                                                                        viennagrid_numeric const * p1,
                                                                        viennagrid_numeric const * p2,
                                                                        viennagrid_numeric const * p3,
@@ -1327,6 +1327,10 @@ VIENNAGRID_DYNAMIC_EXPORT viennagrid_error viennagrid_mesh_surface(viennagrid_me
 VIENNAGRID_DYNAMIC_EXPORT viennagrid_error viennagrid_element_centroid(viennagrid_mesh mesh,
                                                                        viennagrid_element_id element_id,
                                                                        viennagrid_numeric * coords);
+
+/* computes the centroid of the mesh */
+VIENNAGRID_DYNAMIC_EXPORT viennagrid_error viennagrid_mesh_centroid(viennagrid_mesh mesh,
+                                                                    viennagrid_numeric * coords);
 
 
 /* refines the lines of a PLC that no line in output_plc is greater than line_size */

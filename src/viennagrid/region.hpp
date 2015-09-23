@@ -63,7 +63,7 @@ private:
   std::string name_;
   viennagrid_int id_;
 
-  std::set<viennagrid_element_id> boundary_elements_[VIENNAGRID_TOPOLOGIC_DIMENSION_END];
+  std::set<viennagrid_element_id> boundary_elements_[VIENNAGRID_TOPOLOGICAL_DIMENSION_END];
   viennagrid_int boundary_elements_change_counter;
 
   viennagrid_mesh_hierarchy hierarchy_;

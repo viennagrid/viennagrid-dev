@@ -204,14 +204,11 @@ bool operator==( short_vector<T,SizeT> const & lhs, short_vector<T,SizeT> const 
 
 
 
-
-
-
-
-
 inline viennagrid_dimension TOPODIM(viennagrid_element_id element_id) { return viennagrid_topological_dimension_from_element_id(element_id); }
 inline viennagrid_element_id INDEX(viennagrid_element_id element_id) { return viennagrid_index_from_element_id(element_id); }
 inline viennagrid_element_id ID(viennagrid_dimension td, viennagrid_element_id ei) { return viennagrid_compose_element_id(td, ei); }
+
+#define RETURN_ON_ERROR( FUNCTION_CALL ) { viennagrid_error err = FUNCTION_CALL; if (err != VIENNAGRID_SUCCESS) return err; }
 
 
 

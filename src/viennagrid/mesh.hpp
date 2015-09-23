@@ -138,7 +138,7 @@ public:
 
   void optimize_memory()
   {
-    for (int i = 0; i != VIENNAGRID_TOPOLOGIC_DIMENSION_END; ++i)
+    for (int i = 0; i != VIENNAGRID_TOPOLOGICAL_DIMENSION_END; ++i)
       element_handle_buffers[i].optimize_memory();
   }
 
@@ -229,26 +229,26 @@ private:
   }
 
 
-  viennagrid_element_handle_buffer element_handle_buffers[VIENNAGRID_TOPOLOGIC_DIMENSION_END];
+  viennagrid_element_handle_buffer element_handle_buffers[VIENNAGRID_TOPOLOGICAL_DIMENSION_END];
 
 
   viennagrid_int & coboundary_change_counter(viennagrid_dimension element_topological_dimension,
                                              viennagrid_dimension coboundary_topological_dimension)
   { return coboundary_change_counters[+element_topological_dimension][+coboundary_topological_dimension]; }
-  viennagrid_int coboundary_change_counters[VIENNAGRID_TOPOLOGIC_DIMENSION_END][VIENNAGRID_TOPOLOGIC_DIMENSION_END];
+  viennagrid_int coboundary_change_counters[VIENNAGRID_TOPOLOGICAL_DIMENSION_END][VIENNAGRID_TOPOLOGICAL_DIMENSION_END];
 
 
   viennagrid_int & neighbor_change_counter(viennagrid_dimension element_topological_dimension,
                                            viennagrid_dimension connector_topological_dimension,
                                            viennagrid_dimension neighbor_topological_dimension)
   { return neighbor_change_counters[+element_topological_dimension][+connector_topological_dimension][+neighbor_topological_dimension]; }
-  viennagrid_int neighbor_change_counters[VIENNAGRID_TOPOLOGIC_DIMENSION_END][VIENNAGRID_TOPOLOGIC_DIMENSION_END][VIENNAGRID_TOPOLOGIC_DIMENSION_END];
+  viennagrid_int neighbor_change_counters[VIENNAGRID_TOPOLOGICAL_DIMENSION_END][VIENNAGRID_TOPOLOGICAL_DIMENSION_END][VIENNAGRID_TOPOLOGICAL_DIMENSION_END];
 
 
 
   std::set<viennagrid_int> & boundary_elements(viennagrid_dimension element_topological_dimension) { return boundary_elements_[+element_topological_dimension]; }
 
-  std::set<viennagrid_int> boundary_elements_[VIENNAGRID_TOPOLOGIC_DIMENSION_END];
+  std::set<viennagrid_int> boundary_elements_[VIENNAGRID_TOPOLOGICAL_DIMENSION_END];
   viennagrid_int boundary_elements_change_counter;
 };
 
