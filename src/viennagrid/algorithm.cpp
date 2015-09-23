@@ -137,11 +137,11 @@ viennagrid_error viennagrid_spanned_volume_2(viennagrid_dimension dimension,
 }
 
 
-viennagrid_error signed_spanned_volume_3(viennagrid_dimension dimension,
-                                         viennagrid_numeric const * p1,
-                                         viennagrid_numeric const * p2,
-                                         viennagrid_numeric const * p3,
-                                         viennagrid_numeric       * result)
+viennagrid_error viennagrid_signed_spanned_volume_3(viennagrid_dimension dimension,
+                                                    viennagrid_numeric const * p1,
+                                                    viennagrid_numeric const * p2,
+                                                    viennagrid_numeric const * p3,
+                                                    viennagrid_numeric       * result)
 {
   if (dimension == 2) //a triangle in the plane
   {
@@ -180,7 +180,7 @@ viennagrid_error viennagrid_spanned_volume_3(viennagrid_dimension dimension,
 {
   if (result)
   {
-    RETURN_ON_ERROR( signed_spanned_volume_3(dimension, p1, p2, p3, result) );
+    RETURN_ON_ERROR( viennagrid_signed_spanned_volume_3(dimension, p1, p2, p3, result) );
     *result = std::fabs(*result);
   }
   return VIENNAGRID_SUCCESS;
@@ -188,12 +188,12 @@ viennagrid_error viennagrid_spanned_volume_3(viennagrid_dimension dimension,
 
 
 /** @brief Returns the area of the tetrahedron spanned by the three points p1, p2, p3 */
-viennagrid_error signed_spanned_volume_4(viennagrid_dimension dimension,
-                                         viennagrid_numeric const * p1,
-                                         viennagrid_numeric const * p2,
-                                         viennagrid_numeric const * p3,
-                                         viennagrid_numeric const * p4,
-                                         viennagrid_numeric       * result)
+viennagrid_error viennagrid_signed_spanned_volume_4(viennagrid_dimension dimension,
+                                                    viennagrid_numeric const * p1,
+                                                    viennagrid_numeric const * p2,
+                                                    viennagrid_numeric const * p3,
+                                                    viennagrid_numeric const * p4,
+                                                    viennagrid_numeric       * result)
 {
   if (dimension == 3) // triangle in 3d space
   {
@@ -223,7 +223,7 @@ viennagrid_error viennagrid_spanned_volume_4(viennagrid_dimension dimension,
                                              viennagrid_numeric const * p4,
                                              viennagrid_numeric       * result)
 {
-  RETURN_ON_ERROR( signed_spanned_volume_4(dimension, p1, p2, p3, p4, result) );
+  RETURN_ON_ERROR( viennagrid_signed_spanned_volume_4(dimension, p1, p2, p3, p4, result) );
   if (result)
     *result = std::fabs(*result);
   return VIENNAGRID_SUCCESS;
@@ -282,7 +282,7 @@ viennagrid_error viennagrid_element_volume(viennagrid_mesh mesh,
       viennagrid_numeric signed_volume_contribution;
       for (viennagrid_int i = 2; i < viennagrid_int(coords.size()); ++i)
       {
-        RETURN_ON_ERROR( signed_spanned_volume_3(dim, coords[0], coords[i-1], coords[i], &signed_volume_contribution) );
+        RETURN_ON_ERROR( viennagrid_signed_spanned_volume_3(dim, coords[0], coords[i-1], coords[i], &signed_volume_contribution) );
         *volume += signed_volume_contribution;
       }
     }

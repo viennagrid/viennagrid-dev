@@ -1300,12 +1300,27 @@ VIENNAGRID_DYNAMIC_EXPORT viennagrid_error viennagrid_spanned_volume_2(viennagri
                                                                        viennagrid_numeric const * p2,
                                                                        viennagrid_numeric       * volume);
 
+/* computes the signed volume (area) of a triangle defined by three points (2d or 3d) */
+VIENNAGRID_DYNAMIC_EXPORT viennagrid_error viennagrid_signed_spanned_volume_3(viennagrid_dimension dimension,
+                                                                              viennagrid_numeric const * p1,
+                                                                              viennagrid_numeric const * p2,
+                                                                              viennagrid_numeric const * p3,
+                                                                              viennagrid_numeric       * volume);
+
 /* computes the volume (area) of a triangle defined by three points (2d or 3d) */
 VIENNAGRID_DYNAMIC_EXPORT viennagrid_error viennagrid_spanned_volume_3(viennagrid_dimension dimension,
                                                                        viennagrid_numeric const * p1,
                                                                        viennagrid_numeric const * p2,
                                                                        viennagrid_numeric const * p3,
                                                                        viennagrid_numeric       * volume);
+
+/* computes the signed volume of a tetrahedron defined by four points (3d) */
+VIENNAGRID_DYNAMIC_EXPORT viennagrid_error viennagrid_signed_spanned_volume_4(viennagrid_dimension dimension,
+                                                                              viennagrid_numeric const * p1,
+                                                                              viennagrid_numeric const * p2,
+                                                                              viennagrid_numeric const * p3,
+                                                                              viennagrid_numeric const * p4,
+                                                                              viennagrid_numeric       * volume);
 
 /* computes the volume of a tetrahedron defined by four points (3d) */
 VIENNAGRID_DYNAMIC_EXPORT viennagrid_error viennagrid_spanned_volume_4(viennagrid_dimension dimension,
