@@ -25,7 +25,7 @@ public:
   template<typename T>
   void serialize(T const * ptr, std::size_t count)
   {
-    if (!ptr || count < 0)
+    if (!ptr)
       count = 0;
 
     if (count > 0)
