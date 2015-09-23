@@ -4,11 +4,13 @@
 #include <map>
 #include <string>
 
+#include "viennagrid/viennagrid.h"
+
 struct viennagrid_mesh_io_
 {
 public:
 
-  viennagrid_mesh_io_() : mesh_(0) {}
+  viennagrid_mesh_io_() : mesh_(0), reference_counter(1) {}
   ~viennagrid_mesh_io_()
   {
     clear();
@@ -107,5 +109,8 @@ viennagrid_error viennagrid_mesh_io_read_netgen(viennagrid_mesh_io mesh_io,
 
 viennagrid_error viennagrid_mesh_io_write_vtk(viennagrid_mesh_io mesh_io,
                                              const char * filename);
+
+viennagrid_error viennagrid_mesh_io_read_vtk(viennagrid_mesh_io mesh_io,
+                                             std::string filename);
 
 #endif
