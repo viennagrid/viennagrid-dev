@@ -431,7 +431,8 @@ typedef struct viennagrid_mesh_io_ * viennagrid_mesh_io;
 #define VIENNAGRID_ERROR_FILE_MALFORMED                                49
 #define VIENNAGRID_ERROR_NO_MESH                                       50
 #define VIENNAGRID_ERROR_WRITE_ERROR                                   51
-#define VIENNAGRID_ERROR_MESH_HAS_SPARSE_BOUNDARY_STORAGE_LAYOUT       52
+#define VIENNAGRID_ERROR_READ_ERROR                                    52
+#define VIENNAGRID_ERROR_MESH_HAS_SPARSE_BOUNDARY_STORAGE_LAYOUT       53
 
 /* VIENNAGRID BOOL DEFINES */
 #define VIENNAGRID_TRUE                             1

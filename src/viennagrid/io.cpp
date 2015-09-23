@@ -200,6 +200,8 @@ viennagrid_error viennagrid_mesh_io_read_with_filetype(viennagrid_mesh_io mesh_i
   {
     case VIENNAGRID_FILETYPE_NETGEN_MESH:
       return viennagrid_mesh_io_read_netgen(mesh_io, filename);
+    case VIENNAGRID_FILETYPE_VTK_MESH:
+      return viennagrid_mesh_io_read_vtk(mesh_io, filename);
   }
 
   return VIENNAGRID_ERROR_UNKNOWN_FILETYPE;
