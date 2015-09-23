@@ -33,7 +33,6 @@ namespace viennagrid
     base_mesh() : internal_mesh_(0)
     {
       THROW_ON_ERROR( viennagrid_mesh_create(&internal_mesh_) );
-      THROW_ON_ERROR( viennagrid_mesh_property_set(internal_mesh_, VIENNAGRID_PROPERTY_BOUNDARY_LAYOUT, VIENNAGRID_BOUNDARY_LAYOUT_SPARSE) );
     }
 
     template<bool other_is_const>
