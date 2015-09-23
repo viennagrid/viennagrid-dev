@@ -431,6 +431,7 @@ typedef struct viennagrid_mesh_io_ * viennagrid_mesh_io;
 #define VIENNAGRID_ERROR_FILE_MALFORMED                                49
 #define VIENNAGRID_ERROR_NO_MESH                                       50
 #define VIENNAGRID_ERROR_WRITE_ERROR                                   51
+#define VIENNAGRID_ERROR_MESH_HAS_SPARSE_BOUNDARY_STORAGE_LAYOUT       52
 
 /* VIENNAGRID BOOL DEFINES */
 #define VIENNAGRID_TRUE                             1
@@ -1226,7 +1227,7 @@ VIENNAGRID_DYNAMIC_EXPORT viennagrid_error viennagrid_mesh_io_quantity_field_get
 VIENNAGRID_DYNAMIC_EXPORT viennagrid_error viennagrid_mesh_io_quantity_field_get(viennagrid_mesh_io mesh_io,
                                                                                  const char * quantity_name,
                                                                                  viennagrid_quantity_field * quantity_field);
-/* sets a quantity field, the name of the quantity field is used for identification */
+/* sets a quantity field, the name of the quantity field is used for identification. retain is called for the quantity field */
 VIENNAGRID_DYNAMIC_EXPORT viennagrid_error viennagrid_mesh_io_quantity_field_set(viennagrid_mesh_io mesh_io,
                                                                                  viennagrid_quantity_field quantity_field);
 /* unsets a quantity field with a given quantity name */

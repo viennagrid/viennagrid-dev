@@ -46,6 +46,7 @@ public:
 
 
   bool element_id_valid(viennagrid_element_id element_id);
+  bool valid_sparse_dimension(viennagrid_dimension topological_dimension);
 
   bool is_boundary(viennagrid_element_id element_id)
   {

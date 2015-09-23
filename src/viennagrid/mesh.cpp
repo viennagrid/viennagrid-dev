@@ -505,6 +505,12 @@ bool viennagrid_mesh_::element_id_valid(viennagrid_element_id element_id)
   return mesh_hierarchy()->element_id_valid(element_id);
 }
 
+bool viennagrid_mesh_::valid_sparse_dimension(viennagrid_dimension topological_dimension)
+{
+  return mesh_hierarchy()->valid_sparse_dimension(topological_dimension);
+}
+
+
 viennagrid_element_type viennagrid_mesh_::element_type(viennagrid_element_id element_id)
 {
   return mesh_hierarchy()->element_buffer(TOPODIM(element_id)).element_type(element_id);

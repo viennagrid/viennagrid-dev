@@ -13,6 +13,10 @@ bool viennagrid_region_::element_id_valid(viennagrid_element_id element_id)
   return mesh_hierarchy()->element_id_valid(element_id);
 }
 
+bool viennagrid_region_::valid_sparse_dimension(viennagrid_dimension topological_dimension)
+{
+  return mesh_hierarchy()->valid_sparse_dimension(topological_dimension);
+}
 
 void viennagrid_region_::add_element(viennagrid_element_id element_id)
 {

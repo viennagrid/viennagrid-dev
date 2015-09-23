@@ -73,6 +73,7 @@ public:
   viennagrid_int boundary_layout() const { return boundary_layout_; }
   viennagrid_error set_boundary_layout(viennagrid_int boundary_layout_in);
   bool full_boundary_layout() const { return boundary_layout() == VIENNAGRID_BOUNDARY_LAYOUT_FULL; }
+  bool sparse_layout() { return boundary_layout() == VIENNAGRID_QUANTITY_FIELD_STORAGE_SPARSE; }
 
 
 
@@ -207,6 +208,15 @@ public:
   {
     return ( viennagrid_topological_dimension_valid(TOPODIM(element_id)) && (INDEX(element_id) >= 0) && (INDEX(element_id) < element_buffer(TOPODIM(element_id)).size()) );
   }
+
+  bool valid_sparse_dimension(viennagrid_dimension topological_dimension)
+  {
+    if (sparse_layout())
+      return (topological_dimension == 0) || (topological_dimension == cell_dimension());
+    else
+      return true;
+  }
+
 
   viennagrid_int element_count(viennagrid_dimension topological_dimension)
   {

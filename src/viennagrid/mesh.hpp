@@ -179,6 +179,8 @@ public:
 
 
   bool element_id_valid(viennagrid_element_id element_id);
+  bool valid_sparse_dimension(viennagrid_dimension topological_dimension);
+
 
   viennagrid_element_type element_type(viennagrid_element_id element_id);
 
@@ -246,9 +248,9 @@ private:
 
 
 
-  std::set<viennagrid_int> & boundary_elements(viennagrid_dimension element_topological_dimension) { return boundary_elements_[+element_topological_dimension]; }
+  std::set<viennagrid_element_id> & boundary_elements(viennagrid_dimension element_topological_dimension) { return boundary_elements_[+element_topological_dimension]; }
 
-  std::set<viennagrid_int> boundary_elements_[VIENNAGRID_TOPOLOGICAL_DIMENSION_END];
+  std::set<viennagrid_element_id> boundary_elements_[VIENNAGRID_TOPOLOGICAL_DIMENSION_END];
   viennagrid_int boundary_elements_change_counter;
 };
 

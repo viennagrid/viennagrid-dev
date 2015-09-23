@@ -148,6 +148,8 @@ const char * viennagrid_error_string(viennagrid_error error)
       return "no mesh";
     case VIENNAGRID_ERROR_WRITE_ERROR:
       return "write error";
+    case VIENNAGRID_ERROR_MESH_HAS_SPARSE_BOUNDARY_STORAGE_LAYOUT:
+      return "mesh has sparse boundary storage layout";
 
     default:
       return 0;
@@ -416,6 +418,7 @@ viennagrid_error viennagrid_mesh_element_count(viennagrid_mesh mesh,
 {
   if (!mesh)                                                          return VIENNAGRID_ERROR_INVALID_MESH;
   if (!viennagrid_topological_dimension_valid(topological_dimension)) return VIENNAGRID_ERROR_INVALID_TOPOLOGICAL_DIMENSION;
+  if (!mesh->valid_sparse_dimension(topological_dimension))           return VIENNAGRID_ERROR_MESH_HAS_SPARSE_BOUNDARY_STORAGE_LAYOUT;
 
   if (count)
     *count = mesh->element_count(topological_dimension);
@@ -427,8 +430,9 @@ viennagrid_error viennagrid_mesh_element_count_by_type(viennagrid_mesh mesh,
                                                        viennagrid_element_type element_type,
                                                        viennagrid_int * count)
 {
-  if (!mesh)                                        return VIENNAGRID_ERROR_INVALID_MESH;
-  if (!viennagrid_element_type_valid(element_type)) return VIENNAGRID_ERROR_INVALID_ELEMENT_TYPE;
+  if (!mesh)                                                                         return VIENNAGRID_ERROR_INVALID_MESH;
+  if (!viennagrid_element_type_valid(element_type))                                  return VIENNAGRID_ERROR_INVALID_ELEMENT_TYPE;
+  if (!mesh->valid_sparse_dimension(viennagrid_topological_dimension(element_type))) return VIENNAGRID_ERROR_MESH_HAS_SPARSE_BOUNDARY_STORAGE_LAYOUT;
 
   if (count)
     *count = mesh->element_count_by_type(element_type);
@@ -565,6 +569,7 @@ viennagrid_error viennagrid_element_type_pointer(viennagrid_mesh mesh,
 {
   if (!mesh)                                                        return VIENNAGRID_ERROR_INVALID_MESH;
   if (!viennagrid_topological_dimension_valid(topologic_dimension)) return VIENNAGRID_ERROR_INVALID_TOPOLOGICAL_DIMENSION;
+  if (!mesh->valid_sparse_dimension(topologic_dimension))           return VIENNAGRID_ERROR_MESH_HAS_SPARSE_BOUNDARY_STORAGE_LAYOUT;
 
   if (element_type)
     *element_type = mesh->mesh_hierarchy()->element_buffer(topologic_dimension).element_types_pointer();
@@ -578,8 +583,9 @@ viennagrid_error viennagrid_element_type_get(viennagrid_mesh mesh,
                                              viennagrid_element_id element_id,
                                              viennagrid_element_type * element_type)
 {
-  if (!mesh)                               return VIENNAGRID_ERROR_INVALID_MESH;
-  if (!mesh->element_id_valid(element_id)) return VIENNAGRID_ERROR_INVALID_ELEMENT_ID;
+  if (!mesh)                                              return VIENNAGRID_ERROR_INVALID_MESH;
+  if (!mesh->element_id_valid(element_id))                return VIENNAGRID_ERROR_INVALID_ELEMENT_ID;
+  if (!mesh->valid_sparse_dimension(TOPODIM(element_id))) return VIENNAGRID_ERROR_MESH_HAS_SPARSE_BOUNDARY_STORAGE_LAYOUT;
 
   if (element_type)
     *element_type = mesh->element_type(element_id);
@@ -593,8 +599,9 @@ viennagrid_error viennagrid_element_aux_set(viennagrid_mesh mesh,
                                             viennagrid_element_id element_id,
                                             void * aux)
 {
-  if (!mesh)                               return VIENNAGRID_ERROR_INVALID_MESH;
-  if (!mesh->element_id_valid(element_id)) return VIENNAGRID_ERROR_INVALID_ELEMENT_ID;
+  if (!mesh)                                              return VIENNAGRID_ERROR_INVALID_MESH;
+  if (!mesh->element_id_valid(element_id))                return VIENNAGRID_ERROR_INVALID_ELEMENT_ID;
+  if (!mesh->valid_sparse_dimension(TOPODIM(element_id))) return VIENNAGRID_ERROR_MESH_HAS_SPARSE_BOUNDARY_STORAGE_LAYOUT;
 
   mesh->mesh_hierarchy()->element_buffer(TOPODIM(element_id)).set_aux(element_id, aux);
 
@@ -605,8 +612,9 @@ viennagrid_error viennagrid_element_aux_get(viennagrid_mesh mesh,
                                             viennagrid_element_id element_id,
                                             void ** aux)
 {
-  if (!mesh)                               return VIENNAGRID_ERROR_INVALID_MESH;
-  if (!mesh->element_id_valid(element_id)) return VIENNAGRID_ERROR_INVALID_ELEMENT_ID;
+  if (!mesh)                                              return VIENNAGRID_ERROR_INVALID_MESH;
+  if (!mesh->element_id_valid(element_id))                return VIENNAGRID_ERROR_INVALID_ELEMENT_ID;
+  if (!mesh->valid_sparse_dimension(TOPODIM(element_id))) return VIENNAGRID_ERROR_MESH_HAS_SPARSE_BOUNDARY_STORAGE_LAYOUT;
 
   if (aux)
     *aux = mesh->mesh_hierarchy()->element_buffer(TOPODIM(element_id)).aux(element_id);
@@ -621,9 +629,11 @@ viennagrid_error viennagrid_element_boundary_element_pointers(viennagrid_mesh me
                                                               viennagrid_int ** boundary_offsets,
                                                               viennagrid_element_id ** boundary_ids)
 {
-  if (!mesh)                                                      return VIENNAGRID_ERROR_INVALID_MESH;
+  if (!mesh)                                                                   return VIENNAGRID_ERROR_INVALID_MESH;
   if (!viennagrid_topological_dimension_valid(element_topological_dimension))  return VIENNAGRID_ERROR_INVALID_TOPOLOGICAL_DIMENSION;
   if (!viennagrid_topological_dimension_valid(boundary_topological_dimension)) return VIENNAGRID_ERROR_INVALID_TOPOLOGICAL_DIMENSION;
+  if (!mesh->valid_sparse_dimension(element_topological_dimension))            return VIENNAGRID_ERROR_MESH_HAS_SPARSE_BOUNDARY_STORAGE_LAYOUT;
+  if (!mesh->valid_sparse_dimension(boundary_topological_dimension))           return VIENNAGRID_ERROR_MESH_HAS_SPARSE_BOUNDARY_STORAGE_LAYOUT;
 
   if (boundary_offsets)
     *boundary_offsets = mesh->mesh_hierarchy()->element_buffer(element_topological_dimension).boundary_buffer(boundary_topological_dimension).offset_pointer();
@@ -642,9 +652,11 @@ viennagrid_error viennagrid_element_boundary_elements(viennagrid_mesh mesh,
                                                       viennagrid_element_id ** boundary_element_ids_begin,
                                                       viennagrid_element_id ** boundary_element_ids_end)
 {
-  if (!mesh)                                                      return VIENNAGRID_ERROR_INVALID_MESH;
-  if (!mesh->element_id_valid(element_id))                        return VIENNAGRID_ERROR_INVALID_ELEMENT_ID;
+  if (!mesh)                                                                   return VIENNAGRID_ERROR_INVALID_MESH;
+  if (!mesh->element_id_valid(element_id))                                     return VIENNAGRID_ERROR_INVALID_ELEMENT_ID;
   if (!viennagrid_topological_dimension_valid(boundary_topological_dimension)) return VIENNAGRID_ERROR_INVALID_TOPOLOGICAL_DIMENSION;
+  if (!mesh->valid_sparse_dimension(TOPODIM(element_id)))                      return VIENNAGRID_ERROR_MESH_HAS_SPARSE_BOUNDARY_STORAGE_LAYOUT;
+  if (!mesh->valid_sparse_dimension(boundary_topological_dimension))           return VIENNAGRID_ERROR_MESH_HAS_SPARSE_BOUNDARY_STORAGE_LAYOUT;
 
   if (boundary_element_ids_begin)
     *boundary_element_ids_begin = mesh->boundary_begin(element_id, boundary_topological_dimension);
@@ -662,9 +674,11 @@ viennagrid_error viennagrid_element_coboundary_elements(viennagrid_mesh mesh,
                                                         viennagrid_element_id ** coboundary_element_ids_begin,
                                                         viennagrid_element_id ** coboundary_element_ids_end)
 {
-  if (!mesh)                                                        return VIENNAGRID_ERROR_INVALID_MESH;
-  if (!mesh->element_id_valid(element_id))                          return VIENNAGRID_ERROR_INVALID_ELEMENT_ID;
+  if (!mesh)                                                                     return VIENNAGRID_ERROR_INVALID_MESH;
+  if (!mesh->element_id_valid(element_id))                                       return VIENNAGRID_ERROR_INVALID_ELEMENT_ID;
   if (!viennagrid_topological_dimension_valid(coboundary_topological_dimension)) return VIENNAGRID_ERROR_INVALID_TOPOLOGICAL_DIMENSION;
+  if (!mesh->valid_sparse_dimension(TOPODIM(element_id)))                        return VIENNAGRID_ERROR_MESH_HAS_SPARSE_BOUNDARY_STORAGE_LAYOUT;
+  if (!mesh->valid_sparse_dimension(coboundary_topological_dimension))           return VIENNAGRID_ERROR_MESH_HAS_SPARSE_BOUNDARY_STORAGE_LAYOUT;
 
   if (coboundary_element_ids_begin)
     *coboundary_element_ids_begin = mesh->coboundary_begin(element_id, coboundary_topological_dimension);
@@ -683,10 +697,13 @@ viennagrid_error viennagrid_element_neighbor_elements(viennagrid_mesh mesh,
                                                       viennagrid_element_id ** neighbor_element_ids_begin,
                                                       viennagrid_element_id ** neighbor_element_ids_end)
 {
-  if (!mesh)                                                       return VIENNAGRID_ERROR_INVALID_MESH;
-  if (!mesh->element_id_valid(element_id))                         return VIENNAGRID_ERROR_INVALID_ELEMENT_ID;
+  if (!mesh)                                                                    return VIENNAGRID_ERROR_INVALID_MESH;
+  if (!mesh->element_id_valid(element_id))                                      return VIENNAGRID_ERROR_INVALID_ELEMENT_ID;
   if (!viennagrid_topological_dimension_valid(connector_topological_dimension)) return VIENNAGRID_ERROR_INVALID_TOPOLOGICAL_DIMENSION;
   if (!viennagrid_topological_dimension_valid(neighbor_topological_dimension))  return VIENNAGRID_ERROR_INVALID_TOPOLOGICAL_DIMENSION;
+  if (!mesh->valid_sparse_dimension(TOPODIM(element_id)))                       return VIENNAGRID_ERROR_MESH_HAS_SPARSE_BOUNDARY_STORAGE_LAYOUT;
+  if (!mesh->valid_sparse_dimension(connector_topological_dimension))           return VIENNAGRID_ERROR_MESH_HAS_SPARSE_BOUNDARY_STORAGE_LAYOUT;
+  if (!mesh->valid_sparse_dimension(neighbor_topological_dimension))            return VIENNAGRID_ERROR_MESH_HAS_SPARSE_BOUNDARY_STORAGE_LAYOUT;
 
   if (neighbor_element_ids_begin)
     *neighbor_element_ids_begin = mesh->neighbor_begin(element_id, connector_topological_dimension, neighbor_topological_dimension);
@@ -704,8 +721,9 @@ viennagrid_error viennagrid_element_is_mesh_boundary(viennagrid_mesh mesh,
                                                      viennagrid_element_id element_id,
                                                      viennagrid_bool * result)
 {
-  if (!mesh)                               return VIENNAGRID_ERROR_INVALID_MESH;
-  if (!mesh->element_id_valid(element_id)) return VIENNAGRID_ERROR_INVALID_ELEMENT_ID;
+  if (!mesh)                                              return VIENNAGRID_ERROR_INVALID_MESH;
+  if (!mesh->element_id_valid(element_id))                return VIENNAGRID_ERROR_INVALID_ELEMENT_ID;
+  if (!mesh->valid_sparse_dimension(TOPODIM(element_id))) return VIENNAGRID_ERROR_MESH_HAS_SPARSE_BOUNDARY_STORAGE_LAYOUT;
 
   const_cast<viennagrid_mesh>(mesh)->make_boundary_flags();
 
@@ -720,9 +738,10 @@ viennagrid_error viennagrid_element_is_region_boundary(viennagrid_region region,
                                                        viennagrid_element_id element_id,
                                                        viennagrid_bool * result)
 {
-  if (!region)                             return VIENNAGRID_ERROR_INVALID_REGION;
-  if (!mesh)                               return VIENNAGRID_ERROR_INVALID_MESH;
-  if (!mesh->element_id_valid(element_id)) return VIENNAGRID_ERROR_INVALID_ELEMENT_ID;
+  if (!region)                                            return VIENNAGRID_ERROR_INVALID_REGION;
+  if (!mesh)                                              return VIENNAGRID_ERROR_INVALID_MESH;
+  if (!mesh->element_id_valid(element_id))                return VIENNAGRID_ERROR_INVALID_ELEMENT_ID;
+  if (!mesh->valid_sparse_dimension(TOPODIM(element_id))) return VIENNAGRID_ERROR_MESH_HAS_SPARSE_BOUNDARY_STORAGE_LAYOUT;
 
   const_cast<viennagrid_mesh>(mesh)->make_boundary_flags( const_cast<viennagrid_region>(region) );
 
@@ -740,8 +759,9 @@ viennagrid_error viennagrid_mesh_elements_get(viennagrid_mesh mesh,
                                               viennagrid_element_id ** element_ids_begin,
                                               viennagrid_element_id ** element_ids_end)
 {
-  if (!mesh)                                                     return VIENNAGRID_ERROR_INVALID_MESH;
+  if (!mesh)                                                                  return VIENNAGRID_ERROR_INVALID_MESH;
   if (!viennagrid_topological_dimension_valid(element_topological_dimension)) return VIENNAGRID_ERROR_INVALID_TOPOLOGICAL_DIMENSION;
+  if (!mesh->valid_sparse_dimension(element_topological_dimension))           return VIENNAGRID_ERROR_MESH_HAS_SPARSE_BOUNDARY_STORAGE_LAYOUT;
 
   if (element_ids_begin)
     *element_ids_begin = mesh->elements_begin(element_topological_dimension);
@@ -760,6 +780,7 @@ viennagrid_error viennagrid_element_parent_pointer(viennagrid_mesh mesh,
 {
   if (!mesh)                                                        return VIENNAGRID_ERROR_INVALID_MESH;
   if (!viennagrid_topological_dimension_valid(topologic_dimension)) return VIENNAGRID_ERROR_INVALID_TOPOLOGICAL_DIMENSION;
+  if (!mesh->valid_sparse_dimension(topologic_dimension))           return VIENNAGRID_ERROR_MESH_HAS_SPARSE_BOUNDARY_STORAGE_LAYOUT;
 
   if (element_parent_id)
     *element_parent_id = mesh->mesh_hierarchy()->element_buffer(topologic_dimension).parent_id_pointer();
@@ -771,8 +792,9 @@ viennagrid_error viennagrid_element_parent_get(viennagrid_mesh mesh,
                                                viennagrid_element_id element_id,
                                                viennagrid_element_id * element_parent_id)
 {
-  if (!mesh)                               return VIENNAGRID_ERROR_INVALID_MESH;
-  if (!mesh->element_id_valid(element_id)) return VIENNAGRID_ERROR_INVALID_ELEMENT_ID;
+  if (!mesh)                                              return VIENNAGRID_ERROR_INVALID_MESH;
+  if (!mesh->element_id_valid(element_id))                return VIENNAGRID_ERROR_INVALID_ELEMENT_ID;
+  if (!mesh->valid_sparse_dimension(TOPODIM(element_id))) return VIENNAGRID_ERROR_MESH_HAS_SPARSE_BOUNDARY_STORAGE_LAYOUT;
 
   if (element_parent_id)
     *element_parent_id = mesh->parent(element_id);
@@ -910,8 +932,9 @@ viennagrid_error viennagrid_element_regions_get(viennagrid_mesh mesh,
                                                 viennagrid_region_id ** region_id_begin,
                                                 viennagrid_region_id ** region_id_end)
 {
-  if (!mesh)                               return VIENNAGRID_ERROR_INVALID_MESH;
-  if (!mesh->element_id_valid(element_id)) return VIENNAGRID_ERROR_INVALID_ELEMENT_ID;
+  if (!mesh)                                              return VIENNAGRID_ERROR_INVALID_MESH;
+  if (!mesh->element_id_valid(element_id))                return VIENNAGRID_ERROR_INVALID_ELEMENT_ID;
+  if (!mesh->valid_sparse_dimension(TOPODIM(element_id))) return VIENNAGRID_ERROR_MESH_HAS_SPARSE_BOUNDARY_STORAGE_LAYOUT;
 
   if (region_id_begin)
     *region_id_begin = mesh->regions_begin(element_id);
@@ -927,8 +950,9 @@ viennagrid_error viennagrid_element_regions_get(viennagrid_mesh mesh,
 viennagrid_error viennagrid_region_element_add(viennagrid_region region,
                                                viennagrid_element_id element_id)
 {
-  if (!region)                               return VIENNAGRID_ERROR_INVALID_REGION;
-  if (!region->element_id_valid(element_id)) return VIENNAGRID_ERROR_INVALID_ELEMENT_ID;
+  if (!region)                                              return VIENNAGRID_ERROR_INVALID_REGION;
+  if (!region->element_id_valid(element_id))                return VIENNAGRID_ERROR_INVALID_ELEMENT_ID;
+  if (!region->valid_sparse_dimension(TOPODIM(element_id))) return VIENNAGRID_ERROR_MESH_HAS_SPARSE_BOUNDARY_STORAGE_LAYOUT;
 
   region->add_element(element_id);
 
@@ -940,8 +964,9 @@ viennagrid_error viennagrid_region_contains_element(viennagrid_region region,
                                                     viennagrid_element_id element_id,
                                                     viennagrid_bool * value)
 {
-  if (!region)                               return VIENNAGRID_ERROR_INVALID_REGION;
-  if (!region->element_id_valid(element_id)) return VIENNAGRID_ERROR_INVALID_ELEMENT_ID;
+  if (!region)                                              return VIENNAGRID_ERROR_INVALID_REGION;
+  if (!region->element_id_valid(element_id))                return VIENNAGRID_ERROR_INVALID_ELEMENT_ID;
+  if (!region->valid_sparse_dimension(TOPODIM(element_id))) return VIENNAGRID_ERROR_MESH_HAS_SPARSE_BOUNDARY_STORAGE_LAYOUT;
 
   if (value)
     *value = region->contains_element(element_id);
