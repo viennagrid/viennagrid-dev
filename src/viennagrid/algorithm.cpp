@@ -133,3 +133,54 @@ viennagrid_error viennagrid_norm_inf(viennagrid_dimension dimension,
 
 
 
+/* computes the l1-distance of two vectors: result = ||v1-v2||_1 */
+viennagrid_error viennagrid_distance_1(viennagrid_dimension dimension,
+                                       viennagrid_numeric const * v1,
+                                       viennagrid_numeric const * v2,
+                                       viennagrid_numeric       * result)
+{
+  if (result)
+  {
+    std::vector<viennagrid_numeric> v1mv2(dimension);
+    viennagrid_subtract(dimension, v1, v2, &v1mv2[0]);
+    viennagrid_norm_1(dimension, &v1mv2[0], result);
+  }
+
+  return VIENNAGRID_SUCCESS;
+}
+
+
+/* computes the l2-distance of two vectors: result = ||v1-v2||_2 */
+viennagrid_error viennagrid_distance_2(viennagrid_dimension dimension,
+                                       viennagrid_numeric const * v1,
+                                       viennagrid_numeric const * v2,
+                                       viennagrid_numeric       * result)
+{
+  if (result)
+  {
+    std::vector<viennagrid_numeric> v1mv2(dimension);
+    viennagrid_subtract(dimension, v1, v2, &v1mv2[0]);
+    viennagrid_norm_2(dimension, &v1mv2[0], result);
+  }
+
+  return VIENNAGRID_SUCCESS;
+}
+
+/* computes the inf-distance of two vectors: result = ||v1-v2||_inf */
+viennagrid_error viennagrid_distance_inf(viennagrid_dimension dimension,
+                                         viennagrid_numeric const * v1,
+                                         viennagrid_numeric const * v2,
+                                         viennagrid_numeric       * result)
+{
+  if (result && dimension > 0)
+  {
+    std::vector<viennagrid_numeric> v1mv2(dimension);
+    viennagrid_subtract(dimension, v1, v2, &v1mv2[0]);
+    viennagrid_norm_inf(dimension, &v1mv2[0], result);
+  }
+
+  return VIENNAGRID_SUCCESS;
+}
+
+
+

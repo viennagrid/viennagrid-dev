@@ -1273,6 +1273,22 @@ VIENNAGRID_DYNAMIC_EXPORT viennagrid_error viennagrid_plc_read_tetgen_poly(vienn
  *
  **********************************************************************************************/
 
+
+VIENNAGRID_DYNAMIC_EXPORT viennagrid_error viennagrid_copy(viennagrid_dimension       dimension,
+                                                           viennagrid_numeric const * v,
+                                                           viennagrid_numeric       * result);
+
+VIENNAGRID_DYNAMIC_EXPORT viennagrid_error viennagrid_add(viennagrid_dimension dimension,
+                                                          viennagrid_numeric const * v1,
+                                                          viennagrid_numeric const * v2,
+                                                          viennagrid_numeric       * result);
+
+VIENNAGRID_DYNAMIC_EXPORT viennagrid_error viennagrid_subtract(viennagrid_dimension dimension,
+                                                               viennagrid_numeric const * v1,
+                                                               viennagrid_numeric const * v2,
+                                                               viennagrid_numeric       * result);
+
+
 /* computes the cross-product of two vectors: result = v1 x v2  (3d only) */
 VIENNAGRID_DYNAMIC_EXPORT viennagrid_error viennagrid_cross_prod(viennagrid_numeric const * v1,
                                                                  viennagrid_numeric const * v2,
@@ -1298,6 +1314,27 @@ VIENNAGRID_DYNAMIC_EXPORT viennagrid_error viennagrid_norm_2(viennagrid_dimensio
 VIENNAGRID_DYNAMIC_EXPORT viennagrid_error viennagrid_norm_inf(viennagrid_dimension dimension,
                                                              viennagrid_numeric const * v1,
                                                              viennagrid_numeric       * result);
+
+
+/* computes the l1-distance of two vectors: result = ||v1-v2||_1 */
+VIENNAGRID_DYNAMIC_EXPORT viennagrid_error viennagrid_distance_1(viennagrid_dimension dimension,
+                                                                 viennagrid_numeric const * v1,
+                                                                 viennagrid_numeric const * v2,
+                                                                 viennagrid_numeric       * result);
+
+/* computes the l2-distance of two vectors: result = ||v1-v2||_2 */
+VIENNAGRID_DYNAMIC_EXPORT viennagrid_error viennagrid_distance_2(viennagrid_dimension dimension,
+                                                                 viennagrid_numeric const * v1,
+                                                                 viennagrid_numeric const * v2,
+                                                                 viennagrid_numeric       * result);
+
+/* computes the inf-distance of two vectors: result = ||v1-v2||_inf */
+VIENNAGRID_DYNAMIC_EXPORT viennagrid_error viennagrid_distance_inf(viennagrid_dimension dimension,
+                                                                   viennagrid_numeric const * v1,
+                                                                   viennagrid_numeric const * v2,
+                                                                   viennagrid_numeric       * result);
+
+
 
 /* computes the volume (length) of the line spanned by two points */
 VIENNAGRID_DYNAMIC_EXPORT viennagrid_error viennagrid_signed_spanned_volume_2(viennagrid_dimension dimension,
