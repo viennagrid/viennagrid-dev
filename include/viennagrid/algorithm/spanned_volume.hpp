@@ -25,7 +25,8 @@
 
 namespace viennagrid
 {
-  inline viennagrid_numeric signed_spanned_volume(point const & p0, point const & p1)
+  template<typename PointT>
+  viennagrid_numeric signed_spanned_volume(PointT const & p0, PointT const & p1)
   {
     assert( p0.size() == p1.size() );
 
@@ -34,7 +35,8 @@ namespace viennagrid
     return result;
   }
 
-  inline viennagrid_numeric signed_spanned_volume(point const & p0, point const & p1, point const & p2)
+  template<typename PointT>
+  viennagrid_numeric signed_spanned_volume(PointT const & p0, PointT const & p1, PointT const & p2)
   {
     assert( p0.size() == p1.size() );
     assert( p0.size() == p2.size() );
@@ -44,7 +46,8 @@ namespace viennagrid
     return result;
   }
 
-  inline viennagrid_numeric signed_spanned_volume(point const & p0, point const & p1, point const & p2, point const & p3)
+  template<typename PointT>
+  viennagrid_numeric signed_spanned_volume(PointT const & p0, PointT const & p1, PointT const & p2, PointT const & p3)
   {
     assert( p0.size() == p1.size() );
     assert( p0.size() == p2.size() );
@@ -59,7 +62,8 @@ namespace viennagrid
 
 
 
-  inline viennagrid_numeric spanned_volume(point const & p0, point const & p1)
+  template<typename PointT>
+  viennagrid_numeric spanned_volume(PointT const & p0, PointT const & p1)
   {
     assert( p0.size() == p1.size() );
 
@@ -68,7 +72,8 @@ namespace viennagrid
     return result;
   }
 
-  inline viennagrid_numeric spanned_volume(point const & p0, point const & p1, point const & p2)
+  template<typename PointT>
+  viennagrid_numeric spanned_volume(PointT const & p0, PointT const & p1, PointT const & p2)
   {
     assert( p0.size() == p1.size() );
     assert( p0.size() == p2.size() );
@@ -78,7 +83,8 @@ namespace viennagrid
     return result;
   }
 
-  inline viennagrid_numeric spanned_volume(point const & p0, point const & p1, point const & p2, point const & p3)
+  template<typename PointT>
+  viennagrid_numeric spanned_volume(PointT const & p0, PointT const & p1, PointT const & p2, PointT const & p3)
   {
     assert( p0.size() == p1.size() );
     assert( p0.size() == p2.size() );
