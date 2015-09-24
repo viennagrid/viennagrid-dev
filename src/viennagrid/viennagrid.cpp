@@ -965,6 +965,32 @@ viennagrid_error viennagrid_region_element_add(viennagrid_region region,
   return VIENNAGRID_SUCCESS;
 }
 
+viennagrid_error viennagrid_copy_region_information(viennagrid_mesh src_mesh,
+                                                    viennagrid_element_id src_element_id,
+                                                    viennagrid_mesh dst_mesh,
+                                                    viennagrid_element_id dst_element_id)
+{
+  if (!src_mesh || !dst_mesh)                                     return VIENNAGRID_ERROR_INVALID_MESH;
+  if (!src_mesh->element_id_valid(src_element_id))                return VIENNAGRID_ERROR_INVALID_ELEMENT_ID;
+  if (!dst_mesh->element_id_valid(dst_element_id))                return VIENNAGRID_ERROR_INVALID_ELEMENT_ID;
+  if (!src_mesh->valid_sparse_dimension(TOPODIM(src_element_id))) return VIENNAGRID_ERROR_MESH_HAS_SPARSE_BOUNDARY_STORAGE_LAYOUT;
+  if (!dst_mesh->valid_sparse_dimension(TOPODIM(dst_element_id))) return VIENNAGRID_ERROR_MESH_HAS_SPARSE_BOUNDARY_STORAGE_LAYOUT;
+
+  if ((src_mesh == dst_mesh) && (src_element_id == dst_element_id)) return VIENNAGRID_SUCCESS;
+
+  viennagrid_region_id * region_ids_begin;
+  viennagrid_region_id * region_ids_end;
+  RETURN_ON_ERROR( viennagrid_element_regions_get(src_mesh, src_element_id, &region_ids_begin, &region_ids_end) );
+
+  for (viennagrid_region_id * rit = region_ids_begin; rit != region_ids_end; ++rit)
+  {
+    viennagrid_region region;
+    RETURN_ON_ERROR( viennagrid_mesh_region_get_or_create(dst_mesh, *rit, &region) );
+    RETURN_ON_ERROR( viennagrid_region_element_add(region, dst_element_id) );
+  }
+
+  return VIENNAGRID_SUCCESS;
+}
 
 viennagrid_error viennagrid_region_contains_element(viennagrid_region region,
                                                     viennagrid_element_id element_id,

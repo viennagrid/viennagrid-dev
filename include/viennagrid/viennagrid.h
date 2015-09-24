@@ -999,6 +999,12 @@ VIENNAGRID_DYNAMIC_EXPORT viennagrid_error viennagrid_element_regions_get(vienna
 VIENNAGRID_DYNAMIC_EXPORT viennagrid_error viennagrid_region_element_add(viennagrid_region region,
                                                                          viennagrid_element_id element_id);
 
+/* copies the region information (in which region is the element) from one element to another */
+VIENNAGRID_DYNAMIC_EXPORT viennagrid_error viennagrid_copy_region_information(viennagrid_mesh src_mesh,
+                                                                              viennagrid_element_id src_element_id,
+                                                                              viennagrid_mesh dst_mesh,
+                                                                              viennagrid_element_id dst_element_id);
+
 VIENNAGRID_DYNAMIC_EXPORT viennagrid_error viennagrid_region_contains_element(viennagrid_region region,
                                                                               viennagrid_element_id element_id,
                                                                               viennagrid_bool * value);
