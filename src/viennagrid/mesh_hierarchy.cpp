@@ -5,7 +5,7 @@
 
 
 
-viennagrid_mesh_hierarchy_::viennagrid_mesh_hierarchy_(viennagrid_mesh root_in) : geometric_dimension_(0), cell_dimension_(VIENNAGRID_INVALID_TOPOLOGICAL_DIMENSION), root_(root_in), change_counter_(0)
+viennagrid_mesh_hierarchy_::viennagrid_mesh_hierarchy_(viennagrid_mesh root_in) : geometric_dimension_(VIENNAGRID_INVALID_DIMENSION), cell_dimension_(VIENNAGRID_INVALID_DIMENSION), root_(root_in), change_counter_(0)
 {
   clear();
 }
@@ -27,7 +27,7 @@ viennagrid_error viennagrid_mesh_hierarchy_::set_boundary_layout(viennagrid_int 
   if ((boundary_layout() == VIENNAGRID_BOUNDARY_LAYOUT_SPARSE) &&
       (boundary_layout_in == VIENNAGRID_BOUNDARY_LAYOUT_FULL))
   {
-    if (cell_dimension() != VIENNAGRID_INVALID_TOPOLOGICAL_DIMENSION)
+    if (cell_dimension() != VIENNAGRID_INVALID_DIMENSION)
     {
       viennagrid_element_buffer & cell_buffer = element_buffer( cell_dimension() );
 
@@ -62,7 +62,7 @@ viennagrid_error viennagrid_mesh_hierarchy_::set_boundary_layout(viennagrid_int 
       (boundary_layout_in == VIENNAGRID_BOUNDARY_LAYOUT_SPARSE) &&
       (mesh_count() == 1))
   {
-    if (cell_dimension() != VIENNAGRID_INVALID_TOPOLOGICAL_DIMENSION)
+    if (cell_dimension() != VIENNAGRID_INVALID_DIMENSION)
     {
       for (viennagrid_dimension i = 1; i != cell_dimension(); ++i)
       {
@@ -214,7 +214,7 @@ void viennagrid_mesh_hierarchy_::clear()
   }
 
   geometric_dimension_ = 0;
-  cell_dimension_ = VIENNAGRID_INVALID_TOPOLOGICAL_DIMENSION;
+  cell_dimension_ = VIENNAGRID_INVALID_DIMENSION;
 
   meshes_.clear();
   meshes_.push_back(root());
