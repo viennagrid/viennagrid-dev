@@ -965,10 +965,10 @@ viennagrid_error viennagrid_region_element_add(viennagrid_region region,
   return VIENNAGRID_SUCCESS;
 }
 
-viennagrid_error viennagrid_copy_region_information(viennagrid_mesh src_mesh,
-                                                    viennagrid_element_id src_element_id,
-                                                    viennagrid_mesh dst_mesh,
-                                                    viennagrid_element_id dst_element_id)
+viennagrid_error viennagrid_element_copy_region_information(viennagrid_mesh src_mesh,
+                                                            viennagrid_element_id src_element_id,
+                                                            viennagrid_mesh dst_mesh,
+                                                            viennagrid_element_id dst_element_id)
 {
   if (!src_mesh || !dst_mesh)                                     return VIENNAGRID_ERROR_INVALID_MESH;
   if (!src_mesh->element_id_valid(src_element_id))                return VIENNAGRID_ERROR_INVALID_ELEMENT_ID;
