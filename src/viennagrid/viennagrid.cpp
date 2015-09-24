@@ -148,8 +148,14 @@ const char * viennagrid_error_string(viennagrid_error error)
       return "no mesh";
     case VIENNAGRID_ERROR_WRITE_ERROR:
       return "write error";
+    case VIENNAGRID_ERROR_READ_ERROR:
+      return "read error";
     case VIENNAGRID_ERROR_MESH_HAS_SPARSE_BOUNDARY_STORAGE_LAYOUT:
       return "mesh has sparse boundary storage layout";
+    case VIENNAGRID_ERROR_INVALID_GEOMETRIC_DIMENSION:
+      return "invalid geometric dimension";
+    case VIENNAGRID_ERROR_NUMERIC_CLOSE_TO_ZERO:
+      return "numeric close to zero";
 
     default:
       return 0;

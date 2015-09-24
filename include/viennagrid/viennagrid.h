@@ -433,6 +433,8 @@ typedef struct viennagrid_mesh_io_ * viennagrid_mesh_io;
 #define VIENNAGRID_ERROR_WRITE_ERROR                                   51
 #define VIENNAGRID_ERROR_READ_ERROR                                    52
 #define VIENNAGRID_ERROR_MESH_HAS_SPARSE_BOUNDARY_STORAGE_LAYOUT       53
+#define VIENNAGRID_ERROR_INVALID_GEOMETRIC_DIMENSION                   54
+#define VIENNAGRID_ERROR_NUMERIC_CLOSE_TO_ZERO                         55
 
 /* VIENNAGRID BOOL DEFINES */
 #define VIENNAGRID_TRUE                             1
@@ -490,6 +492,7 @@ typedef struct viennagrid_mesh_io_ * viennagrid_mesh_io;
 #define VIENNAGRID_INVALID_TOPOLOGICAL_DIMENSION   -1
 #define VIENNAGRID_INVALID_REGION_ID               -1
 
+#define VIENNAGRID_TOLERANCE_EPSILON               1e-8
 
 /**********************************************************************************************
  *
@@ -1365,6 +1368,10 @@ VIENNAGRID_DYNAMIC_EXPORT viennagrid_error viennagrid_element_centroid(viennagri
 VIENNAGRID_DYNAMIC_EXPORT viennagrid_error viennagrid_mesh_centroid(viennagrid_mesh mesh,
                                                                     viennagrid_numeric * coords);
 
+/* computes the volume (area/length) of a particular element of the mesh */
+VIENNAGRID_DYNAMIC_EXPORT viennagrid_error viennagrid_element_circumcenter(viennagrid_mesh mesh,
+                                                                           viennagrid_element_id element_id,
+                                                                           viennagrid_numeric * coords);
 
 /* refines the lines of a PLC that no line in output_plc is greater than line_size */
 VIENNAGRID_DYNAMIC_EXPORT viennagrid_error viennagrid_plc_line_refine(viennagrid_plc plc,
