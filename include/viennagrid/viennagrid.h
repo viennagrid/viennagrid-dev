@@ -1410,6 +1410,67 @@ VIENNAGRID_DYNAMIC_EXPORT viennagrid_error viennagrid_element_circumcenter(vienn
                                                                            viennagrid_element_id element_id,
                                                                            viennagrid_numeric * coords);
 
+/* computes the closest point on a line to another point */
+VIENNAGRID_DYNAMIC_EXPORT viennagrid_error viennagrid_closest_point_on_line(viennagrid_dimension dimension,
+                                                                            viennagrid_numeric const * point,
+                                                                            viennagrid_numeric const * line_point1,
+                                                                            viennagrid_numeric const * line_point2,
+                                                                            viennagrid_numeric * result);
+
+/* computes the closest point on a triangle to another point */
+VIENNAGRID_DYNAMIC_EXPORT viennagrid_error viennagrid_closest_point_on_triangle(viennagrid_dimension dimension,
+                                                                                viennagrid_numeric const * point,
+                                                                                viennagrid_numeric const * triangle_point1,
+                                                                                viennagrid_numeric const * triangle_point2,
+                                                                                viennagrid_numeric const * triangle_point3,
+                                                                                viennagrid_numeric * result);
+
+/* computes the closest point on a quadrilateral to another point */
+VIENNAGRID_DYNAMIC_EXPORT viennagrid_error viennagrid_closest_point_on_quadrilateral(viennagrid_dimension dimension,
+                                                                                     viennagrid_numeric const * point,
+                                                                                     viennagrid_numeric const * quadrilateral_point0,
+                                                                                     viennagrid_numeric const * quadrilateral_point1,
+                                                                                     viennagrid_numeric const * quadrilateral_point2,
+                                                                                     viennagrid_numeric const * quadrilateral_point3,
+                                                                                     viennagrid_numeric * result);
+
+/* computes the closest point on a tetrahedron to another point */
+VIENNAGRID_DYNAMIC_EXPORT viennagrid_error viennagrid_closest_point_on_tetrahedron(viennagrid_dimension dimension,
+                                                                                   viennagrid_numeric const * point,
+                                                                                   viennagrid_numeric const * tetrahedron_point0,
+                                                                                   viennagrid_numeric const * tetrahedron_point1,
+                                                                                   viennagrid_numeric const * tetrahedron_point2,
+                                                                                   viennagrid_numeric const * tetrahedron_point3,
+                                                                                   viennagrid_numeric * result);
+
+/* computes the closest point on a hexahedron to another point */
+VIENNAGRID_DYNAMIC_EXPORT viennagrid_error viennagrid_closest_point_on_hexahedron(viennagrid_dimension dimension,
+                                                                                  viennagrid_numeric const * point,
+                                                                                  viennagrid_numeric const * hexahedron_point0,
+                                                                                  viennagrid_numeric const * hexahedron_point1,
+                                                                                  viennagrid_numeric const * hexahedron_point2,
+                                                                                  viennagrid_numeric const * hexahedron_point3,
+                                                                                  viennagrid_numeric const * hexahedron_point4,
+                                                                                  viennagrid_numeric const * hexahedron_point5,
+                                                                                  viennagrid_numeric const * hexahedron_point6,
+                                                                                  viennagrid_numeric const * hexahedron_point7,
+                                                                                  viennagrid_numeric * result);
+
+/* computes the closest point on an element to another point */
+VIENNAGRID_DYNAMIC_EXPORT viennagrid_error viennagrid_closest_point_on_element(viennagrid_mesh mesh,
+                                                                               viennagrid_numeric const * point,
+                                                                               viennagrid_element_id element_id,
+                                                                               viennagrid_numeric * result);
+
+/* computes the closest point for two lines */
+VIENNAGRID_DYNAMIC_EXPORT viennagrid_error viennagrid_closest_points_line_line(viennagrid_dimension dimension,
+                                                                               viennagrid_numeric const * line1_point1,
+                                                                               viennagrid_numeric const * line1_point2,
+                                                                               viennagrid_numeric const * line2_point1,
+                                                                               viennagrid_numeric const * line2_point2,
+                                                                               viennagrid_numeric * result1,
+                                                                               viennagrid_numeric * result2);
+
 /* refines the lines of a PLC that no line in output_plc is greater than line_size */
 VIENNAGRID_DYNAMIC_EXPORT viennagrid_error viennagrid_plc_line_refine(viennagrid_plc plc,
                                                                       viennagrid_plc output_plc,
