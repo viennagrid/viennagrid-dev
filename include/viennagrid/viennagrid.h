@@ -1484,6 +1484,12 @@ VIENNAGRID_DYNAMIC_EXPORT viennagrid_error viennagrid_closest_points_line_line(v
                                                                                viennagrid_numeric * result2);
 
 /* refines the lines of a PLC that no line in output_plc is greater than line_size */
+VIENNAGRID_DYNAMIC_EXPORT viennagrid_error viennagrid_mesh_extract_boundary(viennagrid_mesh volume_mesh,
+                                                                            viennagrid_mesh hull_mesh,
+                                                                            viennagrid_dimension hull_dimension);
+
+
+/* refines the lines of a PLC that no line in output_plc is greater than line_size */
 VIENNAGRID_DYNAMIC_EXPORT viennagrid_error viennagrid_plc_line_refine(viennagrid_plc plc,
                                                                       viennagrid_plc output_plc,
                                                                       viennagrid_numeric line_size);

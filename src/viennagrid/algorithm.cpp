@@ -12,9 +12,201 @@
 
 #include <vector>
 #include <cmath>
+#include <map>
 
 #include "viennagrid/viennagrid.h"
 #include "common.hpp"
+
+
+struct viennagrid_copy_map_ : public reference_counted
+{
+  viennagrid_copy_map_() : src_mesh(NULL), dst_mesh(NULL), max_vertex_distance(-1), copy_region_information(true) {}
+  viennagrid_copy_map_(viennagrid_mesh src_mesh_, viennagrid_mesh dst_mesh_, bool copy_region_information_ = true) : src_mesh(src_mesh_), dst_mesh(dst_mesh_), max_vertex_distance(-1), copy_region_information(copy_region_information_)
+  {
+    init();
+  }
+  viennagrid_copy_map_(viennagrid_mesh src_mesh_, viennagrid_mesh dst_mesh_, viennagrid_numeric max_vertex_distance_, bool copy_region_information_ = true) : src_mesh(src_mesh_), dst_mesh(dst_mesh_), max_vertex_distance(max_vertex_distance_), copy_region_information(copy_region_information_)
+  {
+    init();
+  }
+
+  ~viennagrid_copy_map_()
+  {
+    viennagrid_mesh_release(src_mesh);
+    viennagrid_mesh_release(dst_mesh);
+  }
+
+  void init()
+  {
+    viennagrid_mesh_retain(src_mesh);
+    viennagrid_mesh_retain(dst_mesh);
+
+    viennagrid_dimension src_dimension;
+    viennagrid_mesh_geometric_dimension_get(src_mesh, &src_dimension);
+
+    viennagrid_dimension dst_dimension;
+    viennagrid_mesh_geometric_dimension_get(dst_mesh, &dst_dimension);
+
+    if (dst_dimension == VIENNAGRID_INVALID_DIMENSION)
+      viennagrid_mesh_geometric_dimension_set(dst_mesh, src_dimension);
+  }
+
+  viennagrid_mesh src_mesh;
+  viennagrid_mesh dst_mesh;
+  viennagrid_numeric max_vertex_distance;
+  bool copy_region_information;
+
+  std::map<viennagrid_element_id, viennagrid_element_id> vertex_map;
+};
+
+typedef viennagrid_copy_map_ * viennagrid_copy_map;
+
+
+
+viennagrid_error viennagrid_copy_map_create(viennagrid_mesh src_mesh, viennagrid_mesh dst_mesh, viennagrid_copy_map * copy_map)
+{
+  if (!src_mesh || !dst_mesh) return VIENNAGRID_ERROR_INVALID_MESH;
+
+  viennagrid_dimension src_dimension;
+  viennagrid_dimension dst_dimension;
+
+  RETURN_ON_ERROR( viennagrid_mesh_geometric_dimension_get(src_mesh, &src_dimension) );
+  RETURN_ON_ERROR( viennagrid_mesh_geometric_dimension_get(dst_mesh, &dst_dimension) );
+
+  if ((dst_dimension != VIENNAGRID_INVALID_DIMENSION) && (dst_dimension != src_dimension)) return VIENNAGRID_ERROR_GEOMETRIC_DIMENSION_MISMATCH;
+
+  if (copy_map)
+    *copy_map = new viennagrid_copy_map_(src_mesh, dst_mesh);
+
+  return VIENNAGRID_SUCCESS;
+}
+
+viennagrid_error viennagrid_copy_map_retain(viennagrid_copy_map copy_map)
+{
+  retain(copy_map);
+  return VIENNAGRID_SUCCESS;
+}
+
+viennagrid_error viennagrid_copy_map_release(viennagrid_copy_map copy_map)
+{
+  release(copy_map);
+  return VIENNAGRID_SUCCESS;
+}
+
+viennagrid_error viennagrid_copy_map_copy_region_information_set(viennagrid_copy_map copy_map, viennagrid_bool copy)
+{
+  copy_map->copy_region_information = (copy == VIENNAGRID_TRUE);
+  return VIENNAGRID_SUCCESS;
+}
+
+viennagrid_error viennagrid_copy_map_copy_region_information_get(viennagrid_copy_map copy_map, viennagrid_bool * copy)
+{
+  if (copy)
+    *copy = copy_map->copy_region_information ? VIENNAGRID_TRUE : VIENNAGRID_FALSE;
+  return VIENNAGRID_SUCCESS;
+}
+
+viennagrid_error viennagrid_copy_map_max_vertex_distance_set(viennagrid_copy_map copy_map, viennagrid_numeric max_vertex_distance)
+{
+  copy_map->max_vertex_distance = max_vertex_distance;
+  return VIENNAGRID_SUCCESS;
+}
+
+viennagrid_error viennagrid_copy_map_max_vertex_distance_get(viennagrid_copy_map copy_map, viennagrid_numeric * max_vertex_distance)
+{
+  if (max_vertex_distance)
+    *max_vertex_distance = copy_map->max_vertex_distance;
+  return VIENNAGRID_SUCCESS;
+}
+
+viennagrid_error viennagrid_copy_map_element_copy(viennagrid_copy_map copy_map,
+                                                  viennagrid_element_id source_element_id,
+                                                  viennagrid_element_id * destination_element_id)
+{
+  viennagrid_element_type element_type;
+  viennagrid_element_type_get(copy_map->src_mesh, source_element_id, &element_type);
+
+  if (element_type == VIENNAGRID_ELEMENT_TYPE_VERTEX)
+  {
+    std::map<viennagrid_element_id, viennagrid_element_id>::const_iterator it = copy_map->vertex_map.find(source_element_id);
+    if (it != copy_map->vertex_map.end())
+    {
+      *destination_element_id = (*it).second;
+      return VIENNAGRID_SUCCESS;
+    }
+
+    viennagrid_element_id * vertices_begin;
+    viennagrid_element_id * vertices_end;
+    viennagrid_mesh_elements_get(copy_map->dst_mesh, 0, &vertices_begin, &vertices_end);
+
+    viennagrid_numeric * source_vertex_coords;
+    viennagrid_mesh_vertex_coords_get(copy_map->src_mesh, source_element_id, &source_vertex_coords);
+
+    if ((copy_map->max_vertex_distance > 0) && (vertices_end-vertices_begin > 0))
+    {
+      viennagrid_numeric * vertex_coords;
+      viennagrid_mesh_vertex_coords_pointer(copy_map->dst_mesh, &vertex_coords);
+
+      viennagrid_dimension dimension;
+      viennagrid_mesh_geometric_dimension_get(copy_map->dst_mesh, &dimension);
+
+
+      for (viennagrid_element_id * vit = vertices_begin; vit != vertices_end; ++vit)
+      {
+        viennagrid_numeric distance;
+        viennagrid_distance_2(dimension, source_vertex_coords, vertex_coords+dimension*(*vit), &distance);
+
+        if ( distance < copy_map->max_vertex_distance )
+        {
+          *destination_element_id = *vit;
+          return VIENNAGRID_SUCCESS;
+        }
+      }
+    }
+
+    viennagrid_element_id new_vertex_id;
+    viennagrid_mesh_vertex_create(copy_map->dst_mesh, source_vertex_coords, &new_vertex_id);
+    copy_map->vertex_map[source_element_id] = new_vertex_id;
+
+    if (copy_map->copy_region_information)
+      viennagrid_element_copy_region_information(copy_map->src_mesh, source_element_id, copy_map->dst_mesh, new_vertex_id);
+
+    if (destination_element_id)
+      *destination_element_id = new_vertex_id;
+  }
+  else
+  {
+    viennagrid_element_id * vertices_begin;
+    viennagrid_element_id * vertices_end;
+    viennagrid_element_boundary_elements(copy_map->src_mesh, source_element_id, 0, &vertices_begin, &vertices_end);
+
+    std::vector<viennagrid_element_id> new_vertices( vertices_end-vertices_begin );
+    for (viennagrid_element_id * vit = vertices_begin; vit != vertices_end; ++vit)
+      viennagrid_copy_map_element_copy(copy_map, *vit, &new_vertices[vit-vertices_begin]);
+
+    viennagrid_element_id new_element_id;
+    viennagrid_mesh_element_create(copy_map->dst_mesh, element_type, new_vertices.size(), &new_vertices[0], &new_element_id);
+
+    if (copy_map->copy_region_information)
+      viennagrid_element_copy_region_information(copy_map->src_mesh, source_element_id, copy_map->dst_mesh, new_element_id);
+
+    if (destination_element_id)
+      *destination_element_id = new_element_id;
+  }
+
+
+
+  return VIENNAGRID_SUCCESS;
+}
+
+
+
+
+
+
+
+
+
 
 
 
@@ -181,6 +373,69 @@ viennagrid_error viennagrid_distance_inf(viennagrid_dimension dimension,
 
   return VIENNAGRID_SUCCESS;
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+viennagrid_error viennagrid_mesh_extract_boundary(viennagrid_mesh volume_mesh,
+                                                  viennagrid_mesh hull_mesh,
+                                                  viennagrid_dimension hull_dimension)
+{
+  viennagrid_dimension dimension;
+  viennagrid_mesh_geometric_dimension_get(volume_mesh, &dimension);
+
+  viennagrid_mesh_clear(hull_mesh);
+  viennagrid_mesh_geometric_dimension_set(hull_mesh, dimension);
+
+  viennagrid_dimension cell_dimension;
+  viennagrid_mesh_cell_dimension_get(volume_mesh, &cell_dimension);
+
+
+  viennagrid_copy_map copy_map;
+  viennagrid_copy_map_create(volume_mesh, hull_mesh, &copy_map);
+
+
+  viennagrid_element_id * hull_elements_begin;
+  viennagrid_element_id * hull_elements_end;
+  viennagrid_mesh_elements_get(volume_mesh, hull_dimension, &hull_elements_begin, &hull_elements_end);
+
+  for (viennagrid_element_id * eit = hull_elements_begin; eit != hull_elements_end; ++eit)
+  {
+    viennagrid_bool is_boundary;
+    viennagrid_element_is_any_boundary(volume_mesh, *eit, &is_boundary);
+
+    if (is_boundary == VIENNAGRID_TRUE)
+    {
+      viennagrid_element_id new_element_id;
+      viennagrid_copy_map_element_copy(copy_map, *eit, &new_element_id);
+    }
+  }
+
+  return VIENNAGRID_SUCCESS;
+}
+
+
+
+
+
+
+
+
+
+
+
 
 
 
