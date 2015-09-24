@@ -435,6 +435,7 @@ typedef struct viennagrid_mesh_io_ * viennagrid_mesh_io;
 #define VIENNAGRID_ERROR_MESH_HAS_SPARSE_BOUNDARY_STORAGE_LAYOUT       53
 #define VIENNAGRID_ERROR_INVALID_GEOMETRIC_DIMENSION                   54
 #define VIENNAGRID_ERROR_NUMERIC_CLOSE_TO_ZERO                         55
+#define VIENNAGRID_ERROR_GEOMETRIC_DIMENSION_MISMATCH                  56
 
 /* VIENNAGRID BOOL DEFINES */
 #define VIENNAGRID_TRUE                             1
@@ -931,6 +932,11 @@ VIENNAGRID_DYNAMIC_EXPORT viennagrid_error viennagrid_element_is_region_boundary
                                                                                  viennagrid_mesh mesh,
                                                                                  viennagrid_element_id element_id,
                                                                                  viennagrid_bool * result);
+
+/* queries if a given element is boundary of a mesh or any region of the mesh */
+VIENNAGRID_DYNAMIC_EXPORT viennagrid_error viennagrid_element_is_any_boundary(viennagrid_mesh mesh,
+                                                                              viennagrid_element_id element_id,
+                                                                              viennagrid_bool * result);
 
 
 /* gets all elements of a mesh for a given topological dimension */

@@ -156,6 +156,8 @@ const char * viennagrid_error_string(viennagrid_error error)
       return "invalid geometric dimension";
     case VIENNAGRID_ERROR_NUMERIC_CLOSE_TO_ZERO:
       return "numeric close to zero";
+    case VIENNAGRID_ERROR_GEOMETRIC_DIMENSION_MISMATCH:
+      return "geometric dimension mismatch";
 
     default:
       return 0;
@@ -757,6 +759,40 @@ viennagrid_error viennagrid_element_is_region_boundary(viennagrid_region region,
   return VIENNAGRID_SUCCESS;
 }
 
+
+
+viennagrid_error viennagrid_element_is_any_boundary(viennagrid_mesh mesh,
+                                                    viennagrid_element_id element_id,
+                                                    viennagrid_bool * result)
+{
+  if (!mesh)                                              return VIENNAGRID_ERROR_INVALID_MESH;
+  if (!mesh->element_id_valid(element_id))                return VIENNAGRID_ERROR_INVALID_ELEMENT_ID;
+  if (!mesh->valid_sparse_dimension(TOPODIM(element_id))) return VIENNAGRID_ERROR_MESH_HAS_SPARSE_BOUNDARY_STORAGE_LAYOUT;
+
+  if (result)
+  {
+    RETURN_ON_ERROR( viennagrid_element_is_mesh_boundary(mesh, element_id, result) );
+    if (*result == VIENNAGRID_TRUE)
+      return VIENNAGRID_SUCCESS;
+
+    viennagrid_region_id * region_ids_begin;
+    viennagrid_region_id * region_ids_end;
+    RETURN_ON_ERROR( viennagrid_element_regions_get(mesh, element_id, &region_ids_begin, &region_ids_end) );
+    for (viennagrid_region_id * rit = region_ids_begin; rit != region_ids_end; ++rit)
+    {
+      viennagrid_region region;
+      RETURN_ON_ERROR( viennagrid_mesh_region_get(mesh, *rit, &region) );
+      RETURN_ON_ERROR( viennagrid_element_is_region_boundary(region, mesh, element_id, result) );
+
+      if (*result == VIENNAGRID_TRUE)
+        return VIENNAGRID_SUCCESS;
+    }
+
+    *result = VIENNAGRID_FALSE;
+  }
+
+  return VIENNAGRID_SUCCESS;
+}
 
 
 
