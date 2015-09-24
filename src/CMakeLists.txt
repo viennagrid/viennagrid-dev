@@ -11,7 +11,12 @@ set(LIB_VIENNAGRID_SOURCES viennagrid/algorithm.cpp
                            viennagrid/serialize.cpp
                            viennagrid/viennagrid.cpp
                            viennagrid/io/netgen.cpp
-                           viennagrid/io/vtk.cpp)
+                           viennagrid/io/vtk.cpp
+                           viennagrid/algorithm/centroid.cpp
+                           viennagrid/algorithm/circumcenter.cpp
+                           viennagrid/algorithm/closest_points.cpp
+                           viennagrid/algorithm/surface.cpp
+                           viennagrid/algorithm/volume.cpp)
 
 add_library(viennagrid SHARED ${LIB_VIENNAGRID_SOURCES})
 install(TARGETS viennagrid DESTINATION lib)
