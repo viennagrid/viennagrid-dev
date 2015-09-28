@@ -46,7 +46,14 @@ namespace viennagrid
     return result;
   }
 
-
+  /** @brief Returns the surface of a whole mesh */
+  template<bool region_is_const>
+  viennagrid_numeric surface(base_region<region_is_const> const & region_obj)
+  {
+    viennagrid_numeric result;
+    THROW_ON_ERROR( viennagrid_region_surface( region_obj.internal_mesh(), region_obj.internal(), &result) );
+    return result;
+  }
 
 
   /** @brief Returns a handle to the boundary element with the smallest volume */
