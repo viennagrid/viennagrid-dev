@@ -17,7 +17,6 @@
 
 #include <boost/array.hpp>
 #include "viennagrid/mesh/mesh.hpp"
-#include "viennagrid/algorithm/inner_prod.hpp"
 #include "viennagrid/algorithm/geometry.hpp"
 #include "viennagrid/algorithm/detail/numeric.hpp"
 
