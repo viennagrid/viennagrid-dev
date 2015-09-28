@@ -252,3 +252,42 @@ viennagrid_error viennagrid_mesh_volume(viennagrid_mesh mesh,
 
   return VIENNAGRID_SUCCESS;
 }
+
+
+
+/* computes the volume (area/length) of the region (given by the sum of all cells inside the mesh) */
+viennagrid_error viennagrid_region_volume(viennagrid_mesh mesh,
+                                          viennagrid_region region,
+                                          viennagrid_numeric * volume)
+{
+  if (volume)
+  {
+    viennagrid_dimension cell_dim;
+    RETURN_ON_ERROR( viennagrid_mesh_cell_dimension_get(mesh, &cell_dim) );
+    if (cell_dim < 1)
+      return VIENNAGRID_ERROR_INVALID_TOPOLOGICAL_DIMENSION;
+
+    *volume = 0;
+    viennagrid_element_id *cell_ids_begin, *cell_ids_end;
+    RETURN_ON_ERROR( viennagrid_mesh_elements_get(mesh, cell_dim, &cell_ids_begin, &cell_ids_end) );
+    viennagrid_numeric volume_contribution;
+    viennagrid_bool is_in_region;
+    for (viennagrid_element_id *cit = cell_ids_begin; cit != cell_ids_end; ++cit)
+    {
+      RETURN_ON_ERROR( viennagrid_region_contains_element(region, *cit, &is_in_region) );
+      if (is_in_region == VIENNAGRID_TRUE)
+      {
+        RETURN_ON_ERROR( viennagrid_element_volume(mesh, *cit, &volume_contribution) );
+        *volume += volume_contribution;
+      }
+    }
+  }
+
+  return VIENNAGRID_SUCCESS;
+}
+
+
+
+
+
+

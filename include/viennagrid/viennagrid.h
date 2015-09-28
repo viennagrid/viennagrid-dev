@@ -1408,6 +1408,16 @@ VIENNAGRID_DYNAMIC_EXPORT viennagrid_error viennagrid_mesh_volume(viennagrid_mes
 VIENNAGRID_DYNAMIC_EXPORT viennagrid_error viennagrid_mesh_surface(viennagrid_mesh mesh,
                                                                    viennagrid_numeric * surface);
 
+/* computes the volume (area/length) of the region (given by the sum of all cells inside the mesh) */
+VIENNAGRID_DYNAMIC_EXPORT viennagrid_error viennagrid_region_volume(viennagrid_mesh mesh,
+                                                                    viennagrid_region region,
+                                                                    viennagrid_numeric * volume);
+
+/* computes the surface of the region (given by the sum of all facets with only one connected cell) */
+VIENNAGRID_DYNAMIC_EXPORT viennagrid_error viennagrid_region_surface(viennagrid_mesh mesh,
+                                                                     viennagrid_region region,
+                                                                     viennagrid_numeric * surface);
+
 /* computes the centroid of a particular element of the mesh */
 VIENNAGRID_DYNAMIC_EXPORT viennagrid_error viennagrid_element_centroid(viennagrid_mesh mesh,
                                                                        viennagrid_element_id element_id,
