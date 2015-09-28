@@ -16,6 +16,7 @@
 
 #include "viennagrid/viennagrid.h"
 #include "common.hpp"
+#include "mesh.hpp"
 
 
 struct viennagrid_copy_map_ : public reference_counted
@@ -393,6 +394,10 @@ viennagrid_error viennagrid_mesh_extract_boundary(viennagrid_mesh volume_mesh,
                                                   viennagrid_mesh boundary_mesh,
                                                   viennagrid_dimension boundary_dimension)
 {
+  if (!volume_mesh)                                             return VIENNAGRID_ERROR_INVALID_MESH;
+  if (!boundary_dimension)                                      return VIENNAGRID_ERROR_INVALID_MESH;
+  if (!volume_mesh->valid_sparse_dimension(boundary_dimension)) return VIENNAGRID_ERROR_MESH_HAS_SPARSE_BOUNDARY_STORAGE_LAYOUT;
+
   viennagrid_dimension dimension;
   RETURN_ON_ERROR( viennagrid_mesh_geometric_dimension_get(volume_mesh, &dimension) );
 
@@ -401,6 +406,8 @@ viennagrid_error viennagrid_mesh_extract_boundary(viennagrid_mesh volume_mesh,
 
   viennagrid_dimension cell_dimension;
   RETURN_ON_ERROR(  viennagrid_mesh_cell_dimension_get(volume_mesh, &cell_dimension) );
+
+  if ((boundary_dimension < 0) || (boundary_dimension >= cell_dimension)) return VIENNAGRID_ERROR_INVALID_TOPOLOGICAL_DIMENSION;
 
 
   viennagrid_copy_map copy_map;
@@ -432,6 +439,13 @@ viennagrid_error viennagrid_mesh_affine_transform(viennagrid_mesh mesh,
                                                   viennagrid_numeric const * matrix,
                                                   viennagrid_numeric const * translation)
 {
+  if (!mesh)                        return VIENNAGRID_ERROR_INVALID_MESH;
+  if (!mesh->is_root())             return VIENNAGRID_ERROR_MESH_IS_NOT_ROOT;
+  if ((destination_dimension <= 0)) return VIENNAGRID_ERROR_INVALID_GEOMETRIC_DIMENSION;
+
+  if (!matrix && !translation)
+    return VIENNAGRID_SUCCESS;
+
   viennagrid_dimension dimension;
   RETURN_ON_ERROR( viennagrid_mesh_geometric_dimension_get(mesh, &dimension) );
 

@@ -1488,7 +1488,7 @@ VIENNAGRID_DYNAMIC_EXPORT viennagrid_error viennagrid_mesh_extract_boundary(vien
                                                                             viennagrid_mesh boundary_mesh,
                                                                             viennagrid_dimension boundary_dimension);
 
-/* transforms all points of all meshes in the mesh hierarchy. the matrix has to be linear in memory, using row-major layout. matrix and/or translation can be NULL if they are not used  */
+/* transforms all points of all meshes in the mesh hierarchy. the matrix has to be linear in memory, using row-major layout. matrix and/or translation can be NULL if they are not used. mesh has to be a root mesh */
 VIENNAGRID_DYNAMIC_EXPORT viennagrid_error viennagrid_mesh_affine_transform(viennagrid_mesh mesh,
                                                                             viennagrid_dimension destination_dimension,
                                                                             viennagrid_numeric const * matrix,
