@@ -1483,10 +1483,16 @@ VIENNAGRID_DYNAMIC_EXPORT viennagrid_error viennagrid_closest_points_line_line(v
                                                                                viennagrid_numeric * result1,
                                                                                viennagrid_numeric * result2);
 
-/* refines the lines of a PLC that no line in output_plc is greater than line_size */
+/* extract the boundary of specific topological boundary dimension of a mesh */
 VIENNAGRID_DYNAMIC_EXPORT viennagrid_error viennagrid_mesh_extract_boundary(viennagrid_mesh volume_mesh,
-                                                                            viennagrid_mesh hull_mesh,
-                                                                            viennagrid_dimension hull_dimension);
+                                                                            viennagrid_mesh boundary_mesh,
+                                                                            viennagrid_dimension boundary_dimension);
+
+/* transforms all points of all meshes in the mesh hierarchy. the matrix has to be linear in memory, using row-major layout. matrix and/or translation can be NULL if they are not used  */
+VIENNAGRID_DYNAMIC_EXPORT viennagrid_error viennagrid_mesh_affine_transform(viennagrid_mesh mesh,
+                                                                            viennagrid_dimension destination_dimension,
+                                                                            viennagrid_numeric const * matrix,
+                                                                            viennagrid_numeric const * translation);
 
 
 /* refines the lines of a PLC that no line in output_plc is greater than line_size */
