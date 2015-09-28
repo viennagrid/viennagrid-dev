@@ -132,6 +132,17 @@ namespace viennagrid
       THROW_ON_ERROR( viennagrid_mesh_name_set(internal(), name_.c_str()) );
     }
 
+    void set_sparse_layout()
+    {
+      THROW_ON_ERROR( viennagrid_mesh_property_set(internal(), VIENNAGRID_PROPERTY_BOUNDARY_LAYOUT, VIENNAGRID_BOUNDARY_LAYOUT_SPARSE) );
+    }
+
+    void set_full_layout()
+    {
+      THROW_ON_ERROR( viennagrid_mesh_property_set(internal(), VIENNAGRID_PROPERTY_BOUNDARY_LAYOUT, VIENNAGRID_BOUNDARY_LAYOUT_FULL) );
+    }
+
+
   private:
 
     void retain() const
