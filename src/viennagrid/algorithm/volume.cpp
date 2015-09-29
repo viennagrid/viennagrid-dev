@@ -156,73 +156,77 @@ viennagrid_error viennagrid_element_volume(viennagrid_mesh mesh,
     viennagrid_element_type element_type;
     RETURN_ON_ERROR( viennagrid_element_type_get(mesh, element_id, &element_type) );
 
-    viennagrid_dimension dim;
-    RETURN_ON_ERROR( viennagrid_mesh_geometric_dimension_get(mesh, &dim) );
-
-    viennagrid_element_id *vertex_ids_begin, *vertex_ids_end;
-    RETURN_ON_ERROR( viennagrid_element_boundary_elements(mesh, element_id, 0, &vertex_ids_begin, &vertex_ids_end) );
-
-    std::vector<viennagrid_numeric *> coords(vertex_ids_end - vertex_ids_begin);
-    for (viennagrid_element_id *it = vertex_ids_begin; it<vertex_ids_end; ++it)
-    {
-      RETURN_ON_ERROR( viennagrid_mesh_vertex_coords_get(mesh, *it, &(coords[it - vertex_ids_begin])) );
-    }
-
     if (element_type == VIENNAGRID_ELEMENT_TYPE_VERTEX)
     {
       *volume = 1; // volume of 0-sphere
     }
-    else if (element_type == VIENNAGRID_ELEMENT_TYPE_LINE || element_type == VIENNAGRID_ELEMENT_TYPE_EDGE)
+    else
     {
-      RETURN_ON_ERROR( viennagrid_spanned_volume_2(dim, coords[0], coords[1], volume) );
-    }
-    else if (element_type == VIENNAGRID_ELEMENT_TYPE_TRIANGLE)
-    {
-      RETURN_ON_ERROR( viennagrid_spanned_volume_3(dim, coords[0], coords[1], coords[2], volume) );
-    }
-    else if (element_type == VIENNAGRID_ELEMENT_TYPE_QUADRILATERAL)
-    {
-      viennagrid_numeric volume_1;
-      RETURN_ON_ERROR( viennagrid_spanned_volume_3(dim, coords[0], coords[1], coords[2], &volume_1) );
-      RETURN_ON_ERROR( viennagrid_spanned_volume_3(dim, coords[2], coords[1], coords[3], volume) );
-      *volume += volume_1;
-    }
-    else if (element_type == VIENNAGRID_ELEMENT_TYPE_POLYGON)
-    {
-      // decompose into triangles and sum signed contributions
-      *volume = 0;
-      viennagrid_numeric signed_volume_contribution;
-      for (viennagrid_int i = 2; i < viennagrid_int(coords.size()); ++i)
+      viennagrid_dimension dim;
+      RETURN_ON_ERROR( viennagrid_mesh_geometric_dimension_get(mesh, &dim) );
+
+      viennagrid_element_id *vertex_ids_begin, *vertex_ids_end;
+      RETURN_ON_ERROR( viennagrid_element_boundary_elements(mesh, element_id, 0, &vertex_ids_begin, &vertex_ids_end) );
+
+      std::vector<viennagrid_numeric *> coords(vertex_ids_end - vertex_ids_begin);
+      for (viennagrid_element_id *it = vertex_ids_begin; it<vertex_ids_end; ++it)
       {
-        RETURN_ON_ERROR( viennagrid_signed_spanned_volume_3(dim, coords[0], coords[i-1], coords[i], &signed_volume_contribution) );
+        RETURN_ON_ERROR( viennagrid_mesh_vertex_coords_get(mesh, *it, &(coords[it - vertex_ids_begin])) );
+      }
+
+
+      if (element_type == VIENNAGRID_ELEMENT_TYPE_LINE || element_type == VIENNAGRID_ELEMENT_TYPE_EDGE)
+      {
+        RETURN_ON_ERROR( viennagrid_spanned_volume_2(dim, coords[0], coords[1], volume) );
+      }
+      else if (element_type == VIENNAGRID_ELEMENT_TYPE_TRIANGLE)
+      {
+        RETURN_ON_ERROR( viennagrid_spanned_volume_3(dim, coords[0], coords[1], coords[2], volume) );
+      }
+      else if (element_type == VIENNAGRID_ELEMENT_TYPE_QUADRILATERAL)
+      {
+        viennagrid_numeric volume_1;
+        RETURN_ON_ERROR( viennagrid_spanned_volume_3(dim, coords[0], coords[1], coords[2], &volume_1) );
+        RETURN_ON_ERROR( viennagrid_spanned_volume_3(dim, coords[2], coords[1], coords[3], volume) );
+        *volume += volume_1;
+      }
+      else if (element_type == VIENNAGRID_ELEMENT_TYPE_POLYGON)
+      {
+        // decompose into triangles and sum signed contributions
+        *volume = 0;
+        viennagrid_numeric signed_volume_contribution;
+        for (viennagrid_int i = 2; i < viennagrid_int(coords.size()); ++i)
+        {
+          RETURN_ON_ERROR( viennagrid_signed_spanned_volume_3(dim, coords[0], coords[i-1], coords[i], &signed_volume_contribution) );
+          *volume += signed_volume_contribution;
+        }
+      }
+      else if (element_type == VIENNAGRID_ELEMENT_TYPE_TETRAHEDRON)
+      {
+        RETURN_ON_ERROR( viennagrid_spanned_volume_4(dim, coords[0], coords[1], coords[2], coords[3], volume) );
+      }
+      else if (element_type == VIENNAGRID_ELEMENT_TYPE_HEXAHEDRON)
+      {
+        // decompose into tetrahedra and sum signed contributions
+        *volume = 0;
+        viennagrid_numeric signed_volume_contribution;
+        RETURN_ON_ERROR( viennagrid_spanned_volume_4(dim, coords[0], coords[1], coords[3], coords[4], &signed_volume_contribution) );
+        *volume += signed_volume_contribution;
+        RETURN_ON_ERROR( viennagrid_spanned_volume_4(dim, coords[4], coords[1], coords[3], coords[7], &signed_volume_contribution) );
+        *volume += signed_volume_contribution;
+        RETURN_ON_ERROR( viennagrid_spanned_volume_4(dim, coords[4], coords[1], coords[7], coords[5], &signed_volume_contribution) );
+        *volume += signed_volume_contribution;
+
+        RETURN_ON_ERROR( viennagrid_spanned_volume_4(dim, coords[0], coords[3], coords[2], coords[4], &signed_volume_contribution) );
+        *volume += signed_volume_contribution;
+        RETURN_ON_ERROR( viennagrid_spanned_volume_4(dim, coords[2], coords[4], coords[3], coords[6], &signed_volume_contribution) );
+        *volume += signed_volume_contribution;
+        RETURN_ON_ERROR( viennagrid_spanned_volume_4(dim, coords[6], coords[4], coords[3], coords[7], &signed_volume_contribution) );
         *volume += signed_volume_contribution;
       }
+      else
+        return VIENNAGRID_ERROR_INVALID_ELEMENT_TYPE;
     }
-    else if (element_type == VIENNAGRID_ELEMENT_TYPE_TETRAHEDRON)
-    {
-      RETURN_ON_ERROR( viennagrid_spanned_volume_4(dim, coords[0], coords[1], coords[2], coords[3], volume) );
-    }
-    else if (element_type == VIENNAGRID_ELEMENT_TYPE_HEXAHEDRON)
-    {
-      // decompose into tetrahedra and sum signed contributions
-      *volume = 0;
-      viennagrid_numeric signed_volume_contribution;
-      RETURN_ON_ERROR( viennagrid_spanned_volume_4(dim, coords[0], coords[1], coords[3], coords[4], &signed_volume_contribution) );
-      *volume += signed_volume_contribution;
-      RETURN_ON_ERROR( viennagrid_spanned_volume_4(dim, coords[4], coords[1], coords[3], coords[7], &signed_volume_contribution) );
-      *volume += signed_volume_contribution;
-      RETURN_ON_ERROR( viennagrid_spanned_volume_4(dim, coords[4], coords[1], coords[7], coords[5], &signed_volume_contribution) );
-      *volume += signed_volume_contribution;
-
-      RETURN_ON_ERROR( viennagrid_spanned_volume_4(dim, coords[0], coords[3], coords[2], coords[4], &signed_volume_contribution) );
-      *volume += signed_volume_contribution;
-      RETURN_ON_ERROR( viennagrid_spanned_volume_4(dim, coords[2], coords[4], coords[3], coords[6], &signed_volume_contribution) );
-      *volume += signed_volume_contribution;
-      RETURN_ON_ERROR( viennagrid_spanned_volume_4(dim, coords[6], coords[4], coords[3], coords[7], &signed_volume_contribution) );
-      *volume += signed_volume_contribution;
-    }
-    else
-      return VIENNAGRID_ERROR_INVALID_ELEMENT_TYPE;
   }
 
   return VIENNAGRID_SUCCESS;
