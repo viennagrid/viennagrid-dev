@@ -1503,6 +1503,9 @@ VIENNAGRID_DYNAMIC_EXPORT viennagrid_error viennagrid_mesh_affine_transform(vien
                                                                             viennagrid_dimension destination_dimension,
                                                                             viennagrid_numeric const * matrix,
                                                                             viennagrid_numeric const * translation);
+VIENNAGRID_DYNAMIC_EXPORT viennagrid_error viennagrid_mesh_scale(viennagrid_mesh mesh,
+                                                                 viennagrid_numeric factor,
+                                                                 viennagrid_numeric const * scaling_center);
 
 
 /* refines the lines of a PLC that no line in output_plc is greater than line_size */

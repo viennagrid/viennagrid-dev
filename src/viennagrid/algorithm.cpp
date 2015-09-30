@@ -482,7 +482,44 @@ viennagrid_error viennagrid_mesh_affine_transform(viennagrid_mesh mesh,
 }
 
 
+viennagrid_error viennagrid_mesh_scale(viennagrid_mesh mesh,
+                                       viennagrid_numeric factor,
+                                       viennagrid_numeric const * scaling_center)
+{
+  if (!mesh)                        return VIENNAGRID_ERROR_INVALID_MESH;
+  if (!mesh->is_root())             return VIENNAGRID_ERROR_MESH_IS_NOT_ROOT;
 
+  viennagrid_dimension dimension;
+  RETURN_ON_ERROR( viennagrid_mesh_geometric_dimension_get(mesh, &dimension) );
+
+  viennagrid_numeric * coords;
+  RETURN_ON_ERROR( viennagrid_mesh_vertex_coords_pointer(mesh, &coords) );
+
+  viennagrid_int vertex_count;
+  RETURN_ON_ERROR( viennagrid_mesh_element_count(mesh, 0, &vertex_count) );
+
+  if (scaling_center)
+  {
+    std::vector<viennagrid_numeric> translate(dimension);
+    for (viennagrid_dimension d = 0; d != dimension; ++d)
+      translate[+d] = scaling_center[+d]*(1-factor);
+
+    for (viennagrid_int index = 0; index != vertex_count; ++index)
+    {
+      for (viennagrid_dimension d = 0; d != dimension; ++d)
+      {
+        coords[dimension*index+d] = coords[dimension*index+d]*factor + translate[+d];
+      }
+    }
+  }
+  else
+  {
+    for (viennagrid_int index = 0; index != vertex_count*dimension; ++index)
+      coords[index] *= factor;
+  }
+
+  return VIENNAGRID_SUCCESS;
+}
 
 
 
