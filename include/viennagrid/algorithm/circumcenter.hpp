@@ -35,7 +35,7 @@ namespace viennagrid
   typename viennagrid::result_of::point< ElementT >::type circumcenter(ElementT const & element)
   {
     typename viennagrid::result_of::point< ElementT >::type point( viennagrid::geometric_dimension(element) );
-    viennagrid_element_circumcenter( element.internal_mesh(), element.id().internal(), &point[0] );
+    THROW_ON_ERROR( viennagrid_element_circumcenter(element.internal_mesh(), element.id().internal(), &point[0]) );
     return point;
   }
 
