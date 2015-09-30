@@ -15,6 +15,7 @@ set(LIB_VIENNAGRID_SOURCES viennagrid/algorithm.cpp
                            viennagrid/algorithm/centroid.cpp
                            viennagrid/algorithm/circumcenter.cpp
                            viennagrid/algorithm/closest_points.cpp
+                           viennagrid/algorithm/inclusion.cpp
                            viennagrid/algorithm/surface.cpp
                            viennagrid/algorithm/volume.cpp)
 

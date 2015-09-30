@@ -1503,9 +1503,48 @@ VIENNAGRID_DYNAMIC_EXPORT viennagrid_error viennagrid_mesh_affine_transform(vien
                                                                             viennagrid_dimension destination_dimension,
                                                                             viennagrid_numeric const * matrix,
                                                                             viennagrid_numeric const * translation);
+
+/* scales all points of all meshes based on a scaling center in the mesh hierarchy. scaling_center can be NULL if it is not used. mesh has to be a root mesh */
 VIENNAGRID_DYNAMIC_EXPORT viennagrid_error viennagrid_mesh_scale(viennagrid_mesh mesh,
                                                                  viennagrid_numeric factor,
                                                                  viennagrid_numeric const * scaling_center);
+
+
+/* determines if a point is inside a 2-simplex (a line) */
+VIENNAGRID_DYNAMIC_EXPORT viennagrid_error viennagrid_point_in_simplex_2(viennagrid_dimension dimension,
+                                                                         viennagrid_numeric const * point,
+                                                                         viennagrid_numeric const * line_point0,
+                                                                         viennagrid_numeric const * line_point1,
+                                                                         viennagrid_numeric tolerance,
+                                                                         viennagrid_bool * is_inside);
+
+/* determines if a point is inside a 3-simplex (a triangle) */
+VIENNAGRID_DYNAMIC_EXPORT viennagrid_error viennagrid_point_in_simplex_3(viennagrid_dimension dimension,
+                                                                         viennagrid_numeric const * point,
+                                                                         viennagrid_numeric const * triangle_point0,
+                                                                         viennagrid_numeric const * triangle_point1,
+                                                                         viennagrid_numeric const * triangle_point2,
+                                                                         viennagrid_numeric tolerance,
+                                                                         viennagrid_bool * is_inside);
+
+/* determines if a point is inside a 4-simplex (a tetrahedron) */
+VIENNAGRID_DYNAMIC_EXPORT viennagrid_error viennagrid_point_in_simplex_4(viennagrid_dimension dimension,
+                                                                         viennagrid_numeric const * point,
+                                                                         viennagrid_numeric const * tetrahedron_point0,
+                                                                         viennagrid_numeric const * tetrahedron_point1,
+                                                                         viennagrid_numeric const * tetrahedron_point2,
+                                                                         viennagrid_numeric const * tetrahedron_point3,
+                                                                         viennagrid_numeric tolerance,
+                                                                         viennagrid_bool * is_inside);
+
+/* determines if a point is inside a specific element */
+VIENNAGRID_DYNAMIC_EXPORT viennagrid_error viennagrid_point_in_element(viennagrid_mesh mesh,
+                                                                       viennagrid_element_id element_id,
+                                                                       viennagrid_numeric const * point,
+                                                                       viennagrid_numeric tolerance,
+                                                                       viennagrid_bool * is_inside);
+
+
 
 
 /* refines the lines of a PLC that no line in output_plc is greater than line_size */
