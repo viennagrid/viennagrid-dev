@@ -31,9 +31,7 @@ viennagrid_error viennagrid_element_centroid(viennagrid_mesh mesh,
 
       std::vector<viennagrid_numeric *> point_coords(vertex_ids_end - vertex_ids_begin);
       for (viennagrid_element_id *it = vertex_ids_begin; it<vertex_ids_end; ++it)
-      {
         RETURN_ON_ERROR( viennagrid_mesh_vertex_coords_get(mesh, *it, &(point_coords[it - vertex_ids_begin])) );
-      }
 
       for (viennagrid_dimension d = 0; d<dim; ++d)
         coords[+d] = 0;

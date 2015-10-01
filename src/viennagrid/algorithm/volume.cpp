@@ -142,6 +142,51 @@ viennagrid_error viennagrid_spanned_volume_4(viennagrid_dimension dimension,
 }
 
 
+
+
+viennagrid_error viennagrid_signed_spanned_volume(viennagrid_dimension        dimension,
+                                                  viennagrid_numeric const ** p_begin,
+                                                  viennagrid_numeric const ** p_end,
+                                                  viennagrid_numeric        * result)
+{
+  viennagrid_int point_count = p_end-p_begin;
+
+  switch (point_count)
+  {
+    case 2:
+      return viennagrid_signed_spanned_volume_2(dimension, *(p_begin+0), *(p_begin+1), result);
+    case 3:
+      return viennagrid_signed_spanned_volume_3(dimension, *(p_begin+0), *(p_begin+1), *(p_begin+2), result);
+    case 4:
+      return viennagrid_signed_spanned_volume_4(dimension, *(p_begin+0), *(p_begin+1), *(p_begin+2), *(p_begin+3), result);
+  }
+
+  return VIENNAGRID_ERROR_INVALID_ARGUMENTS;
+}
+
+viennagrid_error viennagrid_spanned_volume(viennagrid_dimension        dimension,
+                                           viennagrid_numeric const ** p_begin,
+                                           viennagrid_numeric const ** p_end,
+                                           viennagrid_numeric        * result)
+{
+  viennagrid_int point_count = p_end-p_begin;
+
+  switch (point_count)
+  {
+    case 2:
+      return viennagrid_spanned_volume_2(dimension, *(p_begin+0), *(p_begin+1), result);
+    case 3:
+      return viennagrid_spanned_volume_3(dimension, *(p_begin+0), *(p_begin+1), *(p_begin+2), result);
+    case 4:
+      return viennagrid_spanned_volume_4(dimension, *(p_begin+0), *(p_begin+1), *(p_begin+2), *(p_begin+3), result);
+  }
+
+  return VIENNAGRID_ERROR_INVALID_ARGUMENTS;
+}
+
+
+
+
 //
 // volume
 //

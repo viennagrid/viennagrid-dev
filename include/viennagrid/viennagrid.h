@@ -1396,6 +1396,19 @@ VIENNAGRID_DYNAMIC_EXPORT viennagrid_error viennagrid_spanned_volume_4(viennagri
                                                                        viennagrid_numeric const * p4,
                                                                        viennagrid_numeric       * volume);
 
+/* computes the signed volume of a number of points */
+VIENNAGRID_DYNAMIC_EXPORT viennagrid_error viennagrid_signed_spanned_volume(viennagrid_dimension        dimension,
+                                                                            viennagrid_numeric const ** p_begin,
+                                                                            viennagrid_numeric const ** p_end,
+                                                                            viennagrid_numeric        * result);
+
+/* computes the volume of a number of points */
+VIENNAGRID_DYNAMIC_EXPORT viennagrid_error viennagrid_spanned_volume(viennagrid_dimension        dimension,
+                                                                     viennagrid_numeric const ** p_begin,
+                                                                     viennagrid_numeric const ** p_end,
+                                                                     viennagrid_numeric        * result);
+
+
 /* computes the volume (area/length) of a particular element of the mesh */
 VIENNAGRID_DYNAMIC_EXPORT viennagrid_error viennagrid_element_volume(viennagrid_mesh mesh,
                                                                      viennagrid_element_id element_id,
