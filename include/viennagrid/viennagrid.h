@@ -1577,6 +1577,10 @@ VIENNAGRID_DYNAMIC_EXPORT viennagrid_error viennagrid_quantity_interpolate_to_me
                                                                                    viennagrid_quantity_field dst_quantity_field,
                                                                                    viennagrid_numeric const * default_value);
 
+/* creates a mesh based on the source mesh by transforming all non-simplex elements to simplices. Currently only triangle/quadrilateral meshes are supported */
+VIENNAGRID_DYNAMIC_EXPORT viennagrid_error viennagrid_mesh_simplexify(viennagrid_mesh src_mesh,
+                                                                      viennagrid_mesh dst_mesh);
+
 /* refines the lines of a PLC that no line in output_plc is greater than line_size */
 VIENNAGRID_DYNAMIC_EXPORT viennagrid_error viennagrid_plc_line_refine(viennagrid_plc plc,
                                                                       viennagrid_plc output_plc,

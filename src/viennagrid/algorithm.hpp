@@ -1,12 +1,9 @@
 #ifndef VIENNAGRID_BACKEND_ALGORITHM_HPP
 #define VIENNAGRID_BACKEND_ALGORITHM_HPP
 
-
-#include <map>
+#include "viennagrid/viennagrid.h"
 
 typedef struct viennagrid_copy_map_ * viennagrid_copy_map;
-
-
 
 VIENNAGRID_DYNAMIC_EXPORT viennagrid_error viennagrid_copy_map_create(viennagrid_mesh src_mesh,
                                                                       viennagrid_mesh dst_mesh,
@@ -29,6 +26,5 @@ VIENNAGRID_DYNAMIC_EXPORT viennagrid_error viennagrid_copy_map_max_vertex_distan
 VIENNAGRID_DYNAMIC_EXPORT viennagrid_error viennagrid_copy_map_element_copy(viennagrid_copy_map copy_map,
                                                                             viennagrid_element_id source_element_id,
                                                                             viennagrid_element_id * destination_element_id);
-
 
 #endif

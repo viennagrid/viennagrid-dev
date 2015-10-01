@@ -405,13 +405,13 @@ viennagrid_error viennagrid_mesh_extract_boundary(viennagrid_mesh volume_mesh,
   RETURN_ON_ERROR( viennagrid_mesh_geometric_dimension_set(boundary_mesh, dimension) );
 
   viennagrid_dimension cell_dimension;
-  RETURN_ON_ERROR(  viennagrid_mesh_cell_dimension_get(volume_mesh, &cell_dimension) );
+  RETURN_ON_ERROR( viennagrid_mesh_cell_dimension_get(volume_mesh, &cell_dimension) );
 
   if ((boundary_dimension < 0) || (boundary_dimension >= cell_dimension)) return VIENNAGRID_ERROR_INVALID_TOPOLOGICAL_DIMENSION;
 
 
   viennagrid_copy_map copy_map;
-  viennagrid_copy_map_create(volume_mesh, boundary_mesh, &copy_map);
+  RETURN_ON_ERROR( viennagrid_copy_map_create(volume_mesh, boundary_mesh, &copy_map) );
 
 
   viennagrid_element_id * hull_elements_begin;
@@ -520,5 +520,75 @@ viennagrid_error viennagrid_mesh_scale(viennagrid_mesh mesh,
 
   return VIENNAGRID_SUCCESS;
 }
+
+
+
+
+
+
+
+
+
+
+viennagrid_error viennagrid_mesh_simplexify(viennagrid_mesh src_mesh,
+                                            viennagrid_mesh dst_mesh)
+{
+  viennagrid_dimension dimension;
+  RETURN_ON_ERROR( viennagrid_mesh_geometric_dimension_get(src_mesh, &dimension) );
+
+  RETURN_ON_ERROR( viennagrid_mesh_clear(dst_mesh) );
+  RETURN_ON_ERROR( viennagrid_mesh_geometric_dimension_set(dst_mesh, dimension) );
+
+  viennagrid_dimension cell_dimension;
+  RETURN_ON_ERROR( viennagrid_mesh_cell_dimension_get(src_mesh, &cell_dimension) );
+
+
+  viennagrid_copy_map copy_map;
+  RETURN_ON_ERROR( viennagrid_copy_map_create(src_mesh, dst_mesh, &copy_map) );
+
+
+  viennagrid_element_id * cells_begin;
+  viennagrid_element_id * cells_end;
+  RETURN_ON_ERROR( viennagrid_mesh_elements_get(src_mesh, cell_dimension, &cells_begin, &cells_end) );
+
+  for (viennagrid_element_id * cit = cells_begin; cit != cells_end; ++cit)
+  {
+    viennagrid_element_type element_type;
+    RETURN_ON_ERROR( viennagrid_element_type_get(src_mesh, *cit, &element_type) );
+
+    if ((element_type != VIENNAGRID_ELEMENT_TYPE_TRIANGLE) && (element_type != VIENNAGRID_ELEMENT_TYPE_QUADRILATERAL))
+      return VIENNAGRID_ERROR_INVALID_ELEMENT_TYPE;
+
+    if (viennagrid_is_simplex(element_type) == VIENNAGRID_TRUE)
+    {
+      viennagrid_element_id new_element_id;
+      RETURN_ON_ERROR( viennagrid_copy_map_element_copy(copy_map, *cit, &new_element_id) );
+    }
+    else
+    {
+      if (element_type == VIENNAGRID_ELEMENT_TYPE_QUADRILATERAL)
+      {
+        viennagrid_element_id * vertices_begin;
+        viennagrid_element_id * vertices_end;
+        RETURN_ON_ERROR( viennagrid_element_boundary_elements(src_mesh, *cit, 0, &vertices_begin, &vertices_end) );
+
+        viennagrid_element_id new_vertices_ids[4];
+        RETURN_ON_ERROR( viennagrid_copy_map_element_copy(copy_map, *vertices_begin, new_vertices_ids) );
+        RETURN_ON_ERROR( viennagrid_copy_map_element_copy(copy_map, *(vertices_begin+1), new_vertices_ids+1) );
+        RETURN_ON_ERROR( viennagrid_copy_map_element_copy(copy_map, *(vertices_begin+2), new_vertices_ids+2) );
+        RETURN_ON_ERROR( viennagrid_copy_map_element_copy(copy_map, *(vertices_begin+3), new_vertices_ids+3) );
+
+        viennagrid_element_id triangle_ids[2];
+        RETURN_ON_ERROR( viennagrid_mesh_element_create(dst_mesh, VIENNAGRID_ELEMENT_TYPE_TRIANGLE, 3, new_vertices_ids, triangle_ids) );
+        RETURN_ON_ERROR( viennagrid_mesh_element_create(dst_mesh, VIENNAGRID_ELEMENT_TYPE_TRIANGLE, 3, new_vertices_ids+1, triangle_ids+1) );
+      }
+    }
+  }
+
+  return VIENNAGRID_SUCCESS;
+}
+
+
+
 
 
