@@ -436,6 +436,7 @@ typedef struct viennagrid_mesh_io_ * viennagrid_mesh_io;
 #define VIENNAGRID_ERROR_INVALID_GEOMETRIC_DIMENSION                   54
 #define VIENNAGRID_ERROR_NUMERIC_CLOSE_TO_ZERO                         55
 #define VIENNAGRID_ERROR_GEOMETRIC_DIMENSION_MISMATCH                  56
+#define VIENNAGRID_ERROR_INVALID_QUANTITY_FIELD_VALUE_TYPE             57
 
 /* VIENNAGRID BOOL DEFINES */
 #define VIENNAGRID_TRUE                             1
@@ -1199,14 +1200,19 @@ VIENNAGRID_DYNAMIC_EXPORT viennagrid_error viennagrid_quantity_field_resize(vien
 VIENNAGRID_DYNAMIC_EXPORT viennagrid_error viennagrid_quantity_field_size(viennagrid_quantity_field quantity_field,
                                                                            viennagrid_int * quantity_count);
 
-/* sets the value for a specific element */
-VIENNAGRID_DYNAMIC_EXPORT viennagrid_error viennagrid_quantity_field_value_set(viennagrid_quantity_field quantity_field,
-                                                                               viennagrid_element_id element_id,
-                                                                               void * value);
 /* gets the pointer to the value for a specific element */
 VIENNAGRID_DYNAMIC_EXPORT viennagrid_error viennagrid_quantity_field_value_get(viennagrid_quantity_field quantity_field,
                                                                                viennagrid_element_id element_id,
-                                                                               void ** value);
+                                                                               void ** values);
+
+/* creates the value for a specific element */
+VIENNAGRID_DYNAMIC_EXPORT viennagrid_error viennagrid_quantity_field_value_get_or_create(viennagrid_quantity_field quantity_field,
+                                                                                         viennagrid_element_id element_id,
+                                                                                         void ** values);
+/* sets the value for a specific element */
+VIENNAGRID_DYNAMIC_EXPORT viennagrid_error viennagrid_quantity_field_value_set(viennagrid_quantity_field quantity_field,
+                                                                               viennagrid_element_id element_id,
+                                                                               void const * values);
 
 
 /**********************************************************************************************

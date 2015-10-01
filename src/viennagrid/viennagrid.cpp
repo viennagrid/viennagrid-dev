@@ -158,6 +158,8 @@ const char * viennagrid_error_string(viennagrid_error error)
       return "numeric close to zero";
     case VIENNAGRID_ERROR_GEOMETRIC_DIMENSION_MISMATCH:
       return "geometric dimension mismatch";
+    case VIENNAGRID_ERROR_INVALID_QUANTITY_FIELD_VALUE_TYPE:
+      return "invalid quantity field value type";
 
     default:
       return 0;

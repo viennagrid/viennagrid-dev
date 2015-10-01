@@ -79,7 +79,7 @@ struct viennagrid_quantity_field_t
     }
   }
 
-  void set(viennagrid_int element_id, void * quantity)
+  void * get_or_create(viennagrid_int element_index)
   {
     void * dst = NULL;
 
@@ -87,20 +87,20 @@ struct viennagrid_quantity_field_t
     {
       case VIENNAGRID_QUANTITY_FIELD_STORAGE_DENSE:
       {
-        if ( element_id >= static_cast<viennagrid_int>(dense_valid_flags.size()) )
-          resize(element_id+1);
+        if ( element_index >= static_cast<viennagrid_int>(dense_valid_flags.size()) )
+          resize(element_index+1);
 
-        dst = &dense_values[0] + element_id*size_per_quantity();
-        dense_valid_flags[element_id] = true;
+        dst = &dense_values[0] + element_index*size_per_quantity();
+        dense_valid_flags[element_index] = true;
 
         break;
       }
 
       case VIENNAGRID_QUANTITY_FIELD_STORAGE_SPARSE:
       {
-        std::map< viennagrid_int, char* >::iterator it = sparse_values.find(element_id);
+        std::map< viennagrid_int, char* >::iterator it = sparse_values.find(element_index);
         if (it == sparse_values.end())
-          it = sparse_values.insert( std::make_pair(element_id, new char[size_per_quantity()]) ).first;
+          it = sparse_values.insert( std::make_pair(element_index, new char[size_per_quantity()]) ).first;
 
         dst = (*it).second;
 
@@ -108,20 +108,27 @@ struct viennagrid_quantity_field_t
       }
     }
 
+    return dst;
+  }
+
+  void set(viennagrid_int element_index, void const * quantity)
+  {
+    void * dst = get_or_create(element_index);
+
     if (quantity && dst)
       memcpy(dst, quantity, size_per_quantity());
   }
 
-  void * get(viennagrid_int element_id)
+  void * get(viennagrid_int element_index)
   {
     switch ( storage_layout )
     {
       case VIENNAGRID_QUANTITY_FIELD_STORAGE_DENSE:
       {
-        if ( (element_id < static_cast<viennagrid_int>(dense_valid_flags.size())) &&
-            (dense_valid_flags[element_id]) )
+        if ( (element_index < static_cast<viennagrid_int>(dense_valid_flags.size())) &&
+            (dense_valid_flags[element_index]) )
         {
-          return &dense_values[0] + element_id*size_per_quantity();
+          return &dense_values[0] + element_index*size_per_quantity();
         }
 
         break;
@@ -129,7 +136,7 @@ struct viennagrid_quantity_field_t
 
       case VIENNAGRID_QUANTITY_FIELD_STORAGE_SPARSE:
       {
-        std::map< viennagrid_int, char* >::iterator it = sparse_values.find(element_id);
+        std::map< viennagrid_int, char* >::iterator it = sparse_values.find(element_index);
         if (it != sparse_values.end())
         {
           return &(*it).second[0];
@@ -344,19 +351,6 @@ viennagrid_error viennagrid_quantity_field_size(viennagrid_quantity_field quanti
   return VIENNAGRID_SUCCESS;
 }
 
-
-viennagrid_error viennagrid_quantity_field_value_set(viennagrid_quantity_field quantity_field,
-                                                     viennagrid_int element_id,
-                                                     void * value)
-{
-  if (!quantity_field)       return VIENNAGRID_ERROR_INVALID_QUANTITY_FIELD;
-  if (INDEX(element_id) < 0) return VIENNAGRID_ERROR_INVALID_ELEMENT_ID;
-
-  quantity_field->set(INDEX(element_id), value);
-
-  return VIENNAGRID_SUCCESS;
-}
-
 viennagrid_error viennagrid_quantity_field_value_get(viennagrid_quantity_field quantity_field,
                                                      viennagrid_int element_id,
                                                      void ** values)
@@ -369,4 +363,32 @@ viennagrid_error viennagrid_quantity_field_value_get(viennagrid_quantity_field q
 
   return VIENNAGRID_SUCCESS;
 }
+
+viennagrid_error viennagrid_quantity_field_value_get_or_create(viennagrid_quantity_field quantity_field,
+                                                               viennagrid_element_id element_id,
+                                                               void ** values)
+{
+  if (!quantity_field)       return VIENNAGRID_ERROR_INVALID_QUANTITY_FIELD;
+  if (INDEX(element_id) < 0) return VIENNAGRID_ERROR_INVALID_ELEMENT_ID;
+
+  void * tmp = quantity_field->get_or_create(INDEX(element_id));
+  if (values)
+    *values = tmp;
+
+  return VIENNAGRID_SUCCESS;
+}
+
+viennagrid_error viennagrid_quantity_field_value_set(viennagrid_quantity_field quantity_field,
+                                                     viennagrid_int element_id,
+                                                     void const * value)
+{
+  if (!quantity_field)       return VIENNAGRID_ERROR_INVALID_QUANTITY_FIELD;
+  if (INDEX(element_id) < 0) return VIENNAGRID_ERROR_INVALID_ELEMENT_ID;
+
+  quantity_field->set(INDEX(element_id), value);
+
+  return VIENNAGRID_SUCCESS;
+}
+
+
 
