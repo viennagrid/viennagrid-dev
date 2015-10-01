@@ -86,8 +86,8 @@ VIENNAGRID_DYNAMIC_EXPORT viennagrid_error viennagrid_quantity_interpolate_simpl
   viennagrid_int values_count;
   viennagrid_quantity_field_values_per_quantity_get(quantity_field, &values_count);
 
-  if ((element_type != VIENNAGRID_ELEMENT_TYPE_LINE) ||
-      (element_type != VIENNAGRID_ELEMENT_TYPE_TRIANGLE) ||
+  if ((element_type != VIENNAGRID_ELEMENT_TYPE_LINE) &&
+      (element_type != VIENNAGRID_ELEMENT_TYPE_TRIANGLE) &&
       (element_type != VIENNAGRID_ELEMENT_TYPE_TETRAHEDRON))
     return VIENNAGRID_ERROR_INVALID_ELEMENT_TYPE;
 
