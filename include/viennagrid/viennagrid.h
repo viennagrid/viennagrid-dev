@@ -1563,8 +1563,19 @@ VIENNAGRID_DYNAMIC_EXPORT viennagrid_error viennagrid_point_in_element(viennagri
                                                                        viennagrid_numeric tolerance,
                                                                        viennagrid_bool * is_inside);
 
+/* interpolates a quantity field on elements to a quantity field on elements of a specific topological dimension. Elements of the same mesh are used */
+VIENNAGRID_DYNAMIC_EXPORT viennagrid_error viennagrid_quantity_interpolate(viennagrid_mesh mesh,
+                                                                           viennagrid_quantity_field src_quantity_field,
+                                                                           viennagrid_dimension dst_topological_dimension,
+                                                                           viennagrid_quantity_field dst_quantity_field);
 
-
+/* interpolates a quantity field on one mesh to a quantity field on another mesh. Currently only cell quantity source fields and topological dimension of 0 is supported */
+VIENNAGRID_DYNAMIC_EXPORT viennagrid_error viennagrid_quantity_interpolate_to_mesh(viennagrid_mesh src_mesh,
+                                                                                   viennagrid_quantity_field src_quantity_field,
+                                                                                   viennagrid_mesh dst_mesh,
+                                                                                   viennagrid_dimension dst_topological_dimension,
+                                                                                   viennagrid_quantity_field dst_quantity_field,
+                                                                                   viennagrid_numeric const * default_value);
 
 /* refines the lines of a PLC that no line in output_plc is greater than line_size */
 VIENNAGRID_DYNAMIC_EXPORT viennagrid_error viennagrid_plc_line_refine(viennagrid_plc plc,
