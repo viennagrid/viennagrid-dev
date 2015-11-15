@@ -17,6 +17,7 @@ set(LIB_VIENNAGRID_SOURCES viennagrid/algorithm.cpp
                            viennagrid/algorithm/closest_points.cpp
                            viennagrid/algorithm/inclusion.cpp
                            viennagrid/algorithm/quantity_interpolate.cpp
+                           viennagrid/algorithm/refine.cpp
                            viennagrid/algorithm/surface.cpp
                            viennagrid/algorithm/volume.cpp)
 

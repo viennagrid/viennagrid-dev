@@ -437,6 +437,7 @@ typedef struct viennagrid_mesh_io_ * viennagrid_mesh_io;
 #define VIENNAGRID_ERROR_NUMERIC_CLOSE_TO_ZERO                         55
 #define VIENNAGRID_ERROR_GEOMETRIC_DIMENSION_MISMATCH                  56
 #define VIENNAGRID_ERROR_INVALID_QUANTITY_FIELD_VALUE_TYPE             57
+#define VIENNAGRID_ERROR_ROOT_MESHES_NEED_TO_BE_DIFFERENT              58
 
 /* VIENNAGRID BOOL DEFINES */
 #define VIENNAGRID_TRUE                             1
@@ -1585,5 +1586,14 @@ VIENNAGRID_DYNAMIC_EXPORT viennagrid_error viennagrid_mesh_simplexify(viennagrid
 VIENNAGRID_DYNAMIC_EXPORT viennagrid_error viennagrid_plc_line_refine(viennagrid_plc plc,
                                                                       viennagrid_plc output_plc,
                                                                       viennagrid_numeric line_size);
+
+/* Refines the mesh based on edges to be refined and possible new vertex locations (provided as values in the range (0,1) to indicate desired splitting along edge).
+*
+*  Current limitation: input and output mesh must be different root meshes.
+*/
+VIENNAGRID_DYNAMIC_EXPORT viennagrid_error viennagrid_mesh_refine(viennagrid_mesh mesh,
+                                                                  viennagrid_bool    * edge_refinement_tags,
+                                                                  viennagrid_numeric * vertex_locations,
+                                                                  viennagrid_mesh output_mesh);
 
 #endif

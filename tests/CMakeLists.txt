@@ -4,7 +4,8 @@ foreach(PROG
         angle boundary coboundary
         distance_1d distance_2d distance_3d distance_boundary
         hypercube interface named_segment point
-        #refinement refinement2 refinement3 refinement-triangles
+        refinement-triangles
+        #refinement refinement2 refinement3
         scale region surface volume vtk_c vtk_writer
 
 
