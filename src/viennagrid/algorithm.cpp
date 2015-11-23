@@ -238,7 +238,7 @@ viennagrid_error viennagrid_subtract(viennagrid_dimension dimension,
                                      viennagrid_numeric       * result)
 {
   for (viennagrid_dimension i = 0; i != dimension; ++i)
-    result[+i] = v1[+i] + v2[+i];
+    result[+i] = v1[+i] - v2[+i];
   return VIENNAGRID_SUCCESS;
 }
 
