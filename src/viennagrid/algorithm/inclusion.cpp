@@ -26,6 +26,13 @@ viennagrid_error viennagrid_point_in_simplex_2(viennagrid_dimension dimension,
   return VIENNAGRID_SUCCESS;
 }
 
+
+
+viennagrid_numeric sign_2(viennagrid_numeric const * p1, viennagrid_numeric const * p2, viennagrid_numeric const* p3)
+{
+    return (p1[0] - p3[0]) * (p2[1] - p3[1]) - (p2[0] - p3[0]) * (p1[1] - p3[1]);
+}
+
 viennagrid_error viennagrid_point_in_simplex_3(viennagrid_dimension dimension,
                                                viennagrid_numeric const * point,
                                                viennagrid_numeric const * triangle_point0,
@@ -53,34 +60,47 @@ viennagrid_error viennagrid_point_in_simplex_3(viennagrid_dimension dimension,
 
   if (is_inside)
   {
-    std::vector<viennagrid_numeric> v0(dimension);
-    std::vector<viennagrid_numeric> v1(dimension);
-    std::vector<viennagrid_numeric> v2(dimension);
+    if (dimension == 2)
+    {
+      bool b1, b2, b3;
 
-    RETURN_ON_ERROR( viennagrid_subtract(dimension, triangle_point2, triangle_point0, &v0[0]) );
-    RETURN_ON_ERROR( viennagrid_subtract(dimension, triangle_point1, triangle_point0, &v1[0]) );
-    RETURN_ON_ERROR( viennagrid_subtract(dimension, point, triangle_point0, &v2[0]) );
+      b1 = sign_2(point, triangle_point0, triangle_point1) < 0;
+      b2 = sign_2(point, triangle_point1, triangle_point2) < 0;
+      b3 = sign_2(point, triangle_point2, triangle_point0) < 0;
 
-    viennagrid_numeric dot00;
-    viennagrid_numeric dot01;
-    viennagrid_numeric dot02;
-    viennagrid_numeric dot11;
-    viennagrid_numeric dot12;
+      *is_inside = ((b1 == b2) && (b2 == b3));
+    }
+    else
+    {
+      std::vector<viennagrid_numeric> v0(dimension);
+      std::vector<viennagrid_numeric> v1(dimension);
+      std::vector<viennagrid_numeric> v2(dimension);
 
-    RETURN_ON_ERROR( viennagrid_inner_prod(dimension, &v0[0], &v0[0], &dot00) );
-    RETURN_ON_ERROR( viennagrid_inner_prod(dimension, &v0[0], &v1[0], &dot01) );
-    RETURN_ON_ERROR( viennagrid_inner_prod(dimension, &v0[0], &v2[0], &dot02) );
-    RETURN_ON_ERROR( viennagrid_inner_prod(dimension, &v1[0], &v1[0], &dot11) );
-    RETURN_ON_ERROR( viennagrid_inner_prod(dimension, &v1[0], &v2[0], &dot12) );
+      RETURN_ON_ERROR( viennagrid_subtract(dimension, triangle_point2, triangle_point0, &v0[0]) );
+      RETURN_ON_ERROR( viennagrid_subtract(dimension, triangle_point1, triangle_point0, &v1[0]) );
+      RETURN_ON_ERROR( viennagrid_subtract(dimension, point, triangle_point0, &v2[0]) );
 
-    viennagrid_numeric denom = (dot00*dot11 - dot01*dot01);
-    if (std::abs(denom) < VIENNAGRID_TOLERANCE_EPSILON)
-      return VIENNAGRID_ERROR_NUMERIC_CLOSE_TO_ZERO;
+      viennagrid_numeric dot00;
+      viennagrid_numeric dot01;
+      viennagrid_numeric dot02;
+      viennagrid_numeric dot11;
+      viennagrid_numeric dot12;
 
-    viennagrid_numeric u = (dot11*dot02 - dot01*dot12) / denom;
-    viennagrid_numeric v = (dot00*dot12 - dot01*dot02) / denom;
+      RETURN_ON_ERROR( viennagrid_inner_prod(dimension, &v0[0], &v0[0], &dot00) );
+      RETURN_ON_ERROR( viennagrid_inner_prod(dimension, &v0[0], &v1[0], &dot01) );
+      RETURN_ON_ERROR( viennagrid_inner_prod(dimension, &v0[0], &v2[0], &dot02) );
+      RETURN_ON_ERROR( viennagrid_inner_prod(dimension, &v1[0], &v1[0], &dot11) );
+      RETURN_ON_ERROR( viennagrid_inner_prod(dimension, &v1[0], &v2[0], &dot12) );
 
-    *is_inside = (u >= -tolerance) && (v >= -tolerance) && (u+v <= 1+2*tolerance);
+      viennagrid_numeric denom = (dot00*dot11 - dot01*dot01);
+      if (std::abs(denom) < VIENNAGRID_TOLERANCE_EPSILON)
+        return VIENNAGRID_ERROR_NUMERIC_CLOSE_TO_ZERO;
+
+      viennagrid_numeric u = (dot11*dot02 - dot01*dot12) / denom;
+      viennagrid_numeric v = (dot00*dot12 - dot01*dot02) / denom;
+
+      *is_inside = (u >= -tolerance) && (v >= -tolerance) && (u+v <= 1+2*tolerance);
+    }
   }
 
   return VIENNAGRID_SUCCESS;
