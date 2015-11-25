@@ -1591,9 +1591,19 @@ VIENNAGRID_DYNAMIC_EXPORT viennagrid_error viennagrid_plc_line_refine(viennagrid
 *
 *  Current limitation: input and output mesh must be different root meshes.
 */
-VIENNAGRID_DYNAMIC_EXPORT viennagrid_error viennagrid_mesh_refine(viennagrid_mesh mesh,
-                                                                  viennagrid_bool    * edge_refinement_tags,
-                                                                  viennagrid_numeric * vertex_locations,
-                                                                  viennagrid_mesh output_mesh);
+VIENNAGRID_DYNAMIC_EXPORT viennagrid_error viennagrid_mesh_refine_edges(viennagrid_mesh      mesh,
+                                                                        viennagrid_bool    * edge_refinement_tags,
+                                                                        viennagrid_numeric * vertex_locations,
+                                                                        viennagrid_mesh      output_mesh);
+
+/* creates edge refinement flags based on an array of elements */
+VIENNAGRID_DYNAMIC_EXPORT viennagrid_error viennagrid_mesh_refine_create_uniformly_edge_flags(viennagrid_mesh         mesh,
+                                                                                              viennagrid_int          elements_to_refine_count,
+                                                                                              viennagrid_element_id * elements_to_refine,
+                                                                                              viennagrid_bool *       edge_refinement_tags);
+
+/* ensures, that the longest edge of every cell is also refined */
+VIENNAGRID_DYNAMIC_EXPORT viennagrid_error viennagrid_mesh_refine_ensure_longest_edge(viennagrid_mesh   mesh,
+                                                                                      viennagrid_bool * edge_refinement_tags);
 
 #endif

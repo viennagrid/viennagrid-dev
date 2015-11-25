@@ -4,12 +4,12 @@
 #include <cmath>
 
 
-static viennagrid_error refine_triangle(viennagrid_mesh mesh,
-                                        viennagrid_bool       * edge_refinement_tags,
-                                        viennagrid_element_id * vertex_on_edge_ids,
-                                        viennagrid_element_id * old_to_new_vertex_map,
-                                        viennagrid_element_id cell_id,
-                                        viennagrid_mesh output_mesh)
+static viennagrid_error edge_refine_triangle(viennagrid_mesh         mesh,
+                                             viennagrid_bool       * edge_refinement_tags,
+                                             viennagrid_element_id * vertex_on_edge_ids,
+                                             viennagrid_element_id * old_to_new_vertex_map,
+                                             viennagrid_element_id   cell_id,
+                                             viennagrid_mesh         output_mesh)
 {
   viennagrid_int num_edges_to_refine = 0;
   viennagrid_element_id new_vertices[3];
@@ -214,10 +214,10 @@ static viennagrid_error refine_triangle(viennagrid_mesh mesh,
 //
 
 /** refine a mesh according to edge-based refinement tags and new vertex locations */
-viennagrid_error viennagrid_mesh_refine(viennagrid_mesh mesh,
-                                        viennagrid_bool    * edge_refinement_tags,
-                                        viennagrid_numeric * vertex_locations,
-                                        viennagrid_mesh output_mesh)
+viennagrid_error viennagrid_mesh_refine_edges(viennagrid_mesh      mesh,
+                                              viennagrid_bool    * edge_refinement_tags,
+                                              viennagrid_numeric * vertex_locations,
+                                              viennagrid_mesh      output_mesh)
 {
   viennagrid_mesh root_in, root_out;
   RETURN_ON_ERROR( viennagrid_mesh_root_mesh_get(       mesh, &root_in) );
@@ -292,12 +292,12 @@ viennagrid_error viennagrid_mesh_refine(viennagrid_mesh mesh,
     switch (element_type)
     {
     case VIENNAGRID_ELEMENT_TYPE_TRIANGLE:
-      RETURN_ON_ERROR( refine_triangle(mesh,
-                                       edge_refinement_tags,
-                                       &(new_vertices[0]),
-                                       &(old_vertex_to_new_vertex_id[0]),
-                                       *cit,
-                                       output_mesh) ); break;
+      RETURN_ON_ERROR( edge_refine_triangle(mesh,
+                                            edge_refinement_tags,
+                                            &(new_vertices[0]),
+                                            &(old_vertex_to_new_vertex_id[0]),
+                                            *cit,
+                                            output_mesh) ); break;
     default:
       return VIENNAGRID_ERROR_UNSUPPORTED_ELEMENT_TYPE;
     }
@@ -306,3 +306,106 @@ viennagrid_error viennagrid_mesh_refine(viennagrid_mesh mesh,
 
   return VIENNAGRID_SUCCESS;
 }
+
+
+
+
+
+viennagrid_error viennagrid_mesh_refine_create_uniformly_edge_flags(viennagrid_mesh         mesh,
+                                                                    viennagrid_int          elements_to_refine_count,
+                                                                    viennagrid_element_id * elements_to_refine,
+                                                                    viennagrid_bool *       edge_refinement_tags)
+{
+  if (edge_refinement_tags)
+  {
+    for (viennagrid_element_id * eit = elements_to_refine; eit != elements_to_refine+elements_to_refine_count; ++eit)
+    {
+      viennagrid_dimension topo_dim = TOPODIM(*eit);
+
+      if (topo_dim == 0)
+      {
+        // TODO return error?
+      }
+      else if (topo_dim == 1)
+      {
+        edge_refinement_tags[ INDEX(*eit) ] = VIENNAGRID_TRUE;
+      }
+      else
+      {
+        viennagrid_element_id * edges_begin;
+        viennagrid_element_id * edges_end;
+
+        RETURN_ON_ERROR( viennagrid_element_boundary_elements(mesh, *eit, 1, &edges_begin, &edges_end) );
+        for (viennagrid_element_id * it = edges_begin; it != edges_end; ++it)
+          edge_refinement_tags[ INDEX(*it) ] = VIENNAGRID_TRUE;
+      }
+    }
+  }
+
+  return VIENNAGRID_SUCCESS;
+}
+
+
+viennagrid_error viennagrid_mesh_refine_ensure_longest_edge(viennagrid_mesh   mesh,
+                                                            viennagrid_bool * edge_refinement_tags)
+{
+  if (edge_refinement_tags)
+  {
+    viennagrid_dimension cell_dimension;
+    RETURN_ON_ERROR( viennagrid_mesh_cell_dimension_get(mesh, &cell_dimension) );
+
+
+    bool something_changed = true;
+
+    while (something_changed)
+    {
+      something_changed = false;
+
+      viennagrid_element_id * cells_begin;
+      viennagrid_element_id * cells_end;
+      RETURN_ON_ERROR( viennagrid_mesh_elements_get(mesh, cell_dimension, &cells_begin, &cells_end) );
+      for (viennagrid_element_id * cit = cells_begin; cit != cells_end; ++cit)
+      {
+        viennagrid_element_id * edges_begin;
+        viennagrid_element_id * edges_end;
+        RETURN_ON_ERROR( viennagrid_element_boundary_elements(mesh, *cit, 1, &edges_begin, &edges_end) );
+        viennagrid_element_id * eit = edges_begin;
+        for (; eit != edges_end; ++eit)
+        {
+          if (edge_refinement_tags[INDEX(*eit)] == VIENNAGRID_TRUE)
+            break;
+        }
+
+        if (eit != edges_end)
+        {
+          viennagrid_element_id longest_edge_id = -1;
+          viennagrid_numeric longest_edge_len = 0;
+
+          for (eit = edges_begin; eit != edges_end; ++eit)
+          {
+            viennagrid_numeric edge_len;
+            RETURN_ON_ERROR( viennagrid_element_volume(mesh, *eit, &edge_len) );
+            if (edge_len > longest_edge_len)
+            {
+              longest_edge_len = edge_len;
+              longest_edge_id = *eit;
+            }
+          }
+
+          if (edge_refinement_tags[INDEX(longest_edge_id)] == VIENNAGRID_FALSE)
+          {
+            edge_refinement_tags[INDEX(longest_edge_id)] = VIENNAGRID_TRUE;
+            something_changed = true;
+          }
+        }
+      }
+    }
+
+  }
+
+  return VIENNAGRID_SUCCESS;
+}
+
+
+
+
