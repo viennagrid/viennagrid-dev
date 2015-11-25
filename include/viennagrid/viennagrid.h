@@ -1307,6 +1307,11 @@ VIENNAGRID_DYNAMIC_EXPORT viennagrid_error viennagrid_subtract(viennagrid_dimens
                                                                viennagrid_numeric const * v2,
                                                                viennagrid_numeric       * result);
 
+VIENNAGRID_DYNAMIC_EXPORT viennagrid_error viennagrid_prod(viennagrid_dimension dimension,
+                                                           viennagrid_numeric const * v,
+                                                           viennagrid_numeric factor,
+                                                           viennagrid_numeric       * result);
+
 
 /* computes the cross-product of two vectors: result = v1 x v2  (3d only) */
 VIENNAGRID_DYNAMIC_EXPORT viennagrid_error viennagrid_cross_prod(viennagrid_numeric const * v1,
@@ -1605,5 +1610,13 @@ VIENNAGRID_DYNAMIC_EXPORT viennagrid_error viennagrid_mesh_refine_create_uniform
 /* ensures, that the longest edge of every cell is also refined */
 VIENNAGRID_DYNAMIC_EXPORT viennagrid_error viennagrid_mesh_refine_ensure_longest_edge(viennagrid_mesh   mesh,
                                                                                       viennagrid_bool * edge_refinement_tags);
+
+/* create refinement flags and vertex locations for when slicing the mesh with a hyperplane */
+VIENNAGRID_DYNAMIC_EXPORT viennagrid_error viennagrid_mesh_refine_create_hyperplane_edge_flags(viennagrid_mesh      mesh,
+                                                                                               viennagrid_numeric * hyperplane_point,
+                                                                                               viennagrid_numeric * hyperplane_normal,
+                                                                                               viennagrid_bool    * edge_refinement_tags,
+                                                                                               viennagrid_numeric * vertex_locations,
+                                                                                               viennagrid_numeric   tolerance);
 
 #endif

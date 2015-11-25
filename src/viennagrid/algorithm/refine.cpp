@@ -257,14 +257,15 @@ viennagrid_error viennagrid_mesh_refine_edges(viennagrid_mesh      mesh,
                               eit != edges_end;
                             ++eit)
   {
-    if (vertex_locations) // new vertex is not in center of edge
+    if (edge_refinement_tags[viennagrid_index_from_element_id(*eit)])
     {
-      // TODO: Implement
-      return VIENNAGRID_ERROR_UNSPECIFIED_ERROR;
-    }
-    else
-    {
-      if (edge_refinement_tags[viennagrid_index_from_element_id(*eit)])
+      if (vertex_locations) // new vertex is not in center of edge
+      {
+        RETURN_ON_ERROR( viennagrid_mesh_vertex_create(output_mesh,
+                                                       vertex_locations + dim*viennagrid_index_from_element_id(*eit),
+                                                       &(new_vertices[viennagrid_index_from_element_id(*eit)])) );
+      }
+      else
       {
         RETURN_ON_ERROR( viennagrid_element_centroid(mesh, *eit, &(new_vertex_coords[0])) );
         RETURN_ON_ERROR( viennagrid_mesh_vertex_create(output_mesh, &(new_vertex_coords[0]), &(new_vertices[viennagrid_index_from_element_id(*eit)])) );
@@ -407,5 +408,67 @@ viennagrid_error viennagrid_mesh_refine_ensure_longest_edge(viennagrid_mesh   me
 }
 
 
+
+
+
+viennagrid_error viennagrid_mesh_refine_create_hyperplane_edge_flags(viennagrid_mesh      mesh,
+                                                                     viennagrid_numeric * hyperplane_point,
+                                                                     viennagrid_numeric * hyperplane_normal,
+                                                                     viennagrid_bool    * edge_refinement_tags,
+                                                                     viennagrid_numeric * vertex_locations,
+                                                                     viennagrid_numeric   tolerance)
+{
+  viennagrid_dimension dim;
+  RETURN_ON_ERROR( viennagrid_mesh_geometric_dimension_get(mesh, &dim) );
+
+  viennagrid_element_id * edges_begin;
+  viennagrid_element_id * edges_end;
+  RETURN_ON_ERROR( viennagrid_mesh_elements_get(mesh, 1, &edges_begin, &edges_end) );
+
+  for (viennagrid_element_id * eit = edges_begin; eit != edges_end; ++eit)
+  {
+    viennagrid_element_id * vertices_begin;
+    viennagrid_element_id * vertices_end;
+    RETURN_ON_ERROR( viennagrid_element_boundary_elements(mesh, *eit, 0, &vertices_begin, &vertices_end) );
+
+    viennagrid_numeric * pt0;
+    viennagrid_numeric * pt1;
+
+    RETURN_ON_ERROR( viennagrid_mesh_vertex_coords_get(mesh, *(vertices_begin+0), &pt0) );
+    RETURN_ON_ERROR( viennagrid_mesh_vertex_coords_get(mesh, *(vertices_begin+1), &pt1) );
+
+    std::vector<viennagrid_numeric> tmp(dim);
+
+    viennagrid_numeric qd;
+    viennagrid_numeric pd;
+
+    RETURN_ON_ERROR( viennagrid_subtract(dim, pt0, hyperplane_point, &tmp[0]) );
+    RETURN_ON_ERROR( viennagrid_inner_prod(dim, hyperplane_normal, &tmp[0], &qd) );
+
+    RETURN_ON_ERROR( viennagrid_subtract(dim, pt1, hyperplane_point, &tmp[0]) );
+    RETURN_ON_ERROR( viennagrid_inner_prod(dim, hyperplane_normal, &tmp[0], &pd) );
+
+    RETURN_ON_ERROR( viennagrid_element_volume(mesh, *eit, &tmp[0]) );
+    tolerance *= tmp[0];
+
+    viennagrid_numeric smaller = (qd < pd) ? qd : pd;
+    viennagrid_numeric larger = (qd < pd) ? pd : qd;
+
+    if (smaller < -tolerance && larger > tolerance)
+    {
+      edge_refinement_tags[INDEX(*eit)] = VIENNAGRID_TRUE;
+
+      RETURN_ON_ERROR( viennagrid_subtract(dim, pt1, pt0, &tmp[0]) );
+      RETURN_ON_ERROR( viennagrid_prod(dim, &tmp[0], pd/(pd-qd), &tmp[0]) );
+      RETURN_ON_ERROR( viennagrid_subtract(dim, pt1, &tmp[0], &tmp[0]) );
+
+      std::copy( tmp.begin(), tmp.end(), vertex_locations+INDEX(*eit)*dim );
+    }
+    else
+      edge_refinement_tags[INDEX(*eit)] = VIENNAGRID_FALSE;
+  }
+
+  return VIENNAGRID_SUCCESS;
+}
 
 

@@ -242,6 +242,16 @@ viennagrid_error viennagrid_subtract(viennagrid_dimension dimension,
   return VIENNAGRID_SUCCESS;
 }
 
+viennagrid_error viennagrid_prod(viennagrid_dimension dimension,
+                                 viennagrid_numeric const * v,
+                                 viennagrid_numeric factor,
+                                 viennagrid_numeric       * result)
+{
+  for (viennagrid_dimension i = 0; i != dimension; ++i)
+    result[+i] = v[+i]  * factor;
+  return VIENNAGRID_SUCCESS;
+}
+
 
 
 
