@@ -172,19 +172,13 @@ int main()
   // Refine only specific cells:
   MeshType adaptively_refined_mesh;
 
-  // Define a container which stores the flags, in this case we want an std::map as underlying container
-  typedef viennagrid::result_of::accessor_container< CellType, bool, viennagrid::std_map_tag >::type CellRefinementContainerType;
-  CellRefinementContainerType cell_refinement_flag;
-
-  // define an accessor on this container for easy access with elements
-  viennagrid::result_of::accessor< CellRefinementContainerType, CellType >::type cell_refinement_accessor(cell_refinement_flag);
-
-  cell_refinement_accessor.set( viennagrid::cells(mesh)[0], true);
-  cell_refinement_accessor.set( viennagrid::cells(mesh)[3], true);
-  cell_refinement_accessor.set( viennagrid::cells(mesh)[8], true);
+  std::vector<viennagrid_element_id> cell_refinement_flags;
+  cell_refinement_flags.push_back( viennagrid::cells(mesh)[0].id().internal() );
+  cell_refinement_flags.push_back( viennagrid::cells(mesh)[3].id().internal() );
+  cell_refinement_flags.push_back( viennagrid::cells(mesh)[8].id().internal() );
 
   // refining the mesh using the accessor representing the marked cells
-  viennagrid::cell_refine(mesh, adaptively_refined_mesh, cell_refinement_accessor);
+  viennagrid::element_refine(mesh, cell_refinement_flags.size(), &cell_refinement_flags[0], adaptively_refined_mesh);
 
   {
     viennagrid::io::vtk_writer<MeshType> writer;

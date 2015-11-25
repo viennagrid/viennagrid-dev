@@ -57,7 +57,7 @@ int tag_and_refine_mesh(viennagrid_mesh input_mesh, viennagrid_mesh & output_mes
   }
 
   // refine the mesh:
-  err = viennagrid_mesh_refine(input_mesh, &(edge_refinement_tags[0]), NULL, output_mesh); ERROR_CHECK(err);
+  err = viennagrid_mesh_refine_edges(input_mesh, &(edge_refinement_tags[0]), NULL, output_mesh); ERROR_CHECK(err);
 
   // compute volume and surface of refined mesh:
   viennagrid_numeric output_mesh_volume;
