@@ -228,6 +228,8 @@ viennagrid_error viennagrid_mesh_refine_edges(viennagrid_mesh      mesh,
   viennagrid_dimension dim;
   RETURN_ON_ERROR( viennagrid_mesh_geometric_dimension_get(mesh, &dim) );
   std::vector<viennagrid_numeric> new_vertex_coords(dim);
+  
+  RETURN_ON_ERROR( viennagrid_mesh_geometric_dimension_set(output_mesh, dim) );
 
   //
   // Step 1: Copy existing vertices over to new mesh
