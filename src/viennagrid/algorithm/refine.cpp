@@ -15,10 +15,10 @@ static viennagrid_error edge_refine_triangle(viennagrid_mesh         mesh,
   viennagrid_element_id new_vertices[3];
 
   viennagrid_dimension dim;
-  RETURN_ON_ERROR( viennagrid_mesh_geometric_dimension_get(mesh, &dim) );
+  RETURN_ON_ERROR( viennagrid_mesh_geometric_dimension_get(output_mesh, &dim) );
 
   viennagrid_numeric * coords;
-  RETURN_ON_ERROR( viennagrid_mesh_vertex_coords_pointer(mesh, &coords) );
+  RETURN_ON_ERROR( viennagrid_mesh_vertex_coords_pointer(output_mesh, &coords) );
 
   viennagrid_element_id *edges_begin, *edges_end;
   RETURN_ON_ERROR( viennagrid_element_boundary_elements(mesh, cell_id, 1, &edges_begin, &edges_end); );
