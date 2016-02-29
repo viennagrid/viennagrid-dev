@@ -33,6 +33,19 @@ static viennagrid_error edge_refine_triangle(viennagrid_mesh         mesh,
   viennagrid_element_id *vertices_begin, *vertices_end;
   RETURN_ON_ERROR( viennagrid_element_boundary_elements(mesh, cell_id, 0, &vertices_begin, &vertices_end); );
   (void)vertices_end; //suppress unused variable warning
+  
+  viennagrid_element_id new_cell_id;
+  viennagrid_region_id * cell_region_ids_start;
+  viennagrid_region_id * cell_region_ids_end;
+  viennagrid_element_regions_get(mesh, cell_id, &cell_region_ids_start, &cell_region_ids_end);
+  
+  std::vector<viennagrid_region> regions;
+  for (viennagrid_region_id * rit = cell_region_ids_start; rit != cell_region_ids_end; ++rit)
+  {
+    viennagrid_region tmp;
+    viennagrid_mesh_region_get_or_create(output_mesh, *rit, &tmp);
+    regions.push_back(tmp);
+  }
 
   if (num_edges_to_refine == 0)
   {
@@ -40,7 +53,9 @@ static viennagrid_error edge_refine_triangle(viennagrid_mesh         mesh,
     new_vertices[1] = old_to_new_vertex_map[viennagrid_index_from_element_id(vertices_begin[1])];
     new_vertices[2] = old_to_new_vertex_map[viennagrid_index_from_element_id(vertices_begin[2])];
 
-    RETURN_ON_ERROR( viennagrid_mesh_element_create(output_mesh, VIENNAGRID_ELEMENT_TYPE_TRIANGLE, 3, new_vertices, NULL) );
+    RETURN_ON_ERROR( viennagrid_mesh_element_create(output_mesh, VIENNAGRID_ELEMENT_TYPE_TRIANGLE, 3, new_vertices, &new_cell_id) );
+    for (std::size_t i = 0; i != regions.size(); ++i)
+      RETURN_ON_ERROR( viennagrid_region_element_add(regions[i], new_cell_id); );
   }
   else if (num_edges_to_refine == 1) // note: for (hopefully) better maintainability and better understanding each case is coded explicitly
   {
@@ -55,12 +70,16 @@ static viennagrid_error edge_refine_triangle(viennagrid_mesh         mesh,
       new_vertices[0] = old_to_new_vertex_map[viennagrid_index_from_element_id(vertices_begin[0])];
       new_vertices[1] = vertex_on_edge_ids[viennagrid_index_from_element_id(edges_begin[0])];
       new_vertices[2] = old_to_new_vertex_map[viennagrid_index_from_element_id(vertices_begin[2])];
-      RETURN_ON_ERROR( viennagrid_mesh_element_create(output_mesh, VIENNAGRID_ELEMENT_TYPE_TRIANGLE, 3, new_vertices, NULL) );
+      RETURN_ON_ERROR( viennagrid_mesh_element_create(output_mesh, VIENNAGRID_ELEMENT_TYPE_TRIANGLE, 3, new_vertices, &new_cell_id) );
+      for (std::size_t i = 0; i != regions.size(); ++i)
+        RETURN_ON_ERROR( viennagrid_region_element_add(regions[i], new_cell_id); );
 
       new_vertices[0] = vertex_on_edge_ids[viennagrid_index_from_element_id(edges_begin[0])];
       new_vertices[1] = old_to_new_vertex_map[viennagrid_index_from_element_id(vertices_begin[1])];
       new_vertices[2] = old_to_new_vertex_map[viennagrid_index_from_element_id(vertices_begin[2])];
-      RETURN_ON_ERROR( viennagrid_mesh_element_create(output_mesh, VIENNAGRID_ELEMENT_TYPE_TRIANGLE, 3, new_vertices, NULL) );
+      RETURN_ON_ERROR( viennagrid_mesh_element_create(output_mesh, VIENNAGRID_ELEMENT_TYPE_TRIANGLE, 3, new_vertices, &new_cell_id) );
+      for (std::size_t i = 0; i != regions.size(); ++i)
+        RETURN_ON_ERROR( viennagrid_region_element_add(regions[i], new_cell_id); );
     }
     else if (edge_refinement_tags[viennagrid_index_from_element_id(edges_begin[1])])
     {
@@ -74,12 +93,16 @@ static viennagrid_error edge_refine_triangle(viennagrid_mesh         mesh,
       new_vertices[0] = old_to_new_vertex_map[viennagrid_index_from_element_id(vertices_begin[0])];
       new_vertices[1] = old_to_new_vertex_map[viennagrid_index_from_element_id(vertices_begin[1])];
       new_vertices[2] = vertex_on_edge_ids[viennagrid_index_from_element_id(edges_begin[1])];
-      RETURN_ON_ERROR( viennagrid_mesh_element_create(output_mesh, VIENNAGRID_ELEMENT_TYPE_TRIANGLE, 3, new_vertices, NULL) );
+      RETURN_ON_ERROR( viennagrid_mesh_element_create(output_mesh, VIENNAGRID_ELEMENT_TYPE_TRIANGLE, 3, new_vertices, &new_cell_id) );
+      for (std::size_t i = 0; i != regions.size(); ++i)
+        RETURN_ON_ERROR( viennagrid_region_element_add(regions[i], new_cell_id); );
 
       new_vertices[0] = vertex_on_edge_ids[viennagrid_index_from_element_id(edges_begin[1])];
       new_vertices[1] = old_to_new_vertex_map[viennagrid_index_from_element_id(vertices_begin[1])];
       new_vertices[2] = old_to_new_vertex_map[viennagrid_index_from_element_id(vertices_begin[2])];
-      RETURN_ON_ERROR( viennagrid_mesh_element_create(output_mesh, VIENNAGRID_ELEMENT_TYPE_TRIANGLE, 3, new_vertices, NULL) );
+      RETURN_ON_ERROR( viennagrid_mesh_element_create(output_mesh, VIENNAGRID_ELEMENT_TYPE_TRIANGLE, 3, new_vertices, &new_cell_id) );
+      for (std::size_t i = 0; i != regions.size(); ++i)
+        RETURN_ON_ERROR( viennagrid_region_element_add(regions[i], new_cell_id); );
     }
     else if (edge_refinement_tags[viennagrid_index_from_element_id(edges_begin[2])])
     {
@@ -93,12 +116,16 @@ static viennagrid_error edge_refine_triangle(viennagrid_mesh         mesh,
       new_vertices[0] = old_to_new_vertex_map[viennagrid_index_from_element_id(vertices_begin[0])];
       new_vertices[1] = old_to_new_vertex_map[viennagrid_index_from_element_id(vertices_begin[1])];
       new_vertices[2] = vertex_on_edge_ids[viennagrid_index_from_element_id(edges_begin[2])];
-      RETURN_ON_ERROR( viennagrid_mesh_element_create(output_mesh, VIENNAGRID_ELEMENT_TYPE_TRIANGLE, 3, new_vertices, NULL) );
+      RETURN_ON_ERROR( viennagrid_mesh_element_create(output_mesh, VIENNAGRID_ELEMENT_TYPE_TRIANGLE, 3, new_vertices, &new_cell_id) );
+      for (std::size_t i = 0; i != regions.size(); ++i)
+        RETURN_ON_ERROR( viennagrid_region_element_add(regions[i], new_cell_id); );
 
       new_vertices[0] = old_to_new_vertex_map[viennagrid_index_from_element_id(vertices_begin[0])];
       new_vertices[1] = vertex_on_edge_ids[viennagrid_index_from_element_id(edges_begin[2])];
       new_vertices[2] = old_to_new_vertex_map[viennagrid_index_from_element_id(vertices_begin[2])];
-      RETURN_ON_ERROR( viennagrid_mesh_element_create(output_mesh, VIENNAGRID_ELEMENT_TYPE_TRIANGLE, 3, new_vertices, NULL) );
+      RETURN_ON_ERROR( viennagrid_mesh_element_create(output_mesh, VIENNAGRID_ELEMENT_TYPE_TRIANGLE, 3, new_vertices, &new_cell_id) );
+      for (std::size_t i = 0; i != regions.size(); ++i)
+        RETURN_ON_ERROR( viennagrid_region_element_add(regions[i], new_cell_id); );
     }
   }
   else if (num_edges_to_refine == 2) // note: for (hopefully) better maintainability and better understanding each case is coded explicitly
@@ -177,31 +204,44 @@ static viennagrid_error edge_refine_triangle(viennagrid_mesh         mesh,
     new_vertices[0] = v0_id;
     new_vertices[1] = vX1_id;
     new_vertices[2] = vX2_id;
-    RETURN_ON_ERROR( viennagrid_mesh_element_create(output_mesh, VIENNAGRID_ELEMENT_TYPE_TRIANGLE, 3, new_vertices, NULL) );
+    RETURN_ON_ERROR( viennagrid_mesh_element_create(output_mesh, VIENNAGRID_ELEMENT_TYPE_TRIANGLE, 3, new_vertices, &new_cell_id) );
+    for (std::size_t i = 0; i != regions.size(); ++i)
+      RETURN_ON_ERROR( viennagrid_region_element_add(regions[i], new_cell_id); );
 
     if (d_X1_2 < d_X2_1)
     {
       new_vertices[0] = vX2_id;
       new_vertices[1] = vX1_id;
       new_vertices[2] = v2_id;
-      RETURN_ON_ERROR( viennagrid_mesh_element_create(output_mesh, VIENNAGRID_ELEMENT_TYPE_TRIANGLE, 3, new_vertices, NULL) );
+      RETURN_ON_ERROR( viennagrid_mesh_element_create(output_mesh, VIENNAGRID_ELEMENT_TYPE_TRIANGLE, 3, new_vertices, &new_cell_id) );
+      for (std::size_t i = 0; i != regions.size(); ++i)
+        RETURN_ON_ERROR( viennagrid_region_element_add(regions[i], new_cell_id); );
 
       new_vertices[0] = vX1_id;
       new_vertices[1] = v1_id;
       new_vertices[2] = v2_id;
-      RETURN_ON_ERROR( viennagrid_mesh_element_create(output_mesh, VIENNAGRID_ELEMENT_TYPE_TRIANGLE, 3, new_vertices, NULL) );
+      RETURN_ON_ERROR( viennagrid_mesh_element_create(output_mesh, VIENNAGRID_ELEMENT_TYPE_TRIANGLE, 3, new_vertices, &new_cell_id) );
+      for (std::size_t i = 0; i != regions.size(); ++i)
+        RETURN_ON_ERROR( viennagrid_region_element_add(regions[i], new_cell_id); );
+
     }
     else
     {
       new_vertices[0] = vX2_id;
       new_vertices[1] = vX1_id;
       new_vertices[2] = v1_id;
-      RETURN_ON_ERROR( viennagrid_mesh_element_create(output_mesh, VIENNAGRID_ELEMENT_TYPE_TRIANGLE, 3, new_vertices, NULL) );
+      RETURN_ON_ERROR( viennagrid_mesh_element_create(output_mesh, VIENNAGRID_ELEMENT_TYPE_TRIANGLE, 3, new_vertices, &new_cell_id) );
+      for (std::size_t i = 0; i != regions.size(); ++i)
+        RETURN_ON_ERROR( viennagrid_region_element_add(regions[i], new_cell_id); );
+
 
       new_vertices[0] = vX2_id;
       new_vertices[1] = v1_id;
       new_vertices[2] = v2_id;
-      RETURN_ON_ERROR( viennagrid_mesh_element_create(output_mesh, VIENNAGRID_ELEMENT_TYPE_TRIANGLE, 3, new_vertices, NULL) );
+      RETURN_ON_ERROR( viennagrid_mesh_element_create(output_mesh, VIENNAGRID_ELEMENT_TYPE_TRIANGLE, 3, new_vertices, &new_cell_id) );
+      for (std::size_t i = 0; i != regions.size(); ++i)
+        RETURN_ON_ERROR( viennagrid_region_element_add(regions[i], new_cell_id); );
+
     }
   }
   else // refine each edge
@@ -216,22 +256,33 @@ static viennagrid_error edge_refine_triangle(viennagrid_mesh         mesh,
     new_vertices[0] = old_to_new_vertex_map[viennagrid_index_from_element_id(vertices_begin[0])];
     new_vertices[1] = vertex_on_edge_ids[viennagrid_index_from_element_id(edges_begin[0])];
     new_vertices[2] = vertex_on_edge_ids[viennagrid_index_from_element_id(edges_begin[1])];
-    RETURN_ON_ERROR( viennagrid_mesh_element_create(output_mesh, VIENNAGRID_ELEMENT_TYPE_TRIANGLE, 3, new_vertices, NULL) );
+    RETURN_ON_ERROR( viennagrid_mesh_element_create(output_mesh, VIENNAGRID_ELEMENT_TYPE_TRIANGLE, 3, new_vertices, &new_cell_id) );
+    for (std::size_t i = 0; i != regions.size(); ++i)
+      RETURN_ON_ERROR( viennagrid_region_element_add(regions[i], new_cell_id); );
+
 
     new_vertices[0] = vertex_on_edge_ids[viennagrid_index_from_element_id(edges_begin[0])];
     new_vertices[1] = old_to_new_vertex_map[viennagrid_index_from_element_id(vertices_begin[1])];
     new_vertices[2] = vertex_on_edge_ids[viennagrid_index_from_element_id(edges_begin[2])];
-    RETURN_ON_ERROR( viennagrid_mesh_element_create(output_mesh, VIENNAGRID_ELEMENT_TYPE_TRIANGLE, 3, new_vertices, NULL) );
+    RETURN_ON_ERROR( viennagrid_mesh_element_create(output_mesh, VIENNAGRID_ELEMENT_TYPE_TRIANGLE, 3, new_vertices, &new_cell_id) );
+    for (std::size_t i = 0; i != regions.size(); ++i)
+      RETURN_ON_ERROR( viennagrid_region_element_add(regions[i], new_cell_id); );
+
 
     new_vertices[0] = vertex_on_edge_ids[viennagrid_index_from_element_id(edges_begin[0])];
     new_vertices[1] = vertex_on_edge_ids[viennagrid_index_from_element_id(edges_begin[2])];
     new_vertices[2] = vertex_on_edge_ids[viennagrid_index_from_element_id(edges_begin[1])];
-    RETURN_ON_ERROR( viennagrid_mesh_element_create(output_mesh, VIENNAGRID_ELEMENT_TYPE_TRIANGLE, 3, new_vertices, NULL) );
+    RETURN_ON_ERROR( viennagrid_mesh_element_create(output_mesh, VIENNAGRID_ELEMENT_TYPE_TRIANGLE, 3, new_vertices, &new_cell_id) );
+    for (std::size_t i = 0; i != regions.size(); ++i)
+      RETURN_ON_ERROR( viennagrid_region_element_add(regions[i], new_cell_id); );
+
 
     new_vertices[0] = vertex_on_edge_ids[viennagrid_index_from_element_id(edges_begin[1])];
     new_vertices[1] = vertex_on_edge_ids[viennagrid_index_from_element_id(edges_begin[2])];
     new_vertices[2] = old_to_new_vertex_map[viennagrid_index_from_element_id(vertices_begin[2])];
-    RETURN_ON_ERROR( viennagrid_mesh_element_create(output_mesh, VIENNAGRID_ELEMENT_TYPE_TRIANGLE, 3, new_vertices, NULL) );
+    RETURN_ON_ERROR( viennagrid_mesh_element_create(output_mesh, VIENNAGRID_ELEMENT_TYPE_TRIANGLE, 3, new_vertices, &new_cell_id) );
+    for (std::size_t i = 0; i != regions.size(); ++i)
+      RETURN_ON_ERROR( viennagrid_region_element_add(regions[i], new_cell_id); );
   }
 
   return VIENNAGRID_SUCCESS;
