@@ -1,5 +1,5 @@
-#ifndef VIENNAGRID_IO_DFISE_TEXT_READER_HPP
-#define VIENNAGRID_IO_DFISE_TEXT_READER_HPP
+#ifndef VIENNAGRID_IO_DFISE_GRD_DAT_READER_HPP
+#define VIENNAGRID_IO_DFISE_GRD_DAT_READER_HPP
 
 /* =======================================================================
    Copyright (c) 2011-2015, Institute for Microelectronics,
@@ -23,7 +23,7 @@
 
 #include "viennautils/exception.hpp"
 #include "viennautils/dfise/parsing_error.hpp"
-#include "viennautils/dfise/grid_reader.hpp"
+#include "viennautils/dfise/grd_bnd_reader.hpp"
 #include "viennautils/dfise/data_reader.hpp"
 
 #include "viennagrid/mesh/element_creation.hpp"
@@ -31,19 +31,17 @@
 #include "viennagrid/algorithm/distance.hpp"
 #include "viennagrid/core/quantity_field.hpp"
 
-class P;
-
 namespace viennagrid
 {
 namespace io
 {
 
-class dfise_text_reader
+class dfise_grd_dat_reader
 {
 public:
   struct error : virtual viennautils::exception {};
 
-  dfise_text_reader(std::string const & filename);
+  dfise_grd_dat_reader(std::string const & filename);
 
   void read_dataset(std::string const & filename);
 
@@ -54,13 +52,13 @@ private:
   struct RegionContact
   {
     std::string region_name_;
-    std::vector<viennautils::dfise::grid_reader::ElementIndex> element_indices_;
+    std::vector<viennautils::dfise::grd_bnd_reader::ElementIndex> element_indices_;
   };
 
-  viennautils::dfise::grid_reader grid_reader_;
+  viennautils::dfise::grd_bnd_reader grd_bnd_reader_;
   viennautils::dfise::data_reader data_reader_;
 
-  static viennagrid_element_type to_viennagrid_element_type(viennautils::dfise::grid_reader::element_tag dfise_tag);
+  static viennagrid_element_type to_viennagrid_element_type(viennautils::dfise::grd_bnd_reader::element_tag dfise_tag);
 
   template<typename PointT>
   static PointT normal_vector(PointT const & p0, PointT const & p1);
@@ -73,18 +71,18 @@ private:
 //              Implementation
 //------------------------------------------------------------------------------------------------
 
-inline dfise_text_reader::dfise_text_reader( std::string const & filename
+inline dfise_grd_dat_reader::dfise_grd_dat_reader( std::string const & filename
                                            ) try
-                                           : grid_reader_(filename)
-                                           , data_reader_(grid_reader_)
+                                           : grd_bnd_reader_(filename)
+                                           , data_reader_(grd_bnd_reader_)
 {
 }
 catch(viennautils::dfise::parsing_error const & e)
 {
-  throw viennautils::make_exception<dfise_text_reader::error>(e.what());
+  throw viennautils::make_exception<dfise_grd_dat_reader::error>(e.what());
 }
 
-inline void dfise_text_reader::read_dataset(std::string const & filename)
+inline void dfise_grd_dat_reader::read_dataset(std::string const & filename)
 {
   try
   {
@@ -92,14 +90,14 @@ inline void dfise_text_reader::read_dataset(std::string const & filename)
   }
   catch(viennautils::dfise::parsing_error const & e)
   {
-    throw viennautils::make_exception<dfise_text_reader::error>(e.what());
+    throw viennautils::make_exception<dfise_grd_dat_reader::error>(e.what());
   }
 }
 
 template<typename MeshT>
-bool dfise_text_reader::to_viennagrid(MeshT const & mesh, std::vector<viennagrid::quantity_field>& quantity_fields, bool extrude_contacts)
+bool dfise_grd_dat_reader::to_viennagrid(MeshT const & mesh, std::vector<viennagrid::quantity_field>& quantity_fields, bool extrude_contacts)
 {
-  using viennautils::dfise::grid_reader;
+  using viennautils::dfise::grd_bnd_reader;
   using viennautils::dfise::data_reader;
 
   typedef typename viennagrid::result_of::point<MeshT>::type PointType;
@@ -110,54 +108,54 @@ bool dfise_text_reader::to_viennagrid(MeshT const & mesh, std::vector<viennagrid
   std::vector<VertexType> vertices;
 
   {
-    //create vertices from the vector returned by the grid_reader_.get_vertices() method which
+    //create vertices from the vector returned by the grd_bnd_reader_.get_vertices() method which
     // actually stores the coordinates of the vertices in sequential order:
-    // e.g. in 2d: grid_reader_.get_vertices() = (x_0, y_0, x_1, y_1, ...)
-    //      in 3d: grid_reader_.get_vertices() = (x_0, y_0, z_0, x_1, ...)
+    // e.g. in 2d: grd_bnd_reader_.get_vertices() = (x_0, y_0, x_1, y_1, ...)
+    //      in 3d: grd_bnd_reader_.get_vertices() = (x_0, y_0, z_0, x_1, ...)
 
     //TODO get_translate() and get_transform() is still ignored here
 
-    unsigned int dimension = grid_reader_.get_dimension();
-    vertices.resize(grid_reader_.get_vertices().size() / dimension);
+    unsigned int dimension = grd_bnd_reader_.get_dimension();
+    vertices.resize(grd_bnd_reader_.get_vertices().size() / dimension);
     for (typename std::vector<VertexType>::size_type i = 0; i < vertices.size(); ++i)
     {
       PointType point(dimension);
       for (unsigned int j = 0; j < dimension; ++j)
       {
-        point[j] = grid_reader_.get_vertices()[dimension*i+j];
+        point[j] = grd_bnd_reader_.get_vertices()[dimension*i+j];
       }
 
       vertices[i] = viennagrid::make_vertex(mesh, point);
     }
   }
 
-  grid_reader::ElementVector const & dfise_elements = grid_reader_.get_elements();
+  grd_bnd_reader::ElementVector const & dfise_elements = grd_bnd_reader_.get_elements();
 
   //establish maximum cell dimension
   viennagrid_dimension cell_dimension = -1;
-  for (grid_reader::ElementVector::const_iterator it = dfise_elements.begin(); it != dfise_elements.end(); ++it)
+  for (grd_bnd_reader::ElementVector::const_iterator it = dfise_elements.begin(); it != dfise_elements.end(); ++it)
   {
     cell_dimension = std::max(cell_dimension, viennagrid_topological_dimension(to_viennagrid_element_type(it->tag_)));
   }
   
   RegionContactMap region_contacts;
 
-  grid_reader::RegionMap const & regions = grid_reader_.get_regions();
+  grd_bnd_reader::RegionMap const & regions = grd_bnd_reader_.get_regions();
 
-  for (grid_reader::RegionMap::const_iterator region_it = regions.begin(); region_it != regions.end(); ++region_it)
+  for (grd_bnd_reader::RegionMap::const_iterator region_it = regions.begin(); region_it != regions.end(); ++region_it)
   {
     std::string region_name = region_it->first;
 
-    std::vector<grid_reader::ElementIndex> const & element_indices = region_it->second.element_indices_;
-    for ( std::vector<grid_reader::ElementIndex>::const_iterator element_it = element_indices.begin()
+    std::vector<grd_bnd_reader::ElementIndex> const & element_indices = region_it->second.element_indices_;
+    for ( std::vector<grd_bnd_reader::ElementIndex>::const_iterator element_it = element_indices.begin()
         ; element_it != element_indices.end()
         ; ++element_it
         )
     {
-      grid_reader::element const & e = dfise_elements[*element_it];
+      grd_bnd_reader::element const & e = dfise_elements[*element_it];
 
       //TODO manual TRIANGULATION should be kicked out asap
-      if(e.tag_ == viennautils::dfise::grid_reader::element_tag_quadrilateral)
+      if(e.tag_ == viennautils::dfise::grd_bnd_reader::element_tag_quadrilateral)
       {
         //TRIANGULATION
         std::vector<VertexType> cell_vertices(3);
@@ -200,7 +198,7 @@ bool dfise_text_reader::to_viennagrid(MeshT const & mesh, std::vector<viennagrid
     }
   }
 
-  typedef std::multimap<grid_reader::VertexIndex, VertexType> NewVertexMap;
+  typedef std::multimap<grd_bnd_reader::VertexIndex, VertexType> NewVertexMap;
   NewVertexMap new_vertices;
 
   //TODO merge this code with sentaurus tdr_reader! TODO
@@ -210,7 +208,7 @@ bool dfise_text_reader::to_viennagrid(MeshT const & mesh, std::vector<viennagrid
     {
       for (std::size_t i = 0; i < rc_it->second.element_indices_.size(); ++i)
       {
-        grid_reader::element const & e = dfise_elements[rc_it->second.element_indices_[i]];
+        grd_bnd_reader::element const & e = dfise_elements[rc_it->second.element_indices_[i]];
 //             std::vector<VertexType> handles = rc->second.vertex_handles[i];
 
         PointType center;
@@ -231,7 +229,7 @@ bool dfise_text_reader::to_viennagrid(MeshT const & mesh, std::vector<viennagrid
         }
         else
         {
-          throw viennautils::make_exception<dfise_text_reader::error>("currently only line contacts are supported");
+          throw viennautils::make_exception<dfise_grd_dat_reader::error>("currently only line contacts are supported");
         }
 
         normal /= viennagrid::norm_2(normal);
@@ -255,12 +253,12 @@ bool dfise_text_reader::to_viennagrid(MeshT const & mesh, std::vector<viennagrid
           other_vertex = center - normal;
 
         std::vector<VertexType> cell_vertices;
-        for (std::vector<grid_reader::VertexIndex>::size_type i = 0; i < e.vertex_indices_.size(); ++i)
+        for (std::vector<grd_bnd_reader::VertexIndex>::size_type i = 0; i < e.vertex_indices_.size(); ++i)
         {
           cell_vertices.push_back(vertices[e.vertex_indices_[i]]);
         }
         VertexType new_vertex = viennagrid::make_vertex(mesh, other_vertex);
-        new_vertices.insert(std::pair<grid_reader::VertexIndex, VertexType>(e.vertex_indices_[0], new_vertex));
+        new_vertices.insert(std::pair<grd_bnd_reader::VertexIndex, VertexType>(e.vertex_indices_[0], new_vertex));
         cell_vertices.push_back( new_vertex );
 
         viennagrid::make_element( mesh.get_or_create_region(rc_it->second.region_name_),
@@ -327,22 +325,23 @@ bool dfise_text_reader::to_viennagrid(MeshT const & mesh, std::vector<viennagrid
   return true;
 }
 
-inline viennagrid_element_type dfise_text_reader::to_viennagrid_element_type(viennautils::dfise::grid_reader::element_tag dfise_tag)
+inline viennagrid_element_type dfise_grd_dat_reader::to_viennagrid_element_type(viennautils::dfise::grd_bnd_reader::element_tag dfise_tag)
 {
   switch(dfise_tag)
   {
-    case viennautils::dfise::grid_reader::element_tag_line:          return VIENNAGRID_ELEMENT_TYPE_LINE;
-    case viennautils::dfise::grid_reader::element_tag_triangle:      return VIENNAGRID_ELEMENT_TYPE_TRIANGLE;
-    case viennautils::dfise::grid_reader::element_tag_quadrilateral: return VIENNAGRID_ELEMENT_TYPE_QUADRILATERAL;
-    case viennautils::dfise::grid_reader::element_tag_tetrahedron:   return VIENNAGRID_ELEMENT_TYPE_TETRAHEDRON;
+    case viennautils::dfise::grd_bnd_reader::element_tag_line:          return VIENNAGRID_ELEMENT_TYPE_LINE;
+    case viennautils::dfise::grd_bnd_reader::element_tag_triangle:      return VIENNAGRID_ELEMENT_TYPE_TRIANGLE;
+    case viennautils::dfise::grd_bnd_reader::element_tag_quadrilateral: return VIENNAGRID_ELEMENT_TYPE_QUADRILATERAL;
+    case viennautils::dfise::grd_bnd_reader::element_tag_polygon:       return VIENNAGRID_ELEMENT_TYPE_POLYGON;
+    case viennautils::dfise::grd_bnd_reader::element_tag_tetrahedron:   return VIENNAGRID_ELEMENT_TYPE_TETRAHEDRON;
   }
 
   assert(false);
-  return viennautils::dfise::grid_reader::element_tag_line;
+  return VIENNAGRID_ELEMENT_TYPE_NO_ELEMENT;
 }
 
 template<typename PointT>
-PointT dfise_text_reader::normal_vector(PointT const & p0, PointT const & p1)
+PointT dfise_grd_dat_reader::normal_vector(PointT const & p0, PointT const & p1)
 {
   PointT line = p1-p0;
   std::swap(line[0], line[1]);
@@ -351,7 +350,7 @@ PointT dfise_text_reader::normal_vector(PointT const & p0, PointT const & p1)
 }
 
 template<typename PointT>
-PointT dfise_text_reader::normal_vector(PointT const & p0, PointT const & p1, PointT const & p2)
+PointT dfise_grd_dat_reader::normal_vector(PointT const & p0, PointT const & p1, PointT const & p2)
 {
   return viennagrid::cross_prod( p1-p0, p2-p0 );
 }

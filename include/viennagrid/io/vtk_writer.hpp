@@ -41,7 +41,7 @@ namespace viennagrid
     {
       typedef double value_type;
 
-      static std::string type_name() { return "Float32"; }
+      static std::string type_name() { return "Float64"; }
       static int num_components() { return 1; }
       static void write( std::ostream & os, value_type value )
       {
@@ -54,7 +54,7 @@ namespace viennagrid
     {
       typedef std::vector<double> value_type;
 
-      static std::string type_name() { return "Float32"; }
+      static std::string type_name() { return "Float64"; }
       static int num_components() { return 3; }
       static void write( std::ostream & os, value_type const & value )
       {
@@ -236,7 +236,7 @@ namespace viennagrid
         std::map< VertexIDType, ElementType > & current_used_vertex_map = used_vertex_map[region_id];
 
         writer << "   <Points>" << std::endl;
-        writer << "    <DataArray type=\"Float32\" NumberOfComponents=\"3\" format=\"ascii\">" << std::endl;
+        writer << "    <DataArray type=\"Float64\" NumberOfComponents=\"3\" format=\"ascii\">" << std::endl;
 
         for (typename std::map< VertexIDType, ElementType >::iterator it = current_used_vertex_map.begin(); it != current_used_vertex_map.end(); ++it)
         {
