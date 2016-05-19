@@ -1165,7 +1165,7 @@ VIENNAGRID_DYNAMIC_EXPORT viennagrid_error viennagrid_quantity_field_init(vienna
                                                                           viennagrid_int values_per_quantity,
                                                                           viennagrid_int storage_layout);
 
-/* queries the toplogical dimension of a quantity field */
+/* queries the topological dimension of a quantity field */
 VIENNAGRID_DYNAMIC_EXPORT viennagrid_error viennagrid_quantity_field_topological_dimension_get(viennagrid_quantity_field quantity_field,
                                                                                              viennagrid_dimension * topological_dimension);
 /* queries the storage layout of a quantity field */
