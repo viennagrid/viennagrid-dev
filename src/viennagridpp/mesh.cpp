@@ -224,6 +224,9 @@ namespace viennagrid
     typedef typename viennagrid::result_of::region_range< base_element<element_is_const> >::type RegionRangeType;
     typedef typename viennagrid::result_of::iterator<RegionRangeType>::type RegionRangeIterator;
 
+    if (is_boundary(element.get_mesh(), element))
+      return true;
+
     RegionRangeType regions(element);
     for (RegionRangeIterator rit = regions.begin(); rit != regions.end(); ++rit)
     {
