@@ -56,8 +56,6 @@ static viennagrid_error edge_refine_triangle(viennagrid_mesh         mesh,
     RETURN_ON_ERROR( viennagrid_mesh_region_get_or_create(output_mesh, *regions_begin, &cell_region) );
   }
 
-  viennagrid_element_id new_cell_id;
-
   if (num_edges_to_refine == 0)
   {
     new_vertices[0] = old_to_new_vertex_map[viennagrid_index_from_element_id(vertices_begin[0])];
