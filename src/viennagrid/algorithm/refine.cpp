@@ -535,12 +535,12 @@ viennagrid_error viennagrid_mesh_refine_create_hyperplane_edge_flags(viennagrid_
     RETURN_ON_ERROR( viennagrid_inner_prod(dim, hyperplane_normal, &tmp[0], &pd) );
 
     RETURN_ON_ERROR( viennagrid_element_volume(mesh, *eit, &tmp[0]) );
-    tolerance *= tmp[0];
+    viennagrid_numeric local_tolerance = tolerance * tmp[0];
 
     viennagrid_numeric smaller = (qd < pd) ? qd : pd;
     viennagrid_numeric larger = (qd < pd) ? pd : qd;
 
-    if (smaller < -tolerance && larger > tolerance)
+    if (smaller < -local_tolerance && larger > local_tolerance)
     {
       edge_refinement_tags[INDEX(*eit)] = VIENNAGRID_TRUE;
 
