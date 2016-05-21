@@ -18,6 +18,8 @@ set(LIB_VIENNAGRID_SOURCES viennagrid/algorithm.cpp
                            viennagrid/algorithm/inclusion.cpp
                            viennagrid/algorithm/quantity_interpolate.cpp
                            viennagrid/algorithm/refine.cpp
+                           viennagrid/algorithm/refine_triangle.cpp
+                           viennagrid/algorithm/refine_tetrahedron.cpp
                            viennagrid/algorithm/surface.cpp
                            viennagrid/algorithm/volume.cpp)
 
