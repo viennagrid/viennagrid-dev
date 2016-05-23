@@ -41,7 +41,7 @@ viennagrid_error edge_refine_triangle(viennagrid_mesh         mesh,
     viennagrid_mesh_region_get_or_create(output_mesh, *rit, &tmp);
     regions.push_back(tmp);
   }
-  viennagrid_region * regions_begin = regions.empty() ? &regions[0] : NULL;
+  viennagrid_region * regions_begin = regions.empty() ? NULL : &regions[0];
   viennagrid_region * regions_end = regions_begin ? regions_begin + regions.size() : NULL;
 
   if (num_edges_to_refine == 0)

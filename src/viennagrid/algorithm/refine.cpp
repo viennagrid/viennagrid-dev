@@ -124,6 +124,13 @@ viennagrid_error viennagrid_mesh_refine_edges(viennagrid_mesh      mesh,
                                             &(old_vertex_to_new_vertex_id[0]),
                                             *cit,
                                             output_mesh) ); break;
+    case VIENNAGRID_ELEMENT_TYPE_TETRAHEDRON:
+      RETURN_ON_ERROR( edge_refine_tetrahedron(mesh,
+                                               edge_refinement_tags,
+                                               &(new_vertices[0]),
+                                               &(old_vertex_to_new_vertex_id[0]),
+                                               *cit,
+                                               output_mesh) ); break;
     default:
       return VIENNAGRID_ERROR_UNSUPPORTED_ELEMENT_TYPE;
     }

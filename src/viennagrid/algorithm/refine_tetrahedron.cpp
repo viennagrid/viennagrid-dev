@@ -491,7 +491,7 @@ viennagrid_error edge_refine_tetrahedron_3_1(viennagrid_mesh output_mesh,
 
   viennagrid_bool tmp;
   RETURN_ON_ERROR( stable_line_is_longer(output_mesh, vertex_ids, 0, 1, 1, 2, &tmp) );
-  
+
   if (tmp == VIENNAGRID_TRUE)
   {
     RETURN_ON_ERROR( stable_line_is_longer(output_mesh, vertex_ids, 1, 3, 1, 2, &tmp) );
@@ -585,10 +585,10 @@ viennagrid_error edge_refine_tetrahedron_3_3(viennagrid_mesh output_mesh,
   // Strategy: The two longest edges of the common vertex are split 'twice',
   //           i.e. two new edges start from the center of the two longest edges
   //if (diag01_len > diag03_len) //split edge 01 again, introduce line 43
-  
+
   viennagrid_bool tmp;
   RETURN_ON_ERROR( stable_line_is_longer(output_mesh, vertex_ids, 0, 1, 0, 3, &tmp) );
-  
+
   if (tmp == VIENNAGRID_TRUE) //split edge 01 again, introduce line 43
   {
     RETURN_ON_ERROR( viennagrid_mesh_element_create_refinement_tetrahedron(output_mesh, vertex_ids, 4, 1, 5, 3, regions_begin, regions_end) );
@@ -613,7 +613,7 @@ viennagrid_error edge_refine_tetrahedron_3_3(viennagrid_mesh output_mesh,
     RETURN_ON_ERROR( viennagrid_mesh_element_create_refinement_tetrahedron(output_mesh, vertex_ids, 4, 1, 5, 6, regions_begin, regions_end) );
     RETURN_ON_ERROR( viennagrid_mesh_element_create_refinement_tetrahedron(output_mesh, vertex_ids, 6, 1, 5, 3, regions_begin, regions_end) );
     RETURN_ON_ERROR( viennagrid_mesh_element_create_refinement_tetrahedron(output_mesh, vertex_ids, 6, 5, 2, 3, regions_begin, regions_end) );
-    
+
     RETURN_ON_ERROR( stable_line_is_longer(output_mesh, vertex_ids, 0, 1, 1, 2, &tmp) );
     if (tmp == VIENNAGRID_TRUE) //split edge 01 again, introduce line 42
     {
@@ -626,7 +626,7 @@ viennagrid_error edge_refine_tetrahedron_3_3(viennagrid_mesh output_mesh,
       RETURN_ON_ERROR( viennagrid_mesh_element_create_refinement_tetrahedron(output_mesh, vertex_ids, 0, 5, 2, 6, regions_begin, regions_end) );
     }
   }
-  
+
   return VIENNAGRID_SUCCESS;
 }
 
@@ -635,13 +635,13 @@ viennagrid_error edge_refine_tetrahedron_3_4(viennagrid_mesh output_mesh,
                                              viennagrid_region * regions_begin,
                                              viennagrid_region * regions_end)
 {
-  
+
   // Strategy: The two longest edges of the common vertex are split 'twice',
   //           i.e. two new edges start from the center of the two longest edges
 
   viennagrid_bool tmp;
   RETURN_ON_ERROR( stable_line_is_longer(output_mesh, vertex_ids, 0, 1, 1, 2, &tmp) );
-  
+
   if (tmp == VIENNAGRID_TRUE) //split edge 01 again, introduce line 42
   {
     RETURN_ON_ERROR( viennagrid_mesh_element_create_refinement_tetrahedron(output_mesh, vertex_ids, 0, 4, 2, 6, regions_begin, regions_end) );
@@ -923,7 +923,7 @@ viennagrid_error edge_refine_tetrahedron_3(viennagrid_bool       * edge_refineme
         ordered_vertices[4] = vertex_on_edge_ids[viennagrid_index_from_element_id(edges_begin[5])];
         ordered_vertices[5] = vertex_on_edge_ids[viennagrid_index_from_element_id(edges_begin[3])];
         ordered_vertices[6] = vertex_on_edge_ids[viennagrid_index_from_element_id(edges_begin[2])];
-        
+
         edge_refine_tetrahedron_3_3(output_mesh, ordered_vertices, regions_begin, regions_end);
       }
       else
@@ -999,7 +999,7 @@ viennagrid_error edge_refine_tetrahedron_4_1(viennagrid_mesh output_mesh,
 {
   viennagrid_bool tmp;
   RETURN_ON_ERROR( stable_line_is_longer(output_mesh, vertex_ids, 0, 3, 1, 3, &tmp) );
-  
+
   if (tmp == VIENNAGRID_TRUE) //split edge 03, introduce line 71
   {
     RETURN_ON_ERROR( viennagrid_mesh_element_create_refinement_tetrahedron(output_mesh, vertex_ids, 0, 1, 4, 7, regions_begin, regions_end) );
@@ -1050,7 +1050,7 @@ viennagrid_error edge_refine_tetrahedron_4_2(viennagrid_mesh output_mesh,
 {
   viennagrid_bool tmp;
   RETURN_ON_ERROR( stable_line_is_longer(output_mesh, vertex_ids, 0, 3, 1, 3, &tmp) );
-  
+
   if (tmp == VIENNAGRID_TRUE) //split edge 03, introduce line 61
   {
     RETURN_ON_ERROR( stable_line_is_longer(output_mesh, vertex_ids, 1, 3, 1, 2, &tmp) );
@@ -1263,8 +1263,8 @@ viennagrid_error edge_refine_tetrahedron_4(viennagrid_bool       * edge_refineme
   vertices[2] = old_to_new_vertex_map[viennagrid_index_from_element_id(vertices_begin[2])];
   vertices[3] = old_to_new_vertex_map[viennagrid_index_from_element_id(vertices_begin[3])];
 
-  
-  
+
+
   //with e0
   if (edge_refinement_tags[viennagrid_index_from_element_id(edges_begin[0])] == VIENNAGRID_FALSE)
   {
@@ -1514,10 +1514,10 @@ viennagrid_error edge_refine_tetrahedron_5_1(viennagrid_mesh output_mesh,
 {
   RETURN_ON_ERROR( viennagrid_mesh_element_create_refinement_tetrahedron(output_mesh, vertex_ids, 6, 7, 8, 3, regions_begin, regions_end) );
   RETURN_ON_ERROR( viennagrid_mesh_element_create_refinement_tetrahedron(output_mesh, vertex_ids, 5, 4, 2, 8, regions_begin, regions_end) );
-  
+
   viennagrid_bool tmp;
   RETURN_ON_ERROR( stable_line_is_longer(output_mesh, vertex_ids, 0, 3, 1, 3, &tmp) );
-  
+
   if (tmp == VIENNAGRID_TRUE) //split edge 03, introduce line 61
   {
     RETURN_ON_ERROR( viennagrid_mesh_element_create_refinement_tetrahedron(output_mesh, vertex_ids, 6, 4, 5, 8, regions_begin, regions_end) );
@@ -1576,8 +1576,8 @@ viennagrid_error edge_refine_tetrahedron_5(viennagrid_bool       * edge_refineme
   vertices[1] = old_to_new_vertex_map[viennagrid_index_from_element_id(vertices_begin[1])];
   vertices[2] = old_to_new_vertex_map[viennagrid_index_from_element_id(vertices_begin[2])];
   vertices[3] = old_to_new_vertex_map[viennagrid_index_from_element_id(vertices_begin[3])];
-  
-  
+
+
   if (edge_refinement_tags[viennagrid_index_from_element_id(edges_begin[0])] == VIENNAGRID_FALSE)
   {
     ordered_vertices[0] = vertices[0];
@@ -1684,23 +1684,23 @@ viennagrid_error edge_refine_tetrahedron_6(viennagrid_bool       * /*edge_refine
 {
   viennagrid_dimension geo_dim;
   RETURN_ON_ERROR( viennagrid_mesh_geometric_dimension_get(output_mesh, &geo_dim) );
-  
+
   viennagrid_element_id vertices[10];
 
   vertices[0] = old_to_new_vertex_map[viennagrid_index_from_element_id(vertices_begin[0])];
   vertices[1] = old_to_new_vertex_map[viennagrid_index_from_element_id(vertices_begin[1])];
   vertices[2] = old_to_new_vertex_map[viennagrid_index_from_element_id(vertices_begin[2])];
   vertices[3] = old_to_new_vertex_map[viennagrid_index_from_element_id(vertices_begin[3])];
-  
-  
+
+
   vertices[4] = vertex_on_edge_ids[viennagrid_index_from_element_id(edges_begin[0])];
   vertices[5] = vertex_on_edge_ids[viennagrid_index_from_element_id(edges_begin[1])];
   vertices[6] = vertex_on_edge_ids[viennagrid_index_from_element_id(edges_begin[2])];
   vertices[7] = vertex_on_edge_ids[viennagrid_index_from_element_id(edges_begin[3])];
   vertices[8] = vertex_on_edge_ids[viennagrid_index_from_element_id(edges_begin[4])];
   vertices[9] = vertex_on_edge_ids[viennagrid_index_from_element_id(edges_begin[5])];
-  
-  
+
+
   //
   // Step 2: Add new cells to new mesh:
   //
@@ -1716,23 +1716,23 @@ viennagrid_error edge_refine_tetrahedron_6(viennagrid_bool       * /*edge_refine
 
   //3-8-6-9:
   RETURN_ON_ERROR( viennagrid_mesh_element_create_refinement_tetrahedron(output_mesh, vertices, 3, 8, 6, 9, regions_begin, regions_end) );
-  
-  
+
+
   viennagrid_numeric diag58, diag67, diag49;
   viennagrid_numeric *pt0, *pt1;
-  
+
   RETURN_ON_ERROR( viennagrid_mesh_vertex_coords_get(output_mesh, vertices[5], &pt0) );
   RETURN_ON_ERROR( viennagrid_mesh_vertex_coords_get(output_mesh, vertices[8], &pt1) );
   RETURN_ON_ERROR( viennagrid_distance_2(geo_dim, pt0, pt1, &diag58) );
-  
+
   RETURN_ON_ERROR( viennagrid_mesh_vertex_coords_get(output_mesh, vertices[6], &pt0) );
   RETURN_ON_ERROR( viennagrid_mesh_vertex_coords_get(output_mesh, vertices[7], &pt1) );
   RETURN_ON_ERROR( viennagrid_distance_2(geo_dim, pt0, pt1, &diag67) );
-  
+
   RETURN_ON_ERROR( viennagrid_mesh_vertex_coords_get(output_mesh, vertices[4], &pt0) );
   RETURN_ON_ERROR( viennagrid_mesh_vertex_coords_get(output_mesh, vertices[9], &pt1) );
   RETURN_ON_ERROR( viennagrid_distance_2(geo_dim, pt0, pt1, &diag49) );
-  
+
 
   if ( (diag58 <= diag67) && (diag58 <= diag49) )  //diag58 is shortest: keep it, split others
   {
@@ -1776,7 +1776,7 @@ viennagrid_error edge_refine_tetrahedron_6(viennagrid_bool       * /*edge_refine
     //4-7-5-9:
     RETURN_ON_ERROR( viennagrid_mesh_element_create_refinement_tetrahedron(output_mesh, vertices, 4, 7, 5, 99, regions_begin, regions_end) );
   }
-  
+
   return VIENNAGRID_SUCCESS;
 }
 
@@ -1835,7 +1835,7 @@ viennagrid_error edge_refine_tetrahedron(viennagrid_mesh         mesh,
     regions.push_back(tmp);
   }
 
-  viennagrid_region * regions_begin = regions.empty() ? &regions[0] : NULL;
+  viennagrid_region * regions_begin = regions.empty() ? NULL : &regions[0];
   viennagrid_region * regions_end = regions_begin ? regions_begin + regions.size() : NULL;
 
 
