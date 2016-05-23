@@ -1286,6 +1286,10 @@ VIENNAGRID_DYNAMIC_EXPORT viennagrid_error viennagrid_mesh_io_write(viennagrid_m
 VIENNAGRID_DYNAMIC_EXPORT viennagrid_error viennagrid_plc_read_tetgen_poly(viennagrid_plc plc,
                                                                            const char * filename);
 
+/* writes a PLC using tetgen .poly file format */
+VIENNAGRID_DYNAMIC_EXPORT viennagrid_error viennagrid_plc_write_tetgen_poly(viennagrid_plc plc,
+                                                                            const char * filename);
+
 /**********************************************************************************************
  *
  *                ViennaGrid miscellaneous routines

@@ -85,7 +85,8 @@ public:
 
 
 
-  viennagrid_int read_tetgen_poly(std::string const & filename);
+  viennagrid_error read_tetgen_poly(std::string const & filename);
+  viennagrid_error write_tetgen_poly(std::string const & filename);
 
 
   viennagrid_int hole_point_count()
