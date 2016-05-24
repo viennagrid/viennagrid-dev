@@ -163,6 +163,15 @@ public:
     size_ = new_size;
   }
 
+  void erase(SizeT start, SizeT end)
+  {
+    if ((start >= size_) || (start < 0) || (end >= size_) || (end < 0) || (end <= start))
+      return;
+
+    std::copy(values_+end, values_+size_, values_+start);
+    size_ -= (end-start);
+  }
+
   void push_back(T const & t)
   {
     resize( size()+1 );
