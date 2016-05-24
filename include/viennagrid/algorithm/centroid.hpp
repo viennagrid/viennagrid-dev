@@ -53,7 +53,13 @@ namespace viennagrid
     return result;
   }
 
-
+  template<bool region_is_const>
+  typename viennagrid::result_of::point< base_region<region_is_const> >::type centroid(base_region<region_is_const> const & region_obj)
+  {
+    point result( geometric_dimension(region_obj) );
+    THROW_ON_ERROR( viennagrid_region_centroid(region_obj.internal_mesh(), region_obj.internal(), &result[0]) );
+    return result;
+  }
 
 
 

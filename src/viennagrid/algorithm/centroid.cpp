@@ -65,7 +65,7 @@ viennagrid_error viennagrid_mesh_centroid(viennagrid_mesh mesh,
     viennagrid_dimension dim;
     RETURN_ON_ERROR( viennagrid_mesh_geometric_dimension_get(mesh, &dim) );
     if (dim <= 0)
-      return VIENNAGRID_ERROR_INVALID_TOPOLOGICAL_DIMENSION;
+      return VIENNAGRID_ERROR_INVALID_GEOMETRIC_DIMENSION;
 
     viennagrid_dimension cell_dimension;
     RETURN_ON_ERROR( viennagrid_mesh_cell_dimension_get(mesh, &cell_dimension) );
@@ -88,7 +88,7 @@ viennagrid_error viennagrid_mesh_centroid(viennagrid_mesh mesh,
 
       volume += current_volume;
       for (viennagrid_dimension d = 0; d<dim; ++d)
-        coords[+d] += current_centroid[+d];
+        coords[+d] += current_centroid[+d] * current_volume;
     }
 
     for (viennagrid_dimension d = 0; d<dim; ++d)
@@ -97,3 +97,54 @@ viennagrid_error viennagrid_mesh_centroid(viennagrid_mesh mesh,
 
   return VIENNAGRID_SUCCESS;
 }
+
+
+viennagrid_error viennagrid_region_centroid(viennagrid_mesh mesh,
+                                            viennagrid_region region,
+                                            viennagrid_numeric * coords)
+{
+  if (coords)
+  {
+    viennagrid_dimension dim;
+    RETURN_ON_ERROR( viennagrid_mesh_geometric_dimension_get(mesh, &dim) );
+    if (dim <= 0)
+      return VIENNAGRID_ERROR_INVALID_GEOMETRIC_DIMENSION;
+
+    viennagrid_dimension cell_dimension;
+    RETURN_ON_ERROR( viennagrid_mesh_cell_dimension_get(mesh, &cell_dimension) );
+
+    viennagrid_element_id * cells_begin;
+    viennagrid_element_id * cells_end;
+    RETURN_ON_ERROR( viennagrid_mesh_elements_get(mesh, cell_dimension, &cells_begin, &cells_end) );
+
+    for (viennagrid_dimension d = 0; d<dim; ++d)
+      coords[+d] = 0;
+    viennagrid_numeric volume = 0;
+
+    for (viennagrid_element_id * cit = cells_begin; cit != cells_end; ++cit)
+    {
+      viennagrid_bool is_in_region;
+      RETURN_ON_ERROR( viennagrid_region_contains_element(region, *cit, &is_in_region) );
+
+      if (is_in_region == VIENNAGRID_FALSE)
+        continue;
+
+      std::vector<viennagrid_numeric> current_centroid(dim, 0);
+      viennagrid_numeric current_volume;
+
+      RETURN_ON_ERROR( viennagrid_element_centroid(mesh, *cit, &current_centroid[0]) );
+      RETURN_ON_ERROR( viennagrid_element_volume(mesh, *cit, &current_volume) );
+
+      volume += current_volume;
+      for (viennagrid_dimension d = 0; d<dim; ++d)
+        coords[+d] += current_centroid[+d] * current_volume;
+    }
+
+    for (viennagrid_dimension d = 0; d<dim; ++d)
+      coords[+d] /= volume;
+  }
+
+  return VIENNAGRID_SUCCESS;
+}
+
+

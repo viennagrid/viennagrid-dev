@@ -1003,9 +1003,16 @@ VIENNAGRID_DYNAMIC_EXPORT viennagrid_error viennagrid_element_regions_get(vienna
                                                                           viennagrid_element_id element_id,
                                                                           viennagrid_region_id ** region_ids_begin,
                                                                           viennagrid_region_id ** region_ids_end);
+
+/* evaluates if an element is in a region */
+VIENNAGRID_DYNAMIC_EXPORT viennagrid_error viennagrid_region_contains_element(viennagrid_region region,
+                                                                              viennagrid_element_id element_id,
+                                                                              viennagrid_bool * value);
+
 /* adds an element to a region */
 VIENNAGRID_DYNAMIC_EXPORT viennagrid_error viennagrid_region_element_add(viennagrid_region region,
                                                                          viennagrid_element_id element_id);
+
 
 /* copies the region information (in which region is the element) from one element to another */
 VIENNAGRID_DYNAMIC_EXPORT viennagrid_error viennagrid_element_copy_region_information(viennagrid_mesh src_mesh,
@@ -1013,9 +1020,7 @@ VIENNAGRID_DYNAMIC_EXPORT viennagrid_error viennagrid_element_copy_region_inform
                                                                                       viennagrid_mesh dst_mesh,
                                                                                       viennagrid_element_id dst_element_id);
 
-VIENNAGRID_DYNAMIC_EXPORT viennagrid_error viennagrid_region_contains_element(viennagrid_region region,
-                                                                              viennagrid_element_id element_id,
-                                                                              viennagrid_bool * value);
+
 
 
 /**********************************************************************************************
@@ -1452,9 +1457,14 @@ VIENNAGRID_DYNAMIC_EXPORT viennagrid_error viennagrid_element_centroid(viennagri
                                                                        viennagrid_element_id element_id,
                                                                        viennagrid_numeric * coords);
 
-/* computes the centroid of the mesh */
+/* computes the centroid of a mesh */
 VIENNAGRID_DYNAMIC_EXPORT viennagrid_error viennagrid_mesh_centroid(viennagrid_mesh mesh,
                                                                     viennagrid_numeric * coords);
+
+/* computes the centroid of a region */
+VIENNAGRID_DYNAMIC_EXPORT viennagrid_error viennagrid_region_centroid(viennagrid_mesh mesh,
+                                                                      viennagrid_region region,
+                                                                      viennagrid_numeric * coords);
 
 /* computes the volume (area/length) of a particular element of the mesh */
 VIENNAGRID_DYNAMIC_EXPORT viennagrid_error viennagrid_element_circumcenter(viennagrid_mesh mesh,
