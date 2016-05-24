@@ -29,7 +29,7 @@ void viennagrid_element_handle_buffer::save_add_elements(viennagrid_mesh_hierarc
 {
   for (viennagrid_int i = 0; i != count; ++i)
   {
-    save_add_element(mesh_hierarchy, start_id+i);
+    add_element(mesh_hierarchy, start_id+i);
   }
 }
 
