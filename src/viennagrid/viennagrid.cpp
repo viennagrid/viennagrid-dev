@@ -529,7 +529,7 @@ viennagrid_error viennagrid_mesh_element_create(viennagrid_mesh mesh,
   if (!vertex_ids)                                 return VIENNAGRID_ERROR_INVALID_ARGUMENTS;;
 
   std::pair<viennagrid_element_id, bool> tmp = mesh->mesh_hierarchy()->get_make_element(element_type, vertex_count, vertex_ids, mesh);
-  if (!tmp.second)                                 return VIENNAGRID_ERROR_ELEMENT_ALREADY_PRESENT;
+//   if (!tmp.second)                                 return VIENNAGRID_ERROR_ELEMENT_ALREADY_PRESENT;
 
   mesh->add_element(tmp.first);
 
