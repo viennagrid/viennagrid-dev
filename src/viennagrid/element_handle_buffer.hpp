@@ -26,6 +26,7 @@ public:
 
   void add_element(viennagrid_mesh_hierarchy mesh_hierarchy, viennagrid_element_id element_id);
   void add_elements(viennagrid_mesh_hierarchy mesh_hierarchy, viennagrid_element_id start_id, viennagrid_int count);
+  void save_add_elements(viennagrid_mesh_hierarchy mesh_hierarchy, viennagrid_element_id start_id, viennagrid_int count);
 
   viennagrid_int * ids() { return ids_.empty() ? 0 : &ids_[0]; }
   viennagrid_int count() const { return ids_.size(); }

@@ -6,7 +6,6 @@ void viennagrid_element_handle_buffer::add_element(viennagrid_mesh_hierarchy mes
   insert( mesh_hierarchy, element_id );
 }
 
-
 void viennagrid_element_handle_buffer::add_elements(viennagrid_mesh_hierarchy mesh_hierarchy, viennagrid_element_id start_id, viennagrid_int count)
 {
   if (ids_.empty() || (start_id > ids_.back()))
@@ -23,6 +22,14 @@ void viennagrid_element_handle_buffer::add_elements(viennagrid_mesh_hierarchy me
   {
     // TODO implement
     assert(false);
+  }
+}
+
+void viennagrid_element_handle_buffer::save_add_elements(viennagrid_mesh_hierarchy mesh_hierarchy, viennagrid_element_id start_id, viennagrid_int count)
+{
+  for (viennagrid_int i = 0; i != count; ++i)
+  {
+    save_add_element(mesh_hierarchy, start_id+i);
   }
 }
 
