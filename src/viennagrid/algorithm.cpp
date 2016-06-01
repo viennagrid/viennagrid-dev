@@ -215,8 +215,12 @@ viennagrid_error viennagrid_copy(viennagrid_dimension       dimension,
                                  viennagrid_numeric const * v,
                                  viennagrid_numeric       * result)
 {
-  for (viennagrid_dimension i = 0; i != dimension; ++i)
-    result[+i] = v[+i];
+  if (result)
+  {
+    for (viennagrid_dimension i = 0; i != dimension; ++i)
+      result[+i] = v[+i];
+  }
+
   return VIENNAGRID_SUCCESS;
 }
 
@@ -227,8 +231,12 @@ viennagrid_error viennagrid_add(viennagrid_dimension dimension,
                                 viennagrid_numeric const * v2,
                                 viennagrid_numeric       * result)
 {
-  for (viennagrid_dimension i = 0; i != dimension; ++i)
-    result[+i] = v1[+i] + v2[+i];
+  if (result)
+  {
+    for (viennagrid_dimension i = 0; i != dimension; ++i)
+      result[+i] = v1[+i] + v2[+i];
+  }
+
   return VIENNAGRID_SUCCESS;
 }
 
@@ -237,8 +245,12 @@ viennagrid_error viennagrid_subtract(viennagrid_dimension dimension,
                                      viennagrid_numeric const * v2,
                                      viennagrid_numeric       * result)
 {
-  for (viennagrid_dimension i = 0; i != dimension; ++i)
-    result[+i] = v1[+i] - v2[+i];
+  if (result)
+  {
+    for (viennagrid_dimension i = 0; i != dimension; ++i)
+      result[+i] = v1[+i] - v2[+i];
+  }
+
   return VIENNAGRID_SUCCESS;
 }
 
@@ -247,8 +259,12 @@ viennagrid_error viennagrid_prod(viennagrid_dimension dimension,
                                  viennagrid_numeric factor,
                                  viennagrid_numeric       * result)
 {
-  for (viennagrid_dimension i = 0; i != dimension; ++i)
-    result[+i] = v[+i]  * factor;
+  if (result)
+  {
+    for (viennagrid_dimension i = 0; i != dimension; ++i)
+      result[+i] = v[+i]  * factor;
+  }
+
   return VIENNAGRID_SUCCESS;
 }
 
