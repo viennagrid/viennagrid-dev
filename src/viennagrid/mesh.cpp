@@ -334,14 +334,11 @@ void viennagrid_mesh_::make_boundary_flags(viennagrid_region region)
     {
       for (viennagrid_int boundary_topological_dimension = 0; boundary_topological_dimension != facet_topological_dimension; ++boundary_topological_dimension)
       {
-        if (viennagrid_is_boundary_type(facet_topological_dimension, boundary_topological_dimension) == VIENNAGRID_TRUE)
+        viennagrid_element_id * it = mesh_hierarchy()->boundary_begin(*facet, boundary_topological_dimension);
+        viennagrid_element_id * boundary_end = mesh_hierarchy()->boundary_end(*facet, boundary_topological_dimension);
+        for (; it != boundary_end; ++it)
         {
-          viennagrid_element_id * it = mesh_hierarchy()->boundary_begin(*facet, boundary_topological_dimension);
-          viennagrid_element_id * boundary_end = mesh_hierarchy()->boundary_end(*facet, boundary_topological_dimension);
-          for (; it != boundary_end; ++it)
-          {
-            region->set_boundary(*it);
-          }
+          region->set_boundary(*it);
         }
       }
 
@@ -376,14 +373,11 @@ void viennagrid_mesh_::make_boundary_flags()
     {
       for (viennagrid_int boundary_topological_dimension = 0; boundary_topological_dimension != facet_topological_dimension; ++boundary_topological_dimension)
       {
-        if (viennagrid_is_boundary_type(facet_topological_dimension, boundary_topological_dimension) == VIENNAGRID_TRUE)
+        viennagrid_element_id * it = mesh_hierarchy()->boundary_begin(*facet, boundary_topological_dimension);
+        viennagrid_element_id * boundary_end = mesh_hierarchy()->boundary_end(*facet, boundary_topological_dimension);
+        for (; it != boundary_end; ++it)
         {
-          viennagrid_element_id * it = mesh_hierarchy()->boundary_begin(*facet, boundary_topological_dimension);
-          viennagrid_element_id * boundary_end = mesh_hierarchy()->boundary_end(*facet, boundary_topological_dimension);
-          for (; it != boundary_end; ++it)
-          {
-            set_boundary(*it);
-          }
+          set_boundary(*it);
         }
       }
 
