@@ -58,24 +58,28 @@ viennagrid_error viennagrid_signed_spanned_volume_3(viennagrid_dimension dimensi
   if (dimension == 2) //a triangle in the plane
   {
     if (result)
+    {
       *result = (  p1[0] * (p2[1] - p3[1])
                  + p2[0] * (p3[1] - p1[1])
                  + p3[0] * (p1[1] - p2[1]) ) / 2.0;
+    }
   }
   else if (dimension == 3) // triangle in 3d space
   {
-    viennagrid_numeric v1[3] = { p2[0] - p1[0], p2[1] - p1[1], p2[2] - p1[2] };
-    viennagrid_numeric v2[3] = { p3[0] - p1[0], p3[1] - p1[1], p3[2] - p1[2] };
-
-    // v3 = cross_prod(v1, v2);
-    viennagrid_numeric v3[3];
-
-    viennagrid_error err = viennagrid_cross_prod(v1, v2, v3);
-    if (err != VIENNAGRID_SUCCESS)
-      return err;
-
     if (result)
+    {
+      viennagrid_numeric v1[3] = { p2[0] - p1[0], p2[1] - p1[1], p2[2] - p1[2] };
+      viennagrid_numeric v2[3] = { p3[0] - p1[0], p3[1] - p1[1], p3[2] - p1[2] };
+
+      // v3 = cross_prod(v1, v2);
+      viennagrid_numeric v3[3];
+
+      viennagrid_error err = viennagrid_cross_prod(v1, v2, v3);
+      if (err != VIENNAGRID_SUCCESS)
+        return err;
+
       *result = std::sqrt(v3[0] * v3[0] + v3[1] * v3[1] + v3[2] * v3[2]) / 2.0;
+    }
   }
   else
     return VIENNAGRID_ERROR_INVALID_ARGUMENTS;
@@ -109,16 +113,18 @@ viennagrid_error viennagrid_signed_spanned_volume_4(viennagrid_dimension dimensi
 {
   if (dimension == 3) // triangle in 3d space
   {
-    viennagrid_numeric v1[3] = { p2[0] - p1[0], p2[1] - p1[1], p2[2] - p1[2] };
-    viennagrid_numeric v2[3] = { p3[0] - p1[0], p3[1] - p1[1], p3[2] - p1[2] };
-    viennagrid_numeric v3[3] = { p4[0] - p1[0], p4[1] - p1[1], p4[2] - p1[2] };
-
-    // v3 = cross_prod(v1, v2);
-    viennagrid_numeric v2v3[3];
-    RETURN_ON_ERROR( viennagrid_cross_prod(v2, v3, v2v3) );
-
     if (result)
-      *result = (v1[0] * v2v3[0] + v1[1] * v2v3[1] + v1[2] * v2v3[2]) / 6.0;
+    {
+      viennagrid_numeric T[3] = { p2[0] - p1[0], p2[1] - p1[1], p2[2] - p1[2] };
+      viennagrid_numeric U[3] = { p3[0] - p1[0], p3[1] - p1[1], p3[2] - p1[2] };
+      viennagrid_numeric V[3] = { p4[0] - p1[0], p4[1] - p1[1], p4[2] - p1[2] };
+
+      viennagrid_numeric UcV[3];
+      RETURN_ON_ERROR( viennagrid_cross_prod(U, V, UcV) );
+
+      RETURN_ON_ERROR( viennagrid_inner_prod(dimension, T, UcV, result) );
+      *result /= 6.0;
+    }
   }
   else
     return VIENNAGRID_ERROR_INVALID_ARGUMENTS;
