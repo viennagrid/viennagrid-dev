@@ -91,7 +91,7 @@ namespace viennagrid
 
   template<bool lhs_is_const, bool rhs_is_const>
   bool operator==(base_element<lhs_is_const> const & lhs, base_element<rhs_is_const> const & rhs)
-  { return (lhs.tag() == rhs.tag()) && (lhs.id() == rhs.id()); }
+  { return (lhs.internal_mesh() == rhs.internal_mesh()) && (lhs.tag() == rhs.tag()) && (lhs.id() == rhs.id()); }
 
   template<bool lhs_is_const, bool rhs_is_const>
   bool operator!=(base_element<lhs_is_const> const & lhs, base_element<rhs_is_const> const & rhs)
@@ -105,6 +105,11 @@ namespace viennagrid
     if (lhs.tag() < rhs.tag())
       return true;
     if (rhs.tag() < lhs.tag())
+      return false;
+
+    if (lhs.internal_mesh() < rhs.internal_mesh())
+      return true;
+    if (rhs.internal_mesh() < lhs.internal_mesh())
       return false;
 
     return lhs.id() < rhs.id();
