@@ -127,65 +127,55 @@ viennagrid_error viennagrid_element_circumcenter(viennagrid_mesh mesh,
         if (dimension != 3)
           return VIENNAGRID_ERROR_INVALID_GEOMETRIC_DIMENSION;
 
-        viennagrid_numeric * O = point_coords[0];
-        viennagrid_numeric A[3];
-        viennagrid_subtract(3, point_coords[1], O, A);
+        viennagrid_numeric * A = point_coords[0];
+        viennagrid_numeric * B = point_coords[1];
+        viennagrid_numeric * C = point_coords[2];
+        viennagrid_numeric * D = point_coords[3];
 
-        viennagrid_numeric B[3];
-        viennagrid_subtract(3, point_coords[2], O, A);
+        viennagrid_numeric T[3];
+        viennagrid_subtract(3, A, D, T);
 
-        viennagrid_numeric C[3];
-        viennagrid_subtract(3, point_coords[3], O, A);
+        viennagrid_numeric U[3];
+        viennagrid_subtract(3, B, D, U);
 
-
-        viennagrid_numeric AcB[3];
-        viennagrid_numeric CcA[3];
-        viennagrid_numeric BcC[3];
-
-        viennagrid_cross_prod(A, B, AcB);
-        viennagrid_cross_prod(C, A, CcA);
-        viennagrid_cross_prod(B, C, BcC);
+        viennagrid_numeric V[3];
+        viennagrid_subtract(3, C, D, V);
 
 
-        viennagrid_numeric ABcC;
-        viennagrid_numeric norm_BcC;
-        viennagrid_cross_prod(A, BcC, &ABcC);
-        viennagrid_norm_2(3, BcC, &norm_BcC);
-        if (std::abs(ABcC) < VIENNAGRID_TOLERANCE_EPSILON * norm_BcC)
-          return VIENNAGRID_ERROR_NUMERIC_CLOSE_TO_ZERO;
+        viennagrid_numeric UcV[3];
+        viennagrid_numeric VcT[3];
+        viennagrid_numeric TcU[3];
+
+        viennagrid_cross_prod(U, V, UcV);
+        viennagrid_cross_prod(V, T, VcT);
+        viennagrid_cross_prod(T, U, TcU);
+
+//         viennagrid_numeric ABcC;
+//         viennagrid_numeric norm_BcC;
+//         viennagrid_cross_prod(A, BcC, &ABcC);
+//         viennagrid_norm_2(3, BcC, &norm_BcC);
+//         if (std::abs(ABcC) < VIENNAGRID_TOLERANCE_EPSILON * norm_BcC)
+//         {
+//           std::cout << "vgrid numeric close to zero: " << std::abs(ABcC) << " " << VIENNAGRID_TOLERANCE_EPSILON * norm_BcC << std::endl;
+//           return VIENNAGRID_ERROR_NUMERIC_CLOSE_TO_ZERO;
+//         }
 
 
-        viennagrid_numeric AA;
-        viennagrid_numeric BB;
-        viennagrid_numeric CC;
+        viennagrid_numeric TT;
+        viennagrid_numeric UU;
+        viennagrid_numeric VV;
 
-        viennagrid_inner_prod(3, A, A, &AA);
-        viennagrid_inner_prod(3, B, B, &BB);
-        viennagrid_inner_prod(3, C, C, &CC);
+        viennagrid_inner_prod(3, T, T, &TT);
+        viennagrid_inner_prod(3, U, U, &UU);
+        viennagrid_inner_prod(3, V, V, &VV);
 
         viennagrid_numeric denominator;
-        viennagrid_inner_prod(3, A, BcC, &denominator);
-        denominator *= 2;
-
+        RETURN_ON_ERROR( viennagrid_signed_spanned_volume_4(3, D, A, B, C, &denominator) );
+        denominator *= 12;
 
         for (viennagrid_dimension i = 0; i<dimension; ++i)
-          coords[+i] = O[+i] + (AcB[+i]*CC + CcA[+i]*BB + BcC[+i]*AA) / denominator;
+          coords[+i] = D[+i] + (UcV[+i]*TT + VcT[+i]*UU + TcU[+i]*VV) / denominator;
 
-
-//           PointT circ_cent = (cross_prod(A, B) * viennagrid::inner_prod(C, C)
-//                                 + cross_prod(C, A) * viennagrid::inner_prod(B, B)
-//                                 + cross_prod(B, C) * viennagrid::inner_prod(A, A)
-//                                 ) / (viennagrid::inner_prod(A, viennagrid::cross_prod(B, C)) * 2.0);
-//           PointT cprodBC = viennagrid::cross_prod(B, C);
-//           if (std::fabs(viennagrid::inner_prod(A, cprodBC)) < 1e-10 * viennagrid::norm_2(cprodBC) )
-//           {
-//             std::cerr << "Near singularity in circum center calculation!" << std::endl;
-//             std::cerr << "A: " << A << std::endl;
-//             std::cerr << "B: " << B << std::endl;
-//             std::cerr << "C: " << C << std::endl;
-//             std::cerr << "B x C: " << viennagrid::cross_prod(B, C) << std::endl;
-//             throw std::runtime_error("Near singularity in circum center calculation!");
-//           }
         return VIENNAGRID_SUCCESS;
       }
 
