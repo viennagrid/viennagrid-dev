@@ -205,6 +205,8 @@ namespace viennagrid
   bool is_boundary( base_mesh<mesh_is_const> const & mesh, base_element<element_is_const> const & element )
   {
     viennagrid_bool result;
+    THROW_ON_ERROR( viennagrid_mesh_property_set(mesh.internal(), VIENNAGRID_PROPERTY_BOUNDARY_LAYOUT, VIENNAGRID_BOUNDARY_LAYOUT_FULL) );
+
     THROW_ON_ERROR( viennagrid_element_is_mesh_boundary(mesh.internal(),
                                                         element.id().internal(),
                                                         &result) );
