@@ -497,7 +497,7 @@ viennagrid_error viennagrid_plc_line_refine(viennagrid_plc plc,
     viennagrid_int facet_hole_point_count;
     viennagrid_plc_facet_hole_points_get(plc, facet_id, &facet_hole_point_count, &facet_hole_points);
     for (viennagrid_int i = 0; i != facet_hole_point_count; ++i)
-      viennagrid_plc_facet_hole_point_add(plc, new_facet_id, facet_hole_points + i*geometric_dimension);
+      viennagrid_plc_facet_hole_point_add(output_plc, new_facet_id, facet_hole_points + i*geometric_dimension);
   }
 
   return VIENNAGRID_SUCCESS;
