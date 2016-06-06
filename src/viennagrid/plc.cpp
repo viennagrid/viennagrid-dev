@@ -381,63 +381,59 @@ viennagrid_error viennagrid_plc_line_refine(viennagrid_plc plc,
 
   viennagrid_plc_init_from_plc(plc, output_plc, VIENNAGRID_TRUE, VIENNAGRID_TRUE);
 
+  viennagrid_int vertex_count;
+  viennagrid_plc_element_count(plc, 0, &vertex_count);
+
   viennagrid_int line_count;
   viennagrid_plc_element_count(plc, 1, &line_count);
 
   viennagrid_int facet_count;
   viennagrid_plc_element_count(plc, 2, &facet_count);
 
-  std::map<viennagrid_int, viennagrid_int> vertex_map;
-  std::vector< std::vector<viennagrid_int> > line_to_lines_map(line_count);
+  std::vector<viennagrid_element_id> vertex_map(vertex_count);
+  std::vector< std::vector<viennagrid_element_id> > line_to_lines_map(line_count);
 
-  for (viennagrid_int line_id = 0; line_id != line_count; ++line_id)
+  viennagrid_element_id vertices_begin;
+  viennagrid_element_id vertices_end;
+  viennagrid_plc_elements_get(plc, 0, &vertices_begin, &vertices_end);
+
+  for (viennagrid_element_id vertex_id = vertices_begin; vertex_id != vertices_end; ++vertex_id)
   {
-    viennagrid_int * vertices_begin;
-    viennagrid_int * vertices_end;
-    viennagrid_plc_boundary_elements(plc, line_id, 0, &vertices_begin, &vertices_end);
+    viennagrid_numeric * pt;
+    viennagrid_plc_vertex_coords_get(plc, vertex_id, &pt);
+    viennagrid_plc_vertex_create(output_plc, pt, &vertex_map[INDEX(vertex_id)]);
+  }
 
-    viennagrid_int v0 = *(vertices_begin+0);
-    viennagrid_int v1 = *(vertices_begin+1);
 
+  viennagrid_element_id lines_begin;
+  viennagrid_element_id lines_end;
+  viennagrid_plc_elements_get(plc, 1, &lines_begin, &lines_end);
+
+  for (viennagrid_element_id line_id = lines_begin; line_id != lines_end; ++line_id)
+  {
+    viennagrid_element_id * line_vertices_begin;
+    viennagrid_element_id * line_vertices_end;
+    viennagrid_plc_boundary_elements(plc, line_id, 0, &line_vertices_begin, &line_vertices_end);
+
+    viennagrid_element_id v0 = *(line_vertices_begin+0);
+    viennagrid_element_id v1 = *(line_vertices_begin+1);
 
     viennagrid_numeric * p0;
-    viennagrid_plc_vertex_coords_get(plc, v0, &p0);
-
     viennagrid_numeric * p1;
+    viennagrid_plc_vertex_coords_get(plc, v0, &p0);
     viennagrid_plc_vertex_coords_get(plc, v1, &p1);
 
+    viennagrid_element_id nv0 = vertex_map[INDEX(v0)];
+    viennagrid_element_id nv1 = vertex_map[INDEX(v1)];
 
-    viennagrid_int nv0;
-    std::map<viennagrid_int, viennagrid_int>::iterator it0 = vertex_map.find(v0);
-    if (it0 == vertex_map.end())
-    {
-      viennagrid_plc_vertex_create(output_plc, p0, &nv0);
-      vertex_map[v0] = nv0;
-    }
-    else
-      nv0 = it0->second;
+    std::vector<viennagrid_element_id> new_lines;
 
-    viennagrid_int nv1;
-    std::map<viennagrid_int, viennagrid_int>::iterator it1 = vertex_map.find(v1);
-    if (it1 == vertex_map.end())
-    {
-      viennagrid_plc_vertex_create(output_plc, p1, &nv1);
-      vertex_map[v1] = nv1;
-    }
-    else
-      nv1 = it1->second;
-
-
-    std::vector<viennagrid_int> new_lines;
-
-    double current_line_size = 0.0;
-    for (viennagrid_dimension i = 0; i != geometric_dimension; ++i)
-      current_line_size += (p0[+i]-p1[+i])*(p0[+i]-p1[+i]);
-    current_line_size = std::sqrt(current_line_size);
+    viennagrid_numeric current_line_size;
+    viennagrid_point_distance_2(geometric_dimension, p0, p1, &current_line_size);
 
     if (current_line_size <= line_size)
     {
-      viennagrid_int line_id;
+      viennagrid_element_id line_id;
       viennagrid_plc_line_create( output_plc, nv0, nv1, &line_id );
       new_lines.push_back(line_id);
     }
@@ -447,52 +443,54 @@ viennagrid_error viennagrid_plc_line_refine(viennagrid_plc plc,
       assert(number_of_new_lines > 1);
 
       std::vector<viennagrid_numeric> offset(geometric_dimension);
-      for (viennagrid_dimension i = 0; i != geometric_dimension; ++i)
-        offset[+i] = (p1[+i]-p0[+i]) / number_of_new_lines;
+      viennagrid_point_subtract(geometric_dimension, p1, p0, &offset[0]);
+      viennagrid_point_prod(geometric_dimension, &offset[0], 1.0/number_of_new_lines, &offset[0]);
 
+      std::vector<viennagrid_numeric> tmp(geometric_dimension);
+      viennagrid_point_copy(geometric_dimension, p0, &tmp[0]);
 
-      std::vector<viennagrid_int> vertices;
+      std::vector<viennagrid_element_id> vertices;
       vertices.push_back(nv0);
       for (int i = 1; i != number_of_new_lines; ++i)
       {
-        std::vector<viennagrid_numeric> tmp(geometric_dimension);
-        for (viennagrid_dimension j = 0; j != geometric_dimension; ++j)
-          tmp[+j] = p0[+j] + i*offset[+j];
-
-        viennagrid_int vertex_id;
-        viennagrid_plc_vertex_create( output_plc, &tmp[0], &vertex_id);
+        viennagrid_point_add(geometric_dimension, &tmp[0], &offset[0], &tmp[0]);
+        viennagrid_element_id vertex_id;
+        viennagrid_plc_vertex_create( output_plc, &tmp[0], &vertex_id );
         vertices.push_back(vertex_id);
       }
       vertices.push_back(nv1);
 
       for (std::size_t i = 0; i != vertices.size()-1; ++i)
       {
-        viennagrid_int line_id;
+        viennagrid_element_id line_id;
         viennagrid_plc_line_create( output_plc, vertices[i], vertices[i+1], &line_id );
         new_lines.push_back(line_id);
       }
     }
 
-    line_to_lines_map[line_id] = new_lines;
+    line_to_lines_map[ INDEX(line_id) ] = new_lines;
   }
 
 
+  viennagrid_element_id facets_begin;
+  viennagrid_element_id facets_end;
+  viennagrid_plc_elements_get(plc, 2, &facets_begin, &facets_end);
 
-  for (viennagrid_int facet_id = 0; facet_id != facet_count; ++facet_id)
+  for (viennagrid_element_id facet_id = facets_begin; facet_id != facets_end; ++facet_id)
   {
-    std::vector<viennagrid_int> new_lines;
+    std::vector<viennagrid_element_id> new_lines;
 
-    viennagrid_int * lines_begin;
-    viennagrid_int * lines_end;
+    viennagrid_element_id * lines_begin;
+    viennagrid_element_id * lines_end;
     viennagrid_plc_boundary_elements(plc, facet_id, 1, &lines_begin, &lines_end);
 
-    for (viennagrid_int * line_it = lines_begin; line_it != lines_end; ++line_it)
+    for (viennagrid_element_id * line_it = lines_begin; line_it != lines_end; ++line_it)
     {
-      std::vector<viennagrid_int> const & current_new_lines = line_to_lines_map[*line_it];
+      std::vector<viennagrid_element_id> const & current_new_lines = line_to_lines_map[ INDEX(*line_it) ];
       std::copy( current_new_lines.begin(), current_new_lines.end(), std::back_inserter(new_lines) );
     }
 
-    viennagrid_int new_facet_id;
+    viennagrid_element_id new_facet_id;
     viennagrid_plc_facet_create(output_plc, new_lines.size(), &new_lines[0], &new_facet_id);
 
     viennagrid_numeric * facet_hole_points;

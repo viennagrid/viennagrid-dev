@@ -210,7 +210,7 @@ namespace viennagrid
     assert(v0.size() == 3);
 
     point result(v0.size());
-    THROW_ON_ERROR( viennagrid_cross_prod(&v0[0], &v1[0], &result[0]) );
+    THROW_ON_ERROR( viennagrid_point_cross_prod(&v0[0], &v1[0], &result[0]) );
     return result;
   }
 
@@ -225,7 +225,7 @@ namespace viennagrid
     assert(v0.size() == v1.size());
 
     viennagrid_numeric result;
-    THROW_ON_ERROR( viennagrid_inner_prod(v0.size(), &v0[0], &v1[0], &result) );
+    THROW_ON_ERROR( viennagrid_point_inner_prod(v0.size(), &v0[0], &v1[0], &result) );
     return result;
   }
 
@@ -234,7 +234,7 @@ namespace viennagrid
   inline viennagrid_numeric norm_1(point const & p)
   {
     viennagrid_numeric result;
-    THROW_ON_ERROR( viennagrid_norm_1(p.size(), &p[0], &result) );
+    THROW_ON_ERROR( viennagrid_point_norm_1(p.size(), &p[0], &result) );
     return result;
   }
 
@@ -242,7 +242,7 @@ namespace viennagrid
   inline viennagrid_numeric norm_2(point const & p)
   {
     viennagrid_numeric result;
-    THROW_ON_ERROR( viennagrid_norm_2(p.size(), &p[0], &result) );
+    THROW_ON_ERROR( viennagrid_point_norm_2(p.size(), &p[0], &result) );
     return result;
   }
   inline viennagrid_numeric norm(point const & p)
@@ -252,7 +252,7 @@ namespace viennagrid
   inline viennagrid_numeric norm_inf(point const & p)
   {
     viennagrid_numeric result;
-    THROW_ON_ERROR( viennagrid_norm_inf(p.size(), &p[0], &result) );
+    THROW_ON_ERROR( viennagrid_point_norm_inf(p.size(), &p[0], &result) );
     return result;
   }
 

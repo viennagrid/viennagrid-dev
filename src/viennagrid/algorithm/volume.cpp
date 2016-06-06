@@ -74,7 +74,7 @@ viennagrid_error viennagrid_signed_spanned_volume_3(viennagrid_dimension dimensi
       // v3 = cross_prod(v1, v2);
       viennagrid_numeric v3[3];
 
-      viennagrid_error err = viennagrid_cross_prod(v1, v2, v3);
+      viennagrid_error err = viennagrid_point_cross_prod(v1, v2, v3);
       if (err != VIENNAGRID_SUCCESS)
         return err;
 
@@ -120,9 +120,9 @@ viennagrid_error viennagrid_signed_spanned_volume_4(viennagrid_dimension dimensi
       viennagrid_numeric V[3] = { p4[0] - p1[0], p4[1] - p1[1], p4[2] - p1[2] };
 
       viennagrid_numeric UcV[3];
-      RETURN_ON_ERROR( viennagrid_cross_prod(U, V, UcV) );
+      RETURN_ON_ERROR( viennagrid_point_cross_prod(U, V, UcV) );
 
-      RETURN_ON_ERROR( viennagrid_inner_prod(dimension, T, UcV, result) );
+      RETURN_ON_ERROR( viennagrid_point_inner_prod(dimension, T, UcV, result) );
       *result /= 6.0;
     }
   }

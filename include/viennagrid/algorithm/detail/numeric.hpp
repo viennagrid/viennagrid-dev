@@ -75,25 +75,15 @@ namespace viennagrid
       return (std::abs(first-second) < relative_tolerance(nc, first));
     }
 
-    template<typename NumericConfigT, typename PointT>
-    bool is_equal_point(NumericConfigT nc, PointT const & p0, PointT const & p1)
+    template<typename PointT>
+    bool is_equal_point(viennagrid_numeric nc, PointT const & p0, PointT const & p1)
     {
-      typedef typename viennagrid::result_of::coord<PointT>::type CoordType;
-      CoordType n0 = viennagrid::norm_2(p0);
-      CoordType n1 = viennagrid::norm_2(p1);
-
-      if ( (n0 < absolute_tolerance<CoordType>(nc)) && (n1 < absolute_tolerance<CoordType>(nc)) )
-        return true;
-
-      if ( (n0 < absolute_tolerance<CoordType>(nc)) || (n1 < absolute_tolerance<CoordType>(nc)) )
-        return false;
-
-      return viennagrid::norm_2(p0 - p1) < viennagrid::detail::relative_tolerance(nc, viennagrid::norm_2(p0)) ||
-             viennagrid::norm_2(p0 - p1) < viennagrid::detail::relative_tolerance(nc, viennagrid::norm_2(p1));
+      viennagrid_bool result;
+      THROW_ON_ERROR( viennagrid_point_is_equal(p0.size(), &p0[0], &p1[0], nc, &result) );
+      return result == VIENNAGRID_TRUE;
     }
 
-    template<typename NumericConfigT>
-    bool is_equal( NumericConfigT nc, point const & first, point const & second )
+    inline bool is_equal( viennagrid_numeric nc, point const & first, point const & second )
     {
       return is_equal_point(nc, first, second);
     }

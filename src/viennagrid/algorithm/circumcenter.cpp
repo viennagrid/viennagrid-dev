@@ -22,7 +22,7 @@ viennagrid_error viennagrid_element_circumcenter(viennagrid_mesh mesh,
     {
       viennagrid_numeric * point_coords;
       RETURN_ON_ERROR( viennagrid_mesh_vertex_coords_get(mesh, element_id, &point_coords) );
-      viennagrid_copy(dimension, point_coords, coords);
+      viennagrid_point_copy(dimension, point_coords, coords);
       return VIENNAGRID_SUCCESS;
     }
 
@@ -78,19 +78,19 @@ viennagrid_error viennagrid_element_circumcenter(viennagrid_mesh mesh,
           viennagrid_numeric CmA[3];
           viennagrid_numeric CmB[3];
 
-          viennagrid_subtract(3, A, B, AmB);
-          viennagrid_subtract(3, A, C, AmC);
-          viennagrid_subtract(3, B, A, BmA);
-          viennagrid_subtract(3, B, C, BmC);
-          viennagrid_subtract(3, C, A, CmA);
-          viennagrid_subtract(3, C, B, CmB);
+          viennagrid_point_subtract(3, A, B, AmB);
+          viennagrid_point_subtract(3, A, C, AmC);
+          viennagrid_point_subtract(3, B, A, BmA);
+          viennagrid_point_subtract(3, B, C, BmC);
+          viennagrid_point_subtract(3, C, A, CmA);
+          viennagrid_point_subtract(3, C, B, CmB);
 
 
 //             double denominator = 2.0 * viennagrid::inner_prod(viennagrid::cross_prod(A-B, B-C), viennagrid::cross_prod(A-B, B-C));
           viennagrid_numeric tmp_vec[3];
-          viennagrid_cross_prod(AmB, BmC, tmp_vec);
+          viennagrid_point_cross_prod(AmB, BmC, tmp_vec);
           viennagrid_numeric denominator;
-          viennagrid_inner_prod(3, tmp_vec, tmp_vec, &denominator);
+          viennagrid_point_inner_prod(3, tmp_vec, tmp_vec, &denominator);
           denominator *= 2.0;
 
 
@@ -98,18 +98,18 @@ viennagrid_error viennagrid_element_circumcenter(viennagrid_mesh mesh,
           viennagrid_numeric tmp1;
 
 //             double alpha = viennagrid::inner_prod(B - C, B - C) * viennagrid::inner_prod(A - B, A - C);
-          viennagrid_inner_prod(3, BmC, BmC, &tmp0);
-          viennagrid_inner_prod(3, AmB, AmC, &tmp1);
+          viennagrid_point_inner_prod(3, BmC, BmC, &tmp0);
+          viennagrid_point_inner_prod(3, AmB, AmC, &tmp1);
           viennagrid_numeric alpha = tmp0*tmp1;
 
 //             double beta  = viennagrid::inner_prod(A - C, A - C) * viennagrid::inner_prod(B - A, B - C);
-          viennagrid_inner_prod(3, AmC, AmC, &tmp0);
-          viennagrid_inner_prod(3, BmA, BmC, &tmp1);
+          viennagrid_point_inner_prod(3, AmC, AmC, &tmp0);
+          viennagrid_point_inner_prod(3, BmA, BmC, &tmp1);
           viennagrid_numeric beta = tmp0*tmp1;
 
 //             double gamma = viennagrid::inner_prod(A - B, A - B) * viennagrid::inner_prod(C - A, C - B);
-          viennagrid_inner_prod(3, AmB, AmB, &tmp0);
-          viennagrid_inner_prod(3, CmA, CmB, &tmp1);
+          viennagrid_point_inner_prod(3, AmB, AmB, &tmp0);
+          viennagrid_point_inner_prod(3, CmA, CmB, &tmp1);
           viennagrid_numeric gamma = tmp0*tmp1;
 
 //             PointT circ_cent = A * (alpha/denominator) + B * (beta/denominator) + C * (gamma/denominator);
@@ -133,22 +133,22 @@ viennagrid_error viennagrid_element_circumcenter(viennagrid_mesh mesh,
         viennagrid_numeric * D = point_coords[3];
 
         viennagrid_numeric T[3];
-        viennagrid_subtract(3, A, D, T);
+        viennagrid_point_subtract(3, A, D, T);
 
         viennagrid_numeric U[3];
-        viennagrid_subtract(3, B, D, U);
+        viennagrid_point_subtract(3, B, D, U);
 
         viennagrid_numeric V[3];
-        viennagrid_subtract(3, C, D, V);
+        viennagrid_point_subtract(3, C, D, V);
 
 
         viennagrid_numeric UcV[3];
         viennagrid_numeric VcT[3];
         viennagrid_numeric TcU[3];
 
-        viennagrid_cross_prod(U, V, UcV);
-        viennagrid_cross_prod(V, T, VcT);
-        viennagrid_cross_prod(T, U, TcU);
+        viennagrid_point_cross_prod(U, V, UcV);
+        viennagrid_point_cross_prod(V, T, VcT);
+        viennagrid_point_cross_prod(T, U, TcU);
 
 //         viennagrid_numeric ABcC;
 //         viennagrid_numeric norm_BcC;
@@ -165,9 +165,9 @@ viennagrid_error viennagrid_element_circumcenter(viennagrid_mesh mesh,
         viennagrid_numeric UU;
         viennagrid_numeric VV;
 
-        viennagrid_inner_prod(3, T, T, &TT);
-        viennagrid_inner_prod(3, U, U, &UU);
-        viennagrid_inner_prod(3, V, V, &VV);
+        viennagrid_point_inner_prod(3, T, T, &TT);
+        viennagrid_point_inner_prod(3, U, U, &UU);
+        viennagrid_point_inner_prod(3, V, V, &VV);
 
         viennagrid_numeric denominator;
         RETURN_ON_ERROR( viennagrid_signed_spanned_volume_4(3, D, A, B, C, &denominator) );

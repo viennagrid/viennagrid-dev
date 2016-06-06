@@ -19,18 +19,18 @@ void closest_points_shortest_distance_2(viennagrid_dimension dimension,
   viennagrid_numeric dp1;
   viennagrid_numeric dp2;
 
-  viennagrid_distance_2(dimension, p1p1, p1p2, &dp1);
-  viennagrid_distance_2(dimension, p2p1, p2p2, &dp2);
+  viennagrid_point_distance_2(dimension, p1p1, p1p2, &dp1);
+  viennagrid_point_distance_2(dimension, p2p1, p2p2, &dp2);
 
   if (dp1 <= dp2)
   {
-    if (result1) viennagrid_copy(dimension, p1p1, result1);
-    if (result2) viennagrid_copy(dimension, p1p2, result2);
+    if (result1) viennagrid_point_copy(dimension, p1p1, result1);
+    if (result2) viennagrid_point_copy(dimension, p1p2, result2);
   }
   else
   {
-    if (result1) viennagrid_copy(dimension, p2p1, result1);
-    if (result2) viennagrid_copy(dimension, p2p2, result2);
+    if (result1) viennagrid_point_copy(dimension, p2p1, result1);
+    if (result2) viennagrid_point_copy(dimension, p2p2, result2);
   }
 }
 
@@ -50,24 +50,24 @@ void closest_points_shortest_distance_3(viennagrid_dimension dimension,
   viennagrid_numeric dp2;
   viennagrid_numeric dp3;
 
-  viennagrid_distance_2(dimension, p1p1, p1p2, &dp1);
-  viennagrid_distance_2(dimension, p2p1, p2p2, &dp2);
-  viennagrid_distance_2(dimension, p3p1, p3p2, &dp3);
+  viennagrid_point_distance_2(dimension, p1p1, p1p2, &dp1);
+  viennagrid_point_distance_2(dimension, p2p1, p2p2, &dp2);
+  viennagrid_point_distance_2(dimension, p3p1, p3p2, &dp3);
 
   if ((dp1 <= dp2) && (dp1 <= dp3))
   {
-    if (result1) viennagrid_copy(dimension, p1p1, result1);
-    if (result2) viennagrid_copy(dimension, p1p2, result2);
+    if (result1) viennagrid_point_copy(dimension, p1p1, result1);
+    if (result2) viennagrid_point_copy(dimension, p1p2, result2);
   }
   else if ((dp2 <= dp1) && (dp2 <= dp3))
   {
-    if (result1) viennagrid_copy(dimension, p2p1, result1);
-    if (result2) viennagrid_copy(dimension, p2p2, result2);
+    if (result1) viennagrid_point_copy(dimension, p2p1, result1);
+    if (result2) viennagrid_point_copy(dimension, p2p2, result2);
   }
   else
   {
-    if (result1) viennagrid_copy(dimension, p3p1, result1);
-    if (result2) viennagrid_copy(dimension, p3p2, result2);
+    if (result1) viennagrid_point_copy(dimension, p3p1, result1);
+    if (result2) viennagrid_point_copy(dimension, p3p2, result2);
   }
 }
 
@@ -90,30 +90,30 @@ void closest_points_shortest_distance_4(viennagrid_dimension dimension,
   viennagrid_numeric dp3;
   viennagrid_numeric dp4;
 
-  viennagrid_distance_2(dimension, p1p1, p1p2, &dp1);
-  viennagrid_distance_2(dimension, p2p1, p2p2, &dp2);
-  viennagrid_distance_2(dimension, p3p1, p3p2, &dp3);
-  viennagrid_distance_2(dimension, p4p1, p4p2, &dp4);
+  viennagrid_point_distance_2(dimension, p1p1, p1p2, &dp1);
+  viennagrid_point_distance_2(dimension, p2p1, p2p2, &dp2);
+  viennagrid_point_distance_2(dimension, p3p1, p3p2, &dp3);
+  viennagrid_point_distance_2(dimension, p4p1, p4p2, &dp4);
 
   if ((dp1 <= dp2) && (dp1 <= dp3) && (dp1 <= dp4))
   {
-    if (result1) viennagrid_copy(dimension, p1p1, result1);
-    if (result2) viennagrid_copy(dimension, p1p2, result2);
+    if (result1) viennagrid_point_copy(dimension, p1p1, result1);
+    if (result2) viennagrid_point_copy(dimension, p1p2, result2);
   }
   else if ((dp2 <= dp1) && (dp2 <= dp3) && (dp2 <= dp4))
   {
-    if (result1) viennagrid_copy(dimension, p2p1, result1);
-    if (result2) viennagrid_copy(dimension, p2p2, result2);
+    if (result1) viennagrid_point_copy(dimension, p2p1, result1);
+    if (result2) viennagrid_point_copy(dimension, p2p2, result2);
   }
   else if ((dp3 <= dp1) && (dp3 <= dp2) && (dp3 <= dp4))
   {
-    if (result1) viennagrid_copy(dimension, p3p1, result1);
-    if (result2) viennagrid_copy(dimension, p3p2, result2);
+    if (result1) viennagrid_point_copy(dimension, p3p1, result1);
+    if (result2) viennagrid_point_copy(dimension, p3p2, result2);
   }
   else
   {
-    if (result1) viennagrid_copy(dimension, p4p1, result1);
-    if (result2) viennagrid_copy(dimension, p4p2, result2);
+    if (result1) viennagrid_point_copy(dimension, p4p1, result1);
+    if (result2) viennagrid_point_copy(dimension, p4p2, result2);
   }
 }
 
@@ -139,36 +139,36 @@ void closest_points_shortest_distance_5(viennagrid_dimension dimension,
   viennagrid_numeric dp4;
   viennagrid_numeric dp5;
 
-  viennagrid_distance_2(dimension, p1p1, p1p2, &dp1);
-  viennagrid_distance_2(dimension, p2p1, p2p2, &dp2);
-  viennagrid_distance_2(dimension, p3p1, p3p2, &dp3);
-  viennagrid_distance_2(dimension, p4p1, p4p2, &dp4);
-  viennagrid_distance_2(dimension, p5p1, p5p2, &dp5);
+  viennagrid_point_distance_2(dimension, p1p1, p1p2, &dp1);
+  viennagrid_point_distance_2(dimension, p2p1, p2p2, &dp2);
+  viennagrid_point_distance_2(dimension, p3p1, p3p2, &dp3);
+  viennagrid_point_distance_2(dimension, p4p1, p4p2, &dp4);
+  viennagrid_point_distance_2(dimension, p5p1, p5p2, &dp5);
 
   if ((dp1 <= dp2) && (dp1 <= dp3) && (dp1 <= dp4) && (dp1 <= dp5))
   {
-    if (result1) viennagrid_copy(dimension, p1p1, result1);
-    if (result2) viennagrid_copy(dimension, p1p2, result2);
+    if (result1) viennagrid_point_copy(dimension, p1p1, result1);
+    if (result2) viennagrid_point_copy(dimension, p1p2, result2);
   }
   else if ((dp2 <= dp1) && (dp2 <= dp3) && (dp2 <= dp4) && (dp2 <= dp5))
   {
-    if (result1) viennagrid_copy(dimension, p2p1, result1);
-    if (result2) viennagrid_copy(dimension, p2p2, result2);
+    if (result1) viennagrid_point_copy(dimension, p2p1, result1);
+    if (result2) viennagrid_point_copy(dimension, p2p2, result2);
   }
   else if ((dp3 <= dp1) && (dp3 <= dp2) && (dp3 <= dp4) && (dp3 <= dp5))
   {
-    if (result1) viennagrid_copy(dimension, p3p1, result1);
-    if (result2) viennagrid_copy(dimension, p3p2, result2);
+    if (result1) viennagrid_point_copy(dimension, p3p1, result1);
+    if (result2) viennagrid_point_copy(dimension, p3p2, result2);
   }
   else if ((dp4 <= dp1) && (dp4 <= dp2) && (dp4 <= dp3) && (dp4 <= dp5))
   {
-    if (result1) viennagrid_copy(dimension, p4p1, result1);
-    if (result2) viennagrid_copy(dimension, p4p2, result2);
+    if (result1) viennagrid_point_copy(dimension, p4p1, result1);
+    if (result2) viennagrid_point_copy(dimension, p4p2, result2);
   }
   else
   {
-    if (result1) viennagrid_copy(dimension, p5p1, result1);
-    if (result2) viennagrid_copy(dimension, p5p2, result2);
+    if (result1) viennagrid_point_copy(dimension, p5p1, result1);
+    if (result2) viennagrid_point_copy(dimension, p5p2, result2);
   }
 }
 
@@ -197,42 +197,42 @@ void closest_points_shortest_distance_6(viennagrid_dimension dimension,
   viennagrid_numeric dp5;
   viennagrid_numeric dp6;
 
-  viennagrid_distance_2(dimension, p1p1, p1p2, &dp1);
-  viennagrid_distance_2(dimension, p2p1, p2p2, &dp2);
-  viennagrid_distance_2(dimension, p3p1, p3p2, &dp3);
-  viennagrid_distance_2(dimension, p4p1, p4p2, &dp4);
-  viennagrid_distance_2(dimension, p5p1, p5p2, &dp5);
-  viennagrid_distance_2(dimension, p5p1, p5p2, &dp6);
+  viennagrid_point_distance_2(dimension, p1p1, p1p2, &dp1);
+  viennagrid_point_distance_2(dimension, p2p1, p2p2, &dp2);
+  viennagrid_point_distance_2(dimension, p3p1, p3p2, &dp3);
+  viennagrid_point_distance_2(dimension, p4p1, p4p2, &dp4);
+  viennagrid_point_distance_2(dimension, p5p1, p5p2, &dp5);
+  viennagrid_point_distance_2(dimension, p5p1, p5p2, &dp6);
 
   if ((dp1 <= dp2) && (dp1 <= dp3) && (dp1 <= dp4) && (dp1 <= dp5) && (dp1 <= dp6))
   {
-    if (result1) viennagrid_copy(dimension, p1p1, result1);
-    if (result2) viennagrid_copy(dimension, p1p2, result2);
+    if (result1) viennagrid_point_copy(dimension, p1p1, result1);
+    if (result2) viennagrid_point_copy(dimension, p1p2, result2);
   }
   else if ((dp2 <= dp1) && (dp2 <= dp3) && (dp2 <= dp4) && (dp2 <= dp5) && (dp2 <= dp6))
   {
-    if (result1) viennagrid_copy(dimension, p2p1, result1);
-    if (result2) viennagrid_copy(dimension, p2p2, result2);
+    if (result1) viennagrid_point_copy(dimension, p2p1, result1);
+    if (result2) viennagrid_point_copy(dimension, p2p2, result2);
   }
   else if ((dp3 <= dp1) && (dp3 <= dp2) && (dp3 <= dp4) && (dp3 <= dp5) && (dp3 <= dp6))
   {
-    if (result1) viennagrid_copy(dimension, p3p1, result1);
-    if (result2) viennagrid_copy(dimension, p3p2, result2);
+    if (result1) viennagrid_point_copy(dimension, p3p1, result1);
+    if (result2) viennagrid_point_copy(dimension, p3p2, result2);
   }
   else if ((dp4 <= dp1) && (dp4 <= dp2) && (dp4 <= dp3) && (dp4 <= dp5) && (dp4 <= dp6))
   {
-    if (result1) viennagrid_copy(dimension, p4p1, result1);
-    if (result2) viennagrid_copy(dimension, p4p2, result2);
+    if (result1) viennagrid_point_copy(dimension, p4p1, result1);
+    if (result2) viennagrid_point_copy(dimension, p4p2, result2);
   }
   else if ((dp5 <= dp1) && (dp5 <= dp2) && (dp5 <= dp3) && (dp5 <= dp4) && (dp5 <= dp6))
   {
-    if (result1) viennagrid_copy(dimension, p5p1, result1);
-    if (result2) viennagrid_copy(dimension, p5p2, result2);
+    if (result1) viennagrid_point_copy(dimension, p5p1, result1);
+    if (result2) viennagrid_point_copy(dimension, p5p2, result2);
   }
   else
   {
-    if (result1) viennagrid_copy(dimension, p6p1, result1);
-    if (result2) viennagrid_copy(dimension, p6p2, result2);
+    if (result1) viennagrid_point_copy(dimension, p6p1, result1);
+    if (result2) viennagrid_point_copy(dimension, p6p2, result2);
   }
 }
 
@@ -251,15 +251,15 @@ viennagrid_error viennagrid_closest_point_on_line(viennagrid_dimension dimension
   std::vector<viennagrid_numeric> pmp1(dimension);
   std::vector<viennagrid_numeric> p2mp1(dimension);
 
-  viennagrid_subtract(dimension, point, line_point1, &pmp1[0]);
-  viennagrid_subtract(dimension, line_point2, line_point1, &p2mp1[0]);
+  viennagrid_point_subtract(dimension, point, line_point1, &pmp1[0]);
+  viennagrid_point_subtract(dimension, line_point2, line_point1, &p2mp1[0]);
 
   viennagrid_numeric t;
   viennagrid_numeric tmp1;
 
 //   coord_type t = viennagrid::inner_prod( (p - line_p1), (line_p2 - line_p1) ) / viennagrid::inner_prod(line_p2 - line_p1, line_p2 - line_p1);
-  viennagrid_inner_prod(dimension, &pmp1[0], &p2mp1[0], &t);
-  viennagrid_inner_prod(dimension, &p2mp1[0], &p2mp1[0], &tmp1);
+  viennagrid_point_inner_prod(dimension, &pmp1[0], &p2mp1[0], &t);
+  viennagrid_point_inner_prod(dimension, &p2mp1[0], &p2mp1[0], &tmp1);
   t /= tmp1;
 
 
@@ -293,17 +293,17 @@ viennagrid_error viennagrid_closest_points_line_line(viennagrid_dimension dimens
   std::vector<viennagrid_numeric> dir_v(dimension);
   std::vector<viennagrid_numeric> dir_w(dimension);
 
-  viennagrid_subtract(dimension, v1, v0, &dir_v[0]);
-  viennagrid_subtract(dimension, w1, w0, &dir_w[0]);
+  viennagrid_point_subtract(dimension, v1, v0, &dir_v[0]);
+  viennagrid_point_subtract(dimension, w1, w0, &dir_w[0]);
 
 
   viennagrid_numeric v_in_v;
   viennagrid_numeric v_in_w;
   viennagrid_numeric w_in_w;
 
-  viennagrid_inner_prod(dimension, &dir_v[0], &dir_v[0], &v_in_v);
-  viennagrid_inner_prod(dimension, &dir_v[0], &dir_w[0], &v_in_w);
-  viennagrid_inner_prod(dimension, &dir_w[0], &dir_w[0], &w_in_w);
+  viennagrid_point_inner_prod(dimension, &dir_v[0], &dir_v[0], &v_in_v);
+  viennagrid_point_inner_prod(dimension, &dir_v[0], &dir_w[0], &v_in_w);
+  viennagrid_point_inner_prod(dimension, &dir_w[0], &dir_w[0], &w_in_w);
 
   viennagrid_numeric denominator = v_in_v * w_in_w - v_in_w * v_in_w;
 
@@ -331,13 +331,13 @@ viennagrid_error viennagrid_closest_points_line_line(viennagrid_dimension dimens
 
 
   std::vector<viennagrid_numeric> dir_distance(dimension);
-  viennagrid_subtract(dimension, v0, w0, &dir_distance[0]);
+  viennagrid_point_subtract(dimension, v0, w0, &dir_distance[0]);
 
   viennagrid_numeric v_in_dir_distance;
   viennagrid_numeric w_in_dir_distance;
 
-  viennagrid_inner_prod(dimension, &dir_v[0], &dir_distance[0], &v_in_dir_distance);
-  viennagrid_inner_prod(dimension, &dir_w[0], &dir_distance[0], &w_in_dir_distance);
+  viennagrid_point_inner_prod(dimension, &dir_v[0], &dir_distance[0], &v_in_dir_distance);
+  viennagrid_point_inner_prod(dimension, &dir_w[0], &dir_distance[0], &w_in_dir_distance);
 
   viennagrid_numeric s = (v_in_w * w_in_dir_distance - w_in_w * v_in_dir_distance) / denominator;
   viennagrid_numeric t = (v_in_v * w_in_dir_distance - v_in_w * v_in_dir_distance) / denominator;
@@ -412,9 +412,9 @@ viennagrid_error viennagrid_closest_point_on_triangle(viennagrid_dimension dimen
   std::vector<viennagrid_numeric> u1(dimension);
   std::vector<viennagrid_numeric> u(dimension);
 
-  viennagrid_subtract(dimension, v1, v0, &u0[0]);
-  viennagrid_subtract(dimension, v2, v0, &u1[0]);
-  viennagrid_subtract(dimension, p, v0, &u[0]);
+  viennagrid_point_subtract(dimension, v1, v0, &u0[0]);
+  viennagrid_point_subtract(dimension, v2, v0, &u1[0]);
+  viennagrid_point_subtract(dimension, p, v0, &u[0]);
 
 
   viennagrid_numeric a;
@@ -423,11 +423,11 @@ viennagrid_error viennagrid_closest_point_on_triangle(viennagrid_dimension dimen
   viennagrid_numeric u_in_u0;
   viennagrid_numeric u_in_u1;
 
-  viennagrid_inner_prod(dimension, &u0[0], &u0[0], &a);
-  viennagrid_inner_prod(dimension, &u0[0], &u1[0], &b);
-  viennagrid_inner_prod(dimension, &u1[0], &u1[0], &d);
-  viennagrid_inner_prod(dimension, &u[0], &u0[0], &u_in_u0);
-  viennagrid_inner_prod(dimension, &u[0], &u1[0], &u_in_u1);
+  viennagrid_point_inner_prod(dimension, &u0[0], &u0[0], &a);
+  viennagrid_point_inner_prod(dimension, &u0[0], &u1[0], &b);
+  viennagrid_point_inner_prod(dimension, &u1[0], &u1[0], &d);
+  viennagrid_point_inner_prod(dimension, &u[0], &u0[0], &u_in_u0);
+  viennagrid_point_inner_prod(dimension, &u[0], &u1[0], &u_in_u1);
 
   viennagrid_numeric denominator = a * d - b * b;
 
@@ -529,32 +529,32 @@ viennagrid_error viennagrid_closest_point_on_tetrahedron(viennagrid_dimension di
   std::vector<viennagrid_numeric> u2(dimension);
   std::vector<viennagrid_numeric> u(dimension);
 
-  viennagrid_subtract(dimension, v1, v0, &u0[0]);
-  viennagrid_subtract(dimension, v2, v0, &u1[0]);
-  viennagrid_subtract(dimension, v3, v0, &u2[0]);
-  viennagrid_subtract(dimension, p, v0, &u[0]);
+  viennagrid_point_subtract(dimension, v1, v0, &u0[0]);
+  viennagrid_point_subtract(dimension, v2, v0, &u1[0]);
+  viennagrid_point_subtract(dimension, v3, v0, &u2[0]);
+  viennagrid_point_subtract(dimension, p, v0, &u[0]);
 
 
   viennagrid_numeric a_00;
   viennagrid_numeric a_01;
   viennagrid_numeric a_02;
 
-  viennagrid_inner_prod(dimension, &u0[0], &u0[0], &a_00);
-  viennagrid_inner_prod(dimension, &u1[0], &u0[0], &a_01);
-  viennagrid_inner_prod(dimension, &u2[0], &u0[0], &a_02);
+  viennagrid_point_inner_prod(dimension, &u0[0], &u0[0], &a_00);
+  viennagrid_point_inner_prod(dimension, &u1[0], &u0[0], &a_01);
+  viennagrid_point_inner_prod(dimension, &u2[0], &u0[0], &a_02);
 
   viennagrid_numeric a_10 = a_01;
   viennagrid_numeric a_11;
   viennagrid_numeric a_12;
 
-  viennagrid_inner_prod(dimension, &u1[0], &u1[0], &a_11);
-  viennagrid_inner_prod(dimension, &u1[0], &u2[0], &a_12);
+  viennagrid_point_inner_prod(dimension, &u1[0], &u1[0], &a_11);
+  viennagrid_point_inner_prod(dimension, &u1[0], &u2[0], &a_12);
 
   viennagrid_numeric a_20 = a_02;
   viennagrid_numeric a_21 = a_12;
   viennagrid_numeric a_22;
 
-  viennagrid_inner_prod(dimension, &u2[0], &u2[0], &a_22);
+  viennagrid_point_inner_prod(dimension, &u2[0], &u2[0], &a_22);
 
 
 
@@ -562,9 +562,9 @@ viennagrid_error viennagrid_closest_point_on_tetrahedron(viennagrid_dimension di
   viennagrid_numeric u_in_u1;
   viennagrid_numeric u_in_u2;
 
-  viennagrid_inner_prod(dimension, &u[0], &u0[0], &u_in_u0);
-  viennagrid_inner_prod(dimension, &u[0], &u0[0], &u_in_u1);
-  viennagrid_inner_prod(dimension, &u[0], &u0[0], &u_in_u2);
+  viennagrid_point_inner_prod(dimension, &u[0], &u0[0], &u_in_u0);
+  viennagrid_point_inner_prod(dimension, &u[0], &u0[0], &u_in_u1);
+  viennagrid_point_inner_prod(dimension, &u[0], &u0[0], &u_in_u2);
 
 
   viennagrid_numeric det_A =  a_00 * a_11 * a_22 + a_01 * a_12 * a_20 + a_02 * a_10 * a_21
@@ -665,7 +665,7 @@ viennagrid_error viennagrid_closest_point_on_element(viennagrid_mesh mesh,
   {
     viennagrid_numeric * point_coords;
     RETURN_ON_ERROR( viennagrid_mesh_vertex_coords_get(mesh, element_id, &point_coords) );
-    viennagrid_copy(dimension, point_coords, result);
+    viennagrid_point_copy(dimension, point_coords, result);
     return VIENNAGRID_SUCCESS;
   }
 

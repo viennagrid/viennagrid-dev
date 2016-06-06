@@ -274,11 +274,11 @@ viennagrid_error viennagrid_mesh_refine_create_hyperplane_edge_flags(viennagrid_
     viennagrid_numeric qd;
     viennagrid_numeric pd;
 
-    RETURN_ON_ERROR( viennagrid_subtract(dim, pt0, hyperplane_point, &tmp[0]) );
-    RETURN_ON_ERROR( viennagrid_inner_prod(dim, hyperplane_normal, &tmp[0], &qd) );
+    RETURN_ON_ERROR( viennagrid_point_subtract(dim, pt0, hyperplane_point, &tmp[0]) );
+    RETURN_ON_ERROR( viennagrid_point_inner_prod(dim, hyperplane_normal, &tmp[0], &qd) );
 
-    RETURN_ON_ERROR( viennagrid_subtract(dim, pt1, hyperplane_point, &tmp[0]) );
-    RETURN_ON_ERROR( viennagrid_inner_prod(dim, hyperplane_normal, &tmp[0], &pd) );
+    RETURN_ON_ERROR( viennagrid_point_subtract(dim, pt1, hyperplane_point, &tmp[0]) );
+    RETURN_ON_ERROR( viennagrid_point_inner_prod(dim, hyperplane_normal, &tmp[0], &pd) );
 
     RETURN_ON_ERROR( viennagrid_element_volume(mesh, *eit, &tmp[0]) );
     viennagrid_numeric local_tolerance = tolerance * tmp[0];
@@ -290,9 +290,9 @@ viennagrid_error viennagrid_mesh_refine_create_hyperplane_edge_flags(viennagrid_
     {
       edge_refinement_tags[INDEX(*eit)] = VIENNAGRID_TRUE;
 
-      RETURN_ON_ERROR( viennagrid_subtract(dim, pt1, pt0, &tmp[0]) );
-      RETURN_ON_ERROR( viennagrid_prod(dim, &tmp[0], pd/(pd-qd), &tmp[0]) );
-      RETURN_ON_ERROR( viennagrid_subtract(dim, pt1, &tmp[0], &tmp[0]) );
+      RETURN_ON_ERROR( viennagrid_point_subtract(dim, pt1, pt0, &tmp[0]) );
+      RETURN_ON_ERROR( viennagrid_point_prod(dim, &tmp[0], pd/(pd-qd), &tmp[0]) );
+      RETURN_ON_ERROR( viennagrid_point_subtract(dim, pt1, &tmp[0], &tmp[0]) );
 
       std::copy( tmp.begin(), tmp.end(), vertex_locations+INDEX(*eit)*dim );
     }

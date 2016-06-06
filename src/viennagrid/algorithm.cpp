@@ -155,7 +155,7 @@ viennagrid_error viennagrid_copy_map_element_copy(viennagrid_copy_map copy_map,
       for (viennagrid_element_id * vit = vertices_begin; vit != vertices_end; ++vit)
       {
         viennagrid_numeric distance;
-        viennagrid_distance_2(dimension, source_vertex_coords, vertex_coords+dimension*(*vit), &distance);
+        viennagrid_point_distance_2(dimension, source_vertex_coords, vertex_coords+dimension*(*vit), &distance);
 
         if ( distance < copy_map->max_vertex_distance )
         {
@@ -211,9 +211,9 @@ viennagrid_error viennagrid_copy_map_element_copy(viennagrid_copy_map copy_map,
 
 
 
-viennagrid_error viennagrid_copy(viennagrid_dimension       dimension,
-                                 viennagrid_numeric const * v,
-                                 viennagrid_numeric       * result)
+viennagrid_error viennagrid_point_copy(viennagrid_dimension       dimension,
+                                       viennagrid_numeric const * v,
+                                       viennagrid_numeric       * result)
 {
   if (result)
   {
@@ -226,10 +226,10 @@ viennagrid_error viennagrid_copy(viennagrid_dimension       dimension,
 
 
 
-viennagrid_error viennagrid_add(viennagrid_dimension dimension,
-                                viennagrid_numeric const * v1,
-                                viennagrid_numeric const * v2,
-                                viennagrid_numeric       * result)
+viennagrid_error viennagrid_point_add(viennagrid_dimension dimension,
+                                       viennagrid_numeric const * v1,
+                                       viennagrid_numeric const * v2,
+                                       viennagrid_numeric       * result)
 {
   if (result)
   {
@@ -240,10 +240,10 @@ viennagrid_error viennagrid_add(viennagrid_dimension dimension,
   return VIENNAGRID_SUCCESS;
 }
 
-viennagrid_error viennagrid_subtract(viennagrid_dimension dimension,
-                                     viennagrid_numeric const * v1,
-                                     viennagrid_numeric const * v2,
-                                     viennagrid_numeric       * result)
+viennagrid_error viennagrid_point_subtract(viennagrid_dimension dimension,
+                                           viennagrid_numeric const * v1,
+                                           viennagrid_numeric const * v2,
+                                           viennagrid_numeric       * result)
 {
   if (result)
   {
@@ -254,10 +254,10 @@ viennagrid_error viennagrid_subtract(viennagrid_dimension dimension,
   return VIENNAGRID_SUCCESS;
 }
 
-viennagrid_error viennagrid_prod(viennagrid_dimension dimension,
-                                 viennagrid_numeric const * v,
-                                 viennagrid_numeric factor,
-                                 viennagrid_numeric       * result)
+viennagrid_error viennagrid_point_prod(viennagrid_dimension dimension,
+                                       viennagrid_numeric const * v,
+                                       viennagrid_numeric factor,
+                                       viennagrid_numeric       * result)
 {
   if (result)
   {
@@ -272,9 +272,9 @@ viennagrid_error viennagrid_prod(viennagrid_dimension dimension,
 
 
 /* computes the cross-product of two vectors: result = v1 x v2  (3d only) */
-viennagrid_error viennagrid_cross_prod(viennagrid_numeric const * v1,
-                                       viennagrid_numeric const * v2,
-                                       viennagrid_numeric       * result)
+viennagrid_error viennagrid_point_cross_prod(viennagrid_numeric const * v1,
+                                             viennagrid_numeric const * v2,
+                                             viennagrid_numeric       * result)
 {
   if (result)
   {
@@ -287,10 +287,10 @@ viennagrid_error viennagrid_cross_prod(viennagrid_numeric const * v1,
 }
 
 /* computes the inner product of two vectors: result = (v1, v2) */
-viennagrid_error viennagrid_inner_prod(viennagrid_dimension dimension,
-                                       viennagrid_numeric const * v1,
-                                       viennagrid_numeric const * v2,
-                                       viennagrid_numeric       * result)
+viennagrid_error viennagrid_point_inner_prod(viennagrid_dimension dimension,
+                                             viennagrid_numeric const * v1,
+                                             viennagrid_numeric const * v2,
+                                             viennagrid_numeric       * result)
 {
   if (result)
   {
@@ -304,9 +304,9 @@ viennagrid_error viennagrid_inner_prod(viennagrid_dimension dimension,
 
 
 /* computes the l1-norm of a vector: result = ||v1||_1 */
-viennagrid_error viennagrid_norm_1(viennagrid_dimension dimension,
-                                   viennagrid_numeric const * v1,
-                                   viennagrid_numeric       * result)
+viennagrid_error viennagrid_point_norm_1(viennagrid_dimension dimension,
+                                         viennagrid_numeric const * v1,
+                                         viennagrid_numeric       * result)
 {
   if (result)
   {
@@ -320,9 +320,9 @@ viennagrid_error viennagrid_norm_1(viennagrid_dimension dimension,
 
 
 /* computes the l2-norm of a vector: result = ||v1||_2 */
-viennagrid_error viennagrid_norm_2(viennagrid_dimension dimension,
-                                   viennagrid_numeric const * v1,
-                                   viennagrid_numeric       * result)
+viennagrid_error viennagrid_point_norm_2(viennagrid_dimension dimension,
+                                         viennagrid_numeric const * v1,
+                                         viennagrid_numeric       * result)
 {
   if (result)
   {
@@ -336,9 +336,9 @@ viennagrid_error viennagrid_norm_2(viennagrid_dimension dimension,
 }
 
 /* computes the l2-norm of a vector: result = ||v1||_2 */
-viennagrid_error viennagrid_norm_inf(viennagrid_dimension dimension,
-                                     viennagrid_numeric const * v1,
-                                     viennagrid_numeric       * result)
+viennagrid_error viennagrid_point_norm_inf(viennagrid_dimension dimension,
+                                           viennagrid_numeric const * v1,
+                                           viennagrid_numeric       * result)
 {
   if (result && dimension > 0)
   {
@@ -353,16 +353,16 @@ viennagrid_error viennagrid_norm_inf(viennagrid_dimension dimension,
 
 
 /* computes the l1-distance of two vectors: result = ||v1-v2||_1 */
-viennagrid_error viennagrid_distance_1(viennagrid_dimension dimension,
-                                       viennagrid_numeric const * v1,
-                                       viennagrid_numeric const * v2,
-                                       viennagrid_numeric       * result)
+viennagrid_error viennagrid_point_distance_1(viennagrid_dimension dimension,
+                                             viennagrid_numeric const * v1,
+                                             viennagrid_numeric const * v2,
+                                             viennagrid_numeric       * result)
 {
   if (result)
   {
     std::vector<viennagrid_numeric> v1mv2(dimension);
-    viennagrid_subtract(dimension, v1, v2, &v1mv2[0]);
-    viennagrid_norm_1(dimension, &v1mv2[0], result);
+    viennagrid_point_subtract(dimension, v1, v2, &v1mv2[0]);
+    viennagrid_point_norm_1(dimension, &v1mv2[0], result);
   }
 
   return VIENNAGRID_SUCCESS;
@@ -370,39 +370,79 @@ viennagrid_error viennagrid_distance_1(viennagrid_dimension dimension,
 
 
 /* computes the l2-distance of two vectors: result = ||v1-v2||_2 */
-viennagrid_error viennagrid_distance_2(viennagrid_dimension dimension,
-                                       viennagrid_numeric const * v1,
-                                       viennagrid_numeric const * v2,
-                                       viennagrid_numeric       * result)
+viennagrid_error viennagrid_point_distance_2(viennagrid_dimension dimension,
+                                             viennagrid_numeric const * v1,
+                                             viennagrid_numeric const * v2,
+                                             viennagrid_numeric       * result)
 {
   if (result)
   {
     std::vector<viennagrid_numeric> v1mv2(dimension);
-    viennagrid_subtract(dimension, v1, v2, &v1mv2[0]);
-    viennagrid_norm_2(dimension, &v1mv2[0], result);
+    viennagrid_point_subtract(dimension, v1, v2, &v1mv2[0]);
+    viennagrid_point_norm_2(dimension, &v1mv2[0], result);
   }
 
   return VIENNAGRID_SUCCESS;
 }
 
 /* computes the inf-distance of two vectors: result = ||v1-v2||_inf */
-viennagrid_error viennagrid_distance_inf(viennagrid_dimension dimension,
-                                         viennagrid_numeric const * v1,
-                                         viennagrid_numeric const * v2,
-                                         viennagrid_numeric       * result)
+viennagrid_error viennagrid_point_distance_inf(viennagrid_dimension dimension,
+                                               viennagrid_numeric const * v1,
+                                               viennagrid_numeric const * v2,
+                                               viennagrid_numeric       * result)
 {
   if (result && dimension > 0)
   {
     std::vector<viennagrid_numeric> v1mv2(dimension);
-    viennagrid_subtract(dimension, v1, v2, &v1mv2[0]);
-    viennagrid_norm_inf(dimension, &v1mv2[0], result);
+    viennagrid_point_subtract(dimension, v1, v2, &v1mv2[0]);
+    viennagrid_point_norm_inf(dimension, &v1mv2[0], result);
   }
 
   return VIENNAGRID_SUCCESS;
 }
 
 
+viennagrid_error viennagrid_point_is_equal(viennagrid_dimension dimension,
+                                           viennagrid_numeric const * v1,
+                                           viennagrid_numeric const * v2,
+                                           viennagrid_numeric eps,
+                                           viennagrid_bool          * result)
+{
+  if (result && dimension > 0)
+  {
+    viennagrid_numeric n1;
+    viennagrid_numeric n2;
 
+    viennagrid_point_norm_2(dimension, v1, &n1);
+    viennagrid_point_norm_2(dimension, v2, &n2);
+
+    if ((n1 < eps) && (n2 < eps))
+    {
+      // both points are close to 0
+      *result = VIENNAGRID_TRUE;
+    }
+    else
+    {
+      if ((n1 < eps) || (n2 < eps))
+      {
+        // one point is close to 0 but the other is not
+        *result = VIENNAGRID_FALSE;
+      }
+      else
+      {
+        viennagrid_numeric d;
+        viennagrid_point_distance_2(dimension, v1, v2, &d);
+
+        n1 = std::max(eps, n1*eps); // relative tolerance for v0
+        n2 = std::max(eps, n2*eps); // relative tolerance for v1
+
+        *result = ((d < n1) || (d < n2)) ? VIENNAGRID_TRUE : VIENNAGRID_FALSE;
+      }
+    }
+  }
+
+  return VIENNAGRID_SUCCESS;
+}
 
 
 
@@ -491,7 +531,7 @@ viennagrid_error viennagrid_mesh_affine_transform(viennagrid_mesh mesh,
     for (viennagrid_dimension d = 0; d != destination_dimension; ++d)
     {
       if (matrix)
-        viennagrid_inner_prod(dimension, src, matrix+dimension*d, dst+d);
+        viennagrid_point_inner_prod(dimension, src, matrix+dimension*d, dst+d);
       else
         dst[+d] = 0;
 

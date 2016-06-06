@@ -16,9 +16,9 @@ viennagrid_error viennagrid_point_in_simplex_2(viennagrid_dimension dimension,
     viennagrid_numeric distance_line_point0;
     viennagrid_numeric distance_line_point1;
 
-    RETURN_ON_ERROR( viennagrid_distance_2(dimension, line_point0, line_point1, &line_length) );
-    RETURN_ON_ERROR( viennagrid_distance_2(dimension, line_point0, point, &distance_line_point0) );
-    RETURN_ON_ERROR( viennagrid_distance_2(dimension, line_point1, point, &distance_line_point1) );
+    RETURN_ON_ERROR( viennagrid_point_distance_2(dimension, line_point0, line_point1, &line_length) );
+    RETURN_ON_ERROR( viennagrid_point_distance_2(dimension, line_point0, point, &distance_line_point0) );
+    RETURN_ON_ERROR( viennagrid_point_distance_2(dimension, line_point1, point, &distance_line_point1) );
 
     *is_inside = std::abs(line_length - (distance_line_point0+distance_line_point1)) < tolerance * line_length;
   }
@@ -76,9 +76,9 @@ viennagrid_error viennagrid_point_in_simplex_3(viennagrid_dimension dimension,
       std::vector<viennagrid_numeric> v1(dimension);
       std::vector<viennagrid_numeric> v2(dimension);
 
-      RETURN_ON_ERROR( viennagrid_subtract(dimension, triangle_point2, triangle_point0, &v0[0]) );
-      RETURN_ON_ERROR( viennagrid_subtract(dimension, triangle_point1, triangle_point0, &v1[0]) );
-      RETURN_ON_ERROR( viennagrid_subtract(dimension, point, triangle_point0, &v2[0]) );
+      RETURN_ON_ERROR( viennagrid_point_subtract(dimension, triangle_point2, triangle_point0, &v0[0]) );
+      RETURN_ON_ERROR( viennagrid_point_subtract(dimension, triangle_point1, triangle_point0, &v1[0]) );
+      RETURN_ON_ERROR( viennagrid_point_subtract(dimension, point, triangle_point0, &v2[0]) );
 
       viennagrid_numeric dot00;
       viennagrid_numeric dot01;
@@ -86,11 +86,11 @@ viennagrid_error viennagrid_point_in_simplex_3(viennagrid_dimension dimension,
       viennagrid_numeric dot11;
       viennagrid_numeric dot12;
 
-      RETURN_ON_ERROR( viennagrid_inner_prod(dimension, &v0[0], &v0[0], &dot00) );
-      RETURN_ON_ERROR( viennagrid_inner_prod(dimension, &v0[0], &v1[0], &dot01) );
-      RETURN_ON_ERROR( viennagrid_inner_prod(dimension, &v0[0], &v2[0], &dot02) );
-      RETURN_ON_ERROR( viennagrid_inner_prod(dimension, &v1[0], &v1[0], &dot11) );
-      RETURN_ON_ERROR( viennagrid_inner_prod(dimension, &v1[0], &v2[0], &dot12) );
+      RETURN_ON_ERROR( viennagrid_point_inner_prod(dimension, &v0[0], &v0[0], &dot00) );
+      RETURN_ON_ERROR( viennagrid_point_inner_prod(dimension, &v0[0], &v1[0], &dot01) );
+      RETURN_ON_ERROR( viennagrid_point_inner_prod(dimension, &v0[0], &v2[0], &dot02) );
+      RETURN_ON_ERROR( viennagrid_point_inner_prod(dimension, &v1[0], &v1[0], &dot11) );
+      RETURN_ON_ERROR( viennagrid_point_inner_prod(dimension, &v1[0], &v2[0], &dot12) );
 
       viennagrid_numeric denom = (dot00*dot11 - dot01*dot01);
       if (std::abs(denom) < VIENNAGRID_TOLERANCE_EPSILON)
@@ -178,7 +178,7 @@ viennagrid_error viennagrid_point_in_element(viennagrid_mesh mesh,
       viennagrid_numeric * coords;
       viennagrid_numeric distance;
       RETURN_ON_ERROR( viennagrid_mesh_vertex_coords_get(mesh, element_id, &coords) );
-      RETURN_ON_ERROR( viennagrid_distance_2(dimension, point, coords, &distance) );
+      RETURN_ON_ERROR( viennagrid_point_distance_2(dimension, point, coords, &distance) );
       *is_inside = distance < tolerance;
     }
     else

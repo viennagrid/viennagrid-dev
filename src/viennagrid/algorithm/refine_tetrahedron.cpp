@@ -28,13 +28,13 @@ viennagrid_error stable_line_is_longer(viennagrid_mesh mesh,
 
   RETURN_ON_ERROR( viennagrid_mesh_vertex_coords_get(mesh, v1_1, &pt1) );
   RETURN_ON_ERROR( viennagrid_mesh_vertex_coords_get(mesh, v1_2, &pt2) );
-  RETURN_ON_ERROR( viennagrid_subtract(geo_dim, pt1, pt2, &tmp[0]) );
-  RETURN_ON_ERROR( viennagrid_norm_2(geo_dim, &tmp[0], &line1) );
+  RETURN_ON_ERROR( viennagrid_point_subtract(geo_dim, pt1, pt2, &tmp[0]) );
+  RETURN_ON_ERROR( viennagrid_point_norm_2(geo_dim, &tmp[0], &line1) );
 
   RETURN_ON_ERROR( viennagrid_mesh_vertex_coords_get(mesh, v2_1, &pt1) );
   RETURN_ON_ERROR( viennagrid_mesh_vertex_coords_get(mesh, v2_2, &pt2) );
-  RETURN_ON_ERROR( viennagrid_subtract(geo_dim, pt1, pt2, &tmp[0]) );
-  RETURN_ON_ERROR( viennagrid_norm_2(geo_dim, &tmp[0], &line2) );
+  RETURN_ON_ERROR( viennagrid_point_subtract(geo_dim, pt1, pt2, &tmp[0]) );
+  RETURN_ON_ERROR( viennagrid_point_norm_2(geo_dim, &tmp[0], &line2) );
 
   if (line1 > line2)
   {
@@ -1723,15 +1723,15 @@ viennagrid_error edge_refine_tetrahedron_6(viennagrid_bool       * /*edge_refine
 
   RETURN_ON_ERROR( viennagrid_mesh_vertex_coords_get(output_mesh, vertices[5], &pt0) );
   RETURN_ON_ERROR( viennagrid_mesh_vertex_coords_get(output_mesh, vertices[8], &pt1) );
-  RETURN_ON_ERROR( viennagrid_distance_2(geo_dim, pt0, pt1, &diag58) );
+  RETURN_ON_ERROR( viennagrid_point_distance_2(geo_dim, pt0, pt1, &diag58) );
 
   RETURN_ON_ERROR( viennagrid_mesh_vertex_coords_get(output_mesh, vertices[6], &pt0) );
   RETURN_ON_ERROR( viennagrid_mesh_vertex_coords_get(output_mesh, vertices[7], &pt1) );
-  RETURN_ON_ERROR( viennagrid_distance_2(geo_dim, pt0, pt1, &diag67) );
+  RETURN_ON_ERROR( viennagrid_point_distance_2(geo_dim, pt0, pt1, &diag67) );
 
   RETURN_ON_ERROR( viennagrid_mesh_vertex_coords_get(output_mesh, vertices[4], &pt0) );
   RETURN_ON_ERROR( viennagrid_mesh_vertex_coords_get(output_mesh, vertices[9], &pt1) );
-  RETURN_ON_ERROR( viennagrid_distance_2(geo_dim, pt0, pt1, &diag49) );
+  RETURN_ON_ERROR( viennagrid_point_distance_2(geo_dim, pt0, pt1, &diag49) );
 
 
   if ( (diag58 <= diag67) && (diag58 <= diag49) )  //diag58 is shortest: keep it, split others

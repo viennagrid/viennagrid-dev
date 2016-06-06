@@ -181,8 +181,8 @@ viennagrid_error edge_refine_triangle(viennagrid_mesh         mesh,
     viennagrid_numeric d_X1_2;
     viennagrid_numeric d_X2_1;
 
-    RETURN_ON_ERROR( viennagrid_distance_2(dim, coords+vX1_id*dim, coords+v2_id*dim, &d_X1_2) );
-    RETURN_ON_ERROR( viennagrid_distance_2(dim, coords+vX2_id*dim, coords+v1_id*dim, &d_X2_1) );
+    RETURN_ON_ERROR( viennagrid_point_distance_2(dim, coords+vX1_id*dim, coords+v2_id*dim, &d_X1_2) );
+    RETURN_ON_ERROR( viennagrid_point_distance_2(dim, coords+vX2_id*dim, coords+v1_id*dim, &d_X2_1) );
 
     new_vertices[0] = v0_id;
     new_vertices[1] = vX1_id;
