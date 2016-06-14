@@ -15,6 +15,7 @@
    License:         MIT (X11), see file LICENSE in the base directory
 =============================================================================== */
 
+#include <set>
 #include "viennagrid/algorithm/centroid.hpp"
 #include "viennagrid/algorithm/geometry.hpp"
 #include "viennagrid/algorithm/intersect.hpp"
@@ -69,17 +70,20 @@ namespace viennagrid
     typedef typename viennagrid::result_of::point<MeshT>::type PointType;
     typedef typename viennagrid::result_of::coord<MeshT>::type CoordType;
 
-    typedef typename viennagrid::result_of::element<MeshT>::type BoundaryElementType;
-    typedef typename viennagrid::result_of::const_element_range<MeshT>::type ConstBoundaryRangeType;
+    typedef typename viennagrid::result_of::element<MeshT>::type ElementType;
+    typedef typename viennagrid::result_of::const_element_range<MeshT>::type ConstFacetRangeType;
+    typedef typename viennagrid::result_of::iterator<ConstFacetRangeType>::type ConstFacetIteratorType;
+
+    typedef typename viennagrid::result_of::const_element_range<ElementType>::type ConstBoundaryRangeType;
     typedef typename viennagrid::result_of::iterator<ConstBoundaryRangeType>::type ConstBoundaryIteratorType;
 
-    ConstBoundaryRangeType boundary_elements(mesh, boundary_dimension);
+    ConstFacetRangeType facet_elements(mesh, boundary_dimension);
 
-    std::vector<int> hull_id_container( boundary_elements.size(), -1 );
-    typename viennagrid::result_of::accessor<std::vector<int>, BoundaryElementType>::type hull_id_accessor(hull_id_container);
+    std::vector<int> hull_id_container( facet_elements.size(), -1 );
+    typename viennagrid::result_of::accessor<std::vector<int>, ElementType>::type hull_id_accessor(hull_id_container);
 
     int num_hulls = 0;
-    for (ConstBoundaryIteratorType beit = boundary_elements.begin(); beit != boundary_elements.end(); ++beit)
+    for (ConstFacetIteratorType beit = facet_elements.begin(); beit != facet_elements.end(); ++beit)
     {
       if (hull_id_accessor.get(*beit) != -1)
         continue;
@@ -97,8 +101,8 @@ namespace viennagrid
     for (int i = 0; i < num_hulls; ++i)
     {
       // finding an element which is in hull i
-      ConstBoundaryIteratorType beit = boundary_elements.begin();
-      for (; beit != boundary_elements.end(); ++beit)
+      ConstFacetIteratorType beit = facet_elements.begin();
+      for (; beit != facet_elements.end(); ++beit)
       {
         if (hull_id_accessor.get(*beit) == i)
           break;
@@ -114,13 +118,57 @@ namespace viennagrid
         if (i == j)
           continue;
 
-        int intersect_count = 0;
-        for (ConstBoundaryIteratorType beit2 = boundary_elements.begin(); beit2 != boundary_elements.end(); ++beit2)
+
+        std::set<ElementType> hull_vertices;
+        std::vector<ElementType> hull_facets;
+
+
+        for (ConstFacetIteratorType beit2 = facet_elements.begin(); beit2 != facet_elements.end(); ++beit2)
         {
           if (hull_id_accessor.get(*beit2) == j)
           {
-            if (element_line_intersect(*beit2, centroid, centroid+normal, 1e-8))
-              ++intersect_count;
+            hull_facets.push_back(*beit2);
+
+            ConstBoundaryRangeType vertices(*beit2, 0);
+            for (ConstBoundaryIteratorType vit = vertices.begin(); vit != vertices.end(); ++vit)
+              hull_vertices.insert(*vit);
+          }
+        }
+
+
+        std::set<ElementType> intersection_hull_vertices;
+        int intersect_count = 0;
+        for (typename std::set<ElementType>::const_iterator it = hull_vertices.begin(); it != hull_vertices.end(); ++it)
+        {
+          if (element_line_intersect(*it, centroid, centroid+normal, 1e-8))
+          {
+            ++intersect_count;
+            intersection_hull_vertices.insert(*it);
+          }
+        }
+
+
+        for (std::size_t i = 0; i != hull_facets.size(); ++i)
+        {
+          bool vertices_intersected = false;
+
+          ConstBoundaryRangeType vertices(hull_facets[i], 0);
+          for (ConstBoundaryIteratorType vit = vertices.begin(); vit != vertices.end(); ++vit)
+          {
+            if (intersection_hull_vertices.find(*vit) != intersection_hull_vertices.end())
+            {
+              vertices_intersected = true;
+              break;
+            }
+          }
+
+          if (vertices_intersected)
+            continue;
+
+
+          if (element_line_intersect(hull_facets[i], centroid, centroid+normal, 1e-8))
+          {
+            ++intersect_count;
           }
         }
 
@@ -155,12 +203,12 @@ namespace viennagrid
       if (hull_parents[hull].size() % 2 != 0)
       {
         bool found_hole_point = false;
-        for (ConstBoundaryIteratorType beit = boundary_elements.begin(); beit != boundary_elements.end(); ++beit)
+        for (ConstBoundaryIteratorType beit = facet_elements.begin(); beit != facet_elements.end(); ++beit)
         {
           if (hull_id_accessor.get(*beit) == hull)
           {
 
-            for (ConstBoundaryIteratorType beit2 = boundary_elements.begin(); beit2 != boundary_elements.end(); ++beit2)
+            for (ConstBoundaryIteratorType beit2 = facet_elements.begin(); beit2 != facet_elements.end(); ++beit2)
             {
               if (*beit2 == *beit)
                 continue;
@@ -178,8 +226,16 @@ namespace viennagrid
               PointType centroid0 = viennagrid::centroid(*beit);
               PointType centroid1 = viennagrid::centroid(*beit2);
 
-              ConstBoundaryIteratorType beit3 = boundary_elements.begin();
-              for (; beit3 != boundary_elements.end(); ++beit3)
+              PointType lv0 = viennagrid::get_point(viennagrid::vertices(*beit)[0]) - viennagrid::get_point(viennagrid::vertices(*beit)[1]);
+              PointType lv1 = viennagrid::get_point(viennagrid::vertices(*beit2)[0]) - viennagrid::get_point(viennagrid::vertices(*beit2)[1]);
+              lv0.normalize();
+              lv1.normalize();
+
+              if (std::abs(viennagrid::inner_prod(lv0, lv1)) > 1-1e-8)
+                continue;
+
+              ConstBoundaryIteratorType beit3 = facet_elements.begin();
+              for (; beit3 != facet_elements.end(); ++beit3)
               {
                 if (!viennagrid::is_boundary(mesh, *beit3))
                   continue;
@@ -188,10 +244,12 @@ namespace viennagrid
                   continue;
 
                 if (viennagrid::element_line_intersect(*beit3, centroid0, centroid1, 1e-8))
+                {
                   break;
+                }
               }
 
-              if (beit3 == boundary_elements.end())
+              if (beit3 == facet_elements.end())
               {
                 hole_points.push_back( (centroid0+centroid1)/2.0 );
                 found_hole_point = true;
