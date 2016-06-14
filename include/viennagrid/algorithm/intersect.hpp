@@ -36,6 +36,42 @@ namespace viennagrid
     }
 
 
+
+
+    template<typename PointAccessorT, typename ElementT, typename DimensionTagT, typename PointT, typename NumericConfigT>
+    bool element_line_intersect_impl(PointAccessorT const point_accessor,
+                            ElementT const & element,
+                            viennagrid::vertex_tag,
+                            DimensionTagT,
+                            PointT const & line_start,
+                            PointT const & line_end,
+                            NumericConfigT nc)
+    {
+
+      PointT point = point_accessor.get(element);
+
+      viennagrid_dimension geo_dim = point.size();
+      PointT dir = line_end - line_start;
+
+
+      viennagrid_dimension dim = 0;
+      for (; dim != geo_dim; ++dim)
+      {
+        if (std::abs(dir[dim]) > detail::absolute_tolerance<viennagrid_numeric>(nc))
+          break;
+      }
+
+      assert(dim != geo_dim);
+
+      viennagrid_numeric alpha = (point[dim]-line_start[dim])/dir[dim];
+
+      return detail::is_equal(nc, line_start + alpha*dir, point);
+    }
+
+
+
+
+
     template<typename PointAccessorT, typename ElementT, typename PointT, typename NumericConfigT>
     bool element_line_intersect_impl(PointAccessorT const point_accessor,
                             ElementT const & element,
