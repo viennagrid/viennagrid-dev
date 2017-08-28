@@ -169,17 +169,17 @@ namespace viennagrid
       difference_type operator-(const const_iterator & it) const { return ptr_ - it.ptr_; }
 
       // less and greater compareable
-      bool operator<(const iterator & it) const { return ptr_ < it.ptr; }
-      bool operator<=(const iterator & it) const { return ptr_ <= it.ptr; }
+      bool operator<(const iterator & it) const { return ptr_ < it.ptr_; }
+      bool operator<=(const iterator & it) const { return ptr_ <= it.ptr_; }
 
-      bool operator>(const iterator & it) const { return ptr_ > it.ptr; }
-      bool operator>=(const iterator & it) const { return ptr_ >= it.ptr; }
+      bool operator>(const iterator & it) const { return ptr_ > it.ptr_; }
+      bool operator>=(const iterator & it) const { return ptr_ >= it.ptr_; }
 
-      bool operator<(const const_iterator & it) const { return ptr_ < it.ptr; }
-      bool operator<=(const const_iterator & it) const { return ptr_ <= it.ptr; }
+      bool operator<(const const_iterator & it) const { return ptr_ < it.ptr_; }
+      bool operator<=(const const_iterator & it) const { return ptr_ <= it.ptr_; }
 
-      bool operator>(const const_iterator & it) const { return ptr_ > it.ptr; }
-      bool operator>=(const const_iterator & it) const { return ptr_ >= it.ptr; }
+      bool operator>(const const_iterator & it) const { return ptr_ > it.ptr_; }
+      bool operator>=(const const_iterator & it) const { return ptr_ >= it.ptr_; }
 
       // compound assign add- and subtractable
       const_iterator & operator+=(long diff) { ptr_ += diff; return *this; }
@@ -300,34 +300,34 @@ namespace viennagrid
   };
 
   // comparisons
-  template<class T, std::size_t N>
+  template<class T, int N>
   bool operator== (const static_array<T,N>& x, const static_array<T,N>& y) {
     return std::equal(x.begin(), x.end(), y.begin());
   }
-  template<class T, std::size_t N>
+  template<class T, int N>
   bool operator< (const static_array<T,N>& x, const static_array<T,N>& y) {
     return std::lexicographical_compare(x.begin(),x.end(),y.begin(),y.end());
   }
-  template<class T, std::size_t N>
+  template<class T, int N>
   bool operator!= (const static_array<T,N>& x, const static_array<T,N>& y) {
     return !(x==y);
   }
-  template<class T, std::size_t N>
+  template<class T, int N>
   bool operator> (const static_array<T,N>& x, const static_array<T,N>& y) {
     return y<x;
   }
-  template<class T, std::size_t N>
+  template<class T, int N>
   bool operator<= (const static_array<T,N>& x, const static_array<T,N>& y) {
     return !(y<x);
   }
-  template<class T, std::size_t N>
+  template<class T, int N>
   bool operator>= (const static_array<T,N>& x, const static_array<T,N>& y) {
     return !(x<y);
   }
 
   // global swap()
   /** @brief Swaps the entries of the two arrays. */
-  template<class T, std::size_t N>
+  template<class T, int N>
   inline void swap (static_array<T,N>& x, static_array<T,N>& y) {
     x.swap(y);
   }
