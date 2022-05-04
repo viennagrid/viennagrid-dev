@@ -530,7 +530,7 @@ namespace viennagrid
     template<typename ValueT>
     struct IDCompare
     {
-      bool operator() (ValueT const & lhs, ValueT const & rhs)
+      bool operator() (ValueT const & lhs, ValueT const & rhs) const
       {
         return lhs->id() < rhs->id();
       }
@@ -539,7 +539,7 @@ namespace viennagrid
     template<typename ValueT, typename BaseIDType>
     struct IDCompare< smart_id<ValueT, BaseIDType> >
     {
-      bool operator() ( smart_id<ValueT, BaseIDType> const & lhs, smart_id<ValueT, BaseIDType> const & rhs)
+      bool operator() ( smart_id<ValueT, BaseIDType> const & lhs, smart_id<ValueT, BaseIDType> const & rhs) const
       {
         return lhs->id() < rhs->id();
       }
